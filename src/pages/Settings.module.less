@@ -1,0 +1,196 @@
+/* Settings 样式 */
+
+.settings {
+  padding: 0;
+}
+
+.settingsCard {
+  border-radius: 16px !important;
+}
+
+.tabs :global(.ant-tabs-nav) {
+  margin-bottom: 24px !important;
+}
+
+.tabs :global(.ant-tabs-tab) {
+  padding: 12px 20px !important;
+  font-size: 14px !important;
+}
+
+.tabs :global(.ant-tabs-tab .anticon) {
+  margin-right: 8px !important;
+}
+
+.tabContent {
+  min-height: 400px;
+}
+
+.section {
+  margin-bottom: 24px;
+}
+
+.section :global(.ant-typography) {
+  margin-bottom: 16px !important;
+}
+
+/* API 提供商卡片 */
+.providerCard {
+  margin-bottom: 16px;
+  border-radius: 12px !important;
+  border: 1px solid #f1f5f9 !important;
+}
+
+.providerHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.providerInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.providerLogo {
+  font-size: 28px;
+}
+
+.providerName {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.modelSelect {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f5f9;
+}
+
+/* 统计卡片 */
+.statCard {
+  border-radius: 12px !important;
+  text-align: center;
+  padding: 8px 0;
+}
+
+.statIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  margin: 0 auto 12px;
+}
+
+.statInfo {
+  text-align: center;
+}
+
+.statInfo :global(.ant-typography) {
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* 开关设置 */
+.switchItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.switchItem:last-child {
+  border-bottom: none;
+}
+
+.switchInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* 账户卡片 */
+.accountCard {
+  border-radius: 16px !important;
+  background: linear-gradient(135deg, #f0f5ff 0%, #fdf2f8 100%);
+}
+
+.accountInfo {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.avatar {
+  background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+  font-size: 32px;
+}
+
+.accountDetail {
+  flex: 1;
+}
+
+.accountDetail :global(.ant-typography) {
+  display: block;
+  margin-bottom: 4px !important;
+}
+
+.accountTags {
+  margin-top: 8px;
+}
+
+/* 关于卡片 */
+.aboutCard {
+  text-align: center;
+  border-radius: 16px !important;
+}
+
+.aboutHeader {
+  margin-bottom: 24px;
+}
+
+.aboutHeader h2 {
+  font-size: 32px !important;
+  margin-bottom: 8px !important;
+}
+
+.aboutInfo {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .tabs :global(.ant-tabs-tab) {
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+  }
+  
+  .accountInfo {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .aboutInfo {
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .switchItem {
+    padding: 12px 0;
+  }
+}

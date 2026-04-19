@@ -1,0 +1,259 @@
+/* Workflow 样式 */
+
+.workflow {
+  padding: 0;
+}
+
+/* 头部 */
+.header {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  padding: 48px;
+  border-radius: 20px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, transparent 70%);
+}
+
+.headerContent {
+  position: relative;
+  z-index: 1;
+}
+
+.title {
+  color: #fff !important;
+  margin-bottom: 8px !important;
+  font-size: 28px !important;
+}
+
+.desc {
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-size: 16px;
+}
+
+/* 内容区 */
+.content {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* 配置卡片 */
+.configCard {
+  border-radius: 16px !important;
+}
+
+.configCard :global(.ant-card-head) {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.formGroup {
+  margin-bottom: 24px;
+}
+
+.formGroup:last-child {
+  margin-bottom: 0;
+}
+
+.formGroup > .ant-typography {
+  display: block;
+  margin-bottom: 12px;
+}
+
+.input,
+.select {
+  width: 100%;
+}
+
+/* 模板选择 */
+.templateGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.templateItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+  background: #f8fafc;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+}
+
+.templateItem:hover {
+  background: #f1f5f9;
+  border-color: var(--template-color);
+}
+
+.templateItem.selected {
+  background: color-mix(in srgb, var(--template-color) 10%, white);
+  border-color: var(--template-color);
+}
+
+.templateIcon {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.templateName {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
+}
+
+.checkIcon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  color: var(--template-color);
+}
+
+/* 预览卡片 */
+.previewCard {
+  border-radius: 16px !important;
+}
+
+.previewSteps {
+  padding: 16px 0;
+}
+
+.stepItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  transition: background 0.2s;
+}
+
+.stepItem:hover {
+  background: #f8fafc;
+}
+
+.stepItem.completed {
+  background: #f0fdf4;
+}
+
+.stepIcon {
+  font-size: 20px;
+}
+
+.stepInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.stepTitle {
+  font-weight: 600;
+  font-size: 14px;
+  color: #1e293b;
+}
+
+.stepDesc {
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* 侧边栏 */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 摘要卡片 */
+.summaryCard {
+  border-radius: 16px !important;
+  position: sticky;
+  top: 24px;
+}
+
+.summaryItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.price {
+  text-align: center;
+  padding: 16px 0;
+}
+
+.priceValue {
+  margin: 8px 0 !important;
+  color: #6366f1 !important;
+}
+
+.priceUnit {
+  font-size: 14px !important;
+}
+
+.priceNote {
+  font-size: 12px;
+}
+
+.startBtn {
+  height: 48px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+  border: none !important;
+  margin-top: 16px;
+}
+
+.startBtn:disabled {
+  background: #e2e8f0 !important;
+}
+
+/* 提示 */
+.tipAlert {
+  border-radius: 12px !important;
+}
+
+/* 响应式 */
+@media (max-width: 1024px) {
+  .content {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 32px 24px;
+  }
+  
+  .title {
+    font-size: 22px !important;
+  }
+  
+  .templateGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

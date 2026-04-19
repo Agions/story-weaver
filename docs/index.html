@@ -1,0 +1,253 @@
+<!-- docs/index.html - PlotCraft Docs Cover Page -->
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PlotCraft - AI驱动的视频脚本创作平台</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%);
+      min-height: 100vh;
+      color: #fff;
+    }
+
+    .cover-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .hero-icon {
+      font-size: 80px;
+      margin-bottom: 24px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .hero-title {
+      font-size: 64px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f64f59 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 16px;
+      letter-spacing: -2px;
+    }
+
+    .hero-subtitle {
+      font-size: 24px;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 40px;
+      font-weight: 400;
+    }
+
+    .hero-description {
+      max-width: 600px;
+      font-size: 18px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.8;
+      margin-bottom: 48px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 60px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .cta-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 32px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .cta-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .cta-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
+    }
+
+    .cta-secondary {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .cta-secondary:hover {
+      background: rgba(255,255,255,0.15);
+      border-color: rgba(255,255,255,0.3);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 1000px;
+      width: 100%;
+      margin-top: 40px;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 28px;
+      text-align: left;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(102, 126, 234, 0.5);
+      transform: translateY(-4px);
+    }
+
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+    }
+
+    .feature-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .feature-desc {
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.6;
+    }
+
+    .footer {
+      margin-top: 80px;
+      padding-top: 40px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.4);
+      font-size: 14px;
+    }
+
+    .footer a {
+      color: #667eea;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 42px;
+      }
+      .hero-subtitle {
+        font-size: 18px;
+      }
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="cover-page">
+    <div class="hero-icon">🎬</div>
+    <h1 class="hero-title">PlotCraft</h1>
+    <p class="hero-subtitle">AI驱动的视频脚本创作平台</p>
+    <p class="hero-description">
+      使用AI将故事转化为精美的视频内容。
+      从小说到剧本，从分镜到最终渲染——
+      为视频创作者打造的完整专业工作流程。
+    </p>
+
+    <div class="cta-buttons">
+      <a href="#/getting-started/quick-start" class="cta-button cta-primary">
+        🚀 快速开始
+      </a>
+      <a href="#/user-guide/workflow-overview" class="cta-button cta-secondary">
+        📖 用户指南
+      </a>
+      <a href="https://github.com/Agions/PlotCraft" target="_blank" class="cta-button cta-secondary">
+        ⭐ GitHub
+      </a>
+    </div>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📝</div>
+        <h3 class="feature-title">智能脚本生成</h3>
+        <p class="feature-desc">AI分析小说和脚本，生成具有适当节奏和对白的结构化视频脚本。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🎬</div>
+        <h3 class="feature-title">智能分镜</h3>
+        <p class="feature-desc">自动生成包含镜头角度、构图和视觉描述的分镜图。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🎭</div>
+        <h3 class="feature-title">角色一致性</h3>
+        <p class="feature-desc">通过AI驱动的角色设计，保持跨帧的视觉一致性。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🖼️</div>
+        <h3 class="feature-title">多模型图像生成</h3>
+        <p class="feature-desc">支持Seedream、FLUX、DALL-E、Stable Diffusion等模型。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">👄</div>
+        <h3 class="feature-title">唇形动画同步</h3>
+        <p class="feature-desc">自动将角色唇形与语音音频同步。</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3 class="feature-title">工作流自动化</h3>
+        <p class="feature-desc">类似n8n的可视化工作流引擎，用于构建自定义制作流程。</p>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>
+        基于 <a href="/LICENSE">MIT许可证</a> 发布 · 
+        版本 3.0.0 · 
+        <a href="https://github.com/Agions/PlotCraft" target="_blank">GitHub</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>

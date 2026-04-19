@@ -1,0 +1,151 @@
+@import '../../../styles/variables.less';
+
+.panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+  border-left: 1px solid @border-color-base;
+  overflow: hidden;
+}
+
+.videoInfo {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: @spacing-small;
+  padding: @spacing-medium;
+  background: rgba(99, 102, 241, 0.04);
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  
+  .ant-typography {
+    font-size: @font-size-small;
+  }
+  
+  .ant-typography-strong {
+    color: @heading-color;
+  }
+}
+
+.divider {
+  margin: 0 !important;
+}
+
+.segmentInfo {
+  padding: 0 @spacing-medium;
+}
+
+.sectionTitle {
+  margin-bottom: @spacing-small !important;
+  font-size: @font-size-base !important;
+  color: @heading-color !important;
+  display: flex;
+  align-items: center;
+  gap: @spacing-small;
+}
+
+.segmentDetails {
+  padding: @spacing-small;
+  background: @background-color-light;
+  border-radius: @border-radius-base;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  
+  &:not(:last-child) {
+    border-bottom: 1px solid @border-color-base;
+  }
+}
+
+.tabs {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  
+  :global {
+    .ant-tabs-nav {
+      margin: 0 !important;
+      padding: 0 @spacing-small;
+      background: #fff;
+    }
+    
+    .ant-tabs-tab {
+      padding: @spacing-small @spacing-small !important;
+      margin: 0 !important;
+      font-size: @font-size-small;
+      
+      .anticon {
+        margin-right: 4px;
+      }
+    }
+    
+    .ant-tabs-content-holder {
+      overflow: hidden;
+    }
+    
+    .ant-tabs-content {
+      height: 100%;
+    }
+    
+    .ant-tabs-tabpane {
+      height: 100%;
+      overflow-y: auto;
+      
+      &::-webkit-scrollbar {
+        width: 4px;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.15);
+        border-radius: 4px;
+      }
+    }
+  }
+}
+
+.settingsGroup {
+  padding: @spacing-medium;
+}
+
+.groupTitle {
+  margin-bottom: @spacing-medium !important;
+  font-size: @font-size-base !important;
+  color: @heading-color !important;
+  display: flex;
+  align-items: center;
+  gap: @spacing-small;
+  
+  .anticon {
+    color: @primary-color;
+  }
+}
+
+.textArea {
+  resize: none;
+}
+
+.colorInput {
+  width: 100%;
+  height: 32px;
+  padding: 2px;
+  cursor: pointer;
+}
+
+.exportButtons {
+  width: 100%;
+  justify-content: space-between;
+  margin-top: @spacing-medium;
+  
+  .ant-btn {
+    flex: 1;
+  }
+}

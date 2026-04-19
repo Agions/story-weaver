@@ -1,0 +1,29 @@
+.container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px;
+  overflow-x: hidden;
+}
+
+.footer {
+  text-align: center;
+  padding: 24px 0;
+  color: rgba(0, 0, 0, 0.45);
+
+  a {
+    color: #6366f1;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: #4f46e5;
+    }
+  }
+}
+
+// 响应式布局
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+}

@@ -1,0 +1,272 @@
+@import '../../../styles/variables.less';
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+  border-top: 1px solid @border-color-base;
+  overflow: hidden;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: @spacing-small @spacing-medium;
+  background: #fff;
+  border-bottom: 1px solid @border-color-base;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+.leftTools {
+  display: flex;
+  align-items: center;
+  gap: @spacing-medium;
+}
+
+.rightTools {
+  display: flex;
+  align-items: center;
+}
+
+.timeDisplay {
+  min-width: 100px;
+  text-align: center;
+  font-family: 'Monaco', 'Menlo', monospace;
+  font-size: @font-size-small;
+}
+
+.playBtn {
+  font-size: 20px;
+  color: @primary-color;
+  
+  &:hover {
+    color: @primary-color-dark;
+    background: rgba(30, 136, 229, 0.1);
+  }
+}
+
+.zoomControls {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px 4px;
+  background: @background-color-light;
+  border-radius: @border-radius-small;
+  
+  .zoomLevel {
+    font-size: @font-size-small;
+    color: @text-color-secondary;
+    min-width: 40px;
+    text-align: center;
+  }
+}
+
+.timelineBody {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.trackLabels {
+  width: 100px;
+  flex-shrink: 0;
+  background: #fff;
+  border-right: 1px solid @border-color-base;
+  padding-top: 24px;
+}
+
+.trackLabel {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: @spacing-small;
+  padding: 0 @spacing-small;
+  font-size: @font-size-small;
+  color: @text-color;
+  border-bottom: 1px solid @border-color-base;
+  
+  .anticon {
+    color: @text-color-secondary;
+  }
+}
+
+.trackArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.timeScale {
+  height: 24px;
+  position: relative;
+  background: #e8eaed;
+  border-bottom: 1px solid @border-color-base;
+  flex-shrink: 0;
+}
+
+.timeMarker {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 1px;
+    height: 8px;
+    background: @text-color-secondary;
+  }
+  
+  .markerLabel {
+    font-size: 10px;
+    color: @text-color-secondary;
+    padding-left: 2px;
+    white-space: nowrap;
+  }
+}
+
+.tracks {
+  flex: 1;
+  position: relative;
+  background: 
+    linear-gradient(90deg, @border-color-base 1px, transparent 1px),
+    linear-gradient(@border-color-base 1px, transparent 1px);
+  background-size: 40px 40px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.track {
+  height: 40px;
+  position: relative;
+  border-bottom: 1px solid @border-color-base;
+  background: rgba(255, 255, 255, 0.5);
+  
+  &:nth-child(2) {
+    border-top: none;
+  }
+}
+
+.segment {
+  position: absolute;
+  top: 4px;
+  height: 32px;
+  border-radius: @border-radius-small;
+  display: flex;
+  align-items: center;
+  padding: 0 @spacing-small;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  overflow: hidden;
+  min-width: 20px;
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+  
+  &.selected {
+    box-shadow: 0 0 0 2px @primary-color;
+    
+    .segmentHandle {
+      opacity: 1;
+    }
+  }
+  
+  .segmentHandle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: ew-resize;
+    opacity: 0;
+    transition: opacity 0.15s;
+    background: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 10px;
+    
+    &:first-child {
+      left: 0;
+      border-radius: @border-radius-small 0 0 @border-radius-small;
+    }
+    
+    &:last-child {
+      right: 0;
+      border-radius: 0 @border-radius-small @border-radius-small 0;
+    }
+  }
+  
+  .segmentName {
+    font-size: @font-size-small;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    margin: 0 auto;
+  }
+}
+
+.emptyTrack {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  z-index: 10;
+  pointer-events: none;
+  transform: translateX(-1px);
+  
+  .playheadHead {
+    width: 12px;
+    height: 12px;
+    background: @primary-color;
+    border-radius: 2px 2px 50% 50%;
+    margin-left: -5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  
+  .playheadLine {
+    width: 2px;
+    height: calc(100% - 12px);
+    background: @primary-color;
+    box-shadow: 0 0 4px rgba(30, 136, 229, 0.5);
+  }
+}
+
+.statusBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: @spacing-small @spacing-medium;
+  background: #fff;
+  border-top: 1px solid @border-color-base;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.leftStatus,
+.rightStatus {
+  display: flex;
+  align-items: center;
+  gap: @spacing-medium;
+}

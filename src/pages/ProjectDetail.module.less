@@ -1,0 +1,156 @@
+.container {
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.descriptionCard {
+  margin-bottom: 24px;
+}
+
+.scriptSection {
+  margin-top: 32px;
+}
+
+.scriptHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.scriptHeader h4 {
+  margin: 0;
+}
+
+.emptyScript {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.card {
+  margin-bottom: 24px;
+}
+
+.scriptList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.functionCard {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.workflowSection {
+  margin-top: 8px;
+}
+
+.storyboardDetail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.storyboardFramesCard,
+.collabCard {
+  width: 100%;
+}
+
+.framePreview {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.collabList {
+  margin-top: 12px;
+  max-height: 240px;
+  overflow: auto;
+}
+
+.versionActions {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.costQuickActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.qualityGateList {
+  margin: 0;
+  padding-left: 16px;
+}
+
+.exportActions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.emptyEditor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+:global(.dark-theme) {
+  .container {
+    background-color: #141414;
+  }
+  
+  .header h2 {
+    color: rgba(255, 255, 255, 0.85);
+  }
+  
+  .scriptHeader h4 {
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 12px;
+  }
+
+  .header {
+    align-items: flex-start;
+  }
+}
