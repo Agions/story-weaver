@@ -15,8 +15,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-      - run: npm ci
+      - run: npm install
       - run: npm run lint
 
   typecheck:
@@ -27,8 +26,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-      - run: npm ci
+      - run: npm install
       - run: npm run typecheck
 
   test:
@@ -39,8 +37,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-      - run: npm ci
+      - run: npm install
       - run: npm run test:ci
 
   build:
@@ -51,6 +48,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-      - run: npm ci
+      - run: npm install
       - run: npm run build
