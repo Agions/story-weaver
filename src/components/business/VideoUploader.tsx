@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Upload, Button, Progress, message } from 'antd';
 import { UploadOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import type { UploadProps, UploadFile } from 'antd/es/upload/interface';
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
 import { open } from '@tauri-apps/api/dialog';
-import { convertFileSrc } from '@tauri-apps/api/tauri';
+import { convertFileSrc } from '@tauri-apps/api/core';
 import styles from './VideoUploader.module.less';
 import { logger } from '@/core/utils/logger';
 

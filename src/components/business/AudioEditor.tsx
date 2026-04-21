@@ -16,7 +16,7 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 import { open } from '@tauri-apps/api/dialog';
-import { convertFileSrc } from '@tauri-apps/api/tauri';
+import { convertFileSrc } from '@tauri-apps/api/core';
 import styles from './AudioEditor.module.less';
 import { logger } from '@/core/utils/logger';
 

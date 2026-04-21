@@ -13,7 +13,7 @@ import {
   FullscreenOutlined, SyncOutlined, ExpandOutlined, LockOutlined,
   VideoCameraOutlined
 } from '@ant-design/icons';
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
 import { open, save } from '@tauri-apps/api/dialog';
 
 import styles from './VideoEditor.module.less';

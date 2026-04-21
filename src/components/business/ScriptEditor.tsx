@@ -24,7 +24,7 @@ import {
 } from '@ant-design/icons';
 import { tauriService } from '@/core/services';
 import type { ScriptData, ScriptMetadata } from '@/core/types';
-import { convertFileSrc } from '@tauri-apps/api/tauri';
+import { convertFileSrc } from '@tauri-apps/api/core';
 import styles from './ScriptEditor.module.less';
 import { logger } from '@/core/utils/logger';
 

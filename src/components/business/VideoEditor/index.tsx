@@ -11,9 +11,9 @@ import {
   SettingOutlined,
   EyeOutlined
 } from '@ant-design/icons';
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
 import { open, save } from '@tauri-apps/api/dialog';
-import { convertFileSrc } from '@tauri-apps/api/tauri';
+import { convertFileSrc } from '@tauri-apps/api/core';
 
 import { VideoPlayer, Timeline, ExportSettingsModal, PreviewModal } from './components';
 import { useVideoPlayer, useTimeline } from './hooks';

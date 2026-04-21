@@ -4,10 +4,10 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import type { 
 import { logger } from '@/core/utils/logger';
-  CompositionProject, 
-  FrameAnimation, 
+import type {
+  CompositionProject,
+  FrameAnimation,
   TransitionConfig,
   StoryboardFrame,
   CameraMotion

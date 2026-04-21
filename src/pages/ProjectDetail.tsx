@@ -368,7 +368,7 @@ const ProjectDetail: React.FC = () => {
         .join('\n') || '';
 
       // 使用 Tauri 命令保存文件
-      const { invoke } = await import('@tauri-apps/api/tauri');
+      const { invoke } = await import('@tauri-apps/api/core');
       const filePath = await invoke<string>('save_file_dialog', {
         defaultPath: `${project.name}_剧本.txt`,
         filters: [{ name: 'Text Files', extensions: ['txt'] }]

@@ -150,7 +150,7 @@ class ReviewExportService {
 
   async saveMarkdownToFile(defaultFileName: string, content: string, options: SaveReviewMarkdownOptions = {}): Promise<boolean> {
     try {
-      const { invoke } = await import('@tauri-apps/api/tauri');
+      const { invoke } = await import('@tauri-apps/api/core');
       const filePath = await invoke<string>('save_file_dialog', {
         defaultPath: defaultFileName,
         filters: [{ name: 'Markdown Files', extensions: ['md'] }]
