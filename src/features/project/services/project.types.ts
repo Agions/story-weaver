@@ -1,28 +1,7 @@
 /**
  * Project Feature Types
+ * Local type definitions (no n8n dependency)
  */
-
-// Re-export workflow types for convenience
-export type {
-  Project,
-  Episode,
-  ProjectSettings,
-  WorkflowExecutionStatus
-} from '@/core/services/n8n-workflow/types';
-
-export type {
-  WorkflowDefinition,
-  WorkflowNode,
-  WorkflowConnection,
-  NodeExecutionResult,
-  NodeExecutionStatus,
-  NodeConfig,
-  NodeTemplate,
-  NodeCategory,
-  MangaNodeType,
-  WorkflowSettings,
-  WorkflowTemplate
-} from '@/core/services/n8n-workflow/types';
 
 // Project data for import/export
 export interface ProjectData {
@@ -53,6 +32,55 @@ export interface EpisodeData {
   updatedAt: string;
   executedAt?: string;
 }
+
+// Project Settings
+export interface ProjectSettings {
+  defaultProvider?: string;
+  defaultModel?: string;
+  defaultQuality?: 'low' | 'medium' | 'high';
+  defaultResolution?: string;
+  defaultFps?: number;
+}
+
+// Episode
+export interface Episode {
+  id: string;
+  projectId: string;
+  episodeNumber: number;
+  title: string;
+  chapterStart: number;
+  chapterEnd: number;
+  workflowId?: string;
+  workflowStatus?: WorkflowExecutionStatus;
+  outputVideo?: string;
+  outputImages?: string[];
+  createdAt?: string;
+  updatedAt?: string;
+  executedAt?: string;
+}
+
+// Project
+export interface Project {
+  id: string;
+  name: string;
+  description?: string;
+  coverImage?: string;
+  novelId?: string;
+  novelTitle?: string;
+  totalChapters?: number;
+  episodes: Episode[];
+  settings: ProjectSettings;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// Workflow execution status (simplified)
+export type WorkflowExecutionStatus = 
+  | 'idle'
+  | 'running'
+  | 'paused'
+  | 'completed'
+  | 'error';
 
 // Export format types
 export type ExportFormat = 'json' | 'zip';

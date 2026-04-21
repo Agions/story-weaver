@@ -5,6 +5,7 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import type { VideoInfo, VideoAnalysis, Scene, Keyframe } from '@/core/types';
+import { logger } from '@/core/utils/logger';
 
 // FFmpeg 命令构建器
 class FFmpegCommandBuilder {
@@ -145,7 +146,7 @@ class VideoService {
           description: `关键帧 ${i}`
         });
       } catch (error) {
-        console.error(`提取关键帧 ${i} 失败:`, error);
+        logger.error(`提取关键帧 ${i} 失败:`, error);
       }
     }
 
@@ -180,7 +181,7 @@ class VideoService {
           tags: [`场景${i + 1}`]
         });
       } catch (error) {
-        console.error(`检测场景 ${i} 失败:`, error);
+        logger.error(`检测场景 ${i} 失败:`, error);
       }
     }
 
@@ -272,7 +273,7 @@ class VideoService {
     builder.output(outputPath, ['-c:v', 'libx264', '-c:a', 'aac']);
 
     const command = builder.build();
-    console.log('FFmpeg 命令:', command);
+    logger.info('FFmpeg 命令:', command);
 
     // 这里应该实际执行 FFmpeg 命令
     // 目前只是模拟
@@ -297,7 +298,7 @@ class VideoService {
       .output(outputPath);
 
     const command = builder.build();
-    console.log('剪辑命令:', command);
+    logger.info('剪辑命令:', command);
 
     await new Promise(resolve => setTimeout(resolve, 1000));
     return outputPath;
@@ -312,7 +313,7 @@ class VideoService {
   ): Promise<string> {
     // 创建临时文件列表
     const fileList = inputPaths.map(p => `file '${p}'`).join('\n');
-    console.log('合并文件列表:', fileList);
+    logger.info('合并文件列表:', fileList);
 
     const builder = new FFmpegCommandBuilder();
     builder
@@ -322,7 +323,7 @@ class VideoService {
       .output(outputPath);
 
     const command = builder.build();
-    console.log('合并命令:', command);
+    logger.info('合并命令:', command);
 
     await new Promise(resolve => setTimeout(resolve, 2000));
     return outputPath;
@@ -358,7 +359,7 @@ class VideoService {
       .output(outputPath, ['-c:v', 'libx264', '-c:a', 'copy']);
 
     const command = builder.build();
-    console.log('字幕命令:', command);
+    logger.info('字幕命令:', command);
 
     await new Promise(resolve => setTimeout(resolve, 1500));
     return outputPath;
@@ -387,7 +388,7 @@ class VideoService {
       .output(outputPath, codec);
 
     const command = builder.build();
-    console.log('转换命令:', command);
+    logger.info('转换命令:', command);
 
     await new Promise(resolve => setTimeout(resolve, 2000));
     return outputPath;

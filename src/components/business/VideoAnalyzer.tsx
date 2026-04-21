@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import VideoUploader from './VideoUploader';
 import type { VideoAnalysis, KeyMoment, EmotionAnalysis } from '@/types';
 import styles from './VideoAnalyzer.module.less';
+import { logger } from '@/core/utils/logger';
 
 const { Title, Paragraph } = Typography;
 
@@ -42,7 +43,7 @@ const VideoAnalyzer: React.FC<VideoAnalyzerProps> = ({
       const videoMetadata = await invoke<any>('analyze_video', { 
         path: selectedVideoUrl 
       }).catch(err => {
-        console.error('视频分析失败:', err);
+        logger.error('视频分析失败:', err);
         throw new Error(`视频分析失败: ${err}`);
       });
       
@@ -54,7 +55,7 @@ const VideoAnalyzer: React.FC<VideoAnalyzerProps> = ({
         path: selectedVideoUrl,
         count: keyFrameCount
       }).catch(err => {
-        console.error('提取关键帧失败:', err);
+        logger.error('提取关键帧失败:', err);
         return [] as string[];
       });
       
@@ -64,7 +65,7 @@ const VideoAnalyzer: React.FC<VideoAnalyzerProps> = ({
       const thumbnail = await invoke<string>('generate_thumbnail', {
         path: selectedVideoUrl
       }).catch(err => {
-        console.error('生成缩略图失败:', err);
+        logger.error('生成缩略图失败:', err);
         return '';
       });
       

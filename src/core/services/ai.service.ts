@@ -7,6 +7,7 @@ import { message } from 'antd';
 import type { AIModel, AIModelSettings, ScriptData, VideoAnalysis, ScriptSegment, Scene, Keyframe } from '@/core/types';
 import { LLM_MODELS, DEFAULT_LLM_MODEL, MODEL_RECOMMENDATIONS } from '@/core/constants';
 import { getModelById } from '@/core/config/models.config';
+import { logger } from '@/core/utils/logger';
 
 // API 响应类型
 export interface AIResponse {
@@ -157,7 +158,7 @@ class AIService {
         updatedAt: new Date().toISOString()
       };
     } catch (error) {
-      console.error('脚本生成失败:', error);
+      logger.error('脚本生成失败:', error);
       throw error;
     }
   }
@@ -188,7 +189,7 @@ class AIService {
         createdAt: new Date().toISOString()
       };
     } catch (error) {
-      console.error('视频分析失败:', error);
+      logger.error('视频分析失败:', error);
       throw error;
     }
   }
@@ -208,7 +209,7 @@ class AIService {
       const response = await this.callAPI(model, settings, prompt);
       return response.content;
     } catch (error) {
-      console.error('脚本优化失败:', error);
+      logger.error('脚本优化失败:', error);
       throw error;
     }
   }
@@ -232,7 +233,7 @@ ${script}
       const response = await this.callAPI(model, settings, prompt);
       return response.content;
     } catch (error) {
-      console.error('翻译失败:', error);
+      logger.error('翻译失败:', error);
       throw error;
     }
   }

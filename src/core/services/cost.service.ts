@@ -4,6 +4,7 @@
  */
 
 import { LLM_MODELS } from '@/core/constants';
+import { logger } from '@/core/utils/logger';
 
 // 成本记录
 export interface CostRecord {
@@ -289,7 +290,7 @@ class CostService {
           threshold: check.threshold,
           timestamp: new Date().toISOString()
         };
-        console.warn(`⚠️ ${check.period} 预算告警: ${check.percent.toFixed(1)}%`);
+        logger.warn(`⚠️ ${check.period} 预算告警: ${check.percent.toFixed(1)}%`);
         this.notifyAlertListeners(alert);
       }
     });
@@ -487,7 +488,7 @@ ${suggestions.join('\n\n')}
       localStorage.setItem('reelforge_cost_records', JSON.stringify(this.records));
       localStorage.setItem('reelforge_cost_budget', JSON.stringify(this.budget));
     } catch (error) {
-      console.error('保存成本记录失败:', error);
+      logger.error('保存成本记录失败:', error);
     }
   }
 
@@ -508,7 +509,7 @@ ${suggestions.join('\n\n')}
 
       return true;
     } catch (error) {
-      console.error('加载成本记录失败:', error);
+      logger.error('加载成本记录失败:', error);
       return false;
     }
   }

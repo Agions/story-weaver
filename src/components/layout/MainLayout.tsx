@@ -22,6 +22,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '@/context/ThemeContext';
 import { preloadPageByPath } from '@/core/router/page-preload';
 import styles from './MainLayout.module.less';
+import { logger } from '@/core/utils/logger';
 
 const { Sider, Content, Header } = AntLayout;
 const { Title, Text } = Typography;
@@ -141,7 +142,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({
       if (e.key === 'preferences') {
         navigate('/settings');
       } else if (e.key === 'logout') {
-        console.log('用户登出');
+        logger.info('用户登出');
       }
     },
   };

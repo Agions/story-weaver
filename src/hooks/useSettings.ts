@@ -8,6 +8,7 @@
  */
 import { useState, useCallback } from 'react';
 import { useLegacyStore } from '@/shared/stores';
+import { logger } from '@/core/utils/logger';
 
 // 启用调试模式
 const DEBUG = false;
@@ -16,10 +17,10 @@ const DEBUG = false;
 const getStoredValue = <T>(key: string, defaultValue: T): T => {
   try {
     const item = window.localStorage.getItem(key);
-    if (DEBUG) console.log(`[useSettings] 读取设置: ${key}`);
+    if (DEBUG) logger.info(`[useSettings] 读取设置: ${key}`);
     return item ? JSON.parse(item) : defaultValue;
   } catch (error) {
-    console.error(`[useSettings] 读取 ${key} 时发生错误:`, error);
+    logger.error(`[useSettings] 读取 ${key} 时发生错误:`, error);
     return defaultValue;
   }
 };
@@ -28,9 +29,9 @@ const getStoredValue = <T>(key: string, defaultValue: T): T => {
 const setStoredValue = <T>(key: string, value: T): void => {
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
-    if (DEBUG) console.log(`[useSettings] 保存设置: ${key}`, value);
+    if (DEBUG) logger.info(`[useSettings] 保存设置: ${key}`, value);
   } catch (error) {
-    console.error(`[useSettings] 保存 ${key} 时发生错误:`, error);
+    logger.error(`[useSettings] 保存 ${key} 时发生错误:`, error);
   }
 };
 
@@ -92,7 +93,7 @@ export const useSettingsStore = () => {
   const resetSettings = useCallback(() => {
     setSettings(DEFAULT_SETTINGS);
     setStoredValue('app_settings', DEFAULT_SETTINGS);
-    if (DEBUG) console.log('[useSettings] 重置所有设置为默认值');
+    if (DEBUG) logger.info('[useSettings] 重置所有设置为默认值');
   }, []);
 
   // 添加最近项目
@@ -278,7 +279,7 @@ export const useApiKey = (provider: string) => {
       updateApiKey({ isValid: valid, isTesting: false });
       return valid;
     } catch (error) {
-      console.error(`[useSettings] 验证${provider} API密钥时发生错误:`, error);
+      logger.error(`[useSettings] 验证${provider} API密钥时发生错误:`, error);
       updateApiKey({ isValid: false, isTesting: false });
       return false;
     }

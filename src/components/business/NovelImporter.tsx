@@ -4,6 +4,7 @@ import { UploadOutlined, FileTextOutlined, DeleteOutlined } from '@ant-design/ic
 import type { ScriptChapter, ScriptSource, ScriptValidationResult } from '@/core/types';
 import { scriptImportService, tauriService } from '@/core/services';
 import styles from './NovelImporter.module.less';
+import { logger } from '@/core/utils/logger';
 
 interface NovelImporterProps {
   initialContent?: string;
@@ -118,13 +119,13 @@ const NovelImporter: React.FC<NovelImporterProps> = ({
         }
         message.success('小说文件导入成功');
       } catch (error) {
-        console.error('读取文件失败:', error);
+        logger.error('读取文件失败:', error);
         message.error('读取文件失败，请重试（建议使用 TXT/MD 编码格式）');
       } finally {
         setIsLoading(false);
       }
     } catch (error) {
-      console.error('选择文件失败:', error);
+      logger.error('选择文件失败:', error);
       message.error('选择文件失败，请重试');
     }
   };

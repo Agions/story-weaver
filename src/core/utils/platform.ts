@@ -4,6 +4,7 @@
  */
 
 import { storageService } from '@/shared/services/storage';
+import { logger } from '@/core/utils/logger';
 
 // 平台类型 - 桌面端专用，移除移动端
 export type Platform = 'web' | 'desktop';
@@ -178,13 +179,13 @@ class DesktopFileSystemAdapter implements FileSystemAdapter {
 
   async readFile(path: string): Promise<Uint8Array> {
     // @tauri-apps/api fs.readFile
-    console.log('[Platform] Desktop readFile:', path);
+    logger.info('[Platform] Desktop readFile:', path);
     return new Uint8Array();
   }
 
   async writeFile(path: string, data: Uint8Array): Promise<void> {
     // @tauri-apps/api fs.writeFile
-    console.log('[Platform] Desktop writeFile:', path);
+    logger.info('[Platform] Desktop writeFile:', path);
   }
 
   async selectFile(options?: {
@@ -192,19 +193,19 @@ class DesktopFileSystemAdapter implements FileSystemAdapter {
     accept?: string[];
   }): Promise<FileInfo[]> {
     // @tauri-apps/api dialog.open
-    console.log('[Platform] Desktop selectFile');
+    logger.info('[Platform] Desktop selectFile');
     return [];
   }
 
   async selectDirectory(): Promise<string> {
     // @tauri-apps/api dialog.open
-    console.log('[Platform] Desktop selectDirectory');
+    logger.info('[Platform] Desktop selectDirectory');
     return '';
   }
 
   async exists(path: string): Promise<boolean> {
     // @tauri-apps/api fs.exists
-    console.log('[Platform] Desktop exists:', path);
+    logger.info('[Platform] Desktop exists:', path);
     return false;
   }
 }
@@ -248,7 +249,7 @@ class WebNotificationAdapter implements NotificationAdapter {
 class DesktopNotificationAdapter implements NotificationAdapter {
   // 使用 Tauri 通知 API
   show(options: { title: string; body?: string; icon?: string }): void {
-    console.log('[Platform] Desktop notification:', options);
+    logger.info('[Platform] Desktop notification:', options);
     // @tauri-apps/api notification
   }
 

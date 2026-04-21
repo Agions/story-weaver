@@ -4,6 +4,8 @@
  * 注意：此为浏览器/web 版本，Tauri 后端功能需要单独实现
  */
 
+import { logger } from '@/core/utils/logger';
+
 // 类型定义
 export interface Scene {
   id: string;
@@ -97,7 +99,7 @@ function isTauri(): boolean {
 
 // Tauri 命令调用
 async function tauriInvoke<T>(_cmd: string, _args?: Record<string, unknown>): Promise<T> {
-  console.warn('[VideoCompositor] Tauri mode - invoke would be called here');
+  logger.warn('[VideoCompositor] Tauri mode - invoke would be called here');
   throw new Error('Tauri invoke not available in web mode');
 }
 
@@ -110,7 +112,7 @@ export async function composeVideo(scenes: Scene[], options: CompositionOptions 
       // Fall through to mock
     }
   }
-  console.warn('[VideoCompositor] Running in web mode - using mock implementation');
+  logger.warn('[VideoCompositor] Running in web mode - using mock implementation');
   const totalDuration = scenes.reduce((acc, s) => acc + s.duration, 0);
   return { ...mockResult, duration: totalDuration };
 }
@@ -123,7 +125,7 @@ export async function addSubtitles(_videoPath: string, _subtitles: SubtitleTrack
       // Fall through to mock
     }
   }
-  console.warn('[VideoCompositor] Running in web mode - using mock implementation');
+  logger.warn('[VideoCompositor] Running in web mode - using mock implementation');
   return { ...mockResult };
 }
 
@@ -135,7 +137,7 @@ export async function addBackgroundMusic(_videoPath: string, _music: BackgroundM
       // Fall through to mock
     }
   }
-  console.warn('[VideoCompositor] Running in web mode - using mock implementation');
+  logger.warn('[VideoCompositor] Running in web mode - using mock implementation');
   return { ...mockResult };
 }
 
@@ -147,7 +149,7 @@ export async function exportVideo(_inputPath: string, _outputPath: string, _opti
       // Fall through to mock
     }
   }
-  console.warn('[VideoCompositor] Running in web mode - using mock implementation');
+  logger.warn('[VideoCompositor] Running in web mode - using mock implementation');
   return { ...mockResult };
 }
 
@@ -179,7 +181,7 @@ export async function concatenateVideos(_videoPaths: string[], _outputPath: stri
       // Fall through to mock
     }
   }
-  console.warn('[VideoCompositor] Running in web mode - using mock implementation');
+  logger.warn('[VideoCompositor] Running in web mode - using mock implementation');
   return { ...mockResult };
 }
 
@@ -191,7 +193,7 @@ export async function extractFrames(_videoPath: string, _outputDir: string, _fps
       // Fall through to mock
     }
   }
-  console.warn('[VideoCompositor] Running in web mode - using mock implementation');
+  logger.warn('[VideoCompositor] Running in web mode - using mock implementation');
   return [];
 }
 
@@ -203,7 +205,7 @@ export async function getVideoInfo(_videoPath: string): Promise<{ duration: numb
       // Fall through to mock
     }
   }
-  console.warn('[VideoCompositor] Running in web mode - using mock implementation');
+  logger.warn('[VideoCompositor] Running in web mode - using mock implementation');
   return { duration: 0, width: 1920, height: 1080, fps: 30, codec: 'h264', bitrate: 0 };
 }
 

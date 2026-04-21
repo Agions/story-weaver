@@ -23,6 +23,7 @@ import {
 } from '@ant-design/icons';
 import type { ExportSettings } from '@/core/types';
 import styles from './VideoExporter.module.less';
+import { logger } from '@/core/utils/logger';
 
 const { Text, Title } = Typography;
 
@@ -156,7 +157,7 @@ const VideoExporter: React.FC<VideoExporterProps> = ({
       setExportedFilePath(`/exports/${filename}.${format.toLowerCase()}`);
       message.success('视频导出成功！');
     } catch (error) {
-      console.error('导出失败:', error);
+      logger.error('导出失败:', error);
       setExportStatus('导出失败，请重试');
       message.error('导出失败，请稍后重试');
     } finally {

@@ -6,6 +6,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { aiService } from './ai.service';
 import type { ScriptSegment } from '@/core/types';
+import { logger } from '@/core/utils/logger';
 
 // 字幕格式类型
 export type SubtitleFormat = 'srt' | 'vtt' | 'ass' | 'txt';
@@ -171,7 +172,7 @@ ${videoText}
 
       return this.generateFromText('', timeframes, style);
     } catch (error) {
-      console.error('AI 字幕生成失败:', error);
+      logger.error('AI 字幕生成失败:', error);
       // 返回空字幕轨道
       return {
         id: uuidv4(),
@@ -212,7 +213,7 @@ ${item.text}
           text: translated.trim(),
         });
       } catch (error) {
-        console.error(`翻译字幕 ${item.index} 失败:`, error);
+        logger.error(`翻译字幕 ${item.index} 失败:`, error);
         translatedItems.push(item);
       }
     }

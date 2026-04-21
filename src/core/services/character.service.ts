@@ -12,6 +12,7 @@ import type {
   CharacterConsistency 
 } from '@/core/types';
 import { CHARACTER_TEMPLATES, getTemplateById, getTemplatesByCategory, type CharacterTemplate } from '@/core/data/character-templates';
+import { logger } from '@/core/utils/logger';
 
 // 本地存储键
 const CHARACTER_STORAGE_KEY = 'man ga-characters';
@@ -105,7 +106,7 @@ export class CharacterService {
   ): Character | null {
     const template = getTemplateById(templateId);
     if (!template) {
-      console.error(`Template not found: ${templateId}`);
+      logger.error(`Template not found: ${templateId}`);
       return null;
     }
 
@@ -271,7 +272,7 @@ export class CharacterService {
       
       return validCharacters;
     } catch (error) {
-      console.error('Failed to import characters:', error);
+      logger.error('Failed to import characters:', error);
       return [];
     }
   }
@@ -299,7 +300,7 @@ export class CharacterService {
         this.characters = JSON.parse(stored);
       }
     } catch (error) {
-      console.error('Failed to load characters from storage:', error);
+      logger.error('Failed to load characters from storage:', error);
       this.characters = [];
     }
   }
@@ -317,7 +318,7 @@ export class CharacterService {
       
       localStorage.setItem(storageKey, JSON.stringify(this.characters));
     } catch (error) {
-      console.error('Failed to save characters to storage:', error);
+      logger.error('Failed to save characters to storage:', error);
     }
   }
 
@@ -384,13 +385,13 @@ function templateToCharacterData(
 ): Omit<Character, 'id' | 'createdAt' | 'updatedAt'> {
   return {
     name: overrides?.name || template.name,
-    role: template.category as any,
+    role: template.category as Character['role'],
     description: overrides?.description || template.description,
     appearance: { ...template.appearance, ...overrides },
-    clothing: template.clothing as any,
-    expressions: template.expressions as any,
+    clothing: template.clothing,
+    expressions: template.expressions,
     consistency: { ...template.consistency },
-    voice: template.recommendedVoice as any,
+    voice: template.recommendedVoice,
     tags: template.tags,
   };
 }

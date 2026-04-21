@@ -19,13 +19,14 @@ import { ArrowLeftOutlined, SaveOutlined, FileTextOutlined, EditOutlined, CheckC
 import type { NovelMetadata } from '@/components/business/NovelImporter';
 import type { StoryboardFrame } from '@/components/business/StoryboardEditor';
 import type { AudioTrackConfig } from '@/components/business/AudioEditor';
-import { loadProjectFromFile, saveProjectToFile, aiService } from '@/core/services/legacy';
+import { aiService, tauriService } from '@/core/services';
 import { audioPipelineService, collaborationService, costService, qualityGateService, reviewExportService, storyAnalysisService } from '@/core/services';
 import type { ExportSettings, StoryAnalysis, Character, CompositionProject } from '@/core/types';
 import type { EvaluationScores, FrameComment, QualityGateIssue, StoryboardVersion, VersionDiffSummary } from '@/core/services';
 import { runWhenIdle } from '@/core/utils/idle';
 import { v4 as uuid } from 'uuid';
 import styles from './ProjectEdit.module.less';
+import { logger } from '@/core/utils/logger';
 
 const importNovelImporter = () => import('@/components/business/NovelImporter');
 const importScriptEditor = () => import('@/components/business/ScriptEditor');
@@ -167,8 +168,7 @@ const ProjectEdit: React.FC = () => {
       setInitialLoading(true);
       setIsNewProject(false);
 
-      loadProjectFromFile(projectId)
-        .then(projectText => {
+      tauriService.readText(projectId).then(projectText => {
           const projectData = JSON.parse(projectText) as ProjectData;
           setProject(projectData);
           form.setFieldsValue({
@@ -248,7 +248,7 @@ const ProjectEdit: React.FC = () => {
           setError(null);
         })
         .catch(err => {
-          console.error('加载项目失败:', err);
+          logger.error('加载项目失败:', err);
           setError('加载项目失败，请确认项目文件是否存在');
           message.error('加载项目失败');
         })
@@ -406,7 +406,7 @@ const ProjectEdit: React.FC = () => {
         message.success(`已生成 ${result.voiceTracks.length} 条配音`);
       }
     } catch (error) {
-      console.error('自动生成配音失败:', error);
+      logger.error('自动生成配音失败:', error);
       message.error('自动生成配音失败');
     } finally {
       setAudioGenerating(false);
@@ -436,7 +436,7 @@ const ProjectEdit: React.FC = () => {
       setAnalysisState('generated');
       message.success('结构化解析完成，请确认结果后继续');
     } catch (error) {
-      console.error('AI解析失败:', error);
+      logger.error('AI解析失败:', error);
       message.error('AI解析失败，请稍后再试');
     } finally {
       setLoading(false);
@@ -469,7 +469,7 @@ const ProjectEdit: React.FC = () => {
       message.success('剧本生成完成');
       setCurrentStep(2);
     } catch (error) {
-      console.error('接受解析结果失败:', error);
+      logger.error('接受解析结果失败:', error);
       message.error('解析 JSON 格式无效，请修正后重试');
     } finally {
       setLoading(false);
@@ -516,7 +516,7 @@ const ProjectEdit: React.FC = () => {
       };
 
       // 保存项目文件
-      await saveProjectToFile(projectData.id, JSON.stringify(projectData));
+      await tauriService.writeText(projectData.id, JSON.stringify(projectData));
 
       message.success('项目保存成功');
       setProject(projectData);
@@ -526,7 +526,7 @@ const ProjectEdit: React.FC = () => {
         navigate(`/project/${projectData.id}`);
       }
     } catch (error) {
-      console.error('保存项目失败:', error);
+      logger.error('保存项目失败:', error);
       message.error('保存项目失败，请稍后再试');
     } finally {
       setSaving(false);
@@ -579,7 +579,7 @@ const ProjectEdit: React.FC = () => {
         message.success('评审记录导出成功');
       }
     } catch (error) {
-      console.error('导出评审记录失败:', error);
+      logger.error('导出评审记录失败:', error);
       message.error('导出评审记录失败');
     }
   };
@@ -717,7 +717,7 @@ const ProjectEdit: React.FC = () => {
             <ScriptEditor
               videoPath=""
               initialSegments={[]}
-              onSave={(segments) => setScriptText(segments as any)}
+              onSave={(segments) => setScriptText(segments as unknown as string)}
               onExport={handleExportScript}
             />
 

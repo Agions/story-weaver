@@ -20,6 +20,7 @@ import { useVideoPlayer, useTimeline } from './hooks';
 import type { VideoEditorProps, ExportSettings } from './types';
 import { defaultExportSettings } from './types';
 import styles from './VideoEditor.module.less';
+import { logger } from '@/core/utils/logger';
 
 const VideoEditor: React.FC<VideoEditorProps> = ({ videoPath, segments, onEditComplete }) => {
   // 视频播放器状态
@@ -64,7 +65,7 @@ const VideoEditor: React.FC<VideoEditorProps> = ({ videoPath, segments, onEditCo
   useEffect(() => {
     return () => {
       if (previewUrl && previewUrl.includes('temp')) {
-        invoke('clean_temp_file', { path: previewUrl }).catch(console.error);
+        invoke('clean_temp_file', { path: previewUrl }).catch((err) => logger.error('清理临时文件失败', err));
       }
     };
   }, []);
@@ -98,7 +99,7 @@ const VideoEditor: React.FC<VideoEditorProps> = ({ videoPath, segments, onEditCo
       const fileUrl = convertFileSrc(tempPath);
       setPreviewUrl(fileUrl);
     } catch (error) {
-      console.error('生成预览失败:', error);
+      logger.error('生成预览失败:', error);
       message.error('生成预览失败: ' + error);
     } finally {
       setPreviewLoading(false);
@@ -155,7 +156,7 @@ const VideoEditor: React.FC<VideoEditorProps> = ({ videoPath, segments, onEditCo
         volume: exportSettings.audioVolume / 100,
         addSubtitles: exportSettings.useSubtitles
       }).catch(error => {
-        console.error('视频剪辑失败:', error);
+        logger.error('视频剪辑失败:', error);
         message.error('视频剪辑失败: ' + error);
         setProcessing(false);
         return null;
@@ -169,7 +170,7 @@ const VideoEditor: React.FC<VideoEditorProps> = ({ videoPath, segments, onEditCo
 
       message.success('视频剪辑完成');
     } catch (error) {
-      console.error('导出视频失败:', error);
+      logger.error('导出视频失败:', error);
       message.error('导出视频失败');
     } finally {
       setProcessing(false);

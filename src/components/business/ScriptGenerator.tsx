@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { aiService } from '@/core/services';
 import { useLegacyStore } from '@/shared/stores';
 import type { ScriptData, ScriptMetadata, ScriptSegment, VideoAnalysis } from '@/core/types';
-import { AIModelType, AI_MODEL_INFO } from '@/core/types/legacy.types';
+import { AIModelType, AI_MODEL_INFO } from '@/core/types/ai-model.types';
 import styles from './ScriptGenerator.module.less';
 
 const { Title, Paragraph } = Typography;

@@ -19,8 +19,8 @@ import { open, save } from '@tauri-apps/api/dialog';
 import styles from './VideoEditor.module.less';
 
 // 导入组件和服务
-import { extractKeyFrames, generateThumbnail, analyzeVideo, saveProjectToFile } from '@/core/services/legacy';
-import type { VideoSegment } from '@/core/services/legacy';
+import { tauriService } from '@/core/services';
+import { logger } from '@/core/utils/logger';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -91,7 +91,7 @@ const VideoEditor: React.FC = () => {
         setVideoSrc(`file://${selected}`);
 
         // 获取视频元数据
-        const metadata = await analyzeVideo(selected);
+        const metadata = await tauriService.getVideoInfo(selected);
         setDuration(metadata.duration);
 
         // 创建一个默认片段
@@ -109,20 +109,20 @@ const VideoEditor: React.FC = () => {
 
         // 提取关键帧
         const frameCount = Math.max(5, Math.floor(metadata.duration / 10));
-        const frames = await extractKeyFrames(selected, frameCount);
+        const frames = await tauriService.generateThumbnails(selected, frameCount);
 
         setKeyframes(frames);
 
         message.success('视频加载成功');
       } catch (error) {
-        console.error('视频分析失败:', error);
+        logger.error('视频分析失败:', error);
         message.error('视频分析失败，请检查文件格式');
       } finally {
         setAnalyzing(false);
         setLoading(false);
       }
     } catch (err) {
-      console.error('选择文件失败:', err);
+      logger.error('选择文件失败:', err);
     }
   };
 
@@ -231,11 +231,11 @@ const VideoEditor: React.FC = () => {
         updatedAt: new Date().toISOString()
       };
 
-      await saveProjectToFile(projectId || 'new', JSON.stringify(projectToSave));
+      await tauriService.writeText(projectId || 'new', JSON.stringify(projectToSave));
 
       message.success('项目保存成功');
     } catch (error) {
-      console.error('保存失败:', error);
+      logger.error('保存失败:', error);
       message.error('保存失败，请重试');
     } finally {
       setIsSaving(false);
@@ -313,7 +313,7 @@ const VideoEditor: React.FC = () => {
         clearInterval(progressInterval);
       }
     } catch (error) {
-      console.error('导出失败:', error);
+      logger.error('导出失败:', error);
       message.error(`导出失败: ${error}`);
     } finally {
       setTimeout(() => {

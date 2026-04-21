@@ -18,6 +18,7 @@ import {
 import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './Layout.module.less';
 import { useTheme } from '@/context/ThemeContext';
+import { logger } from '@/core/utils/logger';
 
 const { Sider, Content, Header } = AntLayout;
 const { Title, Text } = Typography;
@@ -116,7 +117,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         navigate('/settings');
       } else if (key === 'logout') {
         // 实现登出逻辑
-        console.log('用户登出');
+        logger.info('用户登出');
       }
     }
   };

@@ -5,6 +5,7 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import type { 
+import { logger } from '@/core/utils/logger';
   CompositionProject, 
   FrameAnimation, 
   TransitionConfig,
@@ -393,7 +394,7 @@ export class CompositionService {
       
       return composition;
     } catch (error) {
-      console.error('Failed to import composition:', error);
+      logger.error('Failed to import composition:', error);
       return null;
     }
   }
@@ -441,7 +442,7 @@ export class CompositionService {
         );
       }
     } catch (error) {
-      console.error('Failed to load compositions from storage:', error);
+      logger.error('Failed to load compositions from storage:', error);
     }
   }
 
@@ -455,7 +456,7 @@ export class CompositionService {
       const data = Array.from(this.compositions.values());
       localStorage.setItem(COMPOSITION_STORAGE_KEY, JSON.stringify(data));
     } catch (error) {
-      console.error('Failed to save compositions to storage:', error);
+      logger.error('Failed to save compositions to storage:', error);
     }
   }
 

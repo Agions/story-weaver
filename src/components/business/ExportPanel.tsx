@@ -1,9 +1,22 @@
 import React, { useState } from 'react';
 import { Card, Radio, Button, Input, Space, message, Tooltip } from 'antd';
 import { ExportOutlined, FileTextOutlined, FilePdfOutlined, GlobalOutlined } from '@ant-design/icons';
-import { exportScript } from '@/core/services/legacy';
+import { tauriService } from '@/core/services';
 import type { ScriptData } from '@/core/types';
 import styles from './ExportPanel.module.less';
+import { logger } from '@/core/utils/logger';
+
+// 导出脚本到文件
+const exportScript = async (script: ScriptData, format: 'txt' | 'srt', path: string) => {
+  const { tauriService: ts } = await import('@/core/services');
+  let content = '';
+  if (format === 'txt') {
+    content = script.content || '';
+  } else if (format === 'srt') {
+    content = (script as { srt?: string }).srt || '';
+  }
+  await ts.writeText(path, content);
+};
 
 // 导出格式
 type ExportFormat = 'txt' | 'srt' | 'pdf' | 'html';
@@ -40,7 +53,7 @@ const ExportPanel: React.FC<ExportPanelProps> = ({ script }) => {
       await exportScript(script, exportFormat as 'txt' | 'srt', filename);
       message.success(`脚本已成功导出为${exportFormat.toUpperCase()}格式`);
     } catch (error) {
-      console.error('导出失败:', error);
+      logger.error('导出失败:', error);
       message.error('导出失败，请稍后重试');
     } finally {
       setExporting(false);

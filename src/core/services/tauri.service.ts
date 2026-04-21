@@ -235,7 +235,7 @@ class TauriService {
     return entries.map(entry => ({
       name: entry.name,
       path: `${path}/${entry.name}`,
-      isDirectory: (entry as any).isDirectory || (entry as any).is_directory || false
+      isDirectory: 'isDirectory' in entry ? (entry as { isDirectory: boolean }).isDirectory : (entry as { is_directory: boolean }).is_directory ?? false
     }));
   }
 

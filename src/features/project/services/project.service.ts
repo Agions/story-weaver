@@ -1,10 +1,11 @@
 /**
  * Project Service
- * Main service for project management
+ * Main service for project management - no n8n dependency
  */
 
 import { v4 as uuidv4 } from 'uuid';
 import type { Project, Episode, ProjectSettings, WorkflowExecutionStatus } from './project.types';
+import { logger } from '@/core/utils/logger';
 
 // Generate unique IDs
 const generateId = () => uuidv4();
@@ -23,7 +24,7 @@ class ProjectService {
       const data = Array.from(this.projects.values());
       localStorage.setItem('plotcraft-projects', JSON.stringify(data));
     } catch (e) {
-      console.error('Failed to save projects:', e);
+      logger.error('Failed to save projects:', e);
     }
   }
 
@@ -35,7 +36,7 @@ class ProjectService {
         projects.forEach(p => this.projects.set(p.id, p));
       }
     } catch (e) {
-      console.error('Failed to load projects:', e);
+      logger.error('Failed to load projects:', e);
     }
   }
 

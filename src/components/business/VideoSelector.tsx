@@ -4,8 +4,20 @@ import { UploadOutlined, DeleteOutlined, PlayCircleOutlined } from '@ant-design/
 import { open } from '@tauri-apps/api/dialog';
 import { invoke } from '@tauri-apps/api/tauri';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
-import { analyzeVideo, VideoMetadata, formatDuration, formatResolution } from '@/core/services/legacy';
+import { tauriService } from '@/core/services';
+import { VideoMetadata } from '@/shared/types';
 import styles from './VideoSelector.module.less';
+import { logger } from '@/core/utils/logger';
+
+// 格式化时长 mm:ss
+const formatDuration = (seconds: number): string => {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
+
+// 格式化分辨率
+const formatResolution = (width: number, height: number): string => `${width}x${height}`;
 
 interface VideoSelectorProps {
   initialVideoPath?: string;
@@ -56,18 +68,18 @@ const VideoSelector: React.FC<VideoSelectorProps> = ({
       // 分析视频获取元数据
       setIsAnalyzing(true);
       try {
-        const videoMetadata = await analyzeVideo(filePath);
+        const videoMetadata = await tauriService.getVideoInfo(filePath);
         setMetadata(videoMetadata);
         onVideoSelect(filePath, videoMetadata);
       } catch (error) {
-        console.error('分析视频失败:', error);
+        logger.error('分析视频失败:', error);
         // 即使分析失败也允许选择视频
         onVideoSelect(filePath);
       } finally {
         setIsAnalyzing(false);
       }
     } catch (error) {
-      console.error('选择视频失败:', error);
+      logger.error('选择视频失败:', error);
       message.error('选择视频失败，请重试');
     }
   };
@@ -93,7 +105,7 @@ const VideoSelector: React.FC<VideoSelectorProps> = ({
     try {
       await invoke('open_file', { path: videoPath });
     } catch (error) {
-      console.error('打开视频失败:', error);
+      logger.error('打开视频失败:', error);
       message.error('无法打开视频，请确保系统有关联的视频播放器');
     }
   };

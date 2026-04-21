@@ -46,6 +46,7 @@ import type {
   TTSProvider 
 } from '@/core/types';
 import { 
+import { logger } from '@/core/utils/logger';
   CHARACTER_TEMPLATES, 
   getTemplatesByCategory, 
   templateToCharacter,
@@ -144,7 +145,7 @@ const CharacterDesigner: React.FC<CharacterDesignerProps> = ({
       setSelectedTemplate(null);
       setActiveTab('manual');
     } catch (error) {
-      console.error('Failed to create character from template:', error);
+      logger.error('Failed to create character from template:', error);
       message.error('创建角色失败');
     }
   };
@@ -174,7 +175,7 @@ const CharacterDesigner: React.FC<CharacterDesignerProps> = ({
     setSelectedTemplate(null);
     setEditingId(character.id);
     setAvatarUrl(undefined);
-    setClothingItems((character.clothing || []) as any);
+    setClothingItems((character.clothing || []) as ClothingItem[]);
     form.setFieldsValue({
       name: character.name,
       role: character.role,
@@ -238,7 +239,7 @@ const CharacterDesigner: React.FC<CharacterDesignerProps> = ({
       // 确保 consistency.seed 存在
       const consistency = values.consistency || {
         seed: editingId 
-          ? (characters.find(c => c.id === editingId)?.consistency as any)?.seed 
+          ? (characters.find(c => c.id === editingId)?.consistency as CharacterConsistency)?.seed 
           : Math.floor(Math.random() * 10000)
       };
 
@@ -272,7 +273,7 @@ const CharacterDesigner: React.FC<CharacterDesignerProps> = ({
       setModalVisible(false);
       form.resetFields();
     } catch (error) {
-      console.error('Validation failed:', error);
+      logger.error('Validation failed:', error);
     }
   };
 
@@ -416,13 +417,13 @@ const CharacterDesigner: React.FC<CharacterDesignerProps> = ({
                       <Tag color={character.role === 'protagonist' ? 'gold' : character.role === 'antagonist' ? 'red' : 'blue'}>
                         {character.role === 'protagonist' ? '主角' : character.role === 'antagonist' ? '反派' : character.role === 'supporting' ? '配角' : character.role}
                       </Tag>
-                      <Text type="secondary">{(character.appearance as any).gender}, {(character.appearance as any).age}岁</Text>
+                      <Text type="secondary">{(character.appearance as CharacterAppearance).gender}, {(character.appearance as CharacterAppearance).age}岁</Text>
                       <Text type="secondary" style={{ fontSize: 12 }}>
-                        {(character.appearance as any).hairStyle} · {(character.appearance as any).hairColor}
+                        {(character.appearance as CharacterAppearance).hairStyle} · {(character.appearance as CharacterAppearance).hairColor}
                       </Text>
-                      {(character.consistency as any).seed !== undefined && (
+                      {(character.consistency as CharacterConsistency).seed !== undefined && (
                         <Text type="secondary" style={{ fontSize: 11 }}>
-                          Seed: {(character.consistency as any).seed}
+                          Seed: {(character.consistency as CharacterConsistency).seed}
                         </Text>
                       )}
                     </Space>

@@ -4,8 +4,9 @@ import { Card, Button, Typography, Space, Spin, message, Divider, Modal, Tag } f
 import { ArrowLeftOutlined, SaveOutlined, DeleteOutlined, ExportOutlined, RobotOutlined } from '@ant-design/icons';
 import { useProjectStore } from '@/shared/stores';
 import ScriptEditor from '@/components/business/ScriptEditor';
-import { exportScriptToFile, saveProjectToFile } from '@/core/services/legacy';
+import { tauriService } from '@/core/services';
 import styles from './ScriptDetail.module.less';
+import { logger } from '@/core/utils/logger';
 
 const { Title, Text } = Typography;
 
@@ -80,11 +81,11 @@ const ScriptDetail: React.FC = () => {
       updateProject(updatedProject.id, updatedProject);
 
       // 保存到文件
-      await saveProjectToFile(updatedProject.id, JSON.stringify(updatedProject));
+      await tauriService.writeText(updatedProject.id, JSON.stringify(updatedProject));
 
       message.success('保存成功');
     } catch (error) {
-      console.error('保存失败:', error);
+      logger.error('保存失败:', error);
       message.error('保存失败');
     } finally {
       setLoading(false);
@@ -102,12 +103,12 @@ const ScriptDetail: React.FC = () => {
         })
         .join('\n') || '';
 
-      await exportScriptToFile(
+      await tauriService.writeText(
         `${project.name}_脚本_${new Date().toISOString().slice(0, 10)}.txt`,
         scriptContent
       );
     } catch (error) {
-      console.error('导出脚本失败:', error);
+      logger.error('导出脚本失败:', error);
       message.error('导出失败');
     }
   };
@@ -142,7 +143,7 @@ const ScriptDetail: React.FC = () => {
           message.success('删除成功');
           navigate(`/projects/${project.id}`);
         } catch (error) {
-          console.error('删除脚本失败:', error);
+          logger.error('删除脚本失败:', error);
           message.error('删除失败');
         }
       }

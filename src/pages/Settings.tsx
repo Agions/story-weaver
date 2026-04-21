@@ -47,6 +47,7 @@ import {
 } from '@ant-design/icons';
 import { useTheme } from '@/context/ThemeContext';
 import styles from './Settings.module.less';
+import { logger } from '@/core/utils/logger';
 
 const { Title, Text, Paragraph } = Typography;
 const { TabPane } = Tabs;
@@ -104,7 +105,7 @@ const Settings: React.FC = () => {
   const { isDarkMode, toggleTheme } = useTheme();
 
   const handleSaveApiKey = (provider: string) => {
-    console.log('保存 API Key:', provider);
+    logger.info('保存 API Key:', provider);
   };
 
   const tabItems = [

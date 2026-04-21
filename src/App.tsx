@@ -32,6 +32,7 @@ const PageLoader: React.FC = () => (
 
 // 导入Provider组件
 import AppProvider from './providers/AppProvider';
+import { logger } from '@/core/utils/logger';
 
 const App: React.FC = () => {
   const [ffmpegReady, setFFmpegReady] = useState<boolean>(false);
@@ -41,11 +42,11 @@ const App: React.FC = () => {
   useEffect(() => {
     const initializeApp = async () => {
       try {
-        console.log('应用初始化...');
+        logger.info('应用初始化...');
         // 这里可以添加初始化逻辑
-        console.log('应用数据目录检查完成');
+        logger.info('应用数据目录检查完成');
       } catch (error) {
-        console.error('应用初始化失败:', error);
+        logger.error('应用初始化失败:', error);
         notification.error({
           message: '初始化失败',
           description: '应用初始化失败，部分功能可能无法正常使用',
@@ -64,13 +65,13 @@ const App: React.FC = () => {
       try {
         // 这里应该有检查FFmpeg的实际逻辑
         // 这里我们假设已经安装
-        console.log("FFmpeg检查：假设已经安装");
+        logger.info("FFmpeg检查：假设已经安装");
         setTimeout(() => {
           setFFmpegReady(true);
           setChecking(false);
         }, 1000);
       } catch (error) {
-        console.error("FFmpeg检查失败:", error);
+        logger.error("FFmpeg检查失败:", error);
         setFFmpegReady(false);
         setChecking(false);
         notification.error({
@@ -90,7 +91,7 @@ const App: React.FC = () => {
       ? "应用初始化完成，所有功能正常可用。"
       : "应用初始化完成，但某些功能可能受限。";
     
-    console.log(logMessage);
+    logger.info(logMessage);
     
     if (!checking) {
       message.info({

@@ -22,10 +22,18 @@ import {
   ExportOutlined,
   DownOutlined
 } from '@ant-design/icons';
-import { formatDuration, previewSegment } from '@/core/services/legacy';
+import { tauriService } from '@/core/services';
 import type { ScriptData, ScriptMetadata } from '@/core/types';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import styles from './ScriptEditor.module.less';
+import { logger } from '@/core/utils/logger';
+
+// 格式化时长 mm:ss
+const formatDuration = (seconds: number): string => {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
 
 // 定义 VideoSegment 类型（兼容旧接口）
 interface VideoSegment {
@@ -174,13 +182,16 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({
       const segment = segments[index];
 
       // 使用服务函数生成预览
-      const previewPath = await previewSegment(videoPath || '', segment.start, segment.end);
+      const previewPath = await tauriService.generatePreview({
+        inputPath: videoPath || '',
+        segment: { start: segment.start, end: segment.end, type: 'preview' },
+      });
 
       // 设置预览源并显示预览
       setPreviewSrc(convertFileSrc(previewPath));
       setPreviewVisible(true);
     } catch (error) {
-      console.error('生成预览失败:', error);
+      logger.error('生成预览失败:', error);
       message.error('生成预览失败');
     } finally {
       setPreviewLoading(false);
@@ -213,7 +224,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({
         message.success('脚本优化完成');
       }, 2000);
     } catch (error) {
-      console.error('AI 优化脚本失败:', error);
+      logger.error('AI 优化脚本失败:', error);
       message.error('AI 优化脚本失败');
     }
   };
@@ -255,7 +266,7 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({
 
       return resultSegments;
     } catch (error) {
-      console.error('解析脚本失败:', error);
+      logger.error('解析脚本失败:', error);
       return [];
     }
   };

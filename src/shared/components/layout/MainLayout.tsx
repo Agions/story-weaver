@@ -29,6 +29,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { useAppStore } from '@/shared/stores';
 import NotificationCenter from '@/components/business/NotificationCenter';
 import styles from './MainLayout.module.less';
+import { logger } from '@/core/utils/logger';
 
 const { Header, Sider, Content } = Layout;
 const { Text } = Typography;
@@ -68,7 +69,7 @@ const MainLayout: React.FC = () => {
         await import('@tauri-apps/api/app');
         setTauriSupported(true);
       } catch (error) {
-        console.warn('Tauri功能不可用:', error);
+        logger.warn('Tauri功能不可用:', error);
         setTauriSupported(false);
       }
     };
@@ -98,7 +99,7 @@ const MainLayout: React.FC = () => {
       icon: <LogoutOutlined />,
       label: '退出登录',
       onClick: () => {
-        console.log('用户登出');
+        logger.info('用户登出');
         // 登出逻辑
       },
     },

@@ -18,6 +18,7 @@ import {
 import { open } from '@tauri-apps/api/dialog';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import styles from './AudioEditor.module.less';
+import { logger } from '@/core/utils/logger';
 
 // ========== 类型定义 ==========
 
@@ -230,7 +231,7 @@ const AudioEditor: React.FC<AudioEditorProps> = ({
         message.success(`成功导入 ${newTracks.length} 个配音文件`);
       }
     } catch (error) {
-      console.error('导入配音失败:', error);
+      logger.error('导入配音失败:', error);
       message.error('导入配音失败，请重试');
     }
   };
@@ -334,7 +335,7 @@ const AudioEditor: React.FC<AudioEditorProps> = ({
         };
       });
     } catch (error) {
-      console.error('选择背景音乐失败:', error);
+      logger.error('选择背景音乐失败:', error);
       message.error('选择背景音乐失败，请重试');
     }
   };
@@ -446,7 +447,7 @@ const AudioEditor: React.FC<AudioEditorProps> = ({
         message.success(`成功导入 ${newEffects.length} 个音效文件`);
       }
     } catch (error) {
-      console.error('导入音效失败:', error);
+      logger.error('导入音效失败:', error);
       message.error('导入音效失败，请重试');
     }
   };
@@ -557,7 +558,7 @@ const AudioEditor: React.FC<AudioEditorProps> = ({
       // 存储timer引用以便清除
       (window as any).__recordingTimer = timer;
     } catch (error) {
-      console.error('开始录音失败:', error);
+      logger.error('开始录音失败:', error);
       message.error('无法访问麦克风，请检查权限设置');
     }
   };

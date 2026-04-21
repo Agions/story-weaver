@@ -10,6 +10,7 @@ import {
 } from '@ant-design/icons';
 import type { Script } from '@/types';
 import styles from './ScriptPreview.module.less';
+import { logger } from '@/core/utils/logger';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -45,7 +46,7 @@ const ScriptPreview: React.FC<ScriptPreviewProps> = ({ script, onEdit, onExport 
         setCopying(false);
       },
       (err) => {
-        console.error('复制失败:', err);
+        logger.error('复制失败:', err);
         message.error('复制失败，请重试');
         setCopying(false);
       }

@@ -6,6 +6,7 @@ import { invoke } from '@tauri-apps/api/tauri';
 import { open } from '@tauri-apps/api/dialog';
 import { convertFileSrc } from '@tauri-apps/api/tauri';
 import styles from './VideoUploader.module.less';
+import { logger } from '@/core/utils/logger';
 
 interface VideoUploaderProps {
   onUploadSuccess: (videoPath: string) => void;
@@ -43,7 +44,7 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ onUploadSuccess, initialV
         message.success('视频选择成功');
       }
     } catch (error) {
-      console.error('选择文件失败:', error);
+      logger.error('选择文件失败:', error);
       message.error('选择文件失败');
     }
   };
@@ -88,7 +89,7 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ onUploadSuccess, initialV
         setUploading(false);
       };
     } catch (error) {
-      console.error('上传失败:', error);
+      logger.error('上传失败:', error);
       setUploading(false);
       setProgress(0);
       onError?.(error as Error);

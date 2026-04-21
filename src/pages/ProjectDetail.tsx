@@ -21,10 +21,11 @@ import type { NovelMetadata } from '@/components/business/NovelImporter';
 import type { StoryboardFrame } from '@/components/business/StoryboardEditor';
 import { collaborationService, costService, qualityGateService, reviewExportService } from '@/core/services';
 import type { EvaluationScores, FrameComment, StoryboardVersion, VersionDiffSummary } from '@/core/services';
-import { saveProjectToFile, getApiKey, generateScriptWithModel, parseGeneratedScript } from '@/core/services/legacy';
+import { tauriService } from '@/core/services';
 import { runWhenIdle } from '@/core/utils/idle';
 import { v4 as uuidv4 } from 'uuid';
 import styles from './ProjectDetail.module.less';
+import { logger } from '@/core/utils/logger';
 
 const importScriptEditor = () => import('@/components/business/ScriptEditor');
 const importRenderCenter = () => import('@/components/business/RenderCenter');
@@ -115,7 +116,7 @@ const ProjectDetail: React.FC = () => {
     };
     setProject(updatedProject);
     updateProject(updatedProject.id, updatedProject);
-    saveProjectToFile(updatedProject.id, JSON.stringify(updatedProject)).catch(() => undefined);
+    tauriService.writeText(updatedProject.id, JSON.stringify(updatedProject)).catch(() => undefined);
   };
 
   const handleApplyRenderedFrame = (frameId: string, imageUrl: string) => {
@@ -128,7 +129,7 @@ const ProjectDetail: React.FC = () => {
   useEffect(() => {
     if (!id) return;
 
-    const currentProject = projects.find(p => p.id === id) as any;
+    const currentProject = projects.find(p => p.id === id) as ProjectData | undefined;
     if (currentProject) {
       setProject(currentProject);
       // 如果有剧本，设置第一个为活动剧本
@@ -254,7 +255,7 @@ const ProjectDetail: React.FC = () => {
         message.success('评审记录导出成功');
       }
     } catch (error) {
-      console.error('导出评审记录失败:', error);
+      logger.error('导出评审记录失败:', error);
       message.error('导出评审记录失败');
     }
   };
@@ -283,20 +284,20 @@ const ProjectDetail: React.FC = () => {
 
       // 保存到文件，显示loading
       message.loading('正在保存剧本...', 0.5);
-      saveProjectToFile(updatedProject.id, JSON.stringify(updatedProject))
+      tauriService.writeText(updatedProject.id, JSON.stringify(updatedProject))
         .then(() => {
           updateProject(updatedProject.id, updatedProject);
           message.success('剧本创建成功');
         })
         .catch(error => {
-          console.error('保存项目文件失败:', error);
+          logger.error('保存项目文件失败:', error);
           message.error('保存项目文件失败: ' + (error instanceof Error ? error.message : '未知错误'));
           // 回滚UI状态
           setProject(project);
           setActiveScript(project.scripts?.[0] || null);
         });
     } catch (error) {
-      console.error('创建剧本失败:', error);
+      logger.error('创建剧本失败:', error);
       message.error('创建剧本失败');
     }
   };
@@ -334,20 +335,20 @@ const ProjectDetail: React.FC = () => {
       setActiveScript(updatedScript);
 
       // 保存到文件
-      saveProjectToFile(updatedProject.id, JSON.stringify(updatedProject))
+      tauriService.writeText(updatedProject.id, JSON.stringify(updatedProject))
         .then(() => {
           updateProject(updatedProject.id, updatedProject);
           message.success('脚本内容已保存');
         })
         .catch(error => {
-          console.error('保存项目文件失败:', error);
+          logger.error('保存项目文件失败:', error);
           message.error('保存项目文件失败: ' + (error instanceof Error ? error.message : '未知错误'));
           // 回滚UI状态
           setProject(project);
           setActiveScript(activeScript);
         });
     } catch (error) {
-      console.error('更新脚本内容失败:', error);
+      logger.error('更新脚本内容失败:', error);
       message.error('更新脚本内容失败');
     }
   };
@@ -381,7 +382,7 @@ const ProjectDetail: React.FC = () => {
         message.success('剧本导出成功');
       }
     } catch (error) {
-      console.error('导出剧本失败:', error);
+      logger.error('导出剧本失败:', error);
       message.error('导出剧本失败');
     }
   };
@@ -401,7 +402,7 @@ const ProjectDetail: React.FC = () => {
           message.success('项目已删除');
           navigate('/projects');
         } catch (error) {
-          console.error('删除项目失败:', error);
+          logger.error('删除项目失败:', error);
           message.error('删除项目失败');
         }
       }
@@ -825,7 +826,7 @@ const ProjectDetail: React.FC = () => {
                       };
                       setProject(updatedProject);
                       updateProject(updatedProject.id, updatedProject);
-                      saveProjectToFile(updatedProject.id, JSON.stringify(updatedProject)).catch(() => undefined);
+                      tauriService.writeText(updatedProject.id, JSON.stringify(updatedProject)).catch(() => undefined);
                     }}
                   />
                 </Suspense>

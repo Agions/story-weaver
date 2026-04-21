@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { aiService } from './ai.service';
 import { ttsService } from './tts.service';
 import type { VideoInfo, VideoAnalysis, Scene, Keyframe, ObjectDetection, EmotionAnalysis } from '@/core/types';
+import { logger } from '@/core/utils/logger';
 
 // 分析配置
 export interface VideoAnalysisConfig {
@@ -108,7 +109,7 @@ class VideoAnalysisService {
       result.stats = this.calculateStats(result);
 
     } catch (error) {
-      console.error('视频分析失败:', error);
+      logger.error('视频分析失败:', error);
       throw error;
     }
 
@@ -277,7 +278,7 @@ ${this.groupByCategory(analysis.objects || []).map(([cat, objs]) => `- ${cat}: $
 
       return summary;
     } catch (error) {
-      console.error('生成摘要失败:', error);
+      logger.error('生成摘要失败:', error);
       // 返回默认摘要
       return this.generateDefaultSummary(videoInfo, analysis);
     }
