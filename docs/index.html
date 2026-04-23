@@ -225,9 +225,36 @@
       .workflow-step { gap: 18px; }
       .step-number { width: 46px; height: 46px; min-width: 46px; font-size: 15px; }
     }
-  </style>
+  
+    /* Scroll Progress Bar */
+    #scroll-progress {
+      position: fixed;
+      top: 0; left: 0; width: 0%; height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      z-index: 1000;
+      transition: width 0.1s linear;
+    }
+    /* Back to Top Button */
+    #back-to-top {
+      position: fixed; bottom: 30px; right: 30px;
+      width: 48px; height: 48px;
+      background: var(--primary); color: white;
+      border: none; border-radius: 12px;
+      font-size: 20px; cursor: pointer;
+      opacity: 0; visibility: hidden;
+      transition: opacity 0.3s, transform 0.3s, box-shadow 0.3s;
+      z-index: 999;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    }
+    #back-to-top:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(99, 102, 241, 0.6); }
+    #back-to-top.visible { opacity: 1; visibility: visible; }
+
+</style>
 </head>
 <body>
+<div id="scroll-progress"></div><button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
   <div class="bg-gradient"></div>
   <div class="grid-overlay"></div>
   <div class="particles" id="particles"></div>
@@ -409,6 +436,66 @@
       </div>
     </section>
 
+
+    <section class="arch" id="architecture">
+    <div class="section-header reveal">
+      <div class="section-tag">🏗️ 技术架构</div>
+      <h2 class="section-title">现代化技术栈，端到端集成</h2>
+      <p class="section-desc">基于 React 18 + TypeScript 5 构建前端，Tauri 2.0 实现跨平台桌面应用</p>
+    </div>
+    <div class="arch-diagram">
+      <div class="arch-layer">
+        <div class="arch-layer-label">UI 层</div>
+        <div class="arch-items">
+          <div class="arch-item">React 18</div>
+          <div class="arch-item">TypeScript 5</div>
+          <div class="arch-item">Zustand</div>
+          <div class="arch-item">PySide6</div>
+        </div>
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">服务层</div>
+        <div class="arch-items">
+          <div class="arch-item">AI Service</div>
+          <div class="arch-item">Pipeline Controller</div>
+          <div class="arch-item">Event Bus</div>
+          <div class="arch-item">Service Container</div>
+        </div>
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">AI 模型层</div>
+        <div class="arch-items">
+          <div class="arch-item">GLM-5 / M2.5</div>
+          <div class="arch-item">Seedream / Kling</div>
+          <div class="arch-item">CosyVoice</div>
+          <div class="arch-item">Seedance</div>
+        </div>
+      </div>
+      <div class="arch-arrow">↓</div>
+      <div class="arch-layer">
+        <div class="arch-layer-label">导出层</div>
+        <div class="arch-items">
+          <div class="arch-item">Video Export</div>
+          <div class="arch-item">Subtitle Embed</div>
+          <div class="arch-item">Lip Sync</div>
+        </div>
+      </div>
+    </div>
+    <style>
+    .arch { padding: 100px 0; text-align: center; }
+    .arch-diagram { display: flex; flex-direction: column; align-items: center; gap: 8px; max-width: 700px; margin: 0 auto; }
+    .arch-layer { width: 100%; }
+    .arch-layer-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 10px; }
+    .arch-items { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; }
+    .arch-item { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 500; transition: all 0.2s; }
+    .arch-item:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(99,102,241,0.2); }
+    .arch-arrow { color: var(--text-secondary); font-size: 18px; padding: 4px 0; }
+    @media (max-width: 600px) { .arch-item { font-size: 11px; padding: 6px 10px; } }
+    </style>
+    </section>
+
     <footer class="footer">
       <div class="footer-content">
         <div class="footer-links">
@@ -537,6 +624,43 @@ document.querySelectorAll('.model-tab').forEach(tab => {
     document.getElementById('model-grid-' + tabName).style.display = 'grid';
   });
 });
+
+    // Back to top & scroll progress
+    const progressBar = document.getElementById('scroll-progress');
+    const backToTop = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+      if (progressBar) progressBar.style.width = pct + '%';
+      if (backToTop) backToTop.classList.toggle('visible', scrollTop > 500);
+    });
+    // Add copy buttons to pre blocks
+    document.querySelectorAll('pre').forEach(pre => {
+      if (!pre.querySelector('.copy-btn')) {
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn';
+        btn.textContent = '📋 复制';
+        btn.onclick = () => {
+          const code = pre.querySelector('code') || pre;
+          navigator.clipboard.writeText(code.innerText).then(() => {
+            btn.textContent = '✓ 已复制';
+            setTimeout(() => btn.textContent = '📋 复制', 2000);
+          });
+        };
+        pre.style.position = 'relative';
+        pre.appendChild(btn);
+      }
+    });
+
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href').replace('/','#') || a.getAttribute('href'));
+        if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      });
+    });
 </script>
 
     <section class="workflow" id="workflow">
@@ -585,7 +709,7 @@ document.querySelectorAll('.model-tab').forEach(tab => {
           <li><span class="check">✓</span>Jest + Vitest 双重测试覆盖</li>
         </ul>
       </div>
-      <div class="showcase-visual"><div class="showcase-code"># PlotCraft — 脚本生成示例
+      <div class="showcase-visual"><div class="showcase-code" style="position:relative"><button onclick="navigator.clipboard.writeText(this.parentElement.querySelector('code').innerText).then(()=>{this.textContent='✓ 复制';setTimeout(()=>this.textContent='📋 复制',2000)})" style="position:absolute;top:12px;right:12px;background:rgba(99,102,241,0.8);border:none;border-radius:6px;color:white;padding:4px 10px;font-size:12px;cursor:pointer;z-index:10">📋 复制</button># PlotCraft — 脚本生成示例
 
 import { aiService } from '@/core/services'
 
