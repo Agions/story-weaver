@@ -15,7 +15,7 @@ export type {
   VideoAnalysis,
   Scene,
   Keyframe
-} from './services/video.service';
+} from '@/core/types';
 
 export type {
   Scene as ExportScene,

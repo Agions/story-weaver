@@ -10,6 +10,19 @@ import { logger } from '@/core/utils/logger';
 
 const { Title, Text } = Typography;
 
+// 项目文件保存函数
+const saveProjectToFile = async (projectId: string, content: string): Promise<void> => {
+  try {
+    const { appDataDir } = await import('@tauri-apps/api/path');
+    const dir = await appDataDir();
+    const filePath = `${dir}projects/${projectId}.json`;
+    await tauriService.writeText(filePath, content);
+  } catch (error) {
+    logger.error('保存项目文件失败:', error);
+    throw error;
+  }
+};
+
 const ScriptDetail: React.FC = () => {
   const { projectId, scriptId } = useParams<{ projectId: string; scriptId: string }>();
   const navigate = useNavigate();

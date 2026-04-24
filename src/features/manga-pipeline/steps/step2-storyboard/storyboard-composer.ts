@@ -1,4 +1,4 @@
-import { Script } from '../../step1-script-generation/types/script';
+import { Script } from '../step1-script-generation/types/script';
 import { generateSceneDescription, SceneDescription } from './description/scene-description-generator';
 import { generateCharacterIllustration, CharacterIllustration } from './description/character-illustration-generator';
 

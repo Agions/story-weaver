@@ -2,8 +2,8 @@
  * Tauri工具函数
  * 提供与Tauri API相关的工具函数
  */
-import * as fs from '@tauri-apps/api/fs';
-import { open } from '@tauri-apps/api/dialog';
+import * as fs from '@tauri-apps/plugin-fs';
+import { open } from '@tauri-apps/plugin-dialog';
 import { logger } from '@/core/utils/logger';
 
 /**

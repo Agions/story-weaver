@@ -3,4 +3,4 @@
  * Notification feature exports - Notification management
  */
 
-export { NotificationCenter } from './components/NotificationCenter';
+export { default as NotificationCenter } from './components/NotificationCenter';

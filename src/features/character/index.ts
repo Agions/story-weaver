@@ -4,7 +4,7 @@
  */
 
 // Component
-export { CharacterDesigner } from './components/CharacterDesigner';
+export { default as CharacterDesigner } from './components/CharacterDesigner';
 
 // Service
 export { getCharacterService, resetCharacterService } from '@/core/services/character.service';

@@ -1,4 +1,4 @@
-import { StoryEvent } from '../../parser/event-extractor';
+import { StoryEvent } from '../parser/event-extractor';
 
 export type StoryArc = 'introduction' | 'rising' | 'climax' | 'falling' | 'resolution';
 
@@ -6,7 +6,7 @@ export interface NarrativeStructure {
   arc: StoryArc;
   estimatedDuration: number;  // 分钟
   keyPlotPoints: string[];
-  arcSegments: { start: number; end: number; arc: StoryArc }[];
+  arcSegments: ArcSegment[];
 }
 
 export interface ArcSegment {

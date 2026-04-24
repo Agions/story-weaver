@@ -5,7 +5,7 @@
 
 import { useState, useCallback, useRef } from 'react';
 import { message, Modal } from 'antd';
-import { ConfirmDialog, useConfirm, ConfirmDialogProps } from '@/components/common/ConfirmDialog';
+import { ConfirmDialog, useConfirm, ConfirmDialogProps } from '@/shared/components/ui/ConfirmDialog';
 
 // ============================================
 // 加载状态 Hook

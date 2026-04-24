@@ -8,9 +8,9 @@ import type {
   Character, 
   CharacterAppearance, 
   ClothingItem, 
-  CharacterExpression,
-  CharacterConsistency 
+  CharacterExpression
 } from '@/core/types';
+import type { CharacterConsistency } from '@/shared/types';
 import { CHARACTER_TEMPLATES, getTemplateById, getTemplatesByCategory, type CharacterTemplate } from '@/core/data/character-templates';
 import { logger } from '@/core/utils/logger';
 

@@ -5,11 +5,11 @@
 
 import { invoke } from '@tauri-apps/api/core';
 import { listen, UnlistenFn } from '@tauri-apps/api/event';
-import { open, save, message, ask, confirm } from '@tauri-apps/api/dialog';
-import { readTextFile, writeTextFile, writeFile, exists, createDir, removeDir, readDir } from '@tauri-apps/api/fs';
-import { appDir, appConfigDir, appDataDir, documentDir, videoDir, downloadDir } from '@tauri-apps/api/path';
-import { sendNotification, isPermissionGranted, requestPermission } from '@tauri-apps/api/notification';
-import { getCurrent } from '@tauri-apps/api/window';
+import { open, save, message, ask, confirm } from '@tauri-apps/plugin-dialog';
+import { readTextFile, writeTextFile, writeFile, exists, mkdir, remove, readDir } from '@tauri-apps/plugin-fs';
+import { appConfigDir, appDataDir, documentDir, videoDir, downloadDir } from '@tauri-apps/api/path';
+import { sendNotification, isPermissionGranted, requestPermission } from '@tauri-apps/plugin-notification';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 
 // ========== 类型定义 ==========
 
@@ -107,15 +107,15 @@ class TauriService {
   /**
    * 获取当前窗口
    */
-  async getCurrent() {
-    return getCurrent();
+  async getCurrentWindowApi() {
+    return getCurrentWindow();
   }
 
   /**
    * 最小化窗口
    */
   async minimize() {
-    const win = getCurrent();
+    const win = getCurrentWindow();
     await win.minimize();
   }
 
@@ -123,7 +123,7 @@ class TauriService {
    * 最大化/还原窗口
    */
   async toggleMaximize() {
-    const win = getCurrent();
+    const win = getCurrentWindow();
     const isMaximized = await win.isMaximized();
     if (isMaximized) {
       await win.unmaximize();
@@ -136,7 +136,7 @@ class TauriService {
    * 关闭窗口
    */
   async close() {
-    const win = getCurrent();
+    const win = getCurrentWindow();
     await win.close();
   }
 
@@ -144,7 +144,7 @@ class TauriService {
    * 设置窗口标题
    */
   async setTitle(title: string) {
-    const win = getCurrent();
+    const win = getCurrentWindow();
     await win.setTitle(title);
   }
 
@@ -152,7 +152,7 @@ class TauriService {
    * 设置全屏
    */
   async setFullscreen(fullscreen: boolean) {
-    const win = getCurrent();
+    const win = getCurrentWindow();
     await win.setFullscreen(fullscreen);
   }
 
@@ -160,7 +160,7 @@ class TauriService {
    * 设置置顶
    */
   async setAlwaysOnTop(alwaysOnTop: boolean) {
-    const win = getCurrent();
+    const win = getCurrentWindow();
     await win.setAlwaysOnTop(alwaysOnTop);
   }
 
@@ -217,14 +217,14 @@ class TauriService {
    * 创建目录
    */
   async createDir(path: string): Promise<void> {
-    return createDir(path, { recursive: true });
+    return mkdir(path, { recursive: true });
   }
 
   /**
    * 删除文件/目录
    */
   async removePath(path: string): Promise<void> {
-    return removeDir(path, { recursive: true });
+    return remove(path, { recursive: true });
   }
 
   /**
@@ -245,7 +245,7 @@ class TauriService {
    * 获取应用目录
    */
   async getAppDir(): Promise<string> {
-    return appDir();
+    return appConfigDir();
   }
 
   /**
@@ -291,7 +291,7 @@ class TauriService {
   async showMessage(msg: string, options?: { title?: string; kind?: 'info' | 'warning' | 'error' }): Promise<void> {
     await message(msg, {
       title: options?.title || 'PlotCraft AI',
-      type: options?.kind || 'info'
+      kind: options?.kind || 'info'
     });
   }
 

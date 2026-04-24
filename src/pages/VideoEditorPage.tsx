@@ -14,13 +14,22 @@ import {
   VideoCameraOutlined
 } from '@ant-design/icons';
 import { invoke } from '@tauri-apps/api/core';
-import { open, save } from '@tauri-apps/api/dialog';
+import { open, save } from '@tauri-apps/plugin-dialog';
 
 import styles from './VideoEditor.module.less';
 
 // 导入组件和服务
 import { tauriService } from '@/core/services';
 import { logger } from '@/core/utils/logger';
+
+// VideoSegment type (compatible with ScriptEditor interface)
+interface VideoSegment {
+  id: string;
+  start: number;
+  end: number;
+  type: string;
+  content?: string;
+}
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -96,6 +105,7 @@ const VideoEditor: React.FC = () => {
 
         // 创建一个默认片段
         const newSegment: VideoSegment = {
+          id: `segment-${Date.now()}`,
           start: 0,
           end: metadata.duration,
           type: 'video',
@@ -183,6 +193,7 @@ const VideoEditor: React.FC = () => {
   const handleAddSegment = () => {
     // 创建一个5秒的新片段
     const newSegment: VideoSegment = {
+      id: `segment-${Date.now()}`,
       start: Math.min(currentTime, duration - 5),
       end: Math.min(currentTime + 5, duration),
       type: 'video',

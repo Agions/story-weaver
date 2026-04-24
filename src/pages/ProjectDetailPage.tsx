@@ -23,6 +23,7 @@ import { collaborationService, costService, qualityGateService, reviewExportServ
 import type { EvaluationScores, FrameComment, StoryboardVersion, VersionDiffSummary } from '@/core/services';
 import { tauriService } from '@/core/services';
 import { runWhenIdle } from '@/core/utils/idle';
+import type { ProjectData } from '@/shared/types';
 import { v4 as uuidv4 } from 'uuid';
 import styles from './ProjectDetail.module.less';
 import { logger } from '@/core/utils/logger';

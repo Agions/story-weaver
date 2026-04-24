@@ -35,7 +35,7 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     // 记录错误到控制台
-    logger.error('ErrorBoundary caught an error:', error, errorInfo);
+    logger.error('ErrorBoundary caught an error:', { error, errorInfo });
     
     this.setState({
       error,
@@ -68,14 +68,10 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
             status="error"
             title="应用出现错误"
             subTitle={this.state.error?.message || '抱歉，应用程序遇到了一个意外错误。'}
-            extra={[
-              <Button type="primary" key="reload" onClick={this.handleReload}>
-                重新加载
-              </Button>,
-              <Button key="home" onClick={this.handleGoHome}>
-                返回首页
-              </Button>,
-            ]}
+            extra={
+              [<Button type="primary" key="reload" onClick={this.handleReload}>重新加载</Button>,
+               <Button key="home" onClick={this.handleGoHome}>返回首页</Button>] as React.ReactNode
+            }
           />
         </div>
       );
