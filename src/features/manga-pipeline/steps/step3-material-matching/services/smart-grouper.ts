@@ -1,5 +1,7 @@
 import { MaterialMatch, MaterialItem } from './material-searcher';
 
+export type { MaterialMatch, MaterialItem };
+
 export interface MaterialGroup {
   groupId: string;
   theme: string;        // 主题标签
