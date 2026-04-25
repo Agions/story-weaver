@@ -364,15 +364,18 @@ class Pipeline {
 
 // ========== 预设步骤工厂 ==========
 
-export const PIPELINE_STEP_IDS: Record<PipelineStepId, PipelineStepId> = {
-  import: 'import',
-  analysis: 'analysis',
-  script: 'script',
-  storyboard: 'storyboard',
-  character: 'character',
-  render: 'render',
-  export: 'export'
-};
+// Step ID constants — replaces redundant identity mapping
+// Previously: PIPELINE_STEP_IDS was a no-op Record<PipelineStepId, PipelineStepId> where every key === value.
+// Now: a simple string array for iteration and a readonly Record for literal usage.
+export const PIPELINE_STEP_IDS: readonly string[] = [
+  'import',
+  'analysis',
+  'script',
+  'storyboard',
+  'character',
+  'render',
+  'export',
+] as const;
 
 /**
  * 创建导入步骤

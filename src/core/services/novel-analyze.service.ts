@@ -3,8 +3,6 @@
  * 提供小说内容解析、场景分割、角色提取、情感分析等功能
  */
 
-import { aiService } from './ai.service';
-import { costService } from './cost.service';
 import {
   EmotionType,
   type NovelMetadata,
@@ -20,6 +18,9 @@ import {
   type CharacterRelationship,
   type SceneEmotion,
 } from '@/core/types/novel.types';
+
+import { aiService } from './ai.service';
+import { costService } from './cost.service';
 
 /**
  * 小说分析器
@@ -170,7 +171,7 @@ ${content.slice(0, 2000)}
           const start = match.index;
           const title = match[1]?.trim() || match[0].trim();
 
-          if (start > currentPosition) {
+          if (start !== undefined && start > currentPosition) {
             const chapterContent = content.slice(currentPosition, start).trim();
             if (chapterContent.length >= this.config.minChapterLength) {
               chapters.push({
@@ -183,7 +184,9 @@ ${content.slice(0, 2000)}
               });
             }
           }
-          currentPosition = start + match[0].length;
+          if (start !== undefined) {
+            currentPosition = start + match[0].length;
+          }
         }
         break;
       }

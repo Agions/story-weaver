@@ -4,8 +4,10 @@
  */
 
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { debounce, throttle } from './index';
+
 import { logger } from '@/core/utils/logger';
+
+import { debounce, throttle } from './index';
 
 /**
  * 使用本地存储
@@ -51,7 +53,7 @@ export function useDebounce<T extends GenericFunction>(
   }, [callback]);
 
   return useMemo(
-    () => debounce((...args: Parameters<T>) => callbackRef.current(...args), delay),
+    () => debounce(callbackRef.current as GenericFunction, delay),
     [delay]
   );
 }
@@ -70,7 +72,7 @@ export function useThrottle<T extends GenericFunction>(
   }, [callback]);
 
   return useMemo(
-    () => throttle((...args: Parameters<T>) => callbackRef.current(...args), limit),
+    () => throttle(callbackRef.current as GenericFunction, limit),
     [limit]
   );
 }

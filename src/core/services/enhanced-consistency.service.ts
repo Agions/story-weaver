@@ -3,8 +3,9 @@
  * 确保角色形象、表情、风格、声音全剧一致
  */
 
-import { storageService } from '@/shared/services/storage';
 import { v4 as uuidv4 } from 'uuid';
+
+import { storageService } from '@/shared/services/storage';
 
 // ========== 类型定义 ==========
 
@@ -193,7 +194,7 @@ class EnhancedConsistencyService {
       ...updates,
       appearance: { ...character.appearance, ...updates.appearance },
       expressions: { ...character.expressions, ...updates.expressions },
-      voice: { ...character.voice, ...updates.voice },
+      voice: { ...character.voice, ...updates.voice } as CharacterVoice,
       updatedAt: new Date().toISOString()
     };
 
@@ -537,7 +538,7 @@ class EnhancedConsistencyService {
         this.styleCache.set(library.dramaStyle.id, library.dramaStyle);
       }
     }
-    return library;
+    return library ?? null;
   }
 
   /**
@@ -606,7 +607,7 @@ class EnhancedConsistencyService {
    */
   exportStyleGuide(projectId: string): string {
     const library = this.loadCharacterLibrary(projectId);
-    if (!library || !library.dramaStyle) return '# 风格未定义';
+    if (!library?.dramaStyle) return '# 风格未定义';
 
     const style = library.dramaStyle;
 

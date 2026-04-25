@@ -4,15 +4,16 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
+
+import { CHARACTER_TEMPLATES, getTemplateById, getTemplatesByCategory, type CharacterTemplate } from '@/core/data/character-templates';
 import type { 
   Character, 
   CharacterAppearance, 
   ClothingItem, 
   CharacterExpression
 } from '@/core/types';
-import type { CharacterConsistency } from '@/shared/types';
-import { CHARACTER_TEMPLATES, getTemplateById, getTemplatesByCategory, type CharacterTemplate } from '@/core/data/character-templates';
 import { logger } from '@/core/utils/logger';
+import type { CharacterConsistency } from '@/shared/types';
 
 // 本地存储键
 const CHARACTER_STORAGE_KEY = 'man ga-characters';
@@ -59,7 +60,7 @@ export class CharacterService {
    * 根据标签筛选
    */
   getByTag(tag: string): Character[] {
-    return this.characters.filter(c => c.tags.includes(tag));
+    return this.characters.filter(c => c.tags?.includes(tag));
   }
 
   /**
