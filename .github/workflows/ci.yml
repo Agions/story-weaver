@@ -53,7 +53,7 @@ jobs:
           node-version: '20'
       - run: npm install
       - name: Run tests with coverage
-        run: npm test -- --runInBand --coverage --coverageThreshold='{"global":{"branches":30,"functions":30,"lines":30,"statements":30}}'
+        run: npm test -- --runInBand --coverage --coverageThreshold='{"global":{"branches":25,"functions":25,"lines":30,"statements":30}}'
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:

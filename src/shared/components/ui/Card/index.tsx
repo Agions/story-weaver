@@ -38,8 +38,6 @@ export const Card: React.FC<CardProps> = ({
   hoverable = false,
   selected = false,
   className,
-  size = 'default',
-  variant = 'default',
   ...props
 }) => {
   return (
