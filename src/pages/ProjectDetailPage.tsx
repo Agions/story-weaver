@@ -10,7 +10,6 @@ import {
   PlayCircleOutlined,
   SoundOutlined,
   ThunderboltOutlined,
-  CheckCircleOutlined,
   DollarOutlined
 } from '@ant-design/icons';
 import { Button, Card, Tabs, Space, Typography, message, Modal, Spin, Empty, List, Input, Select, Alert } from 'antd';
@@ -58,7 +57,7 @@ const ProjectDetail: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>('novel');
   const [novelMetadata, setNovelMetadata] = useState<NovelMetadata | null>(null);
   const [selectedFrameId, setSelectedFrameId] = useState<string | undefined>(undefined);
-  const [storyboardComments, setStoryboardComments] = useState<FrameComment[]>([]);
+  const [_storyboardComments, setStoryboardComments] = useState<FrameComment[]>([]);
   const [storyboardVersions, setStoryboardVersions] = useState<StoryboardVersion[]>([]);
   const [commentDraft, setCommentDraft] = useState('');
   const [versionLabel, setVersionLabel] = useState('');
@@ -135,6 +134,7 @@ const ProjectDetail: React.FC = () => {
 
     const currentProject = projects.find(p => p.id === id) as ProjectData | undefined;
     if (currentProject) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setProject(currentProject);
       // 如果有剧本，设置第一个为活动剧本
       if (currentProject.scripts && currentProject.scripts.length > 0) {
@@ -163,6 +163,7 @@ const ProjectDetail: React.FC = () => {
 
   useEffect(() => {
     if (storyboardFrames.length === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedFrameId(undefined);
       return;
     }
@@ -583,7 +584,7 @@ const ProjectDetail: React.FC = () => {
               ) : (
                 <Card>
                   <div className={styles.emptyScript}>
-                    <Text type="secondary">暂无剧本，点击"编辑剧本"或"创建空白剧本"按钮添加</Text>
+                    <Text type="secondary">暂无剧本，点击&quot;编辑剧本&quot;或&quot;创建空白剧本&quot;按钮添加</Text>
                   </div>
                 </Card>
               )}

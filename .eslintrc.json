@@ -47,6 +47,8 @@
     "react/react-in-jsx-scope": "off",
     "react/display-name": "off",
     "react-hooks/exhaustive-deps": "warn",
+    "react-hooks/set-state-in-effect": "warn",
+    "react-hooks/preserve-manual-memoization": "warn",
 
     // Import
     "import/order": [
