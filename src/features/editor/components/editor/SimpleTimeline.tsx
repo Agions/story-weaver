@@ -16,7 +16,7 @@ import {
   VideoCameraAddOutlined
 } from '@ant-design/icons';
 import { Button, Tooltip, Slider, Typography, Tag, Dropdown, Space } from 'antd';
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import styles from './SimpleTimeline.module.less';
 
@@ -61,7 +61,7 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
   onZoomChange
 }) => {
   const timelineRef = useRef<HTMLDivElement>(null);
-  // const [isDragging, setIsDragging] = useState(false);
+  const [_isDragging] = useState(false);
   const [localZoom, setLocalZoom] = useState(zoom);
 
   // 格式化时间
@@ -238,8 +238,6 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
             className={styles.tracks}
             ref={timelineRef}
             onClick={handleTimelineClick}
-            role="presentation"
-            tabIndex={0}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleTimelineClick(e); }}
           >
             {/* 视频轨道 */}

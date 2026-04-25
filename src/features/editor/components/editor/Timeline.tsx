@@ -315,8 +315,6 @@ const Timeline: React.FC<TimelineProps> = ({
             className={styles.tracksArea}
             ref={timelineRef}
             onClick={handleTimelineClick}
-            role="presentation"
-            tabIndex={0}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleTimelineClick(e); }}
           >
             <div className={styles.tracksContainer}>

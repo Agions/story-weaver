@@ -6,11 +6,9 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { CHARACTER_TEMPLATES, getTemplateById, getTemplatesByCategory, type CharacterTemplate } from '@/core/data/character-templates';
-import type { 
-  Character, 
-  CharacterAppearance, 
-  ClothingItem, 
-  CharacterExpression
+import type {
+  Character,
+  CharacterAppearance
 } from '@/core/types';
 import { logger } from '@/core/utils/logger';
 import type { CharacterConsistency } from '@/shared/types';
