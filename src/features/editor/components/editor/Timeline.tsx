@@ -1,11 +1,9 @@
 import {
   PlusOutlined,
   DeleteOutlined,
-  DragOutlined,
   ZoomInOutlined,
   ZoomOutOutlined,
   ColumnWidthOutlined,
-  SettingOutlined,
   DoubleRightOutlined
 } from '@ant-design/icons';
 import { 
@@ -13,9 +11,6 @@ import {
   Space, 
   Tooltip, 
   Dropdown, 
-  Slider,
-  Divider,
-  Input
 } from 'antd';
 import React, { useState, useEffect, useRef } from 'react';
 

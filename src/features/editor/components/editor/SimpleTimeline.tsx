@@ -5,17 +5,13 @@ import {
   StepForwardOutlined,
   PlusOutlined,
   DeleteOutlined,
-  ScissorOutlined,
   ZoomInOutlined,
   ZoomOutOutlined,
-  FullscreenOutlined,
   SoundOutlined,
-  ExpandOutlined,
   HolderOutlined,
-  SyncOutlined,
   VideoCameraAddOutlined
 } from '@ant-design/icons';
-import { Button, Tooltip, Slider, Typography, Tag, Dropdown, Space } from 'antd';
+import { Button, Tooltip, Typography, Tag, Space } from 'antd';
 import React, { useRef, useState } from 'react';
 
 import styles from './SimpleTimeline.module.less';
@@ -61,7 +57,7 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
   onZoomChange
 }) => {
   const timelineRef = useRef<HTMLDivElement>(null);
-  const [_isDragging] = useState(false);
+  // const [_isDragging] = useState(false);
   const [localZoom, setLocalZoom] = useState(zoom);
 
   // 格式化时间
