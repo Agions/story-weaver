@@ -73,7 +73,7 @@ const VideoEditor: React.FC = () => {
   };
 
   // 加载视频文件
-  // eslint-disable react-hooks/set-state-in-effect
+  // eslint-disable react-hooks/purity
   const handleLoadVideo = async () => {
     try {
       const selected = await open({
@@ -101,6 +101,7 @@ const VideoEditor: React.FC = () => {
 
         // 创建一个默认片段
         const newSegment: VideoSegment = {
+          // eslint-disable-next-line react-hooks/purity
           id: `segment-${Date.now()}`,
           start: 0,
           end: metadata.duration,
@@ -185,10 +186,11 @@ const VideoEditor: React.FC = () => {
   };
 
   // 添加片段
-  // eslint-disable react-hooks/set-state-in-effect
+  // eslint-disable react-hooks/purity
   const handleAddSegment = () => {
     // 创建一个5秒的新片段
     const newSegment: VideoSegment = {
+      // eslint-disable-next-line react-hooks/purity
       id: `segment-${Date.now()}`,
       start: Math.min(currentTime, duration - 5),
       end: Math.min(currentTime + 5, duration),

@@ -2,7 +2,6 @@ import { message, notification, Spin } from 'antd';
 import React, { useEffect, useState, Suspense, lazy } from 'react';
 import { Routes, Route, BrowserRouter, Navigate } from 'react-router-dom';
 
-
 import { getPageImporters, preloadPage } from '@/core/router/page-preload';
 import { runWhenIdle } from '@/core/utils/idle';
 import './App.css';
@@ -13,7 +12,6 @@ const HomePage = lazy(importers.home);
 const WorkflowPage = lazy(importers.workflow);
 const ProjectEditPage = lazy(importers.projectEdit);
 const ProjectDetailPage = lazy(importers.projectDetail);
-const ScriptDetailPage = lazy(importers.scriptDetail);
 const SettingsPage = lazy(importers.settings);
 const UIDemo = lazy(importers.demo);
 

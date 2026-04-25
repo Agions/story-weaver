@@ -1,3 +1,51 @@
+import type {
+  StoryboardFrame,
+  CompositionProject,
+  FrameAnimation,
+  TransitionConfig,
+  AnimationKeyframe
+} from '@/core/types';
+import { motion } from 'framer-motion';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+
+import styles from './index.module.less';
+import type { Color } from 'antd/es/color-picker';
+import type { ColumnsType } from 'antd/es/table';
+import {
+  Card,
+  Button,
+  Table,
+  Form,
+  Select,
+  InputNumber,
+  Slider,
+  Space,
+  Divider,
+  Modal,
+  message,
+  Empty,
+  Tooltip,
+  Row,
+  Col,
+  Switch,
+  ColorPicker,
+  Typography,
+  Popconfirm,
+  Tag,
+  Timeline,
+} from 'antd';
+import type { Color } from 'antd/es/color-picker';
+import type { ColumnsType } from 'antd/es/table';
+import { motion } from 'framer-motion';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import styles from './index.module.less';
+import type {
+  StoryboardFrame,
+  CompositionProject,
+  FrameAnimation,
+  TransitionConfig,
+  AnimationKeyframe,
+} from '@/core/types';
 import {
   PlayCircleOutlined,
   PauseCircleOutlined,
@@ -36,24 +84,19 @@ import {
 } from 'antd';
 import type { Color } from 'antd/es/color-picker';
 import type { ColumnsType } from 'antd/es/table';
-import { motion, useAnimation, useMotionValue, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-
 import styles from './index.module.less';
+import type {
+  StoryboardFrame,
+  CompositionProject,
+  FrameAnimation,
+  TransitionConfig,
+  AnimationKeyframe
+} from '@/core/types';
 
 const { Option } = Select;
-const { Text, Title } = Typography;
-
-// 项目类型
-import type { 
-  StoryboardFrame, 
-  CompositionProject, 
-  FrameAnimation, 
-  CameraMotionConfig, 
-  TransitionConfig,
-  AnimationKeyframe,
-  AnimationTrack 
-} from '@/core/types';
+const { Text } = Typography;
 
 interface CompositionStudioProps {
   frames: StoryboardFrame[];
