@@ -42,6 +42,8 @@ export interface AudioPipelineOptions {
 const narratorAlias = ['旁白', 'narrator', '解说'];
 
 class AudioPipelineService {
+  // Track blob URL revocation timers to prevent double-revoke and memory leaks
+  private blobUrlTimers = new Map<string, ReturnType<typeof setTimeout>>();
   extractDialogueLines(scriptText: string, maxLines = 50): DialogueLine[] {
     if (!scriptText.trim()) return [];
 
@@ -117,10 +119,12 @@ class AudioPipelineService {
           fadeOut: 0,
           type: narratorAlias.includes(line.speaker.toLowerCase()) ? 'voiceover' : 'dubbing',
         });
-        // Revoke the blob URL after pushing to avoid memory leak.
-        // The browser releases the blob backing automatically; the fileUrl field
-        // will go stale but tracks hold the reference for display purposes only.
-        setTimeout(() => URL.revokeObjectURL(fileUrl), 10000);
+        // Revoke blob URL after 10s safety window; disposeVoiceTracks clears timer on cleanup
+        const timerId = setTimeout(() => {
+          URL.revokeObjectURL(fileUrl);
+          this.blobUrlTimers.delete(`voice_${line.id}`);
+        }, 10000);
+        this.blobUrlTimers.set(`voice_${line.id}`, timerId);
         costService.recordAudioCost(config.provider, response.duration, {
           operation: 'tts_voice_track',
           speaker: line.speaker,
@@ -143,6 +147,12 @@ class AudioPipelineService {
       if (track.fileUrl?.startsWith('blob:')) {
         URL.revokeObjectURL(track.fileUrl);
         track.fileUrl = undefined;
+      }
+      // Cancel safety-window timer if dispose is called before it fires
+      const timerId = this.blobUrlTimers.get(track.id);
+      if (timerId !== undefined) {
+        clearTimeout(timerId);
+        this.blobUrlTimers.delete(track.id);
       }
     });
   }

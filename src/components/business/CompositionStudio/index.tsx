@@ -121,15 +121,19 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentFrameIndex, setCurrentFrameIndex] = useState(0);
   const [playbackSpeed, setPlaybackSpeed] = useState(1);
-  const [, setShowTransitionPreview] = useState(false); // showTransitionPreview unused
-  const [, setSelectedTransition] = useState<TransitionConfig | null>(null); // selectedTransition unused
   const [keyframes, setKeyframes] = useState<AnimationKeyframe[]>([]);
   const animationRef = useRef<number | null>(null);
 
+  // Stable callback wrapper to prevent useEffect re-run on every render
+  const stableOnCompositionChange = useCallback(
+    (c: CompositionProject) => onCompositionChange?.(c),
+    [onCompositionChange]
+  );
+
   // 通知父组件
   useEffect(() => {
-    onCompositionChange?.(composition);
-  }, [composition, onCompositionChange]);
+    stableOnCompositionChange(composition);
+  }, [composition, stableOnCompositionChange]);
 
   // 初始化帧动画配置
   useEffect(() => {
@@ -299,9 +303,8 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
   };
 
   // 预览转场效果
-  const handlePreviewTransition = (transition: TransitionConfig) => {
-    setSelectedTransition(transition);
-    setShowTransitionPreview(true);
+  const handlePreviewTransition = (_transition: TransitionConfig) => {
+    // State values never read — removed to eliminate dead code
   };
 
   // 导出合成数据
