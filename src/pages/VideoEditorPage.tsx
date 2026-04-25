@@ -1,20 +1,18 @@
 import {
-  PlayCircleOutlined, PauseCircleOutlined, ScissorOutlined,
+  PlayCircleOutlined, PauseCircleOutlined,
   SaveOutlined, UndoOutlined, RedoOutlined, DownloadOutlined,
-  FileImageOutlined, SettingOutlined, UploadOutlined, CopyOutlined,
-  DeleteOutlined, CheckCircleOutlined, ShareAltOutlined, PlusOutlined,
-  FullscreenOutlined, SyncOutlined, ExpandOutlined, LockOutlined,
-  VideoCameraOutlined
+  UploadOutlined, DeleteOutlined, PlusOutlined,
+  FullscreenOutlined
 } from '@ant-design/icons';
 import { invoke } from '@tauri-apps/api/core';
 import { open, save } from '@tauri-apps/plugin-dialog';
 import {
   Layout, Card, Button, Dropdown, Space, Typography, Tabs,
-  Row, Col, Progress, Tooltip, message, Empty, Tag, Skeleton,
-  Modal, Radio, Slider, Statistic
+  Row, Col, Progress, Tooltip, message, Empty, Tag,
+  Modal
 } from 'antd';
-import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useRef } from 'react';
+import { useParams } from 'react-router-dom';
 
 
 // 导入组件和服务
@@ -38,17 +36,14 @@ const { TabPane } = Tabs;
 
 const VideoEditor: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
-  const navigate = useNavigate();
 
   // 状态管理
   const [videoSrc, setVideoSrc] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
-  const [analyzing, setAnalyzing] = useState<boolean>(false);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const [duration, setDuration] = useState<number>(0);
   const [segments, setSegments] = useState<VideoSegment[]>([]);
   const [keyframes, setKeyframes] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState<string>('trim');
   const [editHistory, setEditHistory] = useState<VideoSegment[][]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
   const [selectedSegmentIndex, setSelectedSegmentIndex] = useState<number>(-1);
@@ -78,6 +73,7 @@ const VideoEditor: React.FC = () => {
   };
 
   // 加载视频文件
+  // eslint-disable react-hooks/set-state-in-effect
   const handleLoadVideo = async () => {
     try {
       const selected = await open({
@@ -94,7 +90,6 @@ const VideoEditor: React.FC = () => {
 
       // 开始分析视频
       setLoading(true);
-      setAnalyzing(true);
 
       try {
         // 设置视频源
@@ -129,7 +124,6 @@ const VideoEditor: React.FC = () => {
         logger.error('视频分析失败:', error);
         message.error('视频分析失败，请检查文件格式');
       } finally {
-        setAnalyzing(false);
         setLoading(false);
       }
     } catch (err) {
@@ -191,6 +185,7 @@ const VideoEditor: React.FC = () => {
   };
 
   // 添加片段
+  // eslint-disable react-hooks/set-state-in-effect
   const handleAddSegment = () => {
     // 创建一个5秒的新片段
     const newSegment: VideoSegment = {
@@ -576,7 +571,9 @@ const VideoEditor: React.FC = () => {
                     onTimeUpdate={handleTimeUpdate}
                     onLoadedMetadata={handleVideoLoaded}
                     onClick={togglePlayPause}
-                  />
+                  >
+                    <track kind="captions" src="" label="Captions" default={false} />
+                  </video>
                   {renderPlayerControls()}
                 </div>
               ) : (
@@ -608,6 +605,9 @@ const VideoEditor: React.FC = () => {
                       width: `${((segment.end - segment.start) / Math.max(duration, 1)) * 100}%`
                     }}
                     onClick={() => handleSelectSegment(index)}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleSelectSegment(index); }}
+                    role="button"
+                    tabIndex={0}
                   >
                     <div className={styles.segmentHandle} />
                     <div className={styles.segmentLabel}>
@@ -632,7 +632,6 @@ const VideoEditor: React.FC = () => {
           <Col span={8}>
             <Tabs
               defaultActiveKey="trim"
-              onChange={value => setActiveTab(value)}
               className={styles.editorTabs}
             >
               <TabPane tab="片段" key="trim">
