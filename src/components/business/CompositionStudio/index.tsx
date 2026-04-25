@@ -1,12 +1,4 @@
 
-import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-import type {
-  StoryboardFrame,
-  CompositionProject,
-  FrameAnimation,
-  TransitionConfig,
-  AnimationKeyframe,
-} from '@/core/types';
 import {
   PlayCircleOutlined,
   PauseCircleOutlined,
@@ -42,6 +34,16 @@ import {
 } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { motion } from 'framer-motion';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+
+import type {
+  StoryboardFrame,
+  CompositionProject,
+  FrameAnimation,
+  TransitionConfig,
+  AnimationKeyframe,
+} from '@/core/types';
+
 import styles from './index.module.less';
 
 const { Option } = Select;
