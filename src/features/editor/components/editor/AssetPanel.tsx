@@ -4,7 +4,6 @@ import {
   AudioOutlined,
   FileImageOutlined,
   FileTextOutlined,
-  DeleteOutlined,
   MoreOutlined
 } from '@ant-design/icons';
 import {
@@ -16,7 +15,6 @@ import {
   Input,
   Empty,
   Tooltip,
-  Space,
   Dropdown,
   Typography,
   Tag,
@@ -30,7 +28,7 @@ import styles from './AssetPanel.module.less';
 
 const { TabPane } = Tabs;
 const { Search } = Input;
-const { Text } = Typography;
+
 
 interface Asset {
   id: string;
@@ -253,6 +251,9 @@ const AssetPanel: React.FC<AssetPanelProps> = () => {
               <div
                 className={styles.assetContent}
                 onClick={() => addToTimeline(asset)}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") addToTimeline(asset); }}
+                role="button"
+                tabIndex={0}
               >
                 <div className={styles.assetPreview}>
                   {renderThumbnail(asset)}

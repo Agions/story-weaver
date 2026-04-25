@@ -5,19 +5,13 @@ import {
   ThunderboltOutlined,
   RobotOutlined,
   BulbOutlined,
-  SettingOutlined,
-  PlayCircleOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
-  SyncOutlined,
-  StarOutlined,
   VideoCameraAddOutlined,
   PictureOutlined,
   BgColorsOutlined,
-  FontColorsOutlined,
-  EditOutlined
 } from '@ant-design/icons';
-import { Card, Button, List, Tag, Space, Typography, Tooltip, Progress, Divider } from 'antd';
+import { Card, Button, List, Tag, Typography, Tooltip, Progress } from 'antd';
 import React from 'react';
 
 import styles from './AIFeaturePanel.module.less';

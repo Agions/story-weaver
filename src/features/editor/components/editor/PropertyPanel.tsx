@@ -1,19 +1,14 @@
 import {
-  SettingOutlined,
   FontSizeOutlined,
   AudioOutlined,
   PictureOutlined,
-  ThunderboltOutlined,
-  SyncOutlined,
   SaveOutlined,
-  ExportOutlined,
-  ScissorOutlined,
-  RobotOutlined
+  ExportOutlined
 } from '@ant-design/icons';
-import { Card, Tabs, Form, Input, Select, Slider, Switch, Button, Space, Divider, Typography, Row, Col, InputNumber, Radio } from 'antd';
+import { Card, Tabs, Form, Input, Select, Slider, Switch, Button, Space, Typography, Row, Col } from 'antd';
 import React, { useMemo } from 'react';
 
-import { ASPECT_RATIOS, CROP_MODES, CROP_ALIGNMENTS, RESOLUTION_OPTIONS } from '@/core/constants';
+// import { ASPECT_RATIOS, CROP_MODES, CROP_ALIGNMENTS, RESOLUTION_OPTIONS } from '@/core/constants';
 
 import styles from './PropertyPanel.module.less';
 
@@ -305,7 +300,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
   videoInfo,
   exportSettings,
   onExportSettingsChange,
-  onSaveSegment
+  onSaveSegment: _onSaveSegment
 }) => {
   const tabItems = useMemo(() => [
     {

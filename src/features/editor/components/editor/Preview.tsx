@@ -7,7 +7,7 @@ interface PreviewProps {
 
 const Preview = forwardRef<HTMLDivElement, PreviewProps>(({
   playing = false,
-  onTimeUpdate
+  onTimeUpdate: _onTimeUpdate
 }, ref) => {
   return (
     <div ref={ref}>
