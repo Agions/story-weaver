@@ -132,7 +132,7 @@ ${content.slice(0, 10000)}${content.length > 10000 ? '...' : ''}
     try {
       const result = JSON.parse(aiResponse);
       return result as NovelParseResult;
-    } catch (_error) {
+    } catch {
       throw new Error('小说解析失败：AI 返回格式错误');
     }
   }
@@ -213,7 +213,7 @@ ${chapter.content.slice(0, 5000)}${chapter.content.length > 5000 ? '...' : ''}
           duration: 0
         } as ScriptScene;
       });
-    } catch (_error) {
+    } catch {
       throw new Error('场景转换失败：AI 返回格式错误');
     }
   }
@@ -337,7 +337,7 @@ ${chapter.content.slice(0, 5000)}${chapter.content.length > 5000 ? '...' : ''}
           prompt: this.generatePanelPrompt(panel, scene)
         } as Storyboard;
       });
-    } catch (_error) {
+    } catch {
       throw new Error('分镜生成失败：AI 返回格式错误');
     }
   }

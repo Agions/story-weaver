@@ -223,7 +223,7 @@ ${content.slice(0, 2000)}
    */
   async segmentScenes(chapters: Chapter[]): Promise<NovelScene[]> {
     const scenes: NovelScene[] = [];
-    const _scenePattern = /([，。！？])\s*(?=[A-Z]{1,2}[^\u4e00-\u9fa5]|[「『])/g;
+    // const _scenePattern = /([，。！？])\s*(?=[A-Z]{1,2}[^\u4e00-\u9fa5]|[「『])/g;
 
     for (const chapter of chapters) {
       // 使用 AI 智能分割场景
@@ -428,7 +428,7 @@ ${content.slice(0, 5000)}
       .sort((a, b) => b[1] - a[1]);
 
     let importance = 10;
-    for (const [name, _count] of sortedNames.slice(0, 20)) {
+    sortedNames.slice(0, 20).forEach(([name]) => {
       let role: 'main' | 'supporting' | 'minor' = 'minor';
       if (importance >= 8) role = 'main';
       else if (importance >= 4) role = 'supporting';
@@ -442,7 +442,7 @@ ${content.slice(0, 5000)}
       });
 
       importance = Math.max(1, importance - 1);
-    }
+    });
 
     return Array.from(characterMap.values());
   }
@@ -805,7 +805,7 @@ ${content.slice(0, 5000)}
    */
   exportToScript(
     result: AnalyzeResult,
-    format: 'screenplay' | 'comic' | 'manga' = 'manga'
+    _format: 'screenplay' | 'comic' | 'manga' = 'manga'
   ): string {
     const lines: string[] = [
       `# ${result.metadata.title}`,

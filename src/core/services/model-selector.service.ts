@@ -3,7 +3,6 @@
  * 根据已配置的 API Key 自动选择可用模型
  */
 
-import { useSettingsStore } from '@/hooks/useSettings';
 
 // 模型提供商配置
 export const MODEL_PROVIDERS = {

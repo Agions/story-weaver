@@ -65,7 +65,7 @@ class AudioPipelineService {
       }
 
       // 引号对白，默认给旁白
-      const quoteMatch = trimmed.match(/[“\"](.+?)[”\"]/);
+      const quoteMatch = trimmed.match(/[“"](.+?)[”"]/);
       if (quoteMatch) {
         lines.push({
           id: `dlg_${idx}_${Math.random().toString(36).slice(2, 6)}`,

@@ -199,18 +199,18 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
     message.success('关键帧已保存');
   };
 
-  // 添加关键帧
-  const _handleAddKeyframe = (time: number, property: string, value: number) => {
-    setKeyframes(prev => [
-      ...prev,
-      {
-        time,
-        property: property as any,
-        value,
-        easing: 'ease-in-out',
-      }
-    ]);
-  };
+  // 添加关键帧 - reserved for future use
+  // const _handleAddKeyframe = (time: number, property: string, value: number) => {
+  //   setKeyframes(prev => [
+  //     ...prev,
+  //     {
+  //       time,
+  //       property: property as any,
+  //       value,
+  //       easing: 'ease-in-out',
+  //     }
+  //   ]);
+  // };
 
   // 删除关键帧
   const handleDeleteKeyframe = (index: number) => {
@@ -398,21 +398,21 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
     }
   };
 
-  // 计算当前帧的动画值（考虑关键帧）
-  const _getAnimatedValue = useCallback((frameId: string, property: string, baseValue: number): number => {
-    const frame = composition.frames.find(f => f.frameId === frameId);
-    if (!frame?.keyframes || frame.keyframes.length === 0) {
-      return baseValue;
-    }
-
-    // 简化的插值计算
-    const relevantKeyframes = frame.keyframes.filter(kf => kf.property === property);
-    if (relevantKeyframes.length === 0) return baseValue;
-
-    // 这里应该实现完整的关键帧插值系统
-    // 暂时返回第一个关键帧的值作为简化
-    return relevantKeyframes[0].value;
-  }, [composition.frames]);
+  // 计算当前帧的动画值（考虑关键帧） - reserved for future use
+  // const _getAnimatedValue = useCallback((frameId: string, property: string, baseValue: number): number => {
+  //   const frame = composition.frames.find(f => f.frameId === frameId);
+  //   if (!frame?.keyframes || frame.keyframes.length === 0) {
+  //     return baseValue;
+  //   }
+  //
+  //   // 简化的插值计算
+  //   const relevantKeyframes = frame.keyframes.filter(kf => kf.property === property);
+  //   if (relevantKeyframes.length === 0) return baseValue;
+  //
+  //   // 这里应该实现完整的关键帧插值系统
+  //   // 暂时返回第一个关键帧的值作为简化
+  //   return relevantKeyframes[0].value;
+  // }, [composition.frames]);
 
   // 表格列
   const columns: ColumnsType<any> = [

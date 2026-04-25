@@ -4,7 +4,6 @@
  */
 
 import { logger } from '@/core/utils/logger';
-import { storageService } from '@/shared/services/storage';
 
 // 平台类型 - 桌面端专用，移除移动端
 export type Platform = 'web' | 'desktop';
@@ -183,12 +182,12 @@ class DesktopFileSystemAdapter implements FileSystemAdapter {
     return new Uint8Array();
   }
 
-  async writeFile(path: string, data: Uint8Array): Promise<void> {
+  async writeFile(path: string, _data: Uint8Array): Promise<void> {
     // @tauri-apps/api fs.writeFile
     logger.info('[Platform] Desktop writeFile:', path);
   }
 
-  async selectFile(options?: {
+  async selectFile(_options?: {
     multiple?: boolean;
     accept?: string[];
   }): Promise<FileInfo[]> {
