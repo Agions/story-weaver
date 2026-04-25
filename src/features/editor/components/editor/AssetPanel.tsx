@@ -10,13 +10,10 @@ import {
   Tabs,
   Button,
   Upload,
-  Card,
-  List,
   Input,
   Empty,
   Tooltip,
   Dropdown,
-  Typography,
   Tag,
   MenuProps
 } from 'antd';

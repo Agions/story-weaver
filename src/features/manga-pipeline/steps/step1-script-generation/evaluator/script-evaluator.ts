@@ -22,8 +22,6 @@ export interface EvaluationIssue {
 
 export function evaluateScript(script: Script): EvaluationResult {
   const issues: EvaluationIssue[] = [];
-  const _suggestions: string[] = [];
-
   // 1. 对话自然度评估
   const dialogueNaturalness = evaluateDialogueNaturalness(script, issues, suggestions);
 

@@ -61,7 +61,7 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
   onZoomChange
 }) => {
   const timelineRef = useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
+  // const [isDragging, setIsDragging] = useState(false);
   const [localZoom, setLocalZoom] = useState(zoom);
 
   // 格式化时间
@@ -234,10 +234,13 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
           </div>
 
           {/* 轨道区域 */}
-          <div 
+          <div
             className={styles.tracks}
             ref={timelineRef}
             onClick={handleTimelineClick}
+            role="presentation"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleTimelineClick(e); }}
           >
             {/* 视频轨道 */}
             <div className={styles.track}>
