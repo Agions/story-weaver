@@ -523,10 +523,11 @@ interface ButtonProps {
   size?: 'small' | 'middle' | 'large';
   icon?: React.ReactNode;
   shape?: 'default' | 'circle' | 'round';
-  block?:boolean;
+  block?: boolean;
   className?: string;
   children?: React.ReactNode;
   disabled?: boolean;
+  loading?: boolean;
   htmlType?: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
   style?: React.CSSProperties;
@@ -542,6 +543,7 @@ const Button: React.FC<ButtonProps> = ({
   className,
   children,
   disabled,
+  loading,
   ...props
 }) => {
   const sizeClass = size === 'small' ? 'h-8 px-3 text-xs' : size === 'large' ? 'h-11 px-6 text-base' : 'h-10 px-4 text-sm';
@@ -555,7 +557,7 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <button
       type={props.htmlType || 'button'}
-      disabled={disabled}
+      disabled={disabled || loading}
       className={cn(
         "inline-flex items-center justify-center gap-2 font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
         sizeClass,
@@ -566,7 +568,7 @@ const Button: React.FC<ButtonProps> = ({
       )}
       {...props}
     >
-      {icon && <span>{icon}</span>}
+      {loading ? <span className="animate-spin">⟳</span> : icon && <span>{icon}</span>}
       {children}
     </button>
   );
@@ -912,6 +914,8 @@ interface AntdCardProps {
   children?: React.ReactNode;
   size?: 'small' | 'default';
   extra?: React.ReactNode;
+  title?: React.ReactNode;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
 }
 
 const AntdCardBase: React.FC<AntdCardProps> = ({
@@ -922,12 +926,20 @@ const AntdCardBase: React.FC<AntdCardProps> = ({
   children,
   size,
   extra,
+  title,
+  onClick,
 }) => (
-  <ShadcnCard className={cn(hoverable && "hover:shadow-md transition-shadow cursor-pointer", className)}>
+  <ShadcnCard className={cn(hoverable && "hover:shadow-md transition-shadow cursor-pointer", className)} onClick={onClick}>
+    {title && (
+      <div className="flex items-center justify-between px-6 py-4 border-b">
+        <div className="flex items-center gap-2">{title}</div>
+        {extra && <div>{extra}</div>}
+      </div>
+    )}
     {cover && <div className="p-4">{cover}</div>}
     <div className="p-4">
       {children}
-      {extra && <div className="mt-2">{extra}</div>}
+      {extra && !title && <div className="mt-2">{extra}</div>}
     </div>
     {actions && actions.length > 0 && (
       <div className="flex border-t divide-x">

@@ -23,16 +23,13 @@ import {
   Modal,
   Row,
   Col,
-  Tabs,
-  TabPane,
+} from '@/components/ui/antd-compat';
+import { Tabs, TabPane } from '@/components/ui/tabs';
+import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-} from '@/components/ui/antd-compat';
-import {
-  DropdownMenu as DropdownMenuRoot,
-  DropdownMenu as DMRoot,
 } from '@/components/ui/dropdown-menu';
 
 // 导入组件和服务
@@ -50,8 +47,8 @@ interface VideoSegment {
   content?: string;
 }
 
-const { Content } = (Layout as any);
-const { TabPane: AntTabPane } = Tabs as any;
+const Layout = { Content: 'div', Header: 'header', Sider: 'aside' } as any;
+const { Content } = Layout;
 
 const VideoEditor: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
