@@ -3,14 +3,10 @@
  * 统一页面布局结构，提供标准化的页面框架
  */
 
-import { Card, Row, Col, Typography } from 'antd';
 import React from 'react';
-
-import { useTheme } from '@/context/ThemeContext';
+import { Card } from '@/shared/components/ui/Card';
 
 import styles from './PageContainer.module.less';
-
-const { Title, Paragraph, Text } = Typography;
 
 // ============================================
 // 类型定义
@@ -119,8 +115,6 @@ export const PageContainer: React.FC<PageContainerProps> = ({
   compact = false,
   padding,
 }) => {
-  const { isDarkMode } = useTheme();
-
   const containerStyle: React.CSSProperties = {};
   if (padding !== undefined && padding !== 'none') {
     containerStyle.padding = typeof padding === 'number' ? `${padding}px` : padding;
@@ -133,15 +127,15 @@ export const PageContainer: React.FC<PageContainerProps> = ({
           <div className={styles.headerLeft}>
             {title && (
               typeof title === 'string' ? (
-                <Title level={3} className={styles.title}>{title}</Title>
+                <h3 className={styles.title}>{title}</h3>
               ) : (
                 <div className={styles.title}>{title}</div>
               )
             )}
             {description && (
-              <Paragraph type="secondary" className={styles.description}>
+              <p className={styles.description}>
                 {description}
-              </Paragraph>
+              </p>
             )}
           </div>
           {extra && <div className={styles.extra}>{extra}</div>}
@@ -157,8 +151,8 @@ export const PageContainer: React.FC<PageContainerProps> = ({
   if (showCard) {
     return (
       <Card
-        className={`${styles.container} ${isDarkMode ? styles.dark : ''} ${compact ? styles.compact : ''} ${className || ''}`}
-        bordered={false}
+        className={`${styles.container} ${compact ? styles.compact : ''} ${className || ''}`}
+        borderless
       >
         {animated ? <div className={styles.animated}>{content}</div> : content}
       </Card>
@@ -166,7 +160,7 @@ export const PageContainer: React.FC<PageContainerProps> = ({
   }
 
   return (
-    <div className={`${styles.container} ${isDarkMode ? styles.dark : ''} ${compact ? styles.compact : ''} ${className || ''}`}>
+    <div className={`${styles.container} ${compact ? styles.compact : ''} ${className || ''}`}>
       {animated ? <div className={styles.animated}>{content}</div> : content}
     </div>
   );
@@ -202,9 +196,9 @@ export const PageSection: React.FC<PageSectionProps> = ({
         extra={!title && extra ? extra : undefined}
       >
         {description && (
-          <Paragraph type="secondary" className={styles.sectionDesc}>
+          <p className={styles.sectionDesc}>
             {description}
-          </Paragraph>
+          </p>
         )}
         {children}
         {footer && <div className={styles.sectionFooter}>{footer}</div>}
@@ -216,14 +210,14 @@ export const PageSection: React.FC<PageSectionProps> = ({
     <div className={`${styles.sectionPlain} ${bordered ? styles.bordered : ''} ${className || ''}`}>
       {(title || extra) && (
         <div className={styles.sectionHeader}>
-          {title && <Text strong>{title}</Text>}
+          {title && <span style={{ fontWeight: 600 }}>{title}</span>}
           {extra && <span className={styles.sectionExtra}>{extra}</span>}
         </div>
       )}
       {description && (
-        <Paragraph type="secondary" className={styles.sectionDesc}>
+        <p className={styles.sectionDesc}>
           {description}
-        </Paragraph>
+        </p>
       )}
       {children}
       {footer && <div className={styles.sectionFooter}>{footer}</div>}
@@ -257,10 +251,23 @@ export const StatisticCard: React.FC<StatisticCardProps> = ({
     info: '#42A5F5',
   };
 
+  if (loading) {
+    return (
+      <Card className={`${styles.statCard} ${className || ''}`}>
+        <div className={styles.statContent}>
+          <div className={styles.skeletonBlock} style={{ width: 32, height: 32, borderRadius: '50%' }} />
+          <div className={styles.statInfo}>
+            <div className={styles.skeletonBlock} style={{ width: 60, height: 14 }} />
+            <div className={styles.skeletonBlock} style={{ width: 80, height: 28, marginTop: 8 }} />
+          </div>
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <Card
       className={`${styles.statCard} ${onClick ? styles.clickable : ''} ${className || ''}`}
-      loading={loading}
       onClick={onClick}
       hoverable={!!onClick}
     >
@@ -274,12 +281,12 @@ export const StatisticCard: React.FC<StatisticCardProps> = ({
           </div>
         )}
         <div className={styles.statInfo}>
-          {title && <Text type="secondary">{title}</Text>}
+          {title && <span style={{ color: 'rgba(0,0,0,0.45)' }}>{title}</span>}
           <div className={styles.statValue}>{value}</div>
           {trend !== 'none' && trendValue && (
-            <Text className={styles.statTrend} style={{ color: trend === 'up' ? '#52c41a' : '#ff4d4f' }}>
+            <span style={{ color: trend === 'up' ? '#52c41a' : '#ff4d4f' }}>
               {trend === 'up' ? '↑' : '↓'} {trendValue}
-            </Text>
+            </span>
           )}
         </div>
       </div>
@@ -308,7 +315,6 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   return (
     <Card
       className={`${styles.actionCard} ${clickable ? styles.clickable : ''} ${className || ''}`}
-      loading={loading}
       hoverable={clickable}
       onClick={onClick}
     >
@@ -349,14 +355,23 @@ export const GridStatistic: React.FC<GridStatisticProps> = ({
   gutter = [16, 16],
   className,
 }) => {
+  const colSpan = Math.floor(24 / columns);
+  
   return (
-    <Row gutter={gutter} className={className}>
+    <div 
+      className={className}
+      style={{ 
+        display: 'grid', 
+        gridTemplateColumns: `repeat(${columns}, 1fr)`,
+        gap: `${gutter[1]}px`
+      }}
+    >
       {items.map((item, index) => (
-        <Col key={index} xs={24} sm={12} md={24 / columns}>
+        <div key={index}>
           <StatisticCard {...item} />
-        </Col>
+        </div>
       ))}
-    </Row>
+    </div>
   );
 };
 

@@ -1,11 +1,10 @@
 /**
  * Step 5: 场景渲染
  */
-import { Card, Typography, Space, Button } from 'antd';
+import { CheckCircle } from 'lucide-react';
 import React, { lazy } from 'react';
-
-const { Title, Paragraph } = Typography;
-import { CheckCircleOutlined } from '@ant-design/icons';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
 
@@ -29,25 +28,30 @@ const StepContentRender: React.FC<StepContentRenderProps> = ({
   onNext,
 }) => (
   <Card className={styles.stepCard}>
-    <Title level={4}>
-      <CheckCircleOutlined /> 场景渲染
-    </Title>
-    <Paragraph>
-      渲染漫画场景，包括背景、道具和光影效果。
-    </Paragraph>
-    <div className={styles.renderCenterContainer}>
-      <RenderCenter
-        frames={storyboardFrames}
-        projectId={projectId}
-        onApplyRenderedFrame={onApplyRenderedFrame}
-      />
-    </div>
-    <div className={styles.stepActions}>
-      <Space>
-        <Button onClick={onPrev}>上一步</Button>
-        <Button type="primary" onClick={onNext}>下一步</Button>
-      </Space>
-    </div>
+    <CardHeader>
+      <CardTitle className="flex items-center gap-2">
+        <CheckCircle className="h-5 w-5" />
+        场景渲染
+      </CardTitle>
+    </CardHeader>
+    <CardContent>
+      <p className="text-muted-foreground mb-4">
+        渲染漫画场景，包括背景、道具和光影效果。
+      </p>
+      <div className={styles.renderCenterContainer}>
+        <RenderCenter
+          frames={storyboardFrames}
+          projectId={projectId}
+          onApplyRenderedFrame={onApplyRenderedFrame}
+        />
+      </div>
+      <div className={styles.stepActions}>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={onPrev}>上一步</Button>
+          <Button variant="default" onClick={onNext}>下一步</Button>
+        </div>
+      </div>
+    </CardContent>
   </Card>
 );
 

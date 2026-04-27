@@ -1,11 +1,11 @@
 /**
  * Step 3: 分镜设计
  */
-import { Card, Typography, Space, Button, message } from 'antd';
+import { Image } from 'lucide-react';
 import React, { lazy } from 'react';
-
-const { Title, Paragraph } = Typography;
-import { PictureOutlined } from '@ant-design/icons';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { toast } from '@/shared/components/ui/Toast';
 
 import type { StoryboardVersion, VersionDiffSummary, FrameComment } from '@/core/services';
 import type { StoryAnalysis } from '@/core/types';
@@ -72,59 +72,65 @@ const StepContentStoryboard: React.FC<StepContentStoryboardProps> = ({
   onNext,
 }) => (
   <Card className={styles.stepCard}>
-    <Title level={4}>
-      <PictureOutlined /> 分镜设计
-    </Title>
-    <Paragraph>
-      设计漫画分镜，确定每个场景的构图和镜头。
-    </Paragraph>
-    <div className={styles.storyboardContainer}>
-      <div className={styles.storyboardActions}>
-        <Button
-          onClick={() => {
-            if (!storyAnalysis) {
-              message.warning('请先完成 AI 结构化解析');
-              return;
-            }
-            onBuildDraft();
-            message.success('已根据解析结果生成分镜草案');
-          }}
-        >
-          生成分镜草案
-        </Button>
+    <CardHeader>
+      <CardTitle className="flex items-center gap-2">
+        <Image className="h-5 w-5" />
+        分镜设计
+      </CardTitle>
+    </CardHeader>
+    <CardContent>
+      <p className="text-muted-foreground mb-4">
+        设计漫画分镜，确定每个场景的构图和镜头。
+      </p>
+      <div className={styles.storyboardContainer}>
+        <div className={styles.storyboardActions}>
+          <Button
+            variant="outline"
+            onClick={() => {
+              if (!storyAnalysis) {
+                toast.warning('请先完成 AI 结构化解析');
+                return;
+              }
+              onBuildDraft();
+              toast.success('已根据解析结果生成分镜草案');
+            }}
+          >
+            生成分镜草案
+          </Button>
+        </div>
+        <StoryboardEditor
+          key={`${storyboardFrames.length}-${storyboardFrames[0]?.id || 'none'}`}
+          initialFrames={storyboardFrames}
+          focusFrameId={focusFrameId}
+          onChange={onFramesChange}
+          onFrameSelect={onFrameSelect}
+        />
+        <CollaborationPanel
+          projectId={projectId}
+          selectedFrame={selectedFrame}
+          commentDraft={commentDraft}
+          versionLabel={versionLabel}
+          compareLeftVersionId={compareLeftVersionId}
+          compareRightVersionId={compareRightVersionId}
+          versionDiff={versionDiff}
+          storyboardVersions={storyboardVersions}
+          onCommentDraftChange={onCommentDraftChange}
+          onAddComment={onAddComment}
+          onSaveVersion={onSaveVersion}
+          onCompareVersions={onCompareVersions}
+          onRollback={onRollback}
+          onLeftVersionChange={onLeftVersionChange}
+          onRightVersionChange={onRightVersionChange}
+          onVersionLabelChange={onVersionLabelChange}
+        />
       </div>
-      <StoryboardEditor
-        key={`${storyboardFrames.length}-${storyboardFrames[0]?.id || 'none'}`}
-        initialFrames={storyboardFrames}
-        focusFrameId={focusFrameId}
-        onChange={onFramesChange}
-        onFrameSelect={onFrameSelect}
-      />
-      <CollaborationPanel
-        projectId={projectId}
-        selectedFrame={selectedFrame}
-        commentDraft={commentDraft}
-        versionLabel={versionLabel}
-        compareLeftVersionId={compareLeftVersionId}
-        compareRightVersionId={compareRightVersionId}
-        versionDiff={versionDiff}
-        storyboardVersions={storyboardVersions}
-        onCommentDraftChange={onCommentDraftChange}
-        onAddComment={onAddComment}
-        onSaveVersion={onSaveVersion}
-        onCompareVersions={onCompareVersions}
-        onRollback={onRollback}
-        onLeftVersionChange={onLeftVersionChange}
-        onRightVersionChange={onRightVersionChange}
-        onVersionLabelChange={onVersionLabelChange}
-      />
-    </div>
-    <div className={styles.stepActions}>
-      <Space>
-        <Button onClick={onPrev}>上一步</Button>
-        <Button type="primary" onClick={onNext}>下一步</Button>
-      </Space>
-    </div>
+      <div className={styles.stepActions}>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={onPrev}>上一步</Button>
+          <Button variant="default" onClick={onNext}>下一步</Button>
+        </div>
+      </div>
+    </CardContent>
   </Card>
 );
 

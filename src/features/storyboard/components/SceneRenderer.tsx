@@ -1,82 +1,78 @@
 import {
-  PlusOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  CopyOutlined,
-  EnvironmentOutlined,
-  BulbOutlined,
-  CloudOutlined,
-  SunOutlined,
-  MoonOutlined,
-  ThunderboltOutlined,
-  FireOutlined,
-  HeartOutlined,
-  FrownOutlined,
-  StarOutlined,
-  RocketOutlined,
-  HomeOutlined,
-  BankOutlined,
-  CarOutlined,
-  CoffeeOutlined,
-} from '@ant-design/icons';
-import {
-  Card,
-  List,
-  Button,
-  Input,
-  Select,
-  Typography,
-  Space,
-  Tag,
-  Empty,
-  Popconfirm,
-  Divider,
-  Slider,
-  Tooltip,
-  Collapse,
-  Row,
-  Col,
-} from 'antd';
+  Plus,
+  Trash2,
+  Edit,
+  Copy,
+  MapPin,
+  Lightbulb,
+  Cloud,
+  Sun,
+  Moon,
+  Zap,
+  Flame,
+  Heart,
+  Frown,
+  Star,
+  Rocket,
+  Home,
+  Building,
+  Car,
+  Coffee,
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input, Textarea } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Text, Title } from '@/components/ui/typography';
+import { Tag } from '@/components/ui/tag';
+import { Empty } from '@/components/ui/empty';
+import { Popconfirm } from '@/components/ui/confirm-dialog';
+import { Separator } from '@/components/ui/separator';
+import { Slider } from '@/components/ui/slider';
+import { Tooltip as TooltipRoot, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { List, ListItem } from '@/components/ui/list';
 import React, { useState } from 'react';
 
 import styles from './SceneRenderer.module.less';
 
-const { Title, Text, Paragraph } = Typography;
-const { TextArea } = Input;
+// AntD Typography shims
+const Paragraph = ({ children, ...props }: any) => (
+  <p className="text-sm" {...props}>{children}</p>
+);
 
 // 场景类型选项
 const SCENE_TYPE_OPTIONS = [
-  { value: 'indoor', label: '室内', icon: <HomeOutlined /> },
-  { value: 'outdoor', label: '室外', icon: <BankOutlined /> },
-  { value: 'fantasy', label: '幻想', icon: <StarOutlined /> },
-  { value: 'future', label: '未来', icon: <RocketOutlined /> },
-  { value: 'urban', label: '城市', icon: <CarOutlined /> },
-  { value: 'nature', label: '自然', icon: <CloudOutlined /> },
-  { value: 'interior', label: '内景', icon: <CoffeeOutlined /> },
+  { value: 'indoor', label: '室内', icon: <Home /> },
+  { value: 'outdoor', label: '室外', icon: <Building /> },
+  { value: 'fantasy', label: '幻想', icon: <Star /> },
+  { value: 'future', label: '未来', icon: <Rocket /> },
+  { value: 'urban', label: '城市', icon: <Car /> },
+  { value: 'nature', label: '自然', icon: <Cloud /> },
+  { value: 'interior', label: '内景', icon: <Coffee /> },
 ];
 
 // 氛围选项
 const ATMOSPHERE_OPTIONS = [
-  { value: 'warm', label: '温馨', color: '#fa8c16', icon: <HeartOutlined /> },
-  { value: 'horror', label: '恐怖', color: '#000000', icon: <FrownOutlined /> },
-  { value: 'romantic', label: '浪漫', color: '#eb2f96', icon: <HeartOutlined /> },
-  { value: 'battle', label: '战斗', color: '#f5222d', icon: <ThunderboltOutlined /> },
-  { value: 'mysterious', label: '神秘', color: '#722ed1', icon: <StarOutlined /> },
-  { value: 'peaceful', label: '平静', color: '#52c41a', icon: <CloudOutlined /> },
-  { value: 'sad', label: '悲伤', color: '#595959', icon: <FrownOutlined /> },
-  { value: 'joyful', label: '欢乐', color: '#faad14', icon: <StarOutlined /> },
+  { value: 'warm', label: '温馨', color: '#fa8c16', icon: <Heart /> },
+  { value: 'horror', label: '恐怖', color: '#000000', icon: <Frown /> },
+  { value: 'romantic', label: '浪漫', color: '#eb2f96', icon: <Heart /> },
+  { value: 'battle', label: '战斗', color: '#f5222d', icon: <Zap /> },
+  { value: 'mysterious', label: '神秘', color: '#722ed1', icon: <Star /> },
+  { value: 'peaceful', label: '平静', color: '#52c41a', icon: <Cloud /> },
+  { value: 'sad', label: '悲伤', color: '#595959', icon: <Frown /> },
+  { value: 'joyful', label: '欢乐', color: '#faad14', icon: <Star /> },
 ];
 
 // 光照选项
 const LIGHTING_OPTIONS = [
-  { value: 'natural', label: '自然光', icon: <SunOutlined /> },
-  { value: 'artificial', label: '灯光', icon: <BulbOutlined /> },
-  { value: 'moonlight', label: '月光', icon: <MoonOutlined /> },
-  { value: 'firelight', label: '火光', icon: <FireOutlined /> },
-  { value: 'neon', label: '霓虹', icon: <ThunderboltOutlined /> },
-  { value: 'candlelight', label: '烛光', icon: <FireOutlined /> },
-  { value: 'flash', label: '闪光', icon: <ThunderboltOutlined /> },
-  { value: 'shadow', label: '阴影', icon: <CloudOutlined /> },
+  { value: 'natural', label: '自然光', icon: <Sun /> },
+  { value: 'artificial', label: '灯光', icon: <Lightbulb /> },
+  { value: 'moonlight', label: '月光', icon: <Moon /> },
+  { value: 'firelight', label: '火光', icon: <Flame /> },
+  { value: 'neon', label: '霓虹', icon: <Zap /> },
+  { value: 'candlelight', label: '烛光', icon: <Flame /> },
+  { value: 'flash', label: '闪光', icon: <Zap /> },
+  { value: 'shadow', label: '阴影', icon: <Cloud /> },
 ];
 
 // 天气选项
@@ -267,7 +263,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
   // 获取场景类型图标
   const getSceneTypeIcon = (type: string) => {
     const option = SCENE_TYPE_OPTIONS.find((opt) => opt.value === type);
-    return option?.icon || <EnvironmentOutlined />;
+    return option?.icon || <MapPin />;
   };
 
   // 获取氛围颜色
@@ -279,7 +275,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
   // 获取光照图标
   const getLightingIcon = (lighting: string) => {
     const option = LIGHTING_OPTIONS.find((opt) => opt.value === lighting);
-    return option?.icon || <BulbOutlined />;
+    return option?.icon || <Lightbulb />;
   };
 
   return (
@@ -292,7 +288,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
           </Title>
           <Button
             type="primary"
-            icon={<PlusOutlined />}
+            icon={<Plus />}
             size="small"
             onClick={addScene}
           >
@@ -337,7 +333,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
                         <Button
                           type="text"
                           size="small"
-                          icon={<EditOutlined />}
+                          icon={<Edit />}
                           onClick={(e) => {
                             e.stopPropagation();
                             handleSceneSelect(scene);
@@ -348,7 +344,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
                         <Button
                           type="text"
                           size="small"
-                          icon={<CopyOutlined />}
+                          icon={<Copy />}
                           onClick={(e) => {
                             e.stopPropagation();
                             duplicateScene(scene);
@@ -368,7 +364,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
                           type="text"
                           size="small"
                           danger
-                          icon={<DeleteOutlined />}
+                          icon={<Trash2 />}
                           onClick={(e) => e.stopPropagation()}
                         />
                       </Popconfirm>
@@ -408,7 +404,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
                 <img src={selectedScene.imageUrl} alt={selectedScene.name} />
               ) : (
                 <div className={styles.previewPlaceholder}>
-                  <EnvironmentOutlined style={{ fontSize: 64, color: '#d9d9d9' }} />
+                  <MapPin style={{ fontSize: 64, color: '#d9d9d9' }} />
                   <Text type="secondary">场景预览区域</Text>
                   <Paragraph type="secondary" style={{ marginTop: 8, textAlign: 'center' }}>
                     {selectedScene.backgroundDescription || '请输入背景描述'}
@@ -421,19 +417,19 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
               <Row gutter={16}>
                 <Col span={8}>
                   <div className={styles.infoItem}>
-                    <BulbOutlined />
+                    <Lightbulb />
                     <Text>{LIGHTING_OPTIONS.find((l) => l.value === selectedScene.lighting)?.label || selectedScene.lighting}</Text>
                   </div>
                 </Col>
                 <Col span={8}>
                   <div className={styles.infoItem}>
-                    <CloudOutlined />
+                    <Cloud />
                     <Text>{WEATHER_OPTIONS.find((w) => w.value === selectedScene.weather)?.label || selectedScene.weather}</Text>
                   </div>
                 </Col>
                 <Col span={8}>
                   <div className={styles.infoItem}>
-                    <SunOutlined />
+                    <Sun />
                     <Text>{selectedScene.timeOfDay === 'day' ? '白天' : selectedScene.timeOfDay === 'night' ? '夜晚' : selectedScene.timeOfDay}</Text>
                   </div>
                 </Col>
@@ -489,7 +485,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
                             okText="确定"
                             cancelText="取消"
                           >
-                            <DeleteOutlined
+                            <Trash2
                               style={{ marginLeft: 4, cursor: 'pointer' }}
                               onClick={(e) => e.stopPropagation()}
                             />
@@ -655,7 +651,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
 
                 <Button
                   type="dashed"
-                  icon={<PlusOutlined />}
+                  icon={<Plus />}
                   onClick={() => addProp(selectedScene.id)}
                   block
                   style={{ marginBottom: 12 }}
@@ -676,7 +672,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
                           okText="确定"
                           cancelText="取消"
                         >
-                          <DeleteOutlined
+                          <Trash2
                             style={{ color: '#ff4d4f', cursor: 'pointer' }}
                             onClick={(e) => e.stopPropagation()}
                           />

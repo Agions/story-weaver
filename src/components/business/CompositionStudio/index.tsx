@@ -1,40 +1,51 @@
 
 import {
-  PlayCircleOutlined,
-  PauseCircleOutlined,
-  SettingOutlined,
-  VideoCameraOutlined,
-  FastForwardOutlined,
-  PlusOutlined,
-  DeleteOutlined,
-  ExportOutlined,
-  KeyOutlined,
-  BgColorsOutlined,
-  EditOutlined,
-} from '@ant-design/icons';
-import {
-  Card,
-  Button,
-  Table,
-  Form,
-  Select,
-  InputNumber,
-  Slider,
-  Space,
-  Divider,
-  Modal,
-  message,
-  Empty,
-  Tooltip,
-  Row,
-  Col,
-  Tag,
-  Timeline,
-  Typography,
-} from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+  PlayCircle,
+  PauseCircle,
+  Settings,
+  Video,
+  FastForward,
+  Plus,
+  Trash2,
+  Download,
+  Key,
+  Palette,
+  Edit,
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+} from '@/components/ui/table';
+import { Form, FormItem } from '@/components/ui/antd-compat';
+import { Select } from '@/components/ui/antd-compat';
+import { SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { InputNumber } from '@/components/ui/antd-compat';
+import { Slider } from '@/components/ui/slider';
+import { Space } from '@/components/ui/antd-compat';
+import { Divider } from '@/components/ui/antd-compat';
+import { Modal } from '@/components/ui/antd-compat';
+import { Empty } from '@/components/ui/empty';
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from '@/components/ui/tooltip';
+import { Row, Col } from '@/components/ui/antd-compat';
+import { Tag } from '@/components/ui/tag';
+import { Timeline, TimelineItem } from '@/components/ui/timeline';
+import { Text } from '@/components/ui/typography';
 
 import type {
   StoryboardFrame,
@@ -45,9 +56,6 @@ import type {
 } from '@/core/types';
 
 import styles from './index.module.less';
-
-const { Option } = Select;
-const { Text } = Typography;
 
 interface CompositionStudioProps {
   frames: StoryboardFrame[];
@@ -199,7 +207,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
     });
 
     setKeyframeModalVisible(false);
-    message.success('关键帧已保存');
+    toast.success('关键帧已保存');
   };
 
   // 添加关键帧 - reserved for future use
@@ -244,7 +252,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
 
     setFrameModalVisible(false);
     setEditingFrameId(null);
-    message.success('动画配置已保存');
+    toast.success('动画配置已保存');
   };
 
   // 重置帧
@@ -278,7 +286,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
       };
     });
 
-    message.success('已重置为默认');
+    toast.success('已重置为默认');
   };
 
   // 打开全局设置
@@ -299,7 +307,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
       updatedAt: new Date().toISOString(),
     }));
     setGlobalModalVisible(false);
-    message.success('全局设置已保存');
+    toast.success('全局设置已保存');
   };
 
   // 预览转场效果
@@ -336,7 +344,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
     a.click();
     URL.revokeObjectURL(url);
     
-    message.success('合成数据已导出');
+    toast.success('合成数据已导出');
   };
 
   // 播放预览
@@ -479,14 +487,14 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
         <Space>
           <Button 
             size="small" 
-            icon={<EditOutlined />}
+            icon={<Edit />}
             onClick={() => handleEditFrame(record.frameId)}
           >
             编辑
           </Button>
           <Button 
             size="small" 
-            icon={<KeyOutlined />}
+            icon={<Key />}
             onClick={() => handleOpenKeyframes(record.frameId)}
           >
             关键帧
@@ -509,26 +517,26 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
       <Card
         title={
           <Space>
-            <VideoCameraOutlined />
+            <Video />
             <span>动态合成工作室</span>
           </Space>
         }
         extra={
           <Space>
             <Button 
-              icon={<SettingOutlined />} 
+              icon={<Settings />} 
               onClick={handleOpenGlobalSettings}
             >
               全局设置
             </Button>
             <Button 
-              icon={<BgColorsOutlined />}
+              icon={<Palette />}
               onClick={() => setPreviewModalVisible(true)}
             >
               效果预览
             </Button>
             <Button 
-              icon={<ExportOutlined />} 
+              icon={<Download />} 
               onClick={handleExportComposition}
               disabled={composition.frames.length === 0}
             >
@@ -537,7 +545,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
             {!isPlaying ? (
               <Button 
                 type="primary" 
-                icon={<PlayCircleOutlined />} 
+                icon={<PlayCircle />} 
                 onClick={handlePlay}
                 disabled={frames.length === 0}
               >
@@ -545,14 +553,14 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
               </Button>
             ) : (
               <Button 
-                icon={<PauseCircleOutlined />} 
+                icon={<PauseCircle />} 
                 onClick={handlePause}
               >
                 暂停
               </Button>
             )}
             <Button 
-              icon={<FastForwardOutlined />} 
+              icon={<FastForward />} 
               onClick={handleNext}
               disabled={currentFrameIndex >= frames.length - 1}
             >
@@ -618,15 +626,15 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
                 <Col span={12}>
                   <Space>
                     <Text>速度:</Text>
-                    <Select 
-                      value={playbackSpeed} 
-                      onChange={setPlaybackSpeed} 
+                    <Select
+                      value={String(playbackSpeed)}
+                      onChange={(v) => setPlaybackSpeed(parseFloat(v))}
                       style={{ width: 80 }}
                     >
-                      <Option value={0.5}>0.5x</Option>
-                      <Option value={1}>1x</Option>
-                      <Option value={1.5}>1.5x</Option>
-                      <Option value={2}>2x</Option>
+                      <SelectItem value="0.5">0.5x</SelectItem>
+                      <SelectItem value="1">1x</SelectItem>
+                      <SelectItem value="1.5">1.5x</SelectItem>
+                      <SelectItem value="2">2x</SelectItem>
                     </Select>
                   </Space>
                 </Col>
@@ -664,14 +672,78 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
 
               <Divider orientation="left">动画列表</Divider>
               <div className={styles.tableContainer}>
-                <Table
-                  rowKey="frameId"
-                  columns={columns}
-                  dataSource={composition.frames}
-                  pagination={false}
-                  size="small"
-                  scroll={{ y: 300 }}
-                />
+                <Table className="w-full">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead style={{ width: 150 }}>分镜</TableHead>
+                      <TableHead style={{ width: 120 }}>镜头运动</TableHead>
+                      <TableHead style={{ width: 80 }}>缩放</TableHead>
+                      <TableHead style={{ width: 80 }}>旋转</TableHead>
+                      <TableHead style={{ width: 80 }}>透明度</TableHead>
+                      <TableHead style={{ width: 80 }}>关键帧</TableHead>
+                      <TableHead style={{ width: 150 }}>操作</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {composition.frames.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">暂无动画配置</TableCell>
+                      </TableRow>
+                    ) : (
+                      composition.frames.map((record) => {
+                        const frame = frames.find(f => f.id === record.frameId);
+                        const type = record.cameraMotion?.type;
+                        return (
+                          <TableRow key={record.frameId}>
+                            <TableCell>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <span>{frame?.title || record.frameId}</span>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>{frame?.sceneDescription}</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            </TableCell>
+                            <TableCell>
+                              <Tag color={type ? 'blue' : 'default'}>
+                                {type || '静止'}
+                              </Tag>
+                            </TableCell>
+                            <TableCell>{((record.zoom || 1) * 100).toFixed(0)}%</TableCell>
+                            <TableCell>{(record.rotation || 0).toFixed(0)}°</TableCell>
+                            <TableCell>{((record.opacity || 1) * 100).toFixed(0)}%</TableCell>
+                            <TableCell>
+                              <Tag color={record.keyframes?.length ? 'green' : 'default'}>
+                                {record.keyframes?.length || 0}
+                              </Tag>
+                            </TableCell>
+                            <TableCell>
+                              <Space>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleEditFrame(record.frameId)}
+                                >
+                                  编辑
+                                </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => handleOpenKeyframes(record.frameId)}
+                                >
+                                  关键帧
+                                </Button>
+                              </Space>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })
+                    )}
+                  </TableBody>
+                </Table>
               </div>
             </div>
           </Col>
@@ -721,23 +793,24 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
             ) : (
               <Timeline>
                 {keyframes.map((kf, idx) => (
-                  <Timeline.Item 
+                  <TimelineItem
                     key={idx}
                     dot={<Tag color="blue">{kf.time}s</Tag>}
                     color="blue"
                   >
                     <Space>
-                      <Text strong>{kf.property}</Text>
-                      <Text>= {kf.value}</Text>
+                      <span className="font-semibold">{kf.property}</span>
+                      <span>= {kf.value}</span>
                       <Text type="secondary">({kf.easing})</Text>
-                      <Button 
-                        size="small" 
-                        danger 
-                        icon={<DeleteOutlined />}
+                      <Button
+                        size="sm"
+                        variant="destructive"
                         onClick={() => handleDeleteKeyframe(idx)}
-                      />
+                      >
+                        <Trash2 />
+                      </Button>
                     </Space>
-                  </Timeline.Item>
+                  </TimelineItem>
                 ))}
               </Timeline>
             )}
@@ -758,11 +831,11 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
             <Col span={8}>
               <Form.Item label="属性">
                 <Select placeholder="选择属性">
-                  <Option value="zoom">缩放</Option>
-                  <Option value="rotation">旋转</Option>
-                  <Option value="opacity">透明度</Option>
-                  <Option value="pan-x">水平平移</Option>
-                  <Option value="pan-y">垂直平移</Option>
+                  <SelectItem value="zoom">缩放</SelectItem>
+                  <SelectItem value="rotation">旋转</SelectItem>
+                  <SelectItem value="opacity">透明度</SelectItem>
+                  <SelectItem value="pan-x">水平平移</SelectItem>
+                  <SelectItem value="pan-y">垂直平移</SelectItem>
                 </Select>
               </Form.Item>
             </Col>
@@ -772,7 +845,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
               </Form.Item>
             </Col>
           </Row>
-          <Button type="dashed" block icon={<PlusOutlined />}>
+          <Button type="dashed" block icon={<Plus />}>
             添加关键帧
           </Button>
         </div>
@@ -876,7 +949,7 @@ const FrameEditForm: React.FC<FrameEditFormProps> = ({ frameId: _frameId, initia
           <Form.Item name="cameraMotion" label="运动类型">
             <Select placeholder="选择镜头运动">
               {CAMERA_MOTION_OPTIONS.map(opt => (
-                <Option key={opt.value} value={opt.value}>{opt.label}</Option>
+                <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
               ))}
             </Select>
           </Form.Item>
@@ -985,7 +1058,7 @@ const GlobalSettingsForm: React.FC<GlobalSettingsFormProps> = ({ initialValues, 
           <Form.Item name={['defaultTransition', 'effect']} label="转场效果">
             <Select>
               {TRANSITION_OPTIONS.map(opt => (
-                <Option key={opt.value} value={opt.value}>{opt.label}</Option>
+                <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
               ))}
             </Select>
           </Form.Item>
@@ -1000,10 +1073,10 @@ const GlobalSettingsForm: React.FC<GlobalSettingsFormProps> = ({ initialValues, 
         <Col span={24}>
           <Form.Item name={['defaultTransition', 'easing']} label="缓动函数">
             <Select>
-              <Option value="linear">线性</Option>
-              <Option value="ease-in">渐快</Option>
-              <Option value="ease-out">渐慢</Option>
-              <Option value="ease-in-out">先慢后快再慢</Option>
+              <SelectItem value="linear">线性</SelectItem>
+              <SelectItem value="ease-in">渐快</SelectItem>
+              <SelectItem value="ease-out">渐慢</SelectItem>
+              <SelectItem value="ease-in-out">先慢后快再慢</SelectItem>
             </Select>
           </Form.Item>
         </Col>
@@ -1011,11 +1084,6 @@ const GlobalSettingsForm: React.FC<GlobalSettingsFormProps> = ({ initialValues, 
 
       <Divider orientation="left">逐段转场配置（可选）</Divider>
       <Form.Item name="transitions" label="分镜间转场">
-        <Select 
-          mode="tags" 
-          placeholder="格式：start-end:effect:duration，如：0-1:fade:0.5"
-          style={{ width: '100%' }}
-        />
         <Text type="secondary" style={{ display: 'block', marginTop: 8 }}>
           可指定特定分镜间的转场效果，留空则使用默认转场
         </Text>

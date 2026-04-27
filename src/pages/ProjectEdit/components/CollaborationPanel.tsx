@@ -2,10 +2,12 @@
  * 协作面板：镜头评论 + 版本管理
  * 用于 Step 3 分镜设计
  */
-import { Input, Button, List, Select, Space, Alert, Typography } from 'antd';
 import React from 'react';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Alert } from '@/components/ui/alert';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-const { Title } = Typography;
 import type { FrameComment, StoryboardVersion, VersionDiffSummary } from '@/core/services';
 import { collaborationService } from '@/core/services';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
@@ -57,8 +59,8 @@ const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
     <div className={styles.collaborationPanel}>
       {/* 镜头评论 */}
       <div className={styles.collabSection}>
-        <Title level={5}>镜头评论</Title>
-        <Space.Compact className={styles.commentInputWrap}>
+        <h5 className="font-semibold mb-3">镜头评论</h5>
+        <div className="flex gap-2 mb-3">
           <Input
             value={commentDraft}
             onChange={(e) => onCommentDraftChange(e.target.value)}
@@ -66,70 +68,84 @@ const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
             disabled={!selectedFrame}
           />
           <Button
-            type="primary"
+            variant="default"
             onClick={onAddComment}
             disabled={!selectedFrame || !commentDraft.trim()}
           >
             添加
           </Button>
-        </Space.Compact>
-        <List
-          size="small"
-          dataSource={comments}
-          locale={{ emptyText: '暂无评论' }}
-          renderItem={(item: FrameComment) => (
-            <List.Item>
-              <div>
-                <div>{item.content}</div>
-                <span style={{ color: '#999', fontSize: 12 }}>
+        </div>
+        <div className="space-y-2">
+          {comments.length === 0 ? (
+            <p className="text-sm text-muted-foreground">暂无评论</p>
+          ) : (
+            comments.map((item: FrameComment) => (
+              <div key={item.id} className="p-2 border rounded-md">
+                <div className="text-sm">{item.content}</div>
+                <span className="text-xs text-muted-foreground">
                   {new Date(item.createdAt).toLocaleString()}
                 </span>
               </div>
-            </List.Item>
+            ))
           )}
-        />
+        </div>
       </div>
 
       {/* 版本管理 */}
       <div className={styles.collabSection}>
-        <Title level={5}>版本管理</Title>
-        <Space className={styles.versionRow} wrap>
+        <h5 className="font-semibold mb-3">版本管理</h5>
+        <div className="flex gap-2 mb-3 flex-wrap">
           <Input
             value={versionLabel}
             onChange={(e) => onVersionLabelChange(e.target.value)}
             placeholder="版本标签（可选）"
-            style={{ width: 220 }}
-            onPressEnter={() => onSaveVersion()}
+            className="w-[220px]"
+            onKeyDown={(e) => e.key === 'Enter' && onSaveVersion()}
           />
-          <Button onClick={onSaveVersion}>保存快照</Button>
-        </Space>
-        <Space className={styles.versionRow} wrap>
+          <Button variant="outline" onClick={onSaveVersion}>保存快照</Button>
+        </div>
+        <div className="flex gap-2 mb-3 flex-wrap">
           <Select
             placeholder="选择版本A"
             value={compareLeftVersionId}
-            onChange={onLeftVersionChange}
-            style={{ width: 180 }}
-            options={storyboardVersions.map(v => ({ value: v.id, label: v.label }))}
-            allowClear
-          />
+            onValueChange={onLeftVersionChange}
+            className="w-[180px]"
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="选择版本A" />
+            </SelectTrigger>
+            <SelectContent>
+              {storyboardVersions.map(v => (
+                <SelectItem key={v.id} value={v.id}>{v.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Select
             placeholder="选择版本B"
             value={compareRightVersionId}
-            onChange={onRightVersionChange}
-            style={{ width: 180 }}
-            options={storyboardVersions.map(v => ({ value: v.id, label: v.label }))}
-            allowClear
-          />
-          <Button onClick={onCompareVersions}>版本差异</Button>
-          <Button danger onClick={onRollback}>回滚到版本A</Button>
-        </Space>
+            onValueChange={onRightVersionChange}
+            className="w-[180px]"
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="选择版本B" />
+            </SelectTrigger>
+            <SelectContent>
+              {storyboardVersions.map(v => (
+                <SelectItem key={v.id} value={v.id}>{v.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Button variant="outline" onClick={onCompareVersions}>版本差异</Button>
+          <Button variant="destructive" onClick={onRollback}>回滚到版本A</Button>
+        </div>
         {versionDiff && (
           <Alert
-            type={versionDiff.changeCount > 0 ? 'info' : 'success'}
-            showIcon
-            message={`差异字段数: ${versionDiff.changeCount}`}
-            description={versionDiff.changedKeys.slice(0, 6).join(', ') || '无差异'}
-          />
+            variant={versionDiff.changeCount > 0 ? 'default' : 'default'}
+            className={versionDiff.changeCount > 0 ? 'bg-blue-50 border-blue-200' : 'bg-green-50 border-green-200'}
+          >
+            <p className="font-medium">差异字段数: {versionDiff.changeCount}</p>
+            <p className="text-sm">{versionDiff.changedKeys.slice(0, 6).join(', ') || '无差异'}</p>
+          </Alert>
         )}
       </div>
     </div>

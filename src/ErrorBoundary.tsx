@@ -1,6 +1,6 @@
-import { Result, Button } from 'antd';
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-
+import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import { Button } from './components/ui/button';
 import { logger } from '@/core/utils/logger';
 
 /**
@@ -35,16 +35,12 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // 记录错误到控制台
     logger.error('ErrorBoundary caught an error:', { error, errorInfo });
     
     this.setState({
       error,
       errorInfo,
     });
-    
-    // 可以在这里添加错误上报逻辑
-    // 例如: errorTrackingService.report(error, errorInfo);
   }
 
   handleReload = (): void => {
@@ -58,22 +54,24 @@ class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   render(): ReactNode {
     if (this.state.hasError) {
       return (
-        <div style={{
-          height: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: '#f5f5f5',
-        }}>
-          <Result
-            status="error"
-            title="应用出现错误"
-            subTitle={this.state.error?.message || '抱歉，应用程序遇到了一个意外错误。'}
-            extra={
-              [<Button type="primary" key="reload" onClick={this.handleReload}>重新加载</Button>,
-               <Button key="home" onClick={this.handleGoHome}>返回首页</Button>] as React.ReactNode
-            }
-          />
+        <div className="min-h-screen flex items-center justify-center bg-muted/50">
+          <div className="max-w-md w-full p-8 bg-card rounded-lg shadow-lg text-center">
+            <AlertTriangle className="w-16 h-16 mx-auto text-destructive mb-4" />
+            <h1 className="text-2xl font-bold mb-2">应用出现错误</h1>
+            <p className="text-muted-foreground mb-6">
+              {this.state.error?.message || '抱歉，应用程序遇到了一个意外错误。'}
+            </p>
+            <div className="flex gap-4 justify-center">
+              <Button onClick={this.handleReload}>
+                <RefreshCw className="w-4 h-4 mr-2" />
+                重新加载
+              </Button>
+              <Button variant="outline" onClick={this.handleGoHome}>
+                <Home className="w-4 h-4 mr-2" />
+                返回首页
+              </Button>
+            </div>
+          </div>
         </div>
       );
     }

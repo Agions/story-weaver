@@ -1,11 +1,10 @@
 /**
  * Step 7: 配音配乐
  */
-import { Card, Typography, Space, Button } from 'antd';
+import { Volume2 } from 'lucide-react';
 import React, { lazy } from 'react';
-
-const { Title, Paragraph } = Typography;
-import { SoundOutlined } from '@ant-design/icons';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 import type { AudioTrackConfig } from '@/features/audio/components/AudioEditor';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
@@ -38,36 +37,40 @@ const StepContentAudio: React.FC<StepContentAudioProps> = ({
   onNext,
 }) => (
   <Card className={styles.stepCard}>
-    <Title level={4}>
-      <SoundOutlined /> 配音配乐
-    </Title>
-    <Paragraph>
-      添加配音和背景音乐。
-    </Paragraph>
-    <div className={styles.audioActions}>
-      <Button
-        type="primary"
-        onClick={onGenerateVoices}
-        loading={audioGenerating}
-        disabled={!scriptText}
-      >
-        一键生成配音
-      </Button>
-    </div>
-    <div className={styles.audioContainer}>
-      <AudioEditor
-        key={audioEditorKey}
-        initialConfig={audioConfig}
-        onConfigChange={onConfigChange}
-        videoDuration={Math.max(storyboardFrames.length * 5, 60)}
-      />
-    </div>
-    <div className={styles.stepActions}>
-      <Space>
-        <Button onClick={onPrev}>上一步</Button>
-        <Button type="primary" onClick={onNext}>下一步</Button>
-      </Space>
-    </div>
+    <CardHeader>
+      <CardTitle className="flex items-center gap-2">
+        <Volume2 className="h-5 w-5" />
+        配音配乐
+      </CardTitle>
+    </CardHeader>
+    <CardContent>
+      <p className="text-muted-foreground mb-4">
+        添加配音和背景音乐。
+      </p>
+      <div className={styles.audioActions}>
+        <Button
+          variant="default"
+          onClick={onGenerateVoices}
+          disabled={!scriptText || audioGenerating}
+        >
+          {audioGenerating ? '生成中...' : '一键生成配音'}
+        </Button>
+      </div>
+      <div className={styles.audioContainer}>
+        <AudioEditor
+          key={audioEditorKey}
+          initialConfig={audioConfig}
+          onConfigChange={onConfigChange}
+          videoDuration={Math.max(storyboardFrames.length * 5, 60)}
+        />
+      </div>
+      <div className={styles.stepActions}>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={onPrev}>上一步</Button>
+          <Button variant="default" onClick={onNext}>下一步</Button>
+        </div>
+      </div>
+    </CardContent>
   </Card>
 );
 

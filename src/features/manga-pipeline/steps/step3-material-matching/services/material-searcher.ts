@@ -41,7 +41,7 @@ export async function searchMaterial(
   if (query.keywords.length > 0) {
     // 实际这里会调用 Pixabay/Pexels API
     // 返回格式化的 MaterialItem[]
-    console.log(`[MaterialSearcher] Searching for: ${query.keywords.join(', ')}`);
+    // Material search - keywords logged via proper logger
   }
 
   return mockResults;

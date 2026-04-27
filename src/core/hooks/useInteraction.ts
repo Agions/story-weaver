@@ -3,7 +3,7 @@
  * 提供加载状态、错误处理、确认对话框等功能
  */
 
-import { message } from 'antd';
+import { toast } from '@/shared/components/ui';
 import { useState, useCallback, useRef, useEffect } from 'react';
 
 import { useConfirm, ConfirmDialogProps } from '@/shared/components/ui/ConfirmDialog';
@@ -182,23 +182,23 @@ export const useMessage = (_options?: UseMessageOptions): UseMessageReturn => {
   // const [_loadingKey, setLoadingKey] = useState<string | null>(null);
 
   const success = useCallback((content: string, duration = 3) => {
-    message.success(content, duration);
+    toast.success(content);
   }, []);
 
   const error = useCallback((content: string, duration = 4) => {
-    message.error(content, duration);
+    toast.error(content);
   }, []);
 
   const info = useCallback((content: string, duration = 3) => {
-    message.info(content, duration);
+    toast.info(content);
   }, []);
 
   const warning = useCallback((content: string, duration = 4) => {
-    message.warning(content, duration);
+    toast.warning(content);
   }, []);
 
-  const loading = useCallback((content: string, duration = 0) => {
-    const key = message.loading(content, duration);
+  const loading = useCallback((content: string, _duration = 0) => {
+    toast.loading(content);
     // message.loading returns a function to dismiss the message
     return key;
   }, []);

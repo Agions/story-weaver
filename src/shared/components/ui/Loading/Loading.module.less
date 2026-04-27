@@ -14,7 +14,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.8);
   z-index: 9999;
 }
 
@@ -24,7 +24,7 @@
 
 .skeletonHeader {
   height: 200px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, var(--bg-color-secondary, #f0f0f0) 25%, var(--border-color, #e0e0e0) 50%, var(--bg-color-secondary, #f0f0f0) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 12px;
@@ -39,7 +39,7 @@
 
 .skeletonParagraph {
   height: 16px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, var(--bg-color-secondary, #f0f0f0) 25%, var(--border-color, #e0e0e0) 50%, var(--bg-color-secondary, #f0f0f0) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 4px;

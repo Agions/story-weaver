@@ -3,14 +3,20 @@
  * 支持文件拖放上传，带有视觉反馈
  */
 
-import { InboxOutlined } from '@ant-design/icons';
-import { Upload, message } from 'antd';
-import type { UploadProps, UploadFile } from 'antd';
-import React, { useCallback } from 'react';
+import { Upload, ArrowUp } from 'lucide-react';
+import React, { useCallback, useState, useRef } from 'react';
+import toast from '@/shared/components/ui/Toast';
 
 import styles from './FileUploader.module.less';
 
-const { Dragger } = Upload;
+export interface UploadFile {
+  uid: string;
+  name: string;
+  status: 'pending' | 'uploading' | 'done' | 'error';
+  url?: string;
+  response?: unknown;
+  error?: Error;
+}
 
 export interface FileUploaderProps {
   /** 接受的文件类型 */
@@ -24,12 +30,11 @@ export interface FileUploaderProps {
   /** 上传 URL */
   action?: string;
   /** 自定义上传请求 */
-  customRequest?: UploadProps['customRequest'];
+  customRequest?: (options: { file: File; onSuccess: (response?: unknown) => void; onError: (error: Error) => void; onProgress: (percent: number) => void }) => void;
   /** 文件列表 */
-  fileList?: UploadProps['fileList'];
+  fileList?: UploadFile[];
   /** 文件变化回调 */
   onChange?: (info: { file: UploadFile; fileList: UploadFile[] }) => void;
-
   /** 错误回调 */
   onError?: (error: Error) => void;
   /** 自定义校验 */
@@ -48,8 +53,6 @@ export interface FileUploaderProps {
   isDragger?: boolean;
 }
 
-
-
 export const FileUploader: React.FC<FileUploaderProps> = ({
   accept,
   maxCount = 1,
@@ -57,7 +60,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   multiple = false,
   action,
   customRequest,
-  fileList,
+  fileList: externalFileList,
   onChange,
   onError,
   beforeUpload,
@@ -68,16 +71,24 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   showFileList = true,
   isDragger = true,
 }) => {
-  const handleBeforeUpload = useCallback((file: File, files: File[]) => {
+  const [dragOver, setDragOver] = useState(false);
+  const [internalFileList, setInternalFileList] = useState<UploadFile[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const currentFileList = externalFileList || internalFileList;
+
+  const generateId = () => Math.random().toString(36).substring(2, 15);
+
+  const handleFileValidation = useCallback((file: File, files: File[]): boolean => {
     // 检查文件大小
     if (maxSize && file.size > maxSize * 1024 * 1024) {
-      message.error(`文件 ${file.name} 超过最大限制 ${maxSize}MB`);
+      toast.error(`文件 ${file.name} 超过最大限制 ${maxSize}MB`);
       return false;
     }
 
     // 检查文件数量
     if (maxCount && files.length > maxCount) {
-      message.error(`最多只能上传 ${maxCount} 个文件`);
+      toast.error(`最多只能上传 ${maxCount} 个文件`);
       return false;
     }
 
@@ -89,52 +100,157 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     return true;
   }, [maxSize, maxCount, beforeUpload]);
 
-  const handleChange: UploadProps['onChange'] = (info) => {
-    if (info.file.status === 'error') {
-      onError?.(new Error(info.file.error?.message || '上传失败'));
-    }
-    onChange?.({ file: info.file, fileList: info.fileList });
-  };
+  const processFile = useCallback((file: File) => {
+    const uploadFile: UploadFile = {
+      uid: generateId(),
+      name: file.name,
+      status: 'pending',
+    };
 
-  const uploadProps: UploadProps = {
-    accept,
-    multiple,
-    maxCount,
-    action,
-    customRequest,
-    fileList,
-    beforeUpload: handleBeforeUpload,
-    onChange: handleChange,
-    disabled,
-    showUploadList: showFileList,
-  };
+    const newFileList = [...currentFileList, uploadFile];
+    
+    if (customRequest) {
+      customRequest({
+        file,
+        onSuccess: (response) => {
+          uploadFile.status = 'done';
+          uploadFile.response = response;
+          const updated = newFileList.map(f => f.uid === uploadFile.uid ? uploadFile : f);
+          onChange?.({ file: uploadFile, fileList: updated });
+        },
+        onError: (error) => {
+          uploadFile.status = 'error';
+          uploadFile.error = error;
+          onError?.(error);
+          const updated = newFileList.map(f => f.uid === uploadFile.uid ? uploadFile : f);
+          onChange?.({ file: uploadFile, fileList: updated });
+        },
+        onProgress: (_percent) => {
+          uploadFile.status = 'uploading';
+          const updated = newFileList.map(f => f.uid === uploadFile.uid ? uploadFile : f);
+          onChange?.({ file: uploadFile, fileList: updated });
+        },
+      });
+    } else if (action) {
+      uploadFile.status = 'uploading';
+      onChange?.({ file: uploadFile, fileList: newFileList });
+    } else {
+      uploadFile.status = 'done';
+      uploadFile.url = URL.createObjectURL(file);
+      onChange?.({ file: uploadFile, fileList: newFileList });
+    }
+
+    setInternalFileList(newFileList);
+  }, [currentFileList, customRequest, action, onChange, onError]);
+
+  const handleFiles = useCallback((files: FileList | null) => {
+    if (!files) return;
+    
+    const fileArray = multiple ? Array.from(files) : [files[0]];
+    
+    for (const file of fileArray) {
+      if (handleFileValidation(file, fileArray)) {
+        processFile(file);
+      }
+    }
+  }, [multiple, handleFileValidation, processFile]);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!disabled) setDragOver(true);
+  }, [disabled]);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOver(false);
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOver(false);
+    if (disabled) return;
+    handleFiles(e.dataTransfer.files);
+  }, [disabled, handleFiles]);
+
+  const handleClick = useCallback(() => {
+    if (!disabled) {
+      inputRef.current?.click();
+    }
+  }, [disabled]);
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    handleFiles(e.target.files);
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
+  }, [handleFiles]);
 
   const renderDragger = () => (
-    <Dragger
-      {...uploadProps}
-      className={`${styles.uploader} ${className || ''} ${disabled ? styles.disabled : ''}`}
+    <div
+      className={`${styles.uploader} ${className || ''} ${disabled ? styles.disabled : ''} ${dragOver ? styles.dragging : ''}`}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      onClick={handleClick}
     >
+      <input
+        ref={inputRef}
+        type="file"
+        accept={accept}
+        multiple={multiple}
+        className="hidden"
+        onChange={handleInputChange}
+      />
       <p className={styles.icon}>
-        <InboxOutlined />
+        <Upload className={styles.uploadIcon} />
       </p>
       <p className={styles.text}>{placeholder}</p>
       {hint && <p className={styles.hint}>{hint}</p>}
-    </Dragger>
+    </div>
   );
 
   const renderNormal = () => (
-    <Upload
-      {...uploadProps}
+    <div
       className={`${styles.uploader} ${className || ''} ${disabled ? styles.disabled : ''}`}
+      onClick={handleClick}
     >
+      <input
+        ref={inputRef}
+        type="file"
+        accept={accept}
+        multiple={multiple}
+        className="hidden"
+        onChange={handleInputChange}
+      />
       <div className={styles.normalTrigger}>
-        <InboxOutlined />
+        <ArrowUp />
         <span>{placeholder}</span>
       </div>
-    </Upload>
+    </div>
   );
 
-  return isDragger ? renderDragger() : renderNormal();
+  return (
+    <>
+      {isDragger ? renderDragger() : renderNormal()}
+      {showFileList && currentFileList.length > 0 && (
+        <div className={styles.fileList}>
+          {currentFileList.map((file) => (
+            <div key={file.uid} className={styles.fileItem}>
+              <span className={styles.fileName}>{file.name}</span>
+              <span className={`${styles.fileStatus} ${styles[file.status]}`}>
+                {file.status === 'done' && '✓'}
+                {file.status === 'uploading' && '...'}
+                {file.status === 'error' && '✗'}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  );
 };
 
 /**

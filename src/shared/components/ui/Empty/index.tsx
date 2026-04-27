@@ -2,9 +2,9 @@
  * 专业空状态组件
  */
 
-import { PlusOutlined, FolderOpenOutlined, FileOutlined } from '@ant-design/icons';
-import { Empty, Button } from 'antd';
+import { FolderOpen, File, Plus } from 'lucide-react';
 import React from 'react';
+import { Button } from '@/components/ui/button';
 
 import styles from './Empty.module.less';
 
@@ -27,9 +27,9 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   const getIcon = () => {
     switch (type) {
       case 'project':
-        return <FolderOpenOutlined className={styles.icon} />;
+        return <FolderOpen className={styles.icon} />;
       case 'file':
-        return <FileOutlined className={styles.icon} />;
+        return <File className={styles.icon} />;
       default:
         return null;
     }
@@ -38,26 +38,19 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   return (
     <div className={styles.container}>
       {getIcon()}
-      <Empty
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
-        description={
-          <div className={styles.description}>
-            <div className={styles.title}>{title || '暂无内容'}</div>
-            {description && <div className={styles.desc}>{description}</div>}
-          </div>
-        }
-      >
-        {action && (
-          <Button 
-            type="primary" 
-            icon={<PlusOutlined />}
-            onClick={action.onClick}
-            className={styles.actionBtn}
-          >
-            {action.text}
-          </Button>
-        )}
-      </Empty>
+      <div className={styles.description}>
+        <div className={styles.title}>{title || '暂无内容'}</div>
+        {description && <div className={styles.desc}>{description}</div>}
+      </div>
+      {action && (
+        <Button 
+          onClick={action.onClick}
+          className={styles.actionBtn}
+        >
+          <Plus className="h-4 w-4 mr-1" />
+          {action.text}
+        </Button>
+      )}
     </div>
   );
 };

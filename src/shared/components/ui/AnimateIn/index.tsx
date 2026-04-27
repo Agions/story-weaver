@@ -1,5 +1,6 @@
 /**
  * AnimateIn - Simple fade-in animation wrapper
+ * Uses the m-* motion classes from globals.css / index.less
  */
 import React from 'react';
 
@@ -20,15 +21,16 @@ const AnimateIn: React.FC<AnimateInProps> = ({
     animationDelay: `${delay}ms`,
   };
 
+  // Maps to m-* motion utility classes
   const animationClass = {
-    fadeIn: 'animate-fadeIn',
-    slideUp: 'animate-slideUp',
-    slideLeft: 'animate-slideLeft',
-    scale: 'animate-scale',
+    fadeIn: 'm-fade-in',
+    slideUp: 'm-slide-up-in',
+    slideLeft: 'm-slide-left-in',
+    scale: 'm-zoom-in',
   }[type];
 
   return (
-    <div className={`animate-in ${animationClass} ${className}`} style={style}>
+    <div className={`${animationClass} ${className}`} style={style}>
       {children}
     </div>
   );

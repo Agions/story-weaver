@@ -3,7 +3,11 @@
  * 统一管理所有设计变量，提供类型安全的Token访问
  */
 
-import type { ThemeConfig } from 'antd';
+// ThemeConfig was from antd, replaced with inline type
+type ThemeConfig = {
+  token?: Record<string, unknown>;
+  components?: Record<string, Record<string, unknown>>;
+};
 
 // ============================================
 // 颜色系统

@@ -1,9 +1,10 @@
-import { message, notification, Spin } from 'antd';
 import React, { useEffect, useState, Suspense, lazy } from 'react';
 import { Routes, Route, BrowserRouter, Navigate } from 'react-router-dom';
+import { Toaster } from 'sonner';
 
 import { getPageImporters, preloadPage } from '@/core/router/page-preload';
 import { runWhenIdle } from '@/core/utils/idle';
+import { toast } from '@/shared/components/ui/Toast';
 import './App.css';
 
 const importers = getPageImporters();
@@ -17,14 +18,11 @@ const UIDemo = lazy(importers.demo);
 
 // 加载时的占位组件
 const PageLoader: React.FC = () => (
-  <div style={{ 
-    display: 'flex', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    height: '100vh',
-    width: '100%' 
-  }}>
-    <Spin size="large" tip="加载页面中..." />
+  <div className="flex items-center justify-center h-screen w-full">
+    <div className="flex flex-col items-center gap-4">
+      <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      <p className="text-muted-foreground">加载页面中...</p>
+    </div>
   </div>
 );
 
@@ -44,15 +42,10 @@ const App: React.FC = () => {
     const initializeApp = async () => {
       try {
         logger.info('应用初始化...');
-        // 这里可以添加初始化逻辑
         logger.info('应用数据目录检查完成');
       } catch (error) {
         logger.error('应用初始化失败:', error);
-        notification.error({
-          message: '初始化失败',
-          description: '应用初始化失败，部分功能可能无法正常使用',
-          placement: 'bottomRight',
-        });
+        toast.error('初始化失败', { description: '应用初始化失败，部分功能可能无法正常使用' });
       }
     };
     
@@ -64,8 +57,6 @@ const App: React.FC = () => {
     const checkFFmpeg = async () => {
       setChecking(true);
       try {
-        // 这里应该有检查FFmpeg的实际逻辑
-        // 这里我们假设已经安装
         logger.info("FFmpeg检查：假设已经安装");
         setTimeout(() => {
           setFFmpegReady(true);
@@ -75,11 +66,7 @@ const App: React.FC = () => {
         logger.error("FFmpeg检查失败:", error);
         setFFmpegReady(false);
         setChecking(false);
-        notification.error({
-          message: "依赖检查失败",
-          description: "无法检测到FFmpeg，某些功能可能无法正常工作。请确保已正确安装FFmpeg。",
-          duration: 0
-        });
+        toast.error('依赖检查失败', { description: '无法检测到FFmpeg，某些功能可能无法正常工作' });
       }
     };
     
@@ -95,7 +82,7 @@ const App: React.FC = () => {
     logger.info(logMessage);
     
     if (!checking) {
-      message.info(logMessage, 3);
+      toast.info(logMessage);
     }
   }, [ffmpegReady, checking]);
 
@@ -110,6 +97,7 @@ const App: React.FC = () => {
   return (
     <ErrorBoundary>
       <AppProvider>
+        <Toaster position="bottom-right" richColors closeButton />
         <BrowserRouter>
           <AppLayout>
             <Suspense fallback={<PageLoader />}>

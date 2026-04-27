@@ -1,11 +1,9 @@
-import { PlusOutlined, PlayCircleOutlined } from '@ant-design/icons';
-import { Typography, Button } from 'antd';
+import { Plus, Play } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 import styles from './HeroSection.module.less';
-
-const { Title, Paragraph } = Typography;
 
 /**
  * 首页英雄区域组件
@@ -25,28 +23,28 @@ const HeroSection: React.FC = () => {
   return (
     <div className={styles.hero}>
       <div className={styles.heroContent}>
-        <Title level={1} className={styles.title}>
+        <h1 className={styles.title}>
           PlotCraft AI <span className={styles.highlight}>AI视频脚本创作</span>
-        </Title>
-        <Paragraph className={styles.subtitle}>
+        </h1>
+        <p className={styles.subtitle}>
           AI赋能的短视频创作工具，让视频制作更简单、更高效
-        </Paragraph>
+        </p>
         <div className={styles.heroButtons}>
           <Button
-            type="primary"
-            size="large"
-            icon={<PlusOutlined />}
+            size="lg"
             onClick={handleCreateProject}
             className={styles.primaryButton}
           >
+            <Plus className="mr-2 h-4 w-4" />
             创建新项目
           </Button>
           <Button
-            size="large"
-            icon={<PlayCircleOutlined />}
+            size="lg"
+            variant="outline"
             onClick={handleEnterWorkspace}
             className={styles.secondaryButton}
           >
+            <Play className="mr-2 h-4 w-4" />
             进入工作台
           </Button>
         </div>

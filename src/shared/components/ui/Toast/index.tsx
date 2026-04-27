@@ -2,15 +2,7 @@
  * Toast 通知封装
  */
 
-import { 
-  CheckCircleOutlined, 
-  CloseCircleOutlined, 
-  WarningOutlined, 
-  InfoCircleOutlined 
-} from '@ant-design/icons';
-import { message, notification } from 'antd';
-
-// type ToastType = 'success' | 'error' | 'warning' | 'info';
+import { toast as sonnerToast } from 'sonner';
 
 interface ToastOptions {
   message: string;
@@ -18,58 +10,39 @@ interface ToastOptions {
   duration?: number;
 }
 
-// 简化调用
+// 使用sonner替代antd message/notification
 export const toast = {
   success: (msg: string, duration = 3) => 
-    message.success(msg, duration),
+    sonnerToast.success(msg, { duration: duration * 1000 }),
   
   error: (msg: string, duration = 4) => 
-    message.error(msg, duration),
+    sonnerToast.error(msg, { duration: duration * 1000 }),
   
   warning: (msg: string, duration = 3) => 
-    message.warning(msg, duration),
+    sonnerToast.warning(msg, { duration: duration * 1000 }),
   
   info: (msg: string, duration = 3) => 
-    message.info(msg, duration),
+    sonnerToast.info(msg, { duration: duration * 1000 }),
   
-  loading: (msg: string) => message.loading(msg, 0),
+  loading: (msg: string) => sonnerToast.loading(msg),
 };
 
-// 带描述的通知
 export const notify = {
   success: (options: ToastOptions) => 
-    notification.success({
-      icon: <CheckCircleOutlined style={{ color: '#10b981' }} />,
-      ...options,
-      placement: 'topRight',
-    }),
+    sonnerToast.success(options.message, { description: options.description }),
   
   error: (options: ToastOptions) => 
-    notification.error({
-      icon: <CloseCircleOutlined style={{ color: '#ef4444' }} />,
-      ...options,
-      placement: 'topRight',
-    }),
+    sonnerToast.error(options.message, { description: options.description }),
   
   warning: (options: ToastOptions) => 
-    notification.warning({
-      icon: <WarningOutlined style={{ color: '#f59e0b' }} />,
-      ...options,
-      placement: 'topRight',
-    }),
+    sonnerToast.warning(options.message, { description: options.description }),
   
   info: (options: ToastOptions) => 
-    notification.info({
-      icon: <InfoCircleOutlined style={{ color: '#3b82f6' }} />,
-      ...options,
-      placement: 'topRight',
-    }),
+    sonnerToast.info(options.message, { description: options.description }),
 };
 
-// 关闭所有通知
 export const closeAll = () => {
-  message.destroy();
-  notification.destroy();
+  sonnerToast.dismiss();
 };
 
 export default toast;

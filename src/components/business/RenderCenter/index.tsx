@@ -1,5 +1,3 @@
-import { Button, Card, Progress, Select, Space, Table, Tag, Typography, List } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import {
@@ -8,10 +6,29 @@ import {
   type RenderLog,
 } from '@/core/services/render-queue.service';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
+import { toast } from 'sonner';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 import styles from './index.module.less';
-
-const { Text } = Typography;
 
 type LogFilter = 'all' | 'info' | 'warning' | 'error';
 
@@ -78,109 +95,116 @@ const RenderCenter: React.FC<RenderCenterProps> = ({ frames, projectId, onApplyR
     );
   };
 
-  const columns: ColumnsType<FrameRenderJob> = [
-    {
-      title: '分镜',
-      dataIndex: 'frameTitle',
-      key: 'frameTitle',
-    },
-    {
-      title: '状态',
-      key: 'status',
-      width: 120,
-      render: (_, record) => {
-        const colorMap = {
-          pending: 'default',
-          running: 'processing',
-          completed: 'success',
-          failed: 'error',
-        } as const;
-        return <Tag color={colorMap[record.status]}>{record.status}</Tag>;
-      },
-    },
-    {
-      title: '进度',
-      dataIndex: 'progress',
-      key: 'progress',
-      width: 180,
-      render: (value: number) => <Progress percent={value} size="small" />,
-    },
-    {
-      title: '操作',
-      key: 'actions',
-      width: 120,
-      render: (_, record) => (
-        <Space>
-          {record.error && (
-            <Button size="small" onClick={() => renderQueueService.retry(record.id)}>
-              重试
-            </Button>
-          )}
-        </Space>
-      ),
-    },
-  ];
+  const colorMap: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+    pending: 'secondary',
+    running: 'outline',
+    completed: 'default',
+    failed: 'destructive',
+  };
+
+  const logColorMap: Record<string, 'default' | 'destructive' | 'outline'> = {
+    info: 'default',
+    warning: 'outline',
+    error: 'destructive',
+  };
 
   return (
     <div className={styles.container}>
-      <Card
-        title="渲染队列"
-        extra={
-          <Space>
-            <Button onClick={enqueueFrames} disabled={frames.length === 0}>加入分镜</Button>
-            {!isPaused ? (
-              <Button onClick={() => renderQueueService.pause()} disabled={!isRunning}>暂停</Button>
-            ) : (
-              <Button onClick={() => renderQueueService.resume()}>继续</Button>
-            )}
-            <Button type="primary" onClick={() => void renderQueueService.run()} disabled={isRunning || pendingCount === 0}>
-              开始渲染
-            </Button>
-            <Button onClick={() => renderQueueService.clearCompleted()}>清理已完成</Button>
-          </Space>
-        }
-      >
-        <Space size={24} className={styles.stats}>
-          <Text>待处理: {pendingCount}</Text>
-          <Text>进行中: {runningCount}</Text>
-          <Text>已完成: {completedCount}</Text>
-        </Space>
+      <Card>
+        <CardHeader>
+          <CardTitle>渲染队列</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className={styles.stats}>
+            <span>待处理: {pendingCount}</span>
+            <span>进行中: {runningCount}</span>
+            <span>已完成: {completedCount}</span>
+          </div>
 
-        <Table rowKey="id" columns={columns} dataSource={jobs} pagination={{ pageSize: 6 }} size="small" />
+          <div className={styles.actions}>
+            <Button onClick={enqueueFrames} disabled={frames.length === 0} size="sm" variant="outline">加入分镜</Button>
+            {!isPaused ? (
+              <Button onClick={() => renderQueueService.pause()} disabled={!isRunning} size="sm" variant="outline">暂停</Button>
+            ) : (
+              <Button onClick={() => renderQueueService.resume()} size="sm" variant="outline">继续</Button>
+            )}
+            <Button onClick={() => void renderQueueService.run()} disabled={isRunning || pendingCount === 0} size="sm">开始渲染</Button>
+            <Button onClick={() => renderQueueService.clearCompleted()} size="sm" variant="outline">清理已完成</Button>
+          </div>
+
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>分镜</TableHead>
+                <TableHead style={{ width: 120 }}>状态</TableHead>
+                <TableHead style={{ width: 180 }}>进度</TableHead>
+                <TableHead style={{ width: 120 }}>操作</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {jobs.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={4} style={{ textAlign: 'center' }}>暂无渲染任务</TableCell>
+                </TableRow>
+              ) : (
+                jobs.map((job) => (
+                  <TableRow key={job.id}>
+                    <TableCell>{job.frameTitle}</TableCell>
+                    <TableCell>
+                      <Badge variant={colorMap[job.status] || 'outline'}>{job.status}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Progress value={job.progress} />
+                    </TableCell>
+                    <TableCell>
+                      {job.error && (
+                        <Button size="sm" variant="outline" onClick={() => renderQueueService.retry(job.id)}>重试</Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
       </Card>
 
-      <Card
-        title="渲染日志"
-        extra={
-          <Select
-            value={logFilter}
-            style={{ width: 140 }}
-            onChange={(value: LogFilter) => setLogFilter(value)}
-            options={[
-              { value: 'all', label: '全部' },
-              { value: 'info', label: '信息' },
-              { value: 'warning', label: '警告' },
-              { value: 'error', label: '错误' },
-            ]}
-          />
-        }
-      >
-        <List
-          size="small"
-          dataSource={filteredLogs}
-          locale={{ emptyText: '暂无日志' }}
-          renderItem={(item) => (
-            <List.Item>
-              <Space>
-                <Tag color={item.level === 'error' ? 'error' : item.level === 'warning' ? 'warning' : 'blue'}>
-                  {item.level}
-                </Tag>
-                <Text>{item.message}</Text>
-                <Text type="secondary">{new Date(item.timestamp).toLocaleTimeString()}</Text>
-              </Space>
-            </List.Item>
-          )}
-        />
+      <Card>
+        <CardHeader>
+          <CardTitle>渲染日志</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className={styles.logFilter}>
+            <Select
+              value={logFilter}
+              onValueChange={(value: LogFilter) => setLogFilter(value)}
+            >
+              <SelectTrigger style={{ width: 140 }}>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">全部</SelectItem>
+                <SelectItem value="info">信息</SelectItem>
+                <SelectItem value="warning">警告</SelectItem>
+                <SelectItem value="error">错误</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className={styles.logList}>
+            {filteredLogs.length === 0 ? (
+              <div className={styles.emptyLogs}>暂无日志</div>
+            ) : (
+              filteredLogs.map((item, index) => (
+                <div key={index} className={styles.logItem}>
+                  <Badge variant={logColorMap[item.level] || 'outline'}>{item.level}</Badge>
+                  <span>{item.message}</span>
+                  <span className={styles.logTime}>{new Date(item.timestamp).toLocaleTimeString()}</span>
+                </div>
+              ))
+            )}
+          </div>
+        </CardContent>
       </Card>
     </div>
   );

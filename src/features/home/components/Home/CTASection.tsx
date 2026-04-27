@@ -1,13 +1,12 @@
-import { PlusOutlined } from '@ant-design/icons';
-import { Card, Typography, Button } from 'antd';
+import { Plus } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { useTheme } from '@/context/ThemeContext';
 
 import styles from './CTASection.module.less';
-
-const { Title, Paragraph } = Typography;
 
 /**
  * CTA (Call to Action) 组件
@@ -24,19 +23,20 @@ const CTASection: React.FC = () => {
   return (
     <Card
       className={`${styles.cta} ${isDarkMode ? styles.darkCta : ''}`}
-      bordered={false}
+      borderless
     >
-      <Title level={3}>准备好开始创作了吗？</Title>
-      <Paragraph className={styles.ctaText}>
-        使用PlotCraft AI，让AI为您的创作提供灵感和效率
-      </Paragraph>
+      <CardHeader>
+        <CardTitle>准备好开始创作了吗？</CardTitle>
+      </CardHeader>
+      <CardContent className={styles.ctaText}>
+        <p>使用PlotCraft AI，让AI为您的创作提供灵感和效率</p>
+      </CardContent>
       <Button
-        type="primary"
-        size="large"
-        icon={<PlusOutlined />}
+        size="lg"
         onClick={handleCreateProject}
         className={styles.ctaButton}
       >
+        <Plus className="mr-2 h-4 w-4" />
         立即创建项目
       </Button>
     </Card>

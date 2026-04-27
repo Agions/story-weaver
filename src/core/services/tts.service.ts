@@ -3,7 +3,7 @@
  * 支持多种 TTS 提供商：Edge, Azure, 阿里云, 百度, 讯飞, CosyVoice
  */
 
-import { message } from 'antd';
+import { toast } from '@/shared/components/ui';
 
 import type { TTSProvider, TTSVoice, TTSConfig, TTSRequest, TTSResponse, TTSStreamChunk } from '@/core/types';
 
@@ -223,7 +223,7 @@ class TTSService {
    */
   private async azureTTS(text: string, config: TTSConfig, signal?: AbortSignal): Promise<TTSResponse> {
     // Azure TTS 需要 API Key，这里使用模拟实现
-    message.warning('Azure TTS 需要配置 API Key，当前使用 Edge TTS');
+    toast.warning('Azure TTS 需要配置 API Key，当前使用 Edge TTS');
     return this.edgeTTS(text, config, signal);
   }
 
@@ -243,7 +243,7 @@ class TTSService {
    */
   private async aliyunTTS(text: string, config: TTSConfig, signal?: AbortSignal): Promise<TTSResponse> {
     // 阿里云 TTS 需要 API Key，这里使用模拟实现
-    message.warning('阿里云 TTS 需要配置 API Key，当前使用 Edge TTS');
+    toast.warning('阿里云 TTS 需要配置 API Key，当前使用 Edge TTS');
     return this.edgeTTS(text, config, signal);
   }
 
@@ -252,7 +252,7 @@ class TTSService {
    */
   private async baiduTTS(text: string, config: TTSConfig, signal?: AbortSignal): Promise<TTSResponse> {
     // 百度 TTS 需要 API Key，这里使用模拟实现
-    message.warning('百度 TTS 需要配置 API Key，当前使用 Edge TTS');
+    toast.warning('百度 TTS 需要配置 API Key，当前使用 Edge TTS');
     return this.edgeTTS(text, config, signal);
   }
 
@@ -261,7 +261,7 @@ class TTSService {
    */
   private async iflytekTTS(text: string, config: TTSConfig, signal?: AbortSignal): Promise<TTSResponse> {
     // 讯飞 TTS 需要 API Key，这里使用模拟实现
-    message.warning('讯飞 TTS 需要配置 API Key，当前使用 Edge TTS');
+    toast.warning('讯飞 TTS 需要配置 API Key，当前使用 Edge TTS');
     return this.edgeTTS(text, config, signal);
   }
 
@@ -270,7 +270,7 @@ class TTSService {
    */
   private async cosyvoiceTTS(text: string, config: TTSConfig, signal?: AbortSignal): Promise<TTSResponse> {
     // CosyVoice 需要 API Key，这里使用模拟实现
-    message.warning('CosyVoice TTS 需要配置 API Key，当前使用 Edge TTS');
+    toast.warning('CosyVoice TTS 需要配置 API Key，当前使用 Edge TTS');
     return this.edgeTTS(text, config, signal);
   }
 

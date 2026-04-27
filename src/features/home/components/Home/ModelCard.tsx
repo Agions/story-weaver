@@ -1,7 +1,25 @@
-import { RobotOutlined, CheckCircleFilled, WarningOutlined, ApiOutlined, SettingOutlined, ExportOutlined, LinkOutlined } from '@ant-design/icons';
-import { Card, Button, Tag, Space, Typography, Tooltip, Badge, Modal } from 'antd';
+import {
+  Bot,
+  CheckCircle,
+  AlertCircle,
+  Key,
+  Settings,
+  Download,
+  ExternalLink,
+  Copy
+} from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Tooltip } from '@/components/ui/tooltip';
 
 import { AIModelType, AI_MODEL_INFO } from '@/core/types/ai-model.types';
 import { useLegacyStore } from '@/shared/stores';
@@ -18,16 +36,14 @@ const API_LINKS = {
   deepseek: 'https://platform.deepseek.com/api'
 };
 
-const { Text, Title } = Typography;
-
 interface ModelCardProps {
   modelType: AIModelType;
   onSelect: (modelType: AIModelType) => void;
   onRequestApiKey?: (modelType: AIModelType) => void;
 }
 
-const ModelCard: React.FC<ModelCardProps> = ({ 
-  modelType, 
+const ModelCard: React.FC<ModelCardProps> = ({
+  modelType,
   onSelect,
   onRequestApiKey
 }) => {
@@ -36,7 +52,7 @@ const ModelCard: React.FC<ModelCardProps> = ({
   const modelInfo = AI_MODEL_INFO[modelType];
   const isEnabled = aiModelsSettings[modelType]?.enabled;
   const isSelected = selectedAIModel === modelType;
-  const [isModalVisible, setIsModalVisible] = React.useState(false);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   // 处理选择模型
   const handleSelect = () => {
@@ -46,146 +62,189 @@ const ModelCard: React.FC<ModelCardProps> = ({
       navigate('/settings', { state: { activeModel: modelType, showKeyConfig: true } });
     }
   };
-  
+
   // 处理跳转到设置页面
   const handleGoToSettings = (e: React.MouseEvent) => {
     e.stopPropagation();
     navigate('/settings', { state: { activeModel: modelType, showKeyConfig: true } });
   };
-  
+
   // 处理申请API密钥
   const handleRequestApiKey = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // 显示申请选项模态框
-    setIsModalVisible(true);
+    setIsModalOpen(true);
   };
 
   // 处理直接跳转到API密钥申请页面
   const handleGoToApiPage = () => {
     window.open(API_LINKS[modelType], '_blank');
-    setIsModalVisible(false);
+    setIsModalOpen(false);
   };
 
   // 渲染申请选项模态框
   const renderApplyModal = () => (
-    <Modal
-      title={`申请${modelInfo.name} API密钥`}
-      open={isModalVisible}
-      onCancel={() => setIsModalVisible(false)}
-      footer={null}
-      width={400}
-      centered
-      className={styles.applyModal}
-    >
-      <div className={styles.applyOptions}>
-        <Button 
-          type="primary" 
-          icon={<LinkOutlined />} 
-          block 
-          size="large"
-          onClick={handleGoToApiPage}
-          className={styles.applyButton}
-        >
-          前往{modelInfo.provider}官网申请API密钥
-        </Button>
-        
-        <div className={styles.dividerText}>或者</div>
-        
-        <Button
-          block
-          size="large"
-          icon={<SettingOutlined />}
-          onClick={() => {
-            setIsModalVisible(false);
-            navigate('/settings', { state: { activeModel: modelType, showKeyConfig: true } });
-          }}
-          className={styles.applyButton}
-        >
-          直接配置API密钥
-        </Button>
-      </div>
-    </Modal>
+    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+      <DialogContent className={styles.applyModal}>
+        <DialogHeader>
+          <DialogTitle>申请{modelInfo.name} API密钥</DialogTitle>
+        </DialogHeader>
+        <div className={styles.applyOptions}>
+          <Button
+            variant="default"
+            icon={<ExternalLink size={16} />}
+            onClick={handleGoToApiPage}
+            className={styles.applyButton}
+            style={{ width: '100%', justifyContent: 'flex-start' }}
+          >
+            前往{modelInfo.provider}官网申请API密钥
+          </Button>
+
+          <div className={styles.dividerText}>或者</div>
+
+          <Button
+            variant="outline"
+            icon={<Settings size={16} />}
+            onClick={() => {
+              setIsModalOpen(false);
+              navigate('/settings', { state: { activeModel: modelType, showKeyConfig: true } });
+            }}
+            className={styles.applyButton}
+            style={{ width: '100%', justifyContent: 'flex-start' }}
+          >
+            直接配置API密钥
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
-  
+
   return (
     <>
-      <Card 
+      <Card
         className={`${styles.modelCard} ${isSelected ? styles.selected : ''} ${isEnabled ? '' : styles.disabled}`}
         hoverable
         onClick={handleSelect}
       >
         <div className={styles.modelIcon}>
-          <Badge 
-            dot 
-            color={isEnabled ? (isSelected ? "blue" : "green") : "red"}
-            offset={[-5, 5]}
-          >
-            <RobotOutlined style={{ fontSize: 28 }} />
-          </Badge>
+          <span style={{
+            position: 'relative',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 28,
+            height: 28
+          }}>
+            <span style={{
+              position: 'absolute',
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              backgroundColor: isEnabled ? (isSelected ? "#1677ff" : "#52c41a") : "#ff4d4f",
+              top: 0,
+              right: 0
+            }} />
+            <Bot size={28} />
+          </span>
         </div>
-        
+
         <div className={styles.modelInfo}>
-          <Title level={4} className={styles.modelName}>
+          <h4 className={styles.modelName} style={{ margin: '0 0 4px', fontSize: 16, fontWeight: 600 }}>
             {modelInfo.name}
             {isEnabled && isSelected && (
-              <CheckCircleFilled className={styles.selectedIcon} />
+              <CheckCircle size={16} color="#1677ff" style={{ marginLeft: 4 }} />
             )}
-          </Title>
-          
-          <Text type="secondary" className={styles.modelProvider}>
+          </h4>
+
+          <span style={{ color: 'rgba(0,0,0,0.45)', fontSize: 14 }} className={styles.modelProvider}>
             {modelInfo.provider}
-          </Text>
-          
+          </span>
+
           <div className={styles.modelStatus}>
             {isEnabled ? (
-              <Tag color="success" icon={<CheckCircleFilled />}>已配置</Tag>
+              <span style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                padding: '2px 8px',
+                borderRadius: 4,
+                background: '#f6ffed',
+                border: '1px solid #b7eb8f',
+                color: '#52c41a',
+                fontSize: 12
+              }}>
+                <CheckCircle size={12} /> 已配置
+              </span>
             ) : (
-              <Tag color="warning" icon={<WarningOutlined />}>未配置</Tag>
+              <span style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                padding: '2px 8px',
+                borderRadius: 4,
+                background: '#fffbe6',
+                border: '1px solid #ffe58f',
+                color: '#faad14',
+                fontSize: 12
+              }}>
+                <AlertCircle size={12} /> 未配置
+              </span>
             )}
             {isSelected && (
-              <Tag color="processing">当前默认</Tag>
+              <span style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 4,
+                padding: '2px 8px',
+                borderRadius: 4,
+                background: '#e6f4ff',
+                border: '1px solid #91caff',
+                color: '#1677ff',
+                fontSize: 12
+              }}>
+                当前默认
+              </span>
             )}
           </div>
-          
+
           <div className={styles.modelActions}>
             {isEnabled ? (
-              <Space>
-                <Button 
-                  type={isSelected ? "primary" : "default"}
+              <div style={{ display: 'flex', gap: 8 }}>
+                <Button
+                  variant={isSelected ? "default" : "outline"}
                   size="small"
-                  onClick={handleSelect}
+                  onClick={(e) => { e.stopPropagation(); handleSelect(); }}
                 >
                   {isSelected ? '当前默认' : '设为默认'}
                 </Button>
-                <Tooltip title="管理模型设置">
+                <Tooltip content="管理模型设置">
                   <Button
-                    type="text"
+                    variant="ghost"
                     size="small"
-                    icon={<SettingOutlined />}
+                    icon={<Settings size={14} />}
                     onClick={handleGoToSettings}
                   />
                 </Tooltip>
-              </Space>
+              </div>
             ) : (
-              <Space>
-                <Button 
-                  type="primary" 
+              <div style={{ display: 'flex', gap: 8 }}>
+                <Button
+                  variant="default"
                   size="small"
-                  icon={<SettingOutlined />}
+                  icon={<Settings size={14} />}
                   onClick={handleGoToSettings}
                 >
                   去配置
                 </Button>
-                <Button 
-                  type="link" 
+                <Button
+                  variant="ghost"
                   size="small"
-                  icon={<ApiOutlined />}
+                  icon={<Key size={14} />}
                   onClick={handleRequestApiKey}
                   className={styles.applyKeyButton}
                 >
                   申请密钥
                 </Button>
-              </Space>
+              </div>
             )}
           </div>
         </div>
@@ -195,4 +254,4 @@ const ModelCard: React.FC<ModelCardProps> = ({
   );
 };
 
-export default ModelCard; 
+export default ModelCard;

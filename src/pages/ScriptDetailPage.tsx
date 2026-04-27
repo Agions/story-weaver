@@ -1,7 +1,12 @@
-import { ArrowLeftOutlined, SaveOutlined, DeleteOutlined, ExportOutlined, RobotOutlined } from '@ant-design/icons';
-import { Card, Button, Typography, Space, Spin, message, Divider, Modal, Tag } from 'antd';
+import { ArrowLeft, Save, Trash2, Download, Bot } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { Badge } from '@/components/ui/badge';
+import { toast } from '@/shared/components/ui/Toast';
+import { ConfirmDialog } from '@/shared/components/ui/ConfirmDialog';
 
 import { tauriService } from '@/core/services';
 import { logger } from '@/core/utils/logger';
@@ -9,22 +14,6 @@ import ScriptEditor from '@/features/script/components/ScriptEditor';
 import { useProjectStore } from '@/shared/stores';
 
 import styles from './ScriptDetail.module.less';
-
-
-const { Title, Text } = Typography;
-
-// 项目文件保存函数
-const saveProjectToFile = async (projectId: string, content: string): Promise<void> => {
-  try {
-    const { appDataDir } = await import('@tauri-apps/api/path');
-    const dir = await appDataDir();
-    const filePath = `${dir}projects/${projectId}.json`;
-    await tauriService.writeText(filePath, content);
-  } catch (error) {
-    logger.error('保存项目文件失败:', error);
-    throw error;
-  }
-};
 
 const ScriptDetail: React.FC = () => {
   const { projectId, scriptId } = useParams<{ projectId: string; scriptId: string }>();
@@ -34,24 +23,25 @@ const ScriptDetail: React.FC = () => {
   const [project, setProject] = useState<any>(null);
   const [script, setScript] = useState<any>(null);
   const [segments, setSegments] = useState<any[]>([]);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     if (!projectId || !scriptId) {
-      message.error('参数错误');
+      toast.error('参数错误');
       navigate('/projects');
       return;
     }
 
     const currentProject = projects.find(p => p.id === projectId);
     if (!currentProject) {
-      message.error('找不到项目');
+      toast.error('找不到项目');
       navigate('/projects');
       return;
     }
 
     const currentScript = currentProject.scripts?.find((s: any) => s.id === scriptId);
     if (!currentScript) {
-      message.error('找不到脚本');
+      toast.error('找不到脚本');
       navigate(`/projects/${projectId}`);
       return;
     }
@@ -72,37 +62,31 @@ const ScriptDetail: React.FC = () => {
     try {
       setLoading(true);
 
-      // 更新脚本
       const updatedScript = {
         ...script,
         content: segments,
         updatedAt: new Date().toISOString()
       };
 
-      // 更新项目中的脚本
       const updatedScripts = project.scripts.map((s: any) =>
         s.id === script.id ? updatedScript : s
       );
 
-      // 更新项目
       const updatedProject = {
         ...project,
         scripts: updatedScripts,
         updatedAt: new Date().toISOString()
       };
 
-      // 更新状态和store
       setProject(updatedProject);
       setScript(updatedScript);
       updateProject(updatedProject.id, updatedProject);
-
-      // 保存到文件
       await tauriService.writeText(updatedProject.id, JSON.stringify(updatedProject));
 
-      message.success('保存成功');
+      toast.success('保存成功');
     } catch (error) {
       logger.error('保存失败:', error);
-      message.error('保存失败');
+      toast.error('保存失败');
     } finally {
       setLoading(false);
     }
@@ -112,7 +96,6 @@ const ScriptDetail: React.FC = () => {
     if (!project || !script) return;
 
     try {
-      // Create script content
       const scriptContent = segments
         ?.map((segment: any, index: number) => {
           return `【第${index + 1}幕】\n${segment.text || ''}\n`;
@@ -123,110 +106,109 @@ const ScriptDetail: React.FC = () => {
         `${project.name}_脚本_${new Date().toISOString().slice(0, 10)}.txt`,
         scriptContent
       );
+      toast.success('导出成功');
     } catch (error) {
       logger.error('导出脚本失败:', error);
-      message.error('导出失败');
+      toast.error('导出失败');
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!project || !script) return;
 
-    Modal.confirm({
-      title: '确认删除',
-      content: '确定要删除这个脚本吗？此操作不可撤销。',
-      okText: '删除',
-      okType: 'danger',
-      cancelText: '取消',
-      onOk: async () => {
-        try {
-          // 过滤掉要删除的脚本
-          const updatedScripts = project.scripts.filter((s: any) => s.id !== script.id);
+    try {
+      const updatedScripts = project.scripts.filter((s: any) => s.id !== script.id);
 
-          // 更新项目
-          const updatedProject = {
-            ...project,
-            scripts: updatedScripts,
-            updatedAt: new Date().toISOString()
-          };
+      const updatedProject = {
+        ...project,
+        scripts: updatedScripts,
+        updatedAt: new Date().toISOString()
+      };
 
-          // 更新store
-          updateProject(updatedProject.id, updatedProject);
+      updateProject(updatedProject.id, updatedProject);
+      await tauriService.writeText(updatedProject.id, JSON.stringify(updatedProject));
 
-          // 保存到文件
-          await saveProjectToFile(updatedProject.id, JSON.stringify(updatedProject));
-
-          message.success('删除成功');
-          navigate(`/projects/${project.id}`);
-        } catch (error) {
-          logger.error('删除脚本失败:', error);
-          message.error('删除失败');
-        }
-      }
-    });
+      toast.success('删除成功');
+      navigate(`/projects/${project.id}`);
+    } catch (error) {
+      logger.error('删除脚本失败:', error);
+      toast.error('删除失败');
+    }
   };
 
   if (loading) {
-    return <Spin size="large" tip="加载中..." />;
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+          <p className="text-muted-foreground">加载中...</p>
+        </div>
+      </div>
+    );
   }
 
   if (!project || !script) {
-    return <div>资源不存在</div>;
+    return <div className="p-8 text-center">资源不存在</div>;
   }
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <Space>
+        <div className="flex items-center gap-2">
           <Button
-            icon={<ArrowLeftOutlined />}
+            variant="ghost"
+            size="sm"
             onClick={() => navigate(`/projects/${project.id}`)}
           >
+            <ArrowLeft className="h-4 w-4 mr-1" />
             返回项目
           </Button>
 
           <Button
-            type="primary"
-            icon={<SaveOutlined />}
+            variant="default"
+            size="sm"
             onClick={handleSave}
           >
+            <Save className="h-4 w-4 mr-1" />
             保存
           </Button>
 
           <Button
-            icon={<ExportOutlined />}
+            variant="outline"
+            size="sm"
             onClick={handleExport}
             disabled={segments.length === 0}
           >
+            <Download className="h-4 w-4 mr-1" />
             导出
           </Button>
 
           <Button
-            danger
-            icon={<DeleteOutlined />}
-            onClick={handleDelete}
+            variant="destructive"
+            size="sm"
+            onClick={() => setShowDeleteConfirm(true)}
           >
+            <Trash2 className="h-4 w-4 mr-1" />
             删除
           </Button>
-        </Space>
+        </div>
       </div>
 
       <Card className={styles.infoCard}>
-        <Title level={4}>{project.name} - 脚本编辑</Title>
+        <h2 className="text-xl font-semibold mb-2">{project.name} - 脚本编辑</h2>
         <div className={styles.scriptInfo}>
-          <Text type="secondary">创建于 {new Date(script.createdAt).toLocaleString()}</Text>
+          <p className="text-sm text-muted-foreground">创建于 {new Date(script.createdAt).toLocaleString()}</p>
           {script.modelUsed && (
-            <Tag color="blue" icon={<RobotOutlined />} className={styles.modelTag}>
+            <Badge variant="secondary" className="mt-2">
+              <Bot className="h-3 w-3 mr-1" />
               由 {script.modelUsed} 生成
-            </Tag>
+            </Badge>
           )}
         </div>
-        <Divider />
+        <Separator className="my-4" />
         <div className={styles.stats}>
-          <Space>
-            <Text>片段数量: {segments.length}</Text>
-            <Text>总时长: {segments.reduce((total, seg) => total + ((seg.endTime || 0) - (seg.startTime || 0)), 0)} 秒</Text>
-          </Space>
+          <p className="text-sm">片段数量: {segments.length}</p>
+          <p className="text-sm">总时长: {segments.reduce((total, seg) => total + ((seg.endTime || 0) - (seg.startTime || 0)), 0)} 秒</p>
         </div>
       </Card>
 
@@ -236,6 +218,16 @@ const ScriptDetail: React.FC = () => {
           onSegmentsChange={handleSegmentsChange}
         />
       </div>
+
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDelete}
+        title="确认删除"
+        description="确定要删除这个脚本吗？此操作不可撤销。"
+        confirmText="删除"
+        variant="destructive"
+      />
     </div>
   );
 };

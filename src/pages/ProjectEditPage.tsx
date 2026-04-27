@@ -1,27 +1,26 @@
 import {
-  ArrowLeftOutlined,
-  SaveOutlined,
-  FileTextOutlined,
-  ThunderboltOutlined,
-  EditOutlined,
-  CheckCircleOutlined,
-  UserOutlined,
-  PictureOutlined,
-  PlayCircleOutlined,
-  SoundOutlined,
-  ExportOutlined,
-} from '@ant-design/icons';
+  ArrowLeft,
+  Save,
+  FileText,
+  Zap,
+  Edit,
+  CheckCircle,
+  User,
+  Image,
+  PlayCircle,
+  Volume2,
+  Download,
+  AlertTriangle,
+} from 'lucide-react';
 import {
   Card,
-  Form,
-  Input,
-  Button,
-  message,
-  Space,
-  Spin,
-  Result,
-  Steps,
-} from 'antd';
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { toast } from '@/shared/components/ui/Toast';
 import React, { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
@@ -226,7 +225,7 @@ const ProjectEdit: React.FC = () => {
         .catch(err => {
           logger.error('加载项目失败:', err);
           setError('加载项目失败，请确认项目文件是否存在');
-          message.error('加载项目失败');
+          toast.error('加载项目失败');
         })
         .finally(() => {
           setInitialLoading(false);
@@ -324,12 +323,12 @@ const ProjectEdit: React.FC = () => {
     setStoryboardVersions(versions);
     setVersionLabel('');
     setCompareLeftVersionId(versions[versions.length - 1]?.id);
-    message.success('已保存分镜版本快照');
+    toast.success('已保存分镜版本快照');
   };
 
   const handleCompareVersions = () => {
     if (!compareLeftVersionId || !compareRightVersionId) {
-      message.warning('请选择两个版本进行对比');
+      toast.warning('请选择两个版本进行对比');
       return;
     }
     const diff = collaborationService.diffVersions(compareLeftVersionId, compareRightVersionId);
@@ -338,26 +337,26 @@ const ProjectEdit: React.FC = () => {
 
   const handleRollbackVersion = () => {
     if (!project?.id || !compareLeftVersionId) {
-      message.warning('请选择要回滚的版本');
+      toast.warning('请选择要回滚的版本');
       return;
     }
     const payload = collaborationService.rollback(project.id, compareLeftVersionId);
     if (Array.isArray(payload)) {
       setStoryboardFrames(payload as StoryboardFrame[]);
-      message.success('已回滚到所选版本');
+      toast.success('已回滚到所选版本');
       return;
     }
-    message.error('回滚失败，未找到对应版本');
+    toast.error('回滚失败，未找到对应版本');
   };
 
   const handleGenerateVoices = async () => {
     if (!scriptText.trim()) {
-      message.warning('请先完成剧本生成');
+      toast.warning('请先完成剧本生成');
       return;
     }
     try {
       setAudioGenerating(true);
-      message.info('正在生成配音轨道，请稍候...');
+      toast.info('正在生成配音轨道，请稍候...');
       const result = await audioPipelineService.generateVoiceTracks(scriptText, storyAnalysis, {
         maxLines: 20,
         projectId: project?.id,
@@ -368,13 +367,13 @@ const ProjectEdit: React.FC = () => {
       }));
       setAudioEditorKey(`audio-${Date.now()}`);
       if (result.failedLines.length > 0) {
-        message.warning(`已生成 ${result.voiceTracks.length} 条配音，${result.failedLines.length} 条失败`);
+        toast.warning(`已生成 ${result.voiceTracks.length} 条配音，${result.failedLines.length} 条失败`);
       } else {
-        message.success(`已生成 ${result.voiceTracks.length} 条配音`);
+        toast.success(`已生成 ${result.voiceTracks.length} 条配音`);
       }
     } catch (error) {
       logger.error('自动生成配音失败:', error);
-      message.error('自动生成配音失败');
+      toast.error('自动生成配音失败');
     } finally {
       setAudioGenerating(false);
     }
@@ -382,12 +381,12 @@ const ProjectEdit: React.FC = () => {
 
   const handleAnalyzeContent = async () => {
     if (!content) {
-      message.error('请先导入小说/剧本内容');
+      toast.error('请先导入小说/剧本内容');
       return;
     }
     try {
       setLoading(true);
-      message.info('正在结构化分析内容，请稍候...');
+      toast.info('正在结构化分析内容，请稍候...');
       const analyzed = await storyAnalysisService.analyze(content, {
         provider: 'alibaba',
         model: 'qwen-3.5',
@@ -397,10 +396,10 @@ const ProjectEdit: React.FC = () => {
       setStoryAnalysis(analyzed);
       setAnalysisDraft(JSON.stringify(analyzed, null, 2));
       setAnalysisState('generated');
-      message.success('结构化解析完成，请确认结果后继续');
+      toast.success('结构化解析完成，请确认结果后继续');
     } catch (error) {
       logger.error('AI解析失败:', error);
-      message.error('AI解析失败，请稍后再试');
+      toast.error('AI解析失败，请稍后再试');
     } finally {
       setLoading(false);
     }
@@ -408,7 +407,7 @@ const ProjectEdit: React.FC = () => {
 
   const handleAcceptAnalysis = async () => {
     if (!analysisDraft.trim()) {
-      message.error('请先生成解析结果');
+      toast.error('请先生成解析结果');
       return;
     }
     try {
@@ -419,17 +418,17 @@ const ProjectEdit: React.FC = () => {
         setStoryboardFrames(buildStoryboardDraft(parsed));
       }
       setLoading(true);
-      message.info('正在根据解析结果生成剧本...');
+      toast.info('正在根据解析结果生成剧本...');
       const generatedScript = await aiService.generate(
         `请基于以下故事结构生成适合视频脚本制作的剧本：\n\n${JSON.stringify(parsed, null, 2)}\n\n要求：按场景输出，包含旁白、对白、动作描述。`,
         { model: 'gpt-4', provider: 'openai' }
       );
       setScriptText(generatedScript);
-      message.success('剧本生成完成');
+      toast.success('剧本生成完成');
       setCurrentStep(2);
     } catch (error) {
       logger.error('接受解析结果失败:', error);
-      message.error('解析 JSON 格式无效，请修正后重试');
+      toast.error('解析 JSON 格式无效，请修正后重试');
     } finally {
       setLoading(false);
     }
@@ -439,7 +438,7 @@ const ProjectEdit: React.FC = () => {
     try {
       await form.validateFields();
       if (!content) {
-        message.error('请先导入小说/剧本内容');
+        toast.error('请先导入小说/剧本内容');
         return;
       }
       setSaving(true);
@@ -465,14 +464,14 @@ const ProjectEdit: React.FC = () => {
         script: scriptText || undefined
       };
       await tauriService.writeText(projectData.id, JSON.stringify(projectData));
-      message.success('项目保存成功');
+      toast.success('项目保存成功');
       setProject(projectData);
       if (isNewProject) {
         navigate(`/project/${projectData.id}`);
       }
     } catch (error) {
       logger.error('保存项目失败:', error);
-      message.error('保存项目失败，请稍后再试');
+      toast.error('保存项目失败，请稍后再试');
     } finally {
       setSaving(false);
     }
@@ -481,12 +480,12 @@ const ProjectEdit: React.FC = () => {
   const handleBack = () => navigate(-1);
 
   const handleExportScript = (format: string) => {
-    message.info(`导出脚本为 ${format.toUpperCase()} 格式`);
+    toast.info(`导出脚本为 ${format.toUpperCase()} 格式`);
   };
 
   const handleExportReviewNotes = async () => {
     if (!project?.id) {
-      message.warning('请先加载项目后再导出评审记录');
+      toast.warning('请先加载项目后再导出评审记录');
       return;
     }
     try {
@@ -515,27 +514,27 @@ const ProjectEdit: React.FC = () => {
           source: 'project_edit',
         },
       );
-      if (saved) message.success('评审记录导出成功');
+      if (saved) toast.success('评审记录导出成功');
     } catch (error) {
       logger.error('导出评审记录失败:', error);
-      message.error('导出评审记录失败');
+      toast.error('导出评审记录失败');
     }
   };
 
   const handleLocateIssueFrame = (issue: QualityGateIssue) => {
     if (!issue.frameId) {
-      message.info('该问题暂无具体分镜定位信息');
+      toast.info('该问题暂无具体分镜定位信息');
       return;
     }
     const exists = storyboardFrames.some((frame) => frame.id === issue.frameId);
     if (!exists) {
-      message.warning('定位分镜不存在，可能已被删除');
+      toast.warning('定位分镜不存在，可能已被删除');
       return;
     }
     setCurrentStep(3);
     setFocusFrameId(issue.frameId);
     const frameIndex = typeof issue.frameIndex === 'number' ? issue.frameIndex + 1 : undefined;
-    message.success(`已定位到${frameIndex ? `第 ${frameIndex} 镜` : '目标分镜'}`);
+    toast.success(`已定位到${frameIndex ? `第 ${frameIndex} 镜` : '目标分镜'}`);
   };
 
   const handleBuildStoryboardDraft = () => {
@@ -690,100 +689,133 @@ const ProjectEdit: React.FC = () => {
   // --- 渲染 ---
   if (error) {
     return (
-      <Result
-        status="error"
-        title="加载失败"
-        subTitle={error}
-        extra={[
-          <Button key="back" onClick={handleBack}>
-            返回
-          </Button>
-        ]}
-      />
+      <div className="flex flex-col items-center justify-center h-[50vh] gap-4">
+        <AlertTriangle className="h-16 w-16 text-destructive" />
+        <h2 className="text-xl font-semibold">加载失败</h2>
+        <p className="text-muted-foreground">{error}</p>
+        <Button variant="outline" onClick={handleBack}>返回</Button>
+      </div>
     );
   }
 
   return (
     <div className={styles.container}>
-      <Spin spinning={initialLoading} tip="加载项目中...">
-        {/* 顶部 Header */}
-        <div className={styles.header}>
-          <Button type="text" icon={<ArrowLeftOutlined />} onClick={handleBack}>
-            返回
-          </Button>
-          <h3 style={{ margin: 0 }}>
-            {isNewProject ? '创建新项目' : '编辑项目'}
-          </h3>
-          <Space>
-            <Button
-              icon={<FileTextOutlined />}
-              onClick={handleExportReviewNotes}
-              disabled={!project?.id}
-            >
-              导出评审记录
-            </Button>
-            <Button
-              type="primary"
-              icon={<SaveOutlined />}
-              onClick={handleSaveProject}
-              loading={saving}
-            >
-              保存项目
-            </Button>
-          </Space>
+      {initialLoading && (
+        <div className="flex items-center justify-center h-[50vh]">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            <p className="text-muted-foreground">加载项目中...</p>
+          </div>
         </div>
+      )}
 
-        {/* 项目基本信息 */}
-        <Card className={styles.card}>
-          <Form
-            form={form}
-            layout="vertical"
-            initialValues={{ name: '', description: '' }}
+      {/* 顶部 Header */}
+      <div className={styles.header}>
+        <Button variant="ghost" onClick={handleBack}>
+          <ArrowLeft className="h-4 w-4 mr-1" />
+          返回
+        </Button>
+        <h3 style={{ margin: 0 }}>
+          {isNewProject ? '创建新项目' : '编辑项目'}
+        </h3>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={handleExportReviewNotes}
+            disabled={!project?.id}
           >
-            <Form.Item
-              name="name"
-              label="项目名称"
-              rules={[{ required: true, message: '请输入项目名称' }]}
-            >
-              <Input placeholder="请输入项目名称" maxLength={100} />
-            </Form.Item>
-            <Form.Item name="description" label="项目描述">
-              <Input.TextArea placeholder="请输入项目描述（选填）" rows={2} maxLength={500} />
-            </Form.Item>
-          </Form>
-        </Card>
+            <FileText className="h-4 w-4 mr-1" />
+            导出评审记录
+          </Button>
+          <Button
+            variant="default"
+            onClick={handleSaveProject}
+            disabled={saving}
+          >
+            <Save className="h-4 w-4 mr-1" />
+            {saving ? '保存中...' : '保存项目'}
+          </Button>
+        </div>
+      </div>
 
-        {/* 成本面板 */}
-        <Suspense fallback={<Spin style={{ width: '100%' }} />}>
-          <CostDashboard projectId={project?.id} />
-        </Suspense>
+      {/* 项目基本信息 */}
+      <Card className={styles.card}>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium">项目名称</label>
+            <Input
+              placeholder="请输入项目名称"
+              maxLength={100}
+              defaultValue={project?.name || ''}
+            />
+          </div>
+          <div className="space-y-2">
+            <label className="text-sm font-medium">项目描述</label>
+            <textarea
+              className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              placeholder="请输入项目描述（选填）"
+              maxLength={500}
+              rows={2}
+              defaultValue={project?.description || ''}
+            />
+          </div>
+        </div>
+      </Card>
+
+      {/* 成本面板 */}
+      <Suspense fallback={
+        <div className="flex items-center justify-center p-8">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      }>
+        <CostDashboard projectId={project?.id} />
+      </Suspense>
 
         {/* 步骤导航 */}
         <div className={styles.stepsContainer}>
-          <Steps
-            current={currentStep}
-            onChange={setCurrentStep}
-            items={[
-              { title: '导入', icon: <FileTextOutlined />, description: '小说/剧本' },
-              { title: 'AI解析', icon: <ThunderboltOutlined />, description: '智能分析' },
-              { title: '剧本', icon: <EditOutlined />, description: '生成剧本' },
-              { title: '分镜', icon: <PictureOutlined />, description: '漫画分镜' },
-              { title: '角色', icon: <UserOutlined />, description: '角色形象' },
-              { title: '渲染', icon: <CheckCircleOutlined />, description: '场景渲染' },
-              { title: '合成', icon: <PlayCircleOutlined />, description: '动态效果' },
-              { title: '配音', icon: <SoundOutlined />, description: '配音配乐' },
-              { title: '导出', icon: <ExportOutlined />, description: '视频导出' },
-            ]}
-          />
+          <div className="flex items-center gap-2 overflow-x-auto pb-2">
+            {[
+              { key: 'import', title: '导入', icon: FileText, desc: '小说/剧本' },
+              { key: 'analysis', title: 'AI解析', icon: Zap, desc: '智能分析' },
+              { key: 'script', title: '剧本', icon: Edit, desc: '生成剧本' },
+              { key: 'storyboard', title: '分镜', icon: Image, desc: '漫画分镜' },
+              { key: 'character', title: '角色', icon: User, desc: '角色形象' },
+              { key: 'render', title: '渲染', icon: CheckCircle, desc: '场景渲染' },
+              { key: 'composition', title: '合成', icon: PlayCircle, desc: '动态效果' },
+              { key: 'audio', title: '配音', icon: Volume2, desc: '配音配乐' },
+              { key: 'export', title: '导出', icon: Download, desc: '视频导出' },
+            ].map((step, index) => {
+              const Icon = step.icon;
+              return (
+                <div
+                  key={step.key}
+                  className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
+                    index === currentStep
+                      ? 'bg-primary text-primary-foreground'
+                      : index < currentStep
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-muted text-muted-foreground'
+                  }`}
+                  onClick={() => setCurrentStep(index)}
+                >
+                  <Icon className="h-4 w-4" />
+                  <span className="text-sm font-medium">{step.title}</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* 步骤内容 */}
         <div className={styles.stepsContent}>
-          <Suspense fallback={<Spin style={{ width: '100%' }} tip="加载模块中..." />}>
+          <Suspense fallback={
+            <div className="flex items-center justify-center p-8">
+              <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            </div>
+          }>
             {renderStepContent()}
           </Suspense>
         </div>
-      </Spin>
     </div>
   );
 };

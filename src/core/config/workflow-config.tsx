@@ -4,14 +4,14 @@
  */
 
 import { 
-  UploadOutlined, 
-  FileTextOutlined,
-  PlayCircleOutlined,
-  SettingOutlined,
-  ThunderboltOutlined,
-  ExportOutlined,
-  PictureOutlined
-} from '@ant-design/icons';
+  Upload, 
+  FileText,
+  PlayCircle,
+  Settings,
+  Zap,
+  Download,
+  Image
+} from 'lucide-react';
 import React from 'react';
 
 // 工作流步骤定义
@@ -19,49 +19,49 @@ export const WORKFLOW_STEPS = [
   { 
     key: 'import', 
     title: '📥 导入', 
-    icon: <UploadOutlined />,
+    icon: <Upload />,
     color: '#6366f1',
     description: '上传小说/漫画素材'
   },
   { 
     key: 'generate', 
     title: '🤖 生成', 
-    icon: <ThunderboltOutlined />,
+    icon: <Zap />,
     color: '#8b5cf6',
     description: 'AI 智能生成内容'
   },
   { 
     key: 'storyboard', 
     title: '🎬 分镜', 
-    icon: <PictureOutlined />,
+    icon: <Image />,
     color: '#ec4899',
     description: 'AI 智能分镜设计'
   },
   { 
     key: 'character', 
     title: '👤 角色', 
-    icon: <FileTextOutlined />,
+    icon: <FileText />,
     color: '#f59e0b',
     description: '角色形象设计'
   },
   { 
     key: 'render', 
     title: '🎨 渲染', 
-    icon: <PlayCircleOutlined />,
+    icon: <PlayCircle />,
     color: '#10b981',
     description: '场景与角色渲染'
   },
   { 
     key: 'animate', 
     title: '✨ 合成', 
-    icon: <SettingOutlined />,
+    icon: <Settings />,
     color: '#06b6d4',
     description: '动态合成与转场'
   },
   { 
     key: 'export', 
     title: '📤 导出', 
-    icon: <ExportOutlined />,
+    icon: <Download />,
     color: '#f97316',
     description: '导出视频/合集'
   },

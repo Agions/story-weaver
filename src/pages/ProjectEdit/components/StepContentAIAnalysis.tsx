@@ -1,11 +1,13 @@
 /**
  * Step 1: AI 解析内容
  */
-import { Card, Typography, Spin, Alert, Input, Space, Button } from 'antd';
+import { Edit } from 'lucide-react';
 import React, { lazy } from 'react';
-
-const { Title, Paragraph } = Typography;
-import { EditOutlined } from '@ant-design/icons';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Alert } from '@/components/ui/alert';
+import { toast } from '@/shared/components/ui/Toast';
 
 import type { StoryAnalysis } from '@/core/types';
 import type { NovelMetadata } from '@/features/script/components/NovelImporter';
@@ -42,14 +44,26 @@ const StepContentAIAnalysis: React.FC<StepContentAIAnalysisProps> = ({
   onPrev,
 }) => (
   <Card className={styles.stepCard}>
-    <Title level={4}>
-      <EditOutlined /> AI解析内容
-    </Title>
-    <Paragraph>
-      使用AI智能分析小说/剧本内容，提取关键信息，生成适合视频脚本展示的剧本。
-    </Paragraph>
+    <CardHeader>
+      <CardTitle className="flex items-center gap-2">
+        <Edit className="h-5 w-5" />
+        AI解析内容
+      </CardTitle>
+    </CardHeader>
+    <CardContent>
+      <p className="text-muted-foreground mb-4">
+        使用AI智能分析小说/剧本内容，提取关键信息，生成适合视频脚本展示的剧本。
+      </p>
 
-    <Spin spinning={loading} tip="正在AI解析...">
+      {loading && (
+        <div className="flex items-center justify-center p-8">
+          <div className="flex flex-col items-center gap-4">
+            <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+            <p className="text-muted-foreground">正在AI解析...</p>
+          </div>
+        </div>
+      )}
+
       <div className={styles.analyzeContent}>
         <NovelImporter
           initialContent={content}
@@ -60,21 +74,23 @@ const StepContentAIAnalysis: React.FC<StepContentAIAnalysisProps> = ({
 
         {novelMetadata && (
           <div className={styles.contentInfo}>
-            <Title level={5}>内容信息</Title>
-            <p>文件名: {novelMetadata.filename}</p>
-            <p>字符数: {novelMetadata.charCount.toLocaleString()}</p>
-            <p>章节数: {novelMetadata.chapterCount}</p>
-            <p>预估章节数: {novelMetadata.estimatedChapters}</p>
+            <h4 className="font-semibold mb-2">内容信息</h4>
+            <p className="text-sm">文件名: {novelMetadata.filename}</p>
+            <p className="text-sm">字符数: {novelMetadata.charCount.toLocaleString()}</p>
+            <p className="text-sm">章节数: {novelMetadata.chapterCount}</p>
+            <p className="text-sm">预估章节数: {novelMetadata.estimatedChapters}</p>
           </div>
         )}
 
         {analysisState !== 'idle' && (
           <div className={styles.analysisPanel}>
-            <Title level={5}>结构化解析结果（可编辑）</Title>
+            <h4 className="font-semibold mb-2">结构化解析结果（可编辑）</h4>
             {analysisState === 'accepted' && (
-              <Alert type="success" message="当前解析结果已接受，可重跑覆盖" showIcon style={{ marginBottom: 12 }} />
+              <Alert variant="default" className="mb-3 bg-green-50 border-green-200">
+                当前解析结果已接受，可重跑覆盖
+              </Alert>
             )}
-            <Input.TextArea
+            <Input.Textarea
               value={analysisDraft}
               rows={14}
               onChange={(e) => onDraftChange(e.target.value)}
@@ -83,27 +99,27 @@ const StepContentAIAnalysis: React.FC<StepContentAIAnalysisProps> = ({
           </div>
         )}
       </div>
-    </Spin>
 
-    <div className={styles.stepActions}>
-      <Space>
-        <Button onClick={onPrev}>上一步</Button>
-        {analysisState !== 'idle' && (
-          <Button onClick={onAnalyze} loading={loading}>
-            重新解析
-          </Button>
-        )}
-        {analysisState === 'generated' || analysisState === 'accepted' ? (
-          <Button type="primary" onClick={onAccept} loading={loading}>
-            接受并生成剧本
-          </Button>
-        ) : (
-          <Button type="primary" onClick={onAnalyze} loading={loading}>
-            开始AI解析
-          </Button>
-        )}
-      </Space>
-    </div>
+      <div className={styles.stepActions}>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={onPrev}>上一步</Button>
+          {analysisState !== 'idle' && (
+            <Button variant="outline" onClick={onAnalyze} disabled={loading}>
+              重新解析
+            </Button>
+          )}
+          {analysisState === 'generated' || analysisState === 'accepted' ? (
+            <Button variant="default" onClick={onAccept} disabled={loading}>
+              接受并生成剧本
+            </Button>
+          ) : (
+            <Button variant="default" onClick={onAnalyze} disabled={loading}>
+              开始AI解析
+            </Button>
+          )}
+        </div>
+      </div>
+    </CardContent>
   </Card>
 );
 

@@ -21,7 +21,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     const rootElement = document.documentElement;
 
     if (dark) {
-      rootElement.classList.add('dark-theme');
+      rootElement.classList.add('dark-theme', 'dark');
       document.body.style.backgroundColor = '#141414';
       document.body.style.color = 'rgba(255, 255, 255, 0.85)';
 
@@ -42,7 +42,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         (el) => (el as HTMLElement).style.color = 'rgba(255, 255, 255, 0.85)'
       );
     } else {
-      rootElement.classList.remove('dark-theme');
+      rootElement.classList.remove('dark-theme', 'dark');
       document.body.style.backgroundColor = '#fff';
       document.body.style.color = 'rgba(0, 0, 0, 0.85)';
 

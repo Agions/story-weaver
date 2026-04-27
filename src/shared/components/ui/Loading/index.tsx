@@ -2,9 +2,8 @@
  * 专业加载组件
  */
 
-import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
 import React from 'react';
+import { Loader2 } from 'lucide-react';
 
 import styles from './Loading.module.less';
 
@@ -21,34 +20,43 @@ const Loading: React.FC<LoadingProps> = ({
   fullscreen = false,
   children 
 }) => {
-  const spinIcon = <LoadingOutlined spin style={{ fontSize: size === 'large' ? 48 : size === 'small' ? 16 : 24 }} />;
+  const iconSize = size === 'large' ? 48 : size === 'small' ? 16 : 24;
 
   if (fullscreen) {
     return (
       <div className={styles.fullscreen}>
-        <Spin indicator={spinIcon} tip={tip} size={size} />
+        <Loader2 
+          className="animate-spin" 
+          style={{ width: iconSize, height: iconSize }} 
+        />
+        {tip && <p className="mt-4 text-muted-foreground">{tip}</p>}
       </div>
     );
   }
 
   return (
     <div className={styles.container}>
-      <Spin indicator={spinIcon} tip={tip} size={size}>
+      <div className="flex flex-col items-center gap-2">
+        <Loader2 
+          className="animate-spin" 
+          style={{ width: iconSize, height: iconSize }} 
+        />
+        {tip && <p className="text-muted-foreground text-sm">{tip}</p>}
         {children}
-      </Spin>
+      </div>
     </div>
   );
 };
 
 // 骨架屏加载
-interface SkeletonProps {
+interface PageSkeletonProps {
   active?: boolean;
   avatar?: boolean;
   title?: boolean;
   paragraph?: boolean | { rows?: number };
 }
 
-export const PageSkeleton: React.FC<SkeletonProps> = () => (
+export const PageSkeleton: React.FC<PageSkeletonProps> = () => (
   <div className={styles.skeleton}>
     <div className={styles.skeletonHeader} />
     <div className={styles.skeletonContent}>

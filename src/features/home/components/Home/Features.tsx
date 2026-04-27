@@ -1,18 +1,16 @@
 import {
-  ThunderboltOutlined,
-  CodeOutlined,
-  CloudOutlined,
-  BulbOutlined,
-  RocketOutlined
-} from '@ant-design/icons';
-import { Row, Col, Card, Typography } from 'antd';
+  Zap,
+  Code,
+  Cloud,
+  Lightbulb,
+  Rocket
+} from 'lucide-react';
 import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { useTheme } from '@/context/ThemeContext';
 
 import styles from './Features.module.less';
-
-const { Title, Paragraph } = Typography;
 
 interface Feature {
   icon: React.ReactNode;
@@ -23,25 +21,25 @@ interface Feature {
 
 const featureList: Feature[] = [
   {
-    icon: <ThunderboltOutlined />,
+    icon: <Zap className="h-6 w-6" />,
     title: '智能分析',
     description: '基于AI技术分析视频内容，智能识别关键场景和情感变化',
     color: '#6366f1'
   },
   {
-    icon: <CodeOutlined />,
+    icon: <Code className="h-6 w-6" />,
     title: '脚本生成',
     description: '自动生成专业短视频脚本，支持多种风格和平台定制',
     color: '#ec4899'
   },
   {
-    icon: <CloudOutlined />,
+    icon: <Cloud className="h-6 w-6" />,
     title: '一键剪辑',
     description: '根据脚本一键生成精美短视频，无需复杂操作',
     color: '#14b8a6'
   },
   {
-    icon: <BulbOutlined />,
+    icon: <Lightbulb className="h-6 w-6" />,
     title: '创意辅助',
     description: 'AI提供创意建议和创作灵感，帮助提升内容质量',
     color: '#f59e0b'
@@ -57,30 +55,31 @@ const Features: React.FC = () => {
 
   return (
     <div className={styles.features}>
-      <Title level={3} className={styles.sectionTitle}>
-        <RocketOutlined /> 强大功能
-      </Title>
-      <Row gutter={[24, 24]}>
+      <h3 className={styles.sectionTitle}>
+        <Rocket className="inline-block h-5 w-5 mr-2" />
+        强大功能
+      </h3>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         {featureList.map((feature, index) => (
-          <Col xs={24} sm={12} md={6} key={index}>
-            <Card
-              className={`${styles.featureCard} ${isDarkMode ? styles.darkCard : ''}`}
-              bordered={false}
-            >
+          <Card
+            key={index}
+            className={`${styles.featureCard} ${isDarkMode ? styles.darkCard : ''}`}
+          >
+            <CardContent>
               <div
                 className={styles.featureIcon}
                 style={{ color: feature.color }}
               >
                 {feature.icon}
               </div>
-              <Title level={4} className={styles.featureTitle}>{feature.title}</Title>
-              <Paragraph className={styles.featureDesc}>
+              <h4 className={styles.featureTitle}>{feature.title}</h4>
+              <p className={styles.featureDesc}>
                 {feature.description}
-              </Paragraph>
-            </Card>
-          </Col>
+              </p>
+            </CardContent>
+          </Card>
         ))}
-      </Row>
+      </div>
     </div>
   );
 };

@@ -1,31 +1,27 @@
+import React, { useState } from 'react';
+import { Upload, Search, Bell, MoreHorizontal, Video, Audio, FileImage, FileText } from 'lucide-react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
-  UploadOutlined,
-  VideoCameraAddOutlined,
-  AudioOutlined,
-  FileImageOutlined,
-  FileTextOutlined,
-  MoreOutlined
-} from '@ant-design/icons';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   Tabs,
-  Button,
-  Upload,
-  Input,
-  Empty,
-  Tooltip,
-  Dropdown,
-  Tag,
-  MenuProps
-} from 'antd';
-import React, { useState } from 'react';
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs';
+import { EmptyState } from '@/shared/components/ui';
+import { toast } from '@/shared/components/ui';
 
 import { logger } from '@/core/utils/logger';
 
 import styles from './AssetPanel.module.less';
-
-const { TabPane } = Tabs;
-const { Search } = Input;
-
 
 interface Asset {
   id: string;
@@ -142,13 +138,13 @@ const AssetPanel: React.FC<AssetPanelProps> = () => {
           <img src={asset.thumbnail} className={styles.thumbnail} alt={asset.name} />
         ) : (
           <div className={styles.assetIconContainer}>
-            <VideoCameraAddOutlined className={styles.assetIcon} />
+            <Video className={styles.assetIcon} />
           </div>
         );
       case 'audio':
         return (
           <div className={styles.assetIconContainer}>
-            <AudioOutlined className={styles.assetIcon} />
+            <Audio className={styles.assetIcon} />
           </div>
         );
       case 'image':
@@ -156,13 +152,13 @@ const AssetPanel: React.FC<AssetPanelProps> = () => {
           <img src={asset.thumbnail} className={styles.thumbnail} alt={asset.name} />
         ) : (
           <div className={styles.assetIconContainer}>
-            <FileImageOutlined className={styles.assetIcon} />
+            <FileImage className={styles.assetIcon} />
           </div>
         );
       case 'text':
         return (
           <div className={styles.assetIconContainer}>
-            <FileTextOutlined className={styles.assetIcon} />
+            <FileText className={styles.assetIcon} />
           </div>
         );
       default:
@@ -177,7 +173,7 @@ const AssetPanel: React.FC<AssetPanelProps> = () => {
   };
 
   // 素材项操作菜单
-  const getAssetMenuItems = (id: string): MenuProps['items'] => [
+  const getAssetMenuItems = (id: string) => [
     {
       key: '1',
       label: '重命名',
@@ -194,7 +190,7 @@ const AssetPanel: React.FC<AssetPanelProps> = () => {
       onClick: () => logger.info('复制', id)
     },
     {
-      type: 'divider'
+      type: 'divider' as const
     },
     {
       key: '4',
@@ -207,23 +203,20 @@ const AssetPanel: React.FC<AssetPanelProps> = () => {
   return (
     <div className={styles.assetPanelContainer}>
       <div className={styles.assetSearch}>
-        <Search
+        <Input
           placeholder="搜索素材..."
           onChange={(e) => setSearchQuery(e.target.value)}
-          allowClear
         />
       </div>
 
-      <Tabs
-        activeKey={activeTab}
-        onChange={setActiveTab}
-        className={styles.assetTabs}
-      >
-        <TabPane tab="全部" key="all" />
-        <TabPane tab="视频" key="video" />
-        <TabPane tab="音频" key="audio" />
-        <TabPane tab="图片" key="image" />
-        <TabPane tab="文本" key="text" />
+      <Tabs defaultValue="all" className={styles.assetTabs} onValueChange={setActiveTab}>
+        <TabsList>
+          <TabsTrigger value="all">全部</TabsTrigger>
+          <TabsTrigger value="video">视频</TabsTrigger>
+          <TabsTrigger value="audio">音频</TabsTrigger>
+          <TabsTrigger value="image">图片</TabsTrigger>
+          <TabsTrigger value="text">文本</TabsTrigger>
+        </TabsList>
       </Tabs>
 
       <div className={styles.uploadContainer}>
@@ -232,10 +225,8 @@ const AssetPanel: React.FC<AssetPanelProps> = () => {
           showUploadList={false}
           customRequest={handleUpload}
         >
-          <Button
-            icon={<UploadOutlined />}
-            block
-          >
+          <Button variant="outline" className="w-full">
+            <Upload className="h-4 w-4 mr-2" />
             上传素材
           </Button>
         </Upload>
@@ -261,40 +252,35 @@ const AssetPanel: React.FC<AssetPanelProps> = () => {
                   )}
                 </div>
                 <div className={styles.assetInfo}>
-                  <Tooltip title={asset.name}>
-                    <div className={styles.assetName}>{asset.name}</div>
-                  </Tooltip>
+                  <div className={styles.assetName} title={asset.name}>{asset.name}</div>
                   <div className={styles.assetDetails}>
                     <span className={styles.assetSize}>{formatSize(asset.size)}</span>
                     {asset.tags.map(tag => (
-                      <Tag key={tag} className={styles.assetTag}>{tag}</Tag>
+                      <span key={tag} className={styles.assetTag}>{tag}</span>
                     ))}
                   </div>
                 </div>
               </div>
               <Dropdown menu={{ items: getAssetMenuItems(asset.id) }} trigger={['click']} placement="bottomRight">
                 <Button
-                  type="text"
+                  variant="ghost"
                   className={styles.assetMenuButton}
-                  icon={<MoreOutlined />}
+                  icon={<MoreHorizontal />}
                   onClick={(e) => e.stopPropagation()}
                 />
               </Dropdown>
             </div>
           ))
         ) : (
-          <Empty
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description={
-              <span>
-                {searchQuery
-                  ? "没有找到匹配的素材"
-                  : activeTab === 'all'
-                    ? "没有素材"
-                    : `没有${activeTab === 'video' ? '视频' : activeTab === 'audio' ? '音频' : activeTab === 'image' ? '图片' : '文本'}素材`
-                }
-              </span>
+          <EmptyState
+            title={
+              searchQuery
+                ? "没有找到匹配的素材"
+                : activeTab === 'all'
+                  ? "没有素材"
+                  : `没有${activeTab === 'video' ? '视频' : activeTab === 'audio' ? '音频' : activeTab === 'image' ? '图片' : '文本'}素材`
             }
+            description="请尝试其他搜索词或上传新素材"
           />
         )}
       </div>

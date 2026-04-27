@@ -1,24 +1,28 @@
 import {
-  ScissorOutlined,
-  AudioOutlined,
-  FontSizeOutlined,
-  ThunderboltOutlined,
-  RobotOutlined,
-  BulbOutlined,
-  CheckCircleOutlined,
-  ClockCircleOutlined,
-  VideoCameraAddOutlined,
-  PictureOutlined,
-  BgColorsOutlined,
-  SyncOutlined,
-  SettingOutlined,
-} from '@ant-design/icons';
-import { Button, List, Tag, Typography, Tooltip, Progress, Divider, Space } from 'antd';
+  Scissors,
+  Volume2,
+  Type,
+  Zap,
+  Bot,
+  Lightbulb,
+  CheckCircle,
+  Clock,
+  Video,
+  Image,
+  Palette,
+  Settings,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import React from 'react';
 
 import styles from './AIFeaturePanel.module.less';
-
-const { Text, Title } = Typography;
 
 interface AIFeaturePanelProps {
   onFeatureSelect?: (feature: string) => void;
@@ -32,7 +36,7 @@ interface AIFeaturePanelProps {
 const aiFeatures = [
   {
     key: 'smartClip',
-    icon: <ScissorOutlined />,
+    icon: <Scissors size={18} />,
     title: '智能剪辑',
     description: 'AI 自动识别精彩片段',
     tag: 'AI',
@@ -40,7 +44,7 @@ const aiFeatures = [
   },
   {
     key: 'smartDub',
-    icon: <AudioOutlined />,
+    icon: <Volume2 size={18} />,
     title: '智能配音',
     description: '文字转语音，情感合成',
     tag: 'AI',
@@ -48,7 +52,7 @@ const aiFeatures = [
   },
   {
     key: 'subtitle',
-    icon: <FontSizeOutlined />,
+    icon: <Type size={18} />,
     title: '字幕生成',
     description: '语音识别自动生成字幕',
     tag: 'AI',
@@ -56,7 +60,7 @@ const aiFeatures = [
   },
   {
     key: 'autoHighlight',
-    icon: <ThunderboltOutlined />,
+    icon: <Zap size={18} />,
     title: '精彩时刻',
     description: '自动识别高能片段',
     tag: 'AI',
@@ -64,7 +68,7 @@ const aiFeatures = [
   },
   {
     key: 'storyline',
-    icon: <RobotOutlined />,
+    icon: <Bot size={18} />,
     title: '故事线',
     description: 'AI 生成视频叙事结构',
     tag: 'Beta',
@@ -72,7 +76,7 @@ const aiFeatures = [
   },
   {
     key: 'bRoll',
-    icon: <PictureOutlined />,
+    icon: <Image size={18} />,
     title: 'B-Roll',
     description: '智能推荐辅助镜头',
     tag: 'AI',
@@ -80,7 +84,7 @@ const aiFeatures = [
   },
   {
     key: 'background',
-    icon: <BgColorsOutlined />,
+    icon: <Palette size={18} />,
     title: '背景音乐',
     description: '智能匹配背景音乐',
     tag: 'AI',
@@ -88,7 +92,7 @@ const aiFeatures = [
   },
   {
     key: 'colorGrade',
-    icon: <BulbOutlined />,
+    icon: <Lightbulb size={18} />,
     title: '智能调色',
     description: '一键电影级调色',
     tag: 'AI',
@@ -104,11 +108,11 @@ const AIFeaturePanel: React.FC<AIFeaturePanelProps> = ({
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'processing':
-        return <SyncOutlined spin style={{ color: '#3b82f6' }} />;
+        return <Zap size={14} className={styles.spinIcon} style={{ color: '#3b82f6' }} />;
       case 'completed':
-        return <CheckCircleOutlined style={{ color: '#10b981' }} />;
+        return <CheckCircle size={14} style={{ color: '#10b981' }} />;
       case 'error':
-        return <ClockCircleOutlined style={{ color: '#ef4444' }} />;
+        return <Clock size={14} style={{ color: '#ef4444' }} />;
       default:
         return null;
     }
@@ -117,33 +121,32 @@ const AIFeaturePanel: React.FC<AIFeaturePanelProps> = ({
   return (
     <div className={styles.panel}>
       <div className={styles.header}>
-        <Title level={5} className={styles.title}>
-          <RobotOutlined className={styles.aiIcon} />
+        <h5 className={styles.title}>
+          <Bot size={18} className={styles.aiIcon} />
           AI 功能
-        </Title>
-        <Text type="secondary" className={styles.subtitle}>
+        </h5>
+        <span className={styles.subtitle}>
           点击使用 AI 能力
-        </Text>
+        </span>
       </div>
 
-      <Divider className={styles.divider} />
+      <Separator className={styles.divider} />
 
-      <List
-        className={styles.featureList}
-        dataSource={aiFeatures}
-        renderItem={(item) => {
+      <div className={styles.featureList}>
+        {aiFeatures.map((item) => {
           const status = processingStatus[item.key] || 'idle';
           const isSelected = selectedFeature === item.key;
 
           return (
-            <List.Item
+            <div
+              key={item.key}
               className={`${styles.featureItem} ${isSelected ? styles.selected : ''}`}
               onClick={() => onFeatureSelect?.(item.key)}
             >
               <div className={styles.featureContent}>
                 <div className={styles.featureIcon}>
                   {status === 'processing' ? (
-                    <SyncOutlined spin />
+                    <Zap size={18} className={styles.spinIcon} />
                   ) : (
                     item.icon
                   )}
@@ -151,63 +154,70 @@ const AIFeaturePanel: React.FC<AIFeaturePanelProps> = ({
                 <div className={styles.featureInfo}>
                   <div className={styles.featureTitle}>
                     {item.title}
-                    <Tag
-                      color={item.tagColor}
+                    <span
                       className={styles.featureTag}
+                      style={{ backgroundColor: item.tagColor }}
                     >
                       {item.tag}
-                    </Tag>
+                    </span>
                     {getStatusIcon(status)}
                   </div>
-                  <Text type="secondary" className={styles.featureDesc}>
+                  <span className={styles.featureDesc}>
                     {item.description}
-                  </Text>
+                  </span>
                 </div>
               </div>
 
               {status === 'processing' && (
                 <Progress
-                  percent={50}
-                  size="small"
-                  showInfo={false}
+                  value={50}
                   className={styles.progressBar}
                 />
               )}
-            </List.Item>
+            </div>
           );
-        }}
-      />
+        })}
+      </div>
 
-      <Divider className={styles.divider} />
+      <Separator className={styles.divider} />
 
       <div className={styles.quickActions}>
-        <Title level={5} className={styles.sectionTitle}>
+        <h5 className={styles.sectionTitle}>
           快速操作
-        </Title>
-        <Space wrap className={styles.actionButtons}>
-          <Tooltip title="批量处理">
-            <Button icon={<ThunderboltOutlined />} className={styles.actionBtn}>
-              一键成片
-            </Button>
+        </h5>
+        <div className={styles.actionButtons}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline" size="sm" className={styles.actionBtn}>
+                <Zap size={14} /> 一键成片
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>批量处理</TooltipContent>
           </Tooltip>
-          <Tooltip title="智能识别">
-            <Button icon={<VideoCameraAddOutlined />} className={styles.actionBtn}>
-              内容分析
-            </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline" size="sm" className={styles.actionBtn}>
+                <Video size={14} /> 内容分析
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>智能识别</TooltipContent>
           </Tooltip>
-          <Tooltip title="导出设置">
-            <Button icon={<SettingOutlined />} className={styles.actionBtn}>
-              导出
-            </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button variant="outline" size="sm" className={styles.actionBtn}>
+                <Settings size={14} /> 导出
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>导出设置</TooltipContent>
           </Tooltip>
-        </Space>
+        </div>
       </div>
 
       <div className={styles.aiTip}>
-        <BulbOutlined className={styles.tipIcon} />
-        <Text type="secondary">
+        <Lightbulb size={14} className={styles.tipIcon} />
+        <span className={styles.tipText}>
           提示：使用 AI 功能前请先加载视频素材
-        </Text>
+        </span>
       </div>
     </div>
   );

@@ -21,14 +21,17 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  
-  .ant-typography {
-    font-size: @font-size-small;
-  }
-  
-  .ant-typography-strong {
-    color: @heading-color;
-  }
+}
+
+.infoLabel {
+  font-size: @font-size-small;
+  color: @text-color-secondary;
+}
+
+.infoValue {
+  font-size: @font-size-small;
+  color: @heading-color;
+  font-weight: 500;
 }
 
 .divider {
@@ -65,51 +68,25 @@
   }
 }
 
+.detailLabel {
+  color: @text-color-secondary;
+  font-size: @font-size-small;
+}
+
 .tabs {
   flex: 1;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  
-  :global {
-    .ant-tabs-nav {
-      margin: 0 !important;
-      padding: 0 @spacing-small;
-      background: #fff;
-    }
-    
-    .ant-tabs-tab {
-      padding: @spacing-small @spacing-small !important;
-      margin: 0 !important;
-      font-size: @font-size-small;
-      
-      .anticon {
-        margin-right: 4px;
-      }
-    }
-    
-    .ant-tabs-content-holder {
-      overflow: hidden;
-    }
-    
-    .ant-tabs-content {
-      height: 100%;
-    }
-    
-    .ant-tabs-tabpane {
-      height: 100%;
-      overflow-y: auto;
-      
-      &::-webkit-scrollbar {
-        width: 4px;
-      }
-      
-      &::-webkit-scrollbar-thumb {
-        background-color: rgba(0, 0, 0, 0.15);
-        border-radius: 4px;
-      }
-    }
-  }
+}
+
+.tabsList {
+  display: flex;
+  gap: 4px;
+  padding: @spacing-small;
+  background: #fff;
+  border-bottom: 1px solid @border-color-base;
+  flex-wrap: wrap;
 }
 
 .settingsGroup {
@@ -117,16 +94,40 @@
 }
 
 .groupTitle {
-  margin-bottom: @spacing-medium !important;
-  font-size: @font-size-base !important;
-  color: @heading-color !important;
+  margin-bottom: @spacing-medium;
+  font-size: @font-size-base;
+  color: @heading-color;
+  font-weight: 600;
   display: flex;
   align-items: center;
   gap: @spacing-small;
-  
-  .anticon {
-    color: @primary-color;
-  }
+}
+
+.formWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: @spacing-small;
+}
+
+.formItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: @spacing-small;
+}
+
+.label {
+  font-size: @font-size-small;
+  color: @text-color;
+}
+
+.slider {
+  width: 100%;
 }
 
 .textArea {
@@ -138,14 +139,23 @@
   height: 32px;
   padding: 2px;
   cursor: pointer;
+  border: 1px solid @border-color-base;
+  border-radius: @border-radius-base;
+  background: @background-color;
+}
+
+.switchRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.separator {
+  margin: @spacing-small 0 !important;
 }
 
 .exportButtons {
-  width: 100%;
-  justify-content: space-between;
+  display: flex;
+  gap: @spacing-small;
   margin-top: @spacing-medium;
-  
-  .ant-btn {
-    flex: 1;
-  }
 }

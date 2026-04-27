@@ -1,22 +1,21 @@
 import {
-  PlayCircleOutlined,
-  PauseCircleOutlined,
-  StepBackwardOutlined,
-  StepForwardOutlined,
-  PlusOutlined,
-  DeleteOutlined,
-  ZoomInOutlined,
-  ZoomOutOutlined,
-  SoundOutlined,
-  HolderOutlined,
-  VideoCameraAddOutlined
-} from '@ant-design/icons';
-import { Button, Tooltip, Typography, Tag, Space } from 'antd';
+  PlayCircle,
+  PauseCircle,
+  SkipBack,
+  SkipForward,
+  Plus,
+  Trash2,
+  ZoomIn,
+  ZoomOut,
+  Volume2,
+  GripVertical,
+  Video
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Tooltip } from '@/components/ui/tooltip';
 import React, { useRef, useState } from 'react';
 
 import styles from './SimpleTimeline.module.less';
-
-const { Text } = Typography;
 
 interface Segment {
   id: string;
@@ -57,7 +56,6 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
   onZoomChange
 }) => {
   const timelineRef = useRef<HTMLDivElement>(null);
-  // const [_isDragging] = useState(false);
   const [localZoom, setLocalZoom] = useState(zoom);
 
   // 格式化时间
@@ -129,74 +127,73 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
       {/* 顶部工具栏 */}
       <div className={styles.toolbar}>
         <div className={styles.leftTools}>
-          <Tooltip title={isPlaying ? '暂停' : '播放'}>
+          <Tooltip content={isPlaying ? '暂停' : '播放'}>
             <Button
-              type="text"
-              size="small"
-              icon={isPlaying ? <PauseCircleOutlined /> : <PlayCircleOutlined />}
+              variant="ghost"
+              size="sm"
+              icon={isPlaying ? <PauseCircle /> : <PlayCircle />}
               onClick={onPlayPause}
               className={styles.playBtn}
             />
           </Tooltip>
           
           <div className={styles.timeDisplay}>
-            <Text strong>{formatTime(currentTime)}</Text>
-            <Text type="secondary"> / {formatTime(duration)}</Text>
+            <span style={{ fontWeight: 600 }}>{formatTime(currentTime)}</span>
+            <span style={{ color: 'rgba(0,0,0,0.45)' }}> / {formatTime(duration)}</span>
           </div>
           
-          <Space size={4}>
-            <Tooltip title="后退一帧">
-              <Button type="text" size="small" icon={<StepBackwardOutlined />} />
+          <div style={{ display: 'flex', gap: 4 }}>
+            <Tooltip content="后退一帧">
+              <Button variant="ghost" size="sm" icon={<SkipBack />} />
             </Tooltip>
-            <Tooltip title="前进一帧">
-              <Button type="text" size="small" icon={<StepForwardOutlined />} />
+            <Tooltip content="前进一帧">
+              <Button variant="ghost" size="sm" icon={<SkipForward />} />
             </Tooltip>
-          </Space>
+          </div>
         </div>
 
         <div className={styles.rightTools}>
-          <Space>
-            <Tooltip title="添加片段">
+          <div style={{ display: 'flex', gap: 8 }}>
+            <Tooltip content="添加片段">
               <Button
-                type="text"
-                size="small"
-                icon={<PlusOutlined />}
+                variant="ghost"
+                size="sm"
+                icon={<Plus />}
                 onClick={onAddSegment}
               />
             </Tooltip>
             
             {selectedSegmentId && (
-              <Tooltip title="删除片段">
+              <Tooltip content="删除片段">
                 <Button
-                  type="text"
-                  size="small"
-                  danger
-                  icon={<DeleteOutlined />}
+                  variant="ghost"
+                  size="sm"
+                  icon={<Trash2 />}
                   onClick={() => onSegmentDelete?.(selectedSegmentId)}
                 />
               </Tooltip>
             )}
             
             <div className={styles.zoomControls}>
-              <Tooltip title="缩小">
+              <Tooltip content="缩小">
                 <Button
-                  type="text"
-                  size="small"
-                  icon={<ZoomOutOutlined />}
+                  variant="ghost"
+                  size="sm"
+                  icon={<ZoomOut />}
                   onClick={handleZoomOut}
                 />
               </Tooltip>
               <span className={styles.zoomLevel}>{Math.round(localZoom * 100)}%</span>
-              <Tooltip title="放大">
+              <Tooltip content="放大">
                 <Button
-                  type="text"
-                  size="small"
-                  icon={<ZoomInOutlined />}
+                  variant="ghost"
+                  size="sm"
+                  icon={<ZoomIn />}
                   onClick={handleZoomIn}
                 />
               </Tooltip>
             </div>
-          </Space>
+          </div>
         </div>
       </div>
 
@@ -205,11 +202,11 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
         {/* 左侧轨道标签 */}
         <div className={styles.trackLabels}>
           <div className={styles.trackLabel}>
-            <VideoCameraAddOutlined />
+            <Video />
             <span>视频轨道</span>
           </div>
           <div className={styles.trackLabel}>
-            <SoundOutlined />
+            <Volume2 />
             <span>音频轨道</span>
           </div>
         </div>
@@ -230,7 +227,6 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
           </div>
 
           {/* 轨道区域 */}
-          {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
           <div
             className={styles.tracks}
             ref={timelineRef}
@@ -255,7 +251,7 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
                   tabIndex={0}
                   aria-label={segment.name}
                 >
-                  <HolderOutlined className={styles.segmentHandle} />
+                  <GripVertical className={styles.segmentHandle} />
                   <span className={styles.segmentName}>{segment.name}</span>
                 </div>
               ))}
@@ -263,7 +259,7 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
               {/* 如果没有片段显示提示 */}
               {segments.length === 0 && (
                 <div className={styles.emptyTrack}>
-                  <Text type="secondary">点击加载视频或添加片段</Text>
+                  <span style={{ color: 'rgba(0,0,0,0.45)' }}>点击加载视频或添加片段</span>
                 </div>
               )}
             </div>
@@ -271,7 +267,7 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
             {/* 音频轨道占位 */}
             <div className={styles.track}>
               <div className={styles.emptyTrack}>
-                <Text type="secondary">音频轨道</Text>
+                <span style={{ color: 'rgba(0,0,0,0.45)' }}>音频轨道</span>
               </div>
             </div>
 
@@ -290,18 +286,18 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
       {/* 底部状态栏 */}
       <div className={styles.statusBar}>
         <div className={styles.leftStatus}>
-          <Tag color="blue">{segments.length} 个片段</Tag>
-          <Text type="secondary">
+          <span className={styles.tag}>{segments.length} 个片段</span>
+          <span style={{ color: 'rgba(0,0,0,0.45)' }}>
             总时长: {formatTime(duration)}
-          </Text>
+          </span>
         </div>
         <div className={styles.rightStatus}>
-          <Text type="secondary">
+          <span style={{ color: 'rgba(0,0,0,0.45)' }}>
             {selectedSegmentId 
               ? `已选择: ${segments.find(s => s.id === selectedSegmentId)?.name || '未知'}`
               : '未选择片段'
             }
-          </Text>
+          </span>
         </div>
       </div>
     </div>

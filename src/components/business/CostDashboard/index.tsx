@@ -1,5 +1,3 @@
-import { Alert, Button, Card, InputNumber, Progress, Space, Statistic, Table, Tag, Typography, message } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import {
@@ -13,10 +11,23 @@ import {
   type ReviewExportActivity,
   type ReviewExportStatus,
 } from '@/core/services';
+import { toast } from 'sonner';
+
+import { Alert } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 
 import styles from './index.module.less';
-
-const { Text } = Typography;
 
 interface CostDashboardProps {
   projectId?: string;
@@ -30,9 +41,30 @@ const statusLabelMap: Record<ReviewExportStatus, string> = {
 };
 const statusColorMap: Record<ReviewExportStatus, string> = {
   success: 'success',
-  cancelled: 'default',
-  failed: 'error',
+  cancelled: 'secondary',
+  failed: 'destructive',
 };
+
+const Statistic: React.FC<{ title: string; value: number; prefix?: string }> = ({ title, value, prefix }) => (
+  <div className={styles.statistic}>
+    <div className={styles.statisticLabel}>{title}</div>
+    <div className={styles.statisticValue}>{prefix}{value.toFixed(3)}</div>
+  </div>
+);
+
+const InputNumber: React.FC<{
+  min?: number;
+  value?: number | null;
+  onChange?: (value: number | null) => void;
+}> = ({ min = 1, value, onChange }) => (
+  <input
+    type="number"
+    min={min}
+    value={value ?? ''}
+    onChange={(e) => onChange?.(e.target.value ? Number(e.target.value) : null)}
+    className={styles.inputNumber}
+  />
+);
 
 const CostDashboard: React.FC<CostDashboardProps> = ({ projectId }) => {
   const [stats, setStats] = useState<CostStats>(projectId ? costService.getProjectStats(projectId) : costService.getStats());
@@ -50,7 +82,7 @@ const CostDashboard: React.FC<CostDashboardProps> = ({ projectId }) => {
 
     const unsubAlert = costService.subscribeAlert((alert) => {
       setLastAlert(alert);
-      message.warning(`${alert.period} 预算已使用 ${alert.percent.toFixed(1)}%`);
+      toast.warning(`${alert.period} 预算已使用 ${alert.percent.toFixed(1)}%`);
     });
 
     return () => {
@@ -75,7 +107,7 @@ const CostDashboard: React.FC<CostDashboardProps> = ({ projectId }) => {
   }, [projectId, stats]);
 
   const records: CostRecord[] = costService.getRecords(projectId);
-  const exportColumns: ColumnsType<ReviewExportActivity> = [
+  const exportColumns = [
     {
       title: '时间',
       dataIndex: 'createdAt',
@@ -89,7 +121,7 @@ const CostDashboard: React.FC<CostDashboardProps> = ({ projectId }) => {
       key: 'source',
       width: 120,
       render: (v: string) => (
-        <Tag>{v === 'project_edit' ? '编辑页' : v === 'project_detail' ? '详情页' : '未知'}</Tag>
+        <Badge variant="outline">{v === 'project_edit' ? '编辑页' : v === 'project_detail' ? '详情页' : '未知'}</Badge>
       ),
     },
     {
@@ -98,7 +130,9 @@ const CostDashboard: React.FC<CostDashboardProps> = ({ projectId }) => {
       key: 'status',
       width: 100,
       render: (v: ReviewExportStatus) => (
-        <Tag color={statusColorMap[v]}>{statusLabelMap[v]}</Tag>
+        <Badge variant={statusColorMap[v] === 'success' ? 'default' : statusColorMap[v] === 'destructive' ? 'destructive' : 'secondary'}>
+          {statusLabelMap[v]}
+        </Badge>
       ),
     },
     {
@@ -110,9 +144,9 @@ const CostDashboard: React.FC<CostDashboardProps> = ({ projectId }) => {
     },
   ];
 
-  const columns: ColumnsType<CostRecord> = [
+  const columns = [
     { title: '时间', dataIndex: 'timestamp', key: 'timestamp', width: 120, render: (v: string) => new Date(v).toLocaleDateString() },
-    { title: '类型', dataIndex: 'type', key: 'type', width: 90, render: (v: string) => <Tag>{v}</Tag> },
+    { title: '类型', dataIndex: 'type', key: 'type', width: 90, render: (v: string) => <Badge variant="outline">{v}</Badge> },
     { title: 'Provider', dataIndex: 'provider', key: 'provider', width: 100 },
     { title: '模型', dataIndex: 'model', key: 'model', width: 120, render: (v?: string) => v || '-' },
     { title: '成本', dataIndex: 'cost', key: 'cost', width: 100, render: (v: number) => fmt(v) },
@@ -129,60 +163,105 @@ const CostDashboard: React.FC<CostDashboardProps> = ({ projectId }) => {
     <div className={styles.container}>
       {lastAlert && (
         <Alert
-          type="warning"
-          showIcon
+          variant="warning"
           message={`预算告警：${lastAlert.period} 已使用 ${lastAlert.percent.toFixed(1)}%`}
           className={styles.alert}
         />
       )}
 
-      <Card title={projectId ? '项目成本看板' : '全局成本看板'}>
-        <Space size={24} wrap>
-          <Statistic title="总成本" value={stats.total} precision={3} prefix="$" />
-          <Statistic title="今日" value={stats.today} precision={3} prefix="$" />
-          <Statistic title="本周" value={stats.thisWeek} precision={3} prefix="$" />
-          <Statistic title="本月" value={stats.thisMonth} precision={3} prefix="$" />
-        </Space>
+      <Card>
+        <CardHeader>
+          <CardTitle>{projectId ? '项目成本看板' : '全局成本看板'}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className={styles.statsRow}>
+            <Statistic title="总成本" value={stats.total} prefix="$" />
+            <Statistic title="今日" value={stats.today} prefix="$" />
+            <Statistic title="本周" value={stats.thisWeek} prefix="$" />
+            <Statistic title="本月" value={stats.thisMonth} prefix="$" />
+          </div>
 
-        <div className={styles.budgetRows}>
-          <div>
-            <Text>日预算 {fmt(budgetStatus.daily.used)} / {fmt(budgetStatus.daily.limit)}</Text>
-            <Progress percent={Math.min(100, Number(budgetStatus.daily.percent.toFixed(1)))} status={budgetStatus.daily.percent >= budget.alerts.daily ? 'exception' : 'active'} />
+          <div className={styles.budgetRows}>
+            <div>
+              <span>日预算 {fmt(budgetStatus.daily.used)} / {fmt(budgetStatus.daily.limit)}</span>
+              <Progress value={Math.min(100, Number(budgetStatus.daily.percent.toFixed(1)))} />
+            </div>
+            <div>
+              <span>周预算 {fmt(budgetStatus.weekly.used)} / {fmt(budgetStatus.weekly.limit)}</span>
+              <Progress value={Math.min(100, Number(budgetStatus.weekly.percent.toFixed(1)))} />
+            </div>
+            <div>
+              <span>月预算 {fmt(budgetStatus.monthly.used)} / {fmt(budgetStatus.monthly.limit)}</span>
+              <Progress value={Math.min(100, Number(budgetStatus.monthly.percent.toFixed(1)))} />
+            </div>
           </div>
-          <div>
-            <Text>周预算 {fmt(budgetStatus.weekly.used)} / {fmt(budgetStatus.weekly.limit)}</Text>
-            <Progress percent={Math.min(100, Number(budgetStatus.weekly.percent.toFixed(1)))} status={budgetStatus.weekly.percent >= budget.alerts.weekly ? 'exception' : 'active'} />
-          </div>
-          <div>
-            <Text>月预算 {fmt(budgetStatus.monthly.used)} / {fmt(budgetStatus.monthly.limit)}</Text>
-            <Progress percent={Math.min(100, Number(budgetStatus.monthly.percent.toFixed(1)))} status={budgetStatus.monthly.percent >= budget.alerts.monthly ? 'exception' : 'active'} />
-          </div>
-        </div>
 
-        {!projectId && (
-          <Space className={styles.budgetEdit}>
-            <Text>预算设置:</Text>
-            <span>日</span><InputNumber min={1} value={budget.daily} onChange={(v) => updateBudget('daily', v)} />
-            <span>周</span><InputNumber min={1} value={budget.weekly} onChange={(v) => updateBudget('weekly', v)} />
-            <span>月</span><InputNumber min={1} value={budget.monthly} onChange={(v) => updateBudget('monthly', v)} />
-            <Button onClick={() => costService.saveToStorage()}>保存预算</Button>
-          </Space>
-        )}
+          {!projectId && (
+            <div className={styles.budgetEdit}>
+              <span>预算设置:</span>
+              <span>日</span><InputNumber min={1} value={budget.daily} onChange={(v) => updateBudget('daily', v)} />
+              <span>周</span><InputNumber min={1} value={budget.weekly} onChange={(v) => updateBudget('weekly', v)} />
+              <span>月</span><InputNumber min={1} value={budget.monthly} onChange={(v) => updateBudget('monthly', v)} />
+              <Button onClick={() => costService.saveToStorage()} variant="outline" size="sm">保存预算</Button>
+            </div>
+          )}
+        </CardContent>
       </Card>
 
-      <Card title="成本明细（最近）">
-        <Table rowKey="id" size="small" columns={columns} dataSource={records.slice(0, 20)} pagination={false} />
+      <Card>
+        <CardHeader>
+          <CardTitle>成本明细（最近）</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                {columns.map((col: any) => (
+                  <TableHead key={col.key} style={{ width: col.width }}>{col.title}</TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {records.slice(0, 20).map((record) => (
+                <TableRow key={record.id}>
+                  {columns.map((col: any) => (
+                    <TableCell key={col.key}>{col.render ? col.render((record as any)[col.dataIndex], record) : (record as any)[col.dataIndex]}</TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
       </Card>
 
-      <Card title="评审导出活动（最近）">
-        <Table
-          rowKey="id"
-          size="small"
-          columns={exportColumns}
-          dataSource={exportActivities}
-          pagination={false}
-          locale={{ emptyText: '暂无导出活动' }}
-        />
+      <Card>
+        <CardHeader>
+          <CardTitle>评审导出活动（最近）</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                {exportColumns.map((col: any) => (
+                  <TableHead key={col.key} style={{ width: col.width }}>{col.title}</TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {exportActivities.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={exportColumns.length} style={{ textAlign: 'center' }}>暂无导出活动</TableCell>
+                </TableRow>
+              ) : exportActivities.map((record) => (
+                <TableRow key={record.id}>
+                  {exportColumns.map((col: any) => (
+                    <TableCell key={col.key}>{col.render ? col.render((record as any)[col.dataIndex], record) : (record as any)[col.dataIndex]}</TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
       </Card>
     </div>
   );

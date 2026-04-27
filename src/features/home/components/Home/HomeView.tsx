@@ -1,5 +1,5 @@
-import { Divider, Space, Typography } from 'antd';
 import React, { useEffect, useState } from 'react';
+import { Separator } from '@/components/ui/separator';
 
 import styles from './Home.module.less';
 import type { Project } from './ProjectGrid';
@@ -12,9 +12,6 @@ import {
   WorkflowSteps,
   CTASection
 } from '.';
-
-
-const { Text } = Typography;
 
 /**
  * 首页视图组件
@@ -96,18 +93,21 @@ const HomeView: React.FC = () => {
 
       {/* 页脚 */}
       <div className={styles.footer}>
-        <Divider />
-        <Space split={<Divider type="vertical" />}>
-          <Text type="secondary">© 2025 PlotCraft AI</Text>
-          <Text type="secondary">基于 Tauri 和 React 构建</Text>
+        <Separator />
+        <div className="flex items-center gap-2">
+          <span className="text-muted-foreground text-sm">© 2025 PlotCraft AI</span>
+          <Separator orientation="vertical" className="h-4" />
+          <span className="text-muted-foreground text-sm">基于 Tauri 和 React 构建</span>
+          <Separator orientation="vertical" className="h-4" />
           <a
             href="https://github.com/agions/blazecut"
             target="_blank"
             rel="noopener noreferrer"
+            className="text-muted-foreground text-sm hover:underline"
           >
             GitHub
           </a>
-        </Space>
+        </div>
       </div>
     </div>
   );

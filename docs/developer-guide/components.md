@@ -32,7 +32,7 @@ shared/components/
 
 ## 基础 UI 组件
 
-基于 Ant Design 构建,保持一致性。
+基于 shadcn/ui (Radix UI + Tailwind CSS) 构建,保持一致性。
 
 ### Button
 
@@ -192,7 +192,7 @@ const [value, setValue] = useState('');
 
 ## 样式
 
-组件使用 CSS Modules 配合 Ant Design 令牌。
+组件使用 Tailwind CSS 配合 shadcn/ui 设计令牌。
 
 ```typescript
 // Component.module.less

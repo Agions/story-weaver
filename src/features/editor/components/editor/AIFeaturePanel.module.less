@@ -14,20 +14,23 @@
 }
 
 .title {
-  margin: 0 !important;
+  margin: 0 0 4px 0;
   display: flex;
   align-items: center;
   gap: @spacing-small;
-  color: @heading-color !important;
-  
-  .aiIcon {
-    color: @primary-color;
-    font-size: 18px;
-  }
+  color: @heading-color;
+  font-size: @font-size-base;
+  font-weight: 600;
+}
+
+.aiIcon {
+  color: @primary-color;
+  font-size: 18px;
 }
 
 .subtitle {
   font-size: @font-size-small;
+  color: @text-color-secondary;
 }
 
 .divider {
@@ -50,22 +53,23 @@
 }
 
 .featureItem {
-  padding: @spacing-medium !important;
-  margin-bottom: @spacing-small !important;
-  border-radius: @border-radius-base !important;
-  border: 1px solid transparent !important;
+  position: relative;
+  padding: @spacing-medium;
+  margin-bottom: @spacing-small;
+  border-radius: @border-radius-base;
+  border: 1px solid transparent;
   background: #fff;
   cursor: pointer;
   transition: all 0.2s ease;
   
   &:hover {
-    border-color: @primary-color-light !important;
+    border-color: @primary-color-light;
     box-shadow: 0 2px 8px rgba(30, 136, 229, 0.15);
     transform: translateX(2px);
   }
   
   &.selected {
-    border-color: @primary-color !important;
+    border-color: @primary-color;
     background: rgba(30, 136, 229, 0.05);
     box-shadow: 0 2px 8px rgba(30, 136, 229, 0.2);
     
@@ -109,13 +113,15 @@
   font-weight: @font-weight-medium;
   color: @heading-color;
   margin-bottom: 2px;
-  
-  .featureTag {
-    font-size: 10px;
-    padding: 0 4px;
-    line-height: 16px;
-    height: auto;
-  }
+}
+
+.featureTag {
+  font-size: 10px;
+  padding: 0 4px;
+  line-height: 16px;
+  height: auto;
+  border-radius: 2px;
+  color: #fff;
 }
 
 .featureDesc {
@@ -124,6 +130,16 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: @text-color-secondary;
+}
+
+.spinIcon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .progressBar {
@@ -131,11 +147,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  margin: 0;
-  
-  .ant-progress-inner {
-    border-radius: 0 !important;
-  }
+  border-radius: 0 !important;
 }
 
 .quickActions {
@@ -143,14 +155,16 @@
 }
 
 .sectionTitle {
-  margin-bottom: @spacing-medium !important;
-  font-size: @font-size-base !important;
-  color: @heading-color !important;
+  margin-bottom: @spacing-medium;
+  font-size: @font-size-base;
+  font-weight: 600;
+  color: @heading-color;
 }
 
 .actionButtons {
-  width: 100%;
-  justify-content: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: @spacing-small;
 }
 
 .actionBtn {
@@ -172,14 +186,16 @@
   display: flex;
   align-items: flex-start;
   gap: @spacing-small;
-  
-  .tipIcon {
-    color: @primary-color;
-    margin-top: 2px;
-  }
-  
-  .ant-typography {
-    font-size: @font-size-small;
-    line-height: 1.4;
-  }
+}
+
+.tipIcon {
+  color: @primary-color;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.tipText {
+  font-size: @font-size-small;
+  line-height: 1.4;
+  color: @text-color-secondary;
 }

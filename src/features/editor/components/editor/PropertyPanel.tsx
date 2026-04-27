@@ -1,20 +1,31 @@
 import {
-  FontSizeOutlined,
-  AudioOutlined,
-  PictureOutlined,
-  SaveOutlined,
-  ExportOutlined
-} from '@ant-design/icons';
-import { Tabs, Form, Input, Select, Slider, Switch, Button, Space, Typography, Row, Col, Divider } from 'antd';
+  Type,
+  Volume2,
+  Image,
+  Save,
+  Download
+} from 'lucide-react';
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from '@/components/ui/tabs';
+import { Button } from '@/components/ui/button';
+import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+  SelectValue,
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
 import React, { useMemo } from 'react';
 
-// import { ASPECT_RATIOS, CROP_MODES, CROP_ALIGNMENTS, RESOLUTION_OPTIONS } from '@/core/constants';
-
 import styles from './PropertyPanel.module.less';
-
-const { Text, Title } = Typography;
-const { TextArea } = Input;
-const { Option } = Select;
 
 interface PropertyPanelProps {
   selectedSegment?: {
@@ -47,177 +58,209 @@ interface PropertyPanelProps {
 // 字幕设置
 const SubtitleSettings = () => (
   <div className={styles.settingsGroup}>
-    <Title level={5} className={styles.groupTitle}>
-      <FontSizeOutlined /> 字幕设置
-    </Title>
+    <h5 className={styles.groupTitle}>
+      <Type size={16} style={{ display: 'inline', marginRight: 6 }} /> 字幕设置
+    </h5>
     
-    <Form layout="vertical" size="small">
-      <Form.Item label="字幕内容">
-        <TextArea 
+    <div className={styles.formWrapper}>
+      <div className={styles.formItem}>
+        <label className={styles.label}>字幕内容</label>
+        <Textarea 
           rows={4} 
           placeholder="输入字幕文本..." 
           className={styles.textArea}
         />
-      </Form.Item>
+      </div>
       
-      <Row gutter={16}>
-        <Col span={12}>
-          <Form.Item label="字体大小">
-            <Slider min={12} max={72} defaultValue={24} />
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item label="字体颜色">
-            <Input type="color" className={styles.colorInput} defaultValue="#ffffff" />
-          </Form.Item>
-        </Col>
-      </Row>
+      <div className={styles.formRow}>
+        <div className={styles.formItem}>
+          <label className={styles.label}>字体大小</label>
+          <Slider min={12} max={72} defaultValue={24} className={styles.slider} />
+        </div>
+        <div className={styles.formItem}>
+          <label className={styles.label}>字体颜色</label>
+          <input type="color" className={styles.colorInput} defaultValue="#ffffff" />
+        </div>
+      </div>
       
-      <Row gutter={16}>
-        <Col span={12}>
-          <Form.Item label="描边颜色">
-            <Input type="color" className={styles.colorInput} defaultValue="#000000" />
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item label="描边宽度">
-            <Slider min={0} max={4} defaultValue={2} />
-          </Form.Item>
-        </Col>
-      </Row>
+      <div className={styles.formRow}>
+        <div className={styles.formItem}>
+          <label className={styles.label}>描边颜色</label>
+          <input type="color" className={styles.colorInput} defaultValue="#000000" />
+        </div>
+        <div className={styles.formItem}>
+          <label className={styles.label}>描边宽度</label>
+          <Slider min={0} max={4} defaultValue={2} className={styles.slider} />
+        </div>
+      </div>
       
-      <Form.Item label="背景样式">
+      <div className={styles.formItem}>
+        <label className={styles.label}>背景样式</label>
         <Select defaultValue="none">
-          <Option value="none">无</Option>
-          <Option value="box">方框</Option>
-          <Option value="shadow">阴影</Option>
-          <Option value="outline">描边</Option>
+          <SelectTrigger>
+            <SelectValue placeholder="选择样式" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="none">无</SelectItem>
+            <SelectItem value="box">方框</SelectItem>
+            <SelectItem value="shadow">阴影</SelectItem>
+            <SelectItem value="outline">描边</SelectItem>
+          </SelectContent>
         </Select>
-      </Form.Item>
+      </div>
       
-      <Form.Item label="位置">
+      <div className={styles.formItem}>
+        <label className={styles.label}>位置</label>
         <Select defaultValue="bottom">
-          <Option value="top">顶部</Option>
-          <Option value="center">居中</Option>
-          <Option value="bottom">底部</Option>
+          <SelectTrigger>
+            <SelectValue placeholder="选择位置" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="top">顶部</SelectItem>
+            <SelectItem value="center">居中</SelectItem>
+            <SelectItem value="bottom">底部</SelectItem>
+          </SelectContent>
         </Select>
-      </Form.Item>
+      </div>
       
-      <Form.Item label="样式预设">
+      <div className={styles.formItem}>
+        <label className={styles.label}>样式预设</label>
         <Select defaultValue="default">
-          <Option value="default">默认</Option>
-          <Option value="modern">现代</Option>
-          <Option value="cinematic">电影感</Option>
-          <Option value="social">社交媒体</Option>
+          <SelectTrigger>
+            <SelectValue placeholder="选择预设" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="default">默认</SelectItem>
+            <SelectItem value="modern">现代</SelectItem>
+            <SelectItem value="cinematic">电影感</SelectItem>
+            <SelectItem value="social">社交媒体</SelectItem>
+          </SelectContent>
         </Select>
-      </Form.Item>
-    </Form>
+      </div>
+    </div>
   </div>
 );
 
 // 音频设置
 const AudioSettings = () => (
   <div className={styles.settingsGroup}>
-    <Title level={5} className={styles.groupTitle}>
-      <AudioOutlined /> 音频设置
-    </Title>
+    <h5 className={styles.groupTitle}>
+      <Volume2 size={16} style={{ display: 'inline', marginRight: 6 }} /> 音频设置
+    </h5>
     
-    <Form layout="vertical" size="small">
-      <Form.Item label="音量">
+    <div className={styles.formWrapper}>
+      <div className={styles.formItem}>
+        <label className={styles.label}>音量</label>
         <Slider 
-          marks={{ 0: '0%', 50: '50%', 100: '100%' }} 
           defaultValue={80} 
+          className={styles.slider}
         />
-      </Form.Item>
+      </div>
       
-      <Form.Item label="淡入">
+      <div className={styles.formItem}>
+        <label className={styles.label}>淡入</label>
         <Slider 
-          marks={{ 0: '0s', 2: '2s', 5: '5s' }} 
           max={5} 
           defaultValue={0} 
+          className={styles.slider}
         />
-      </Form.Item>
+      </div>
       
-      <Form.Item label="淡出">
+      <div className={styles.formItem}>
+        <label className={styles.label}>淡出</label>
         <Slider 
-          marks={{ 0: '0s', 2: '2s', 5: '5s' }} 
           max={5} 
           defaultValue={0} 
+          className={styles.slider}
         />
-      </Form.Item>
+      </div>
       
-      <Divider />
+      <Separator className={styles.separator} />
       
-      <Title level={5} className={styles.groupTitle}>降噪</Title>
+      <h5 className={styles.groupTitle}>降噪</h5>
       
-      <Form.Item label="降噪强度">
+      <div className={styles.formItem}>
+        <label className={styles.label}>降噪强度</label>
         <Slider 
-          marks={{ 0: '关闭', 50: '中', 100: '强' }} 
           defaultValue={0} 
+          className={styles.slider}
         />
-      </Form.Item>
+      </div>
       
-      <Form.Item label="回声消除">
-        <Switch defaultChecked={false} />
-      </Form.Item>
-    </Form>
+      <div className={styles.formItem}>
+        <div className={styles.switchRow}>
+          <label className={styles.label}>回声消除</label>
+          <Switch />
+        </div>
+      </div>
+    </div>
   </div>
 );
 
 // 视频效果设置
 const VideoSettings = () => (
   <div className={styles.settingsGroup}>
-    <Title level={5} className={styles.groupTitle}>
-      <PictureOutlined /> 视频效果
-    </Title>
+    <h5 className={styles.groupTitle}>
+      <Image size={16} style={{ display: 'inline', marginRight: 6 }} /> 视频效果
+    </h5>
     
-    <Form layout="vertical" size="small">
-      <Form.Item label="亮度">
+    <div className={styles.formWrapper}>
+      <div className={styles.formItem}>
+        <label className={styles.label}>亮度</label>
         <Slider 
-          marks={{ 0: '-100', 50: '0', 100: '+100' }} 
           defaultValue={50} 
+          className={styles.slider}
         />
-      </Form.Item>
+      </div>
       
-      <Form.Item label="对比度">
+      <div className={styles.formItem}>
+        <label className={styles.label}>对比度</label>
         <Slider 
-          marks={{ 0: '-100', 50: '0', 100: '+100' }} 
           defaultValue={50} 
+          className={styles.slider}
         />
-      </Form.Item>
+      </div>
       
-      <Form.Item label="饱和度">
+      <div className={styles.formItem}>
+        <label className={styles.label}>饱和度</label>
         <Slider 
-          marks={{ 0: '-100', 50: '0', 100: '+100' }} 
           defaultValue={50} 
+          className={styles.slider}
         />
-      </Form.Item>
+      </div>
       
-      <Form.Item label="色温">
+      <div className={styles.formItem}>
+        <label className={styles.label}>色温</label>
         <Slider 
-          marks={{ 0: '冷', 50: '自然', 100: '暖' }} 
           defaultValue={50} 
+          className={styles.slider}
         />
-      </Form.Item>
+      </div>
       
-      <Divider />
+      <Separator className={styles.separator} />
       
-      <Form.Item label="预设效果">
+      <div className={styles.formItem}>
+        <label className={styles.label}>预设效果</label>
         <Select defaultValue="none">
-          <Option value="none">无</Option>
-          <Option value="vivid">鲜艳</Option>
-          <Option value="warm">暖色调</Option>
-          <Option value="cool">冷色调</Option>
-          <Option value="BW">黑白</Option>
-          <Option value="sepia">怀旧</Option>
-          <Option value="cinematic">电影感</Option>
+          <SelectTrigger>
+            <SelectValue placeholder="选择效果" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="none">无</SelectItem>
+            <SelectItem value="vivid">鲜艳</SelectItem>
+            <SelectItem value="warm">暖色调</SelectItem>
+            <SelectItem value="cool">冷色调</SelectItem>
+            <SelectItem value="BW">黑白</SelectItem>
+            <SelectItem value="sepia">怀旧</SelectItem>
+            <SelectItem value="cinematic">电影感</SelectItem>
+          </SelectContent>
         </Select>
-      </Form.Item>
-    </Form>
+      </div>
+    </div>
   </div>
-// 导出设置
 );
 
+// 导出设置
 const ExportSettings = ({ 
   exportSettings, 
   onChange 
@@ -226,72 +269,106 @@ const ExportSettings = ({
   onChange?: (settings: Record<string, unknown>) => void;
 }) => (
   <div className={styles.settingsGroup}>
-    <Title level={5} className={styles.groupTitle}>
-      <ExportOutlined /> 导出设置
-    </Title>
+    <h5 className={styles.groupTitle}>
+      <Download size={16} style={{ display: 'inline', marginRight: 6 }} /> 导出设置
+    </h5>
     
-    <Form layout="vertical" size="small">
-      <Form.Item label="输出格式">
+    <div className={styles.formWrapper}>
+      <div className={styles.formItem}>
+        <label className={styles.label}>输出格式</label>
         <Select 
           defaultValue={exportSettings?.format || 'mp4'}
-          onChange={(value) => onChange?.({ format: value })}
+          onValueChange={(value) => onChange?.({ format: value })}
         >
-          <Option value="mp4">MP4</Option>
-          <Option value="mov">MOV</Option>
-          <Option value="webm">WebM</Option>
-          <Option value="gif">GIF</Option>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="mp4">MP4</SelectItem>
+            <SelectItem value="mov">MOV</SelectItem>
+            <SelectItem value="webm">WebM</SelectItem>
+            <SelectItem value="gif">GIF</SelectItem>
+          </SelectContent>
         </Select>
-      </Form.Item>
+      </div>
       
-      <Form.Item label="分辨率">
+      <div className={styles.formItem}>
+        <label className={styles.label}>分辨率</label>
         <Select 
           defaultValue={exportSettings?.resolution || '1080p'}
-          onChange={(value) => onChange?.({ resolution: value })}
+          onValueChange={(value) => onChange?.({ resolution: value })}
         >
-          <Option value="720p">720p (HD)</Option>
-          <Option value="1080p">1080p (Full HD)</Option>
-          <Option value="1440p">1440p (2K)</Option>
-          <Option value="4k">4K (Ultra HD)</Option>
-          <Option value="original">原始分辨率</Option>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="720p">720p (HD)</SelectItem>
+            <SelectItem value="1080p">1080p (Full HD)</SelectItem>
+            <SelectItem value="1440p">1440p (2K)</SelectItem>
+            <SelectItem value="4k">4K (Ultra HD)</SelectItem>
+            <SelectItem value="original">原始分辨率</SelectItem>
+          </SelectContent>
         </Select>
-      </Form.Item>
+      </div>
       
-      <Form.Item label="画质">
+      <div className={styles.formItem}>
+        <label className={styles.label}>画质</label>
         <Select 
           defaultValue={exportSettings?.quality || 'high'}
-          onChange={(value) => onChange?.({ quality: value })}
+          onValueChange={(value) => onChange?.({ quality: value })}
         >
-          <Option value="low">低 (适合社交媒体)</Option>
-          <Option value="medium">中</Option>
-          <Option value="high">高</Option>
-          <Option value="original">原始质量</Option>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="low">低 (适合社交媒体)</SelectItem>
+            <SelectItem value="medium">中</SelectItem>
+            <SelectItem value="high">高</SelectItem>
+            <SelectItem value="original">原始质量</SelectItem>
+          </SelectContent>
         </Select>
-      </Form.Item>
+      </div>
       
-      <Form.Item label="帧率">
+      <div className={styles.formItem}>
+        <label className={styles.label}>帧率</label>
         <Select defaultValue="30">
-          <Option value="24">24 fps (电影)</Option>
-          <Option value="30">30 fps (标准)</Option>
-          <Option value="60">60 fps (流畅)</Option>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="24">24 fps (电影)</SelectItem>
+            <SelectItem value="30">30 fps (标准)</SelectItem>
+            <SelectItem value="60">60 fps (流畅)</SelectItem>
+          </SelectContent>
         </Select>
-      </Form.Item>
+      </div>
       
-      <Divider />
+      <Separator className={styles.separator} />
       
-      <Form.Item label="编码器">
+      <div className={styles.formItem}>
+        <label className={styles.label}>编码器</label>
         <Select defaultValue="h264">
-          <Option value="h264">H.264 (兼容性最好)</Option>
-          <Option value="h265">H.265/HEVC (高压缩率)</Option>
-          <Option value="vp9">VP9 (Web优化)</Option>
-          <Option value="av1">AV1 (最新标准)</Option>
+          <SelectTrigger>
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="h264">H.264 (兼容性最好)</SelectItem>
+            <SelectItem value="h265">H.265/HEVC (高压缩率)</SelectItem>
+            <SelectItem value="vp9">VP9 (Web优化)</SelectItem>
+            <SelectItem value="av1">AV1 (最新标准)</SelectItem>
+          </SelectContent>
         </Select>
-      </Form.Item>
+      </div>
       
-      <Space className={styles.exportButtons}>
-        <Button icon={<SaveOutlined />}>保存设置</Button>
-        <Button type="primary" icon={<ExportOutlined />}>开始导出</Button>
-      </Space>
-    </Form>
+      <div className={styles.exportButtons}>
+        <Button variant="outline" size="sm">
+          <Save size={14} /> 保存设置
+        </Button>
+        <Button size="sm">
+          <Download size={14} /> 开始导出
+        </Button>
+      </div>
+    </div>
   </div>
 );
 
@@ -307,7 +384,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
       key: 'subtitle',
       label: (
         <span>
-          <FontSizeOutlined /> 字幕
+          <Type size={14} style={{ display: 'inline', marginRight: 4 }} /> 字幕
         </span>
       ),
       children: <SubtitleSettings />
@@ -316,7 +393,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
       key: 'audio',
       label: (
         <span>
-          <AudioOutlined /> 音频
+          <Volume2 size={14} style={{ display: 'inline', marginRight: 4 }} /> 音频
         </span>
       ),
       children: <AudioSettings />
@@ -325,7 +402,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
       key: 'video',
       label: (
         <span>
-          <PictureOutlined /> 效果
+          <Image size={14} style={{ display: 'inline', marginRight: 4 }} /> 效果
         </span>
       ),
       children: <VideoSettings />
@@ -334,7 +411,7 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
       key: 'export',
       label: (
         <span>
-          <ExportOutlined /> 导出
+          <Download size={14} style={{ display: 'inline', marginRight: 4 }} /> 导出
         </span>
       ),
       children: (
@@ -352,62 +429,70 @@ const PropertyPanel: React.FC<PropertyPanelProps> = ({
       {videoInfo && (
         <div className={styles.videoInfo}>
           <div className={styles.infoItem}>
-            <Text type="secondary">分辨率</Text>
-            <Text strong>{videoInfo.width} × {videoInfo.height}</Text>
+            <span className={styles.infoLabel}>分辨率</span>
+            <span className={styles.infoValue}>{videoInfo.width} × {videoInfo.height}</span>
           </div>
           <div className={styles.infoItem}>
-            <Text type="secondary">帧率</Text>
-            <Text strong>{videoInfo.fps} fps</Text>
+            <span className={styles.infoLabel}>帧率</span>
+            <span className={styles.infoValue}>{videoInfo.fps} fps</span>
           </div>
           <div className={styles.infoItem}>
-            <Text type="secondary">时长</Text>
-            <Text strong>{Math.floor(videoInfo.duration / 60)}:{String(Math.floor(videoInfo.duration % 60)).padStart(2, '0')}</Text>
+            <span className={styles.infoLabel}>时长</span>
+            <span className={styles.infoValue}>{Math.floor(videoInfo.duration / 60)}:{String(Math.floor(videoInfo.duration % 60)).padStart(2, '0')}</span>
           </div>
           <div className={styles.infoItem}>
-            <Text type="secondary">格式</Text>
-            <Text strong>{videoInfo.format.toUpperCase()}</Text>
+            <span className={styles.infoLabel}>格式</span>
+            <span className={styles.infoValue}>{videoInfo.format.toUpperCase()}</span>
           </div>
         </div>
       )}
 
-      <Divider className={styles.divider} />
+      <Separator className={styles.divider} />
 
       {/* 片段信息 */}
       {selectedSegment && (
         <div className={styles.segmentInfo}>
-          <Title level={5} className={styles.sectionTitle}>
+          <h5 className={styles.sectionTitle}>
             当前片段
-          </Title>
+          </h5>
           <div className={styles.segmentDetails}>
             <div className={styles.detailRow}>
-              <Text type="secondary">名称:</Text>
-              <Text>{selectedSegment.name}</Text>
+              <span className={styles.detailLabel}>名称:</span>
+              <span>{selectedSegment.name}</span>
             </div>
             <div className={styles.detailRow}>
-              <Text type="secondary">时间:</Text>
-              <Text>
+              <span className={styles.detailLabel}>时间:</span>
+              <span>
                 {Math.floor(selectedSegment.start / 60)}:{String(Math.floor(selectedSegment.start % 60)).padStart(2, '0')} 
                 - 
                 {Math.floor(selectedSegment.end / 60)}:{String(Math.floor(selectedSegment.end % 60)).padStart(2, '0')}
-              </Text>
+              </span>
             </div>
             <div className={styles.detailRow}>
-              <Text type="secondary">时长:</Text>
-              <Text>{String((selectedSegment.end - selectedSegment.start).toFixed(1))}s</Text>
+              <span className={styles.detailLabel}>时长:</span>
+              <span>{String((selectedSegment.end - selectedSegment.start).toFixed(1))}s</span>
             </div>
           </div>
         </div>
       )}
 
-      <Divider className={styles.divider} />
+      <Separator className={styles.divider} />
 
       {/* 属性面板标签页 */}
-      <Tabs 
-        defaultActiveKey="subtitle" 
-        items={tabItems}
-        className={styles.tabs}
-        size="small"
-      />
+      <Tabs defaultValue="subtitle" className={styles.tabs}>
+        <TabsList className={styles.tabsList}>
+          {tabItems.map(item => (
+            <TabsTrigger key={item.key} value={item.key}>
+              {item.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        {tabItems.map(item => (
+          <TabsContent key={item.key} value={item.key}>
+            {item.children}
+          </TabsContent>
+        ))}
+      </Tabs>
     </div>
   );
 };

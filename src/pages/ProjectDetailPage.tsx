@@ -1,18 +1,25 @@
 import {
-  EditOutlined,
-  ArrowLeftOutlined,
-  DeleteOutlined,
-  ExportOutlined,
-  PlusOutlined,
-  FileTextOutlined,
-  PictureOutlined,
-  UserOutlined,
-  PlayCircleOutlined,
-  SoundOutlined,
-  ThunderboltOutlined,
-  DollarOutlined
-} from '@ant-design/icons';
-import { Button, Card, Tabs, Space, Typography, message, Modal, Spin, Empty, List, Input, Select, Alert } from 'antd';
+  Edit,
+  ArrowLeft,
+  Trash2,
+  Download,
+  Plus,
+  FileText,
+  Image,
+  User,
+  PlayCircle,
+  Volume2,
+  Zap,
+  DollarSign,
+} from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { toast } from '@/shared/components/ui/Toast';
+import { ConfirmDialog } from '@/shared/components/ui/ConfirmDialog';
 import React, { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
@@ -154,7 +161,7 @@ const ProjectDetail: React.FC = () => {
       setStoryboardComments(collaborationService.listComments(currentProject.id));
       setStoryboardVersions(collaborationService.listVersions(currentProject.id));
     } else {
-      message.error('找不到项目信息');
+      toast.error('找不到项目信息');
       navigate('/projects');
     }
 
@@ -185,7 +192,7 @@ const ProjectDetail: React.FC = () => {
     setStoryboardComments(comments);
     persistProjectPatch({ storyboardComments: comments });
     setCommentDraft('');
-    message.success('评论已添加');
+    toast.success('评论已添加');
   };
 
   const handleSaveStoryboardVersion = () => {
@@ -202,12 +209,12 @@ const ProjectDetail: React.FC = () => {
     setVersionLabel('');
     setCompareLeftVersionId(version.id);
     setVersionDiff(null);
-    message.success('已保存分镜版本快照');
+    toast.success('已保存分镜版本快照');
   };
 
   const handleCompareVersions = () => {
     if (!compareLeftVersionId || !compareRightVersionId) {
-      message.warning('请选择两个版本进行对比');
+      toast.warning('请选择两个版本进行对比');
       return;
     }
     const diff = collaborationService.diffVersions(compareLeftVersionId, compareRightVersionId);
@@ -216,16 +223,16 @@ const ProjectDetail: React.FC = () => {
 
   const handleRollbackVersion = () => {
     if (!project?.id || !compareLeftVersionId) {
-      message.warning('请选择要回滚的版本');
+      toast.warning('请选择要回滚的版本');
       return;
     }
     const payload = collaborationService.rollback(project.id, compareLeftVersionId);
     if (!Array.isArray(payload)) {
-      message.error('回滚失败，未找到对应版本');
+      toast.error('回滚失败，未找到对应版本');
       return;
     }
     persistProjectPatch({ storyboardFrames: payload });
-    message.success('已回滚到所选版本');
+    toast.success('已回滚到所选版本');
   };
 
   const handleExportReviewNotes = async () => {
@@ -257,11 +264,11 @@ const ProjectDetail: React.FC = () => {
         },
       );
       if (saved) {
-        message.success('评审记录导出成功');
+        toast.success('评审记录导出成功');
       }
     } catch (error) {
       logger.error('导出评审记录失败:', error);
-      message.error('导出评审记录失败');
+      toast.error('导出评审记录失败');
     }
   };
 
@@ -288,22 +295,22 @@ const ProjectDetail: React.FC = () => {
       setActiveScript(newScript);
 
       // 保存到文件，显示loading
-      message.loading('正在保存剧本...', 0.5);
+      toast.loading('正在保存剧本...', 0.5);
       tauriService.writeText(updatedProject.id, JSON.stringify(updatedProject))
         .then(() => {
           updateProject(updatedProject.id, updatedProject);
-          message.success('剧本创建成功');
+          toast.success('剧本创建成功');
         })
         .catch(error => {
           logger.error('保存项目文件失败:', error);
-          message.error('保存项目文件失败: ' + (error instanceof Error ? error.message : '未知错误'));
+          toast.error('保存项目文件失败: ' + (error instanceof Error ? error.message : '未知错误'));
           // 回滚UI状态
           setProject(project);
           setActiveScript(project.scripts?.[0] || null);
         });
     } catch (error) {
       logger.error('创建剧本失败:', error);
-      message.error('创建剧本失败');
+      toast.error('创建剧本失败');
     }
   };
 
@@ -343,24 +350,24 @@ const ProjectDetail: React.FC = () => {
       tauriService.writeText(updatedProject.id, JSON.stringify(updatedProject))
         .then(() => {
           updateProject(updatedProject.id, updatedProject);
-          message.success('脚本内容已保存');
+          toast.success('脚本内容已保存');
         })
         .catch(error => {
           logger.error('保存项目文件失败:', error);
-          message.error('保存项目文件失败: ' + (error instanceof Error ? error.message : '未知错误'));
+          toast.error('保存项目文件失败: ' + (error instanceof Error ? error.message : '未知错误'));
           // 回滚UI状态
           setProject(project);
           setActiveScript(activeScript);
         });
     } catch (error) {
       logger.error('更新脚本内容失败:', error);
-      message.error('更新脚本内容失败');
+      toast.error('更新脚本内容失败');
     }
   };
 
   const handleExportScript = async () => {
     if (!project || !activeScript) {
-      message.warning('没有可导出的剧本');
+      toast.warning('没有可导出的剧本');
       return;
     }
 
@@ -384,11 +391,11 @@ const ProjectDetail: React.FC = () => {
           path: filePath,
           content: scriptContent
         });
-        message.success('剧本导出成功');
+        toast.success('剧本导出成功');
       }
     } catch (error) {
       logger.error('导出剧本失败:', error);
-      message.error('导出剧本失败');
+      toast.error('导出剧本失败');
     }
   };
 
@@ -404,11 +411,11 @@ const ProjectDetail: React.FC = () => {
         
         try {
           deleteProject(id);
-          message.success('项目已删除');
+          toast.success('项目已删除');
           navigate('/projects');
         } catch (error) {
           logger.error('删除项目失败:', error);
-          message.error('删除项目失败');
+          toast.error('删除项目失败');
         }
       }
     });
@@ -427,21 +434,21 @@ const ProjectDetail: React.FC = () => {
       <div className={styles.header}>
         <Space>
           <Button 
-            icon={<ArrowLeftOutlined />} 
+            icon={<ArrowLeft />} 
             onClick={() => navigate('/projects')}
           >
             返回项目列表
           </Button>
           
           <Button 
-            icon={<EditOutlined />}
+            icon={<Edit />}
             onClick={() => navigate(`/projects/${id}/edit`)}
           >
             编辑项目
           </Button>
           
           <Button
-            icon={<ExportOutlined />}
+            icon={<Download />}
             onClick={handleExportScript}
             disabled={!activeScript?.content || activeScript.content.length === 0}
           >
@@ -449,7 +456,7 @@ const ProjectDetail: React.FC = () => {
           </Button>
 
           <Button
-            icon={<FileTextOutlined />}
+            icon={<FileText />}
             onClick={handleExportReviewNotes}
             disabled={!project}
           >
@@ -458,7 +465,7 @@ const ProjectDetail: React.FC = () => {
           
           <Button 
             danger
-            icon={<DeleteOutlined />}
+            icon={<Trash2 />}
             onClick={handleDeleteProject}
           >
             删除项目
@@ -481,7 +488,7 @@ const ProjectDetail: React.FC = () => {
           size="large"
         >
           <TabPane
-            tab={renderTabLabel('novel', <FileTextOutlined />, '小说')}
+            tab={renderTabLabel('novel', <FileText />, '小说')}
             key="novel"
           >
             <div className={styles.novelSection}>
@@ -509,7 +516,7 @@ const ProjectDetail: React.FC = () => {
                   <Button
                     type="link"
                     onClick={() => navigate(`/projects/${id}/edit`)}
-                    icon={<EditOutlined />}
+                    icon={<Edit />}
                     style={{ marginTop: 16 }}
                   >
                     编辑项目内容
@@ -523,7 +530,7 @@ const ProjectDetail: React.FC = () => {
                   <Button
                     type="primary"
                     onClick={() => navigate(`/projects/${id}/edit`)}
-                    icon={<PlusOutlined />}
+                    icon={<Plus />}
                   >
                     导入小说/剧本
                   </Button>
@@ -533,7 +540,7 @@ const ProjectDetail: React.FC = () => {
           </TabPane>
 
           <TabPane
-            tab={renderTabLabel('script-edit', <EditOutlined />, '剧本')}
+            tab={renderTabLabel('script-edit', <Edit />, '剧本')}
             key="script-edit"
           >
             <div className={styles.scriptSection}>
@@ -542,14 +549,14 @@ const ProjectDetail: React.FC = () => {
                 <Space>
                   <Button
                     type="primary"
-                    icon={<EditOutlined />}
+                    icon={<Edit />}
                     onClick={handleGenerateScript}
                   >
                     编辑剧本
                   </Button>
 
                   <Button
-                    icon={<PlusOutlined />}
+                    icon={<Plus />}
                     onClick={handleCreateScript}
                   >
                     创建空白剧本
@@ -592,7 +599,7 @@ const ProjectDetail: React.FC = () => {
           </TabPane>
 
           <TabPane
-            tab={renderTabLabel('storyboard', <PictureOutlined />, '分镜')}
+            tab={renderTabLabel('storyboard', <Image />, '分镜')}
             key="storyboard"
           >
             <div className={styles.workflowSection}>
@@ -695,7 +702,7 @@ const ProjectDetail: React.FC = () => {
                       <Button
                         type="primary"
                         onClick={() => navigate(`/projects/${id}/edit`)}
-                        icon={<EditOutlined />}
+                        icon={<Edit />}
                       >
                         去生成分镜
                       </Button>
@@ -710,7 +717,7 @@ const ProjectDetail: React.FC = () => {
                   <Button
                     type="primary"
                     onClick={() => navigate(`/projects/${id}/edit`)}
-                    icon={<EditOutlined />}
+                    icon={<Edit />}
                   >
                     去编辑剧本
                   </Button>
@@ -720,7 +727,7 @@ const ProjectDetail: React.FC = () => {
           </TabPane>
 
           <TabPane
-            tab={renderTabLabel('character', <UserOutlined />, '角色')}
+            tab={renderTabLabel('character', <User />, '角色')}
             key="character"
           >
             <div className={styles.workflowSection}>
@@ -742,7 +749,7 @@ const ProjectDetail: React.FC = () => {
                   <Button
                     type="primary"
                     onClick={() => navigate(`/projects/${id}/edit`)}
-                    icon={<EditOutlined />}
+                    icon={<Edit />}
                   >
                     去编辑剧本
                   </Button>
@@ -752,7 +759,7 @@ const ProjectDetail: React.FC = () => {
           </TabPane>
 
           <TabPane
-            tab={renderTabLabel('render', <ThunderboltOutlined />, '渲染')}
+            tab={renderTabLabel('render', <Zap />, '渲染')}
             key="render"
           >
             <div className={styles.workflowSection}>
@@ -772,7 +779,7 @@ const ProjectDetail: React.FC = () => {
                   <Button
                     type="primary"
                     onClick={() => navigate(`/projects/${id}/edit`)}
-                    icon={<EditOutlined />}
+                    icon={<Edit />}
                   >
                     去编辑剧本
                   </Button>
@@ -782,7 +789,7 @@ const ProjectDetail: React.FC = () => {
           </TabPane>
 
           <TabPane
-            tab={renderTabLabel('composition', <PlayCircleOutlined />, '合成')}
+            tab={renderTabLabel('composition', <PlayCircle />, '合成')}
             key="composition"
           >
             <div className={styles.workflowSection}>
@@ -804,7 +811,7 @@ const ProjectDetail: React.FC = () => {
                   <Button
                     type="primary"
                     onClick={() => navigate(`/projects/${id}/edit`)}
-                    icon={<EditOutlined />}
+                    icon={<Edit />}
                   >
                     去编辑
                   </Button>
@@ -814,7 +821,7 @@ const ProjectDetail: React.FC = () => {
           </TabPane>
 
           <TabPane
-            tab={renderTabLabel('audio', <SoundOutlined />, '配音')}
+            tab={renderTabLabel('audio', <Volume2 />, '配音')}
             key="audio"
           >
             <div className={styles.workflowSection}>
@@ -843,7 +850,7 @@ const ProjectDetail: React.FC = () => {
                   <Button
                     type="primary"
                     onClick={() => navigate(`/projects/${id}/edit`)}
-                    icon={<EditOutlined />}
+                    icon={<Edit />}
                   >
                     去编辑剧本
                   </Button>
@@ -853,12 +860,12 @@ const ProjectDetail: React.FC = () => {
           </TabPane>
 
           <TabPane
-            tab={renderTabLabel('cost', <DollarOutlined />, '成本')}
+            tab={renderTabLabel('cost', <DollarSign />, '成本')}
             key="cost"
           >
             <div className={styles.workflowSection}>
               <div className={styles.costQuickActions}>
-                <Button icon={<ExportOutlined />} onClick={handleExportReviewNotes}>
+                <Button icon={<Download />} onClick={handleExportReviewNotes}>
                   导出评审记录
                 </Button>
               </div>
@@ -869,7 +876,7 @@ const ProjectDetail: React.FC = () => {
           </TabPane>
 
           <TabPane
-            tab={renderTabLabel('export', <ExportOutlined />, '导出')}
+            tab={renderTabLabel('export', <Download />, '导出')}
             key="export"
           >
             <div className={styles.workflowSection}>
@@ -918,7 +925,7 @@ const ProjectDetail: React.FC = () => {
                   <Button
                     type="primary"
                     onClick={() => navigate(`/projects/${id}/edit`)}
-                    icon={<EditOutlined />}
+                    icon={<Edit />}
                   >
                     去编辑剧本
                   </Button>

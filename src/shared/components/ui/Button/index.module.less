@@ -1,6 +1,6 @@
 .button {
-  border-radius: 6px;
-  transition: all 0.2s ease;
+  border-radius: var(--radius-base);
+  transition: all var(--transition-base);
 
   &.small {
     padding: 4px 12px;
@@ -18,12 +18,12 @@
   }
 
   &.secondary {
-    background: #f5f5f5;
-    border-color: #d9d9d9;
+    background: var(--color-secondary-bg, #f5f5f5);
+    border-color: var(--color-border, #d9d9d9);
 
     &:hover {
-      background: #e8e8e8;
-      border-color: #bfbfbf;
+      background: var(--color-secondary-bg-hover, #e8e8e8);
+      border-color: var(--color-border-hover, #bfbfbf);
     }
   }
 
@@ -32,31 +32,7 @@
     border-style: dashed;
 
     &:hover {
-      background: rgba(0, 0, 0, 0.02);
-    }
-  }
-}
-
-:global(.dark) {
-  .button {
-    &.secondary {
-      background: #1f1f1f;
-      border-color: #434343;
-      color: #d9d9d9;
-
-      &:hover {
-        background: #2a2a2a;
-        border-color: #595959;
-      }
-    }
-
-    &.ghost {
-      color: #d9d9d9;
-      border-color: #434343;
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.05);
-      }
+      background: var(--color-ghost-hover, rgba(0, 0, 0, 0.02));
     }
   }
 }

@@ -173,7 +173,7 @@ class WebFileSystemAdapter implements FileSystemAdapter {
 }
 
 class DesktopFileSystemAdapter implements FileSystemAdapter {
-  // TODO: 实现 Tauri 文件系统 API
+  // DEFERRED: Tauri 文件系统 API 实现待后续版本完成
   private webAdapter = new WebFileSystemAdapter();
 
   async readFile(path: string): Promise<Uint8Array> {

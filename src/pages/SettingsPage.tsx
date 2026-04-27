@@ -3,56 +3,41 @@
  */
 
 import { 
-  ApiOutlined, 
-  SettingOutlined, 
-  UserOutlined, 
-  BellOutlined, 
-  SafetyOutlined,
-  CloudOutlined,
-  ThunderboltOutlined,
-  KeyOutlined,
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  QuestionCircleOutlined,
-  InfoCircleOutlined,
-  EditOutlined,
-  PlusOutlined,
-  DeleteOutlined,
-  BulbOutlined,
-  BulbFilled
-} from '@ant-design/icons';
-import { 
-  Card, 
-  Tabs, 
-  Form, 
-  Input, 
-  Button, 
-  Switch, 
-  Space, 
-  Tag, 
-  Typography,
-  Divider,
-  List,
-  Avatar,
-  Badge,
-  Select,
-  InputNumber,
-  Slider,
-  Alert,
-  Row,
-  Col,
-  Progress,
-  Radio
-} from 'antd';
+  Settings, 
+  User, 
+  Bell, 
+  Shield, 
+  Cloud, 
+  Zap, 
+  Key, 
+  CheckCircle, 
+  XCircle, 
+  HelpCircle, 
+  Info, 
+  Edit, 
+  Plus, 
+  Trash2, 
+  Lightbulb
+} from 'lucide-react';
 import React, { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Separator } from '@/components/ui/separator';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { toast } from '@/shared/components/ui/Toast';
 
 import { useTheme } from '@/context/ThemeContext';
 import { logger } from '@/core/utils/logger';
 
 import styles from './Settings.module.less';
-
-const { Title, Text, Paragraph } = Typography;
-const { TabPane } = Tabs;
 
 // API 密钥配置
 const apiProviders = [
@@ -94,7 +79,7 @@ const apiProviders = [
 ];
 
 const Settings: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('general'); // 默认显示通用设置，方便查看主题切换
+  const [activeTab, setActiveTab] = useState('general');
   const [apiKeys, setApiKeys] = useState<Record<string, string>>({
     openai: '',
     anthropic: '',
@@ -103,391 +88,378 @@ const Settings: React.FC = () => {
     zhipu: ''
   });
   
-  // 使用主题上下文
   const { isDarkMode, toggleTheme } = useTheme();
 
   const handleSaveApiKey = (provider: string) => {
     logger.info('保存 API Key:', provider);
+    toast.success('API Key 已保存');
   };
-
-  const tabItems = [
-    {
-      key: 'api',
-      label: (
-        <span>
-          <ApiOutlined /> API 配置
-        </span>
-      ),
-      children: (
-        <div className={styles.tabContent}>
-          <div className={styles.section}>
-            <Title level={4}>AI 模型 API</Title>
-            <Paragraph type="secondary">
-              配置您使用的 AI 服务商 API 密钥，不同服务商支持不同的模型。
-            </Paragraph>
-            
-            <List
-              dataSource={apiProviders}
-              renderItem={(provider) => (
-                <Card className={styles.providerCard} key={provider.key}>
-                  <div className={styles.providerHeader}>
-                    <div className={styles.providerInfo}>
-                      <span className={styles.providerLogo}>{provider.logo}</span>
-                      <span className={styles.providerName}>{provider.name}</span>
-                      {apiKeys[provider.key] ? (
-                        <Tag color="success" icon={<CheckCircleOutlined />}>已配置</Tag>
-                      ) : (
-                        <Tag icon={<CloseCircleOutlined />}>未配置</Tag>
-                      )}
-                    </div>
-                    <Button 
-                      type="link" 
-                      icon={<EditOutlined />}
-                      onClick={() => handleSaveApiKey(provider.key)}
-                    >
-                      {apiKeys[provider.key] ? '修改' : '添加'}
-                    </Button>
-                  </div>
-                  
-                  <div className={styles.modelSelect}>
-                    <Text type="secondary">选择模型：</Text>
-                    <Select
-                      defaultValue={provider.models[0]}
-                      style={{ width: 200 }}
-                      options={provider.models.map(m => ({ label: m, value: m }))}
-                    />
-                  </div>
-                </Card>
-              )}
-            />
-          </div>
-
-          <Divider />
-
-          <div className={styles.section}>
-            <Title level={4}>API 使用统计</Title>
-            <Row gutter={[16, 16]}>
-              <Col xs={24} sm={8}>
-                <Card className={styles.statCard}>
-                  <div className={styles.statIcon} style={{ background: '#e0e7ff', color: '#6366f1' }}>
-                    <ThunderboltOutlined />
-                  </div>
-                  <div className={styles.statInfo}>
-                    <Text type="secondary">本月调用</Text>
-                    <Title level={3}>1,234</Title>
-                  </div>
-                </Card>
-              </Col>
-              <Col xs={24} sm={8}>
-                <Card className={styles.statCard}>
-                  <div className={styles.statIcon} style={{ background: '#fef3c7', color: '#f59e0b' }}>
-                    <KeyOutlined />
-                  </div>
-                  <div className={styles.statInfo}>
-                    <Text type="secondary">消耗 Tokens</Text>
-                    <Title level={3}>567K</Title>
-                  </div>
-                </Card>
-              </Col>
-              <Col xs={24} sm={8}>
-                <Card className={styles.statCard}>
-                  <div className={styles.statIcon} style={{ background: '#d1fae5', color: '#10b981' }}>
-                    <CheckCircleOutlined />
-                  </div>
-                  <div className={styles.statInfo}>
-                    <Text type="secondary">成功调用</Text>
-                    <Title level={3}>98.5%</Title>
-                  </div>
-                </Card>
-              </Col>
-            </Row>
-          </div>
-        </div>
-      )
-    },
-    {
-      key: 'general',
-      label: (
-        <span>
-          <SettingOutlined /> 通用设置
-        </span>
-      ),
-      children: (
-        <div className={styles.tabContent}>
-          {/* 主题设置 */}
-          <div className={styles.section}>
-            <Title level={4}>主题设置</Title>
-            <Paragraph type="secondary">
-              选择您喜欢的主题模式，主题更改将立即生效。
-            </Paragraph>
-            
-            <Radio.Group 
-              value={isDarkMode ? 'dark' : 'light'}
-              onChange={(e) => {
-                if (e.target.value !== (isDarkMode ? 'dark' : 'light')) {
-                  toggleTheme();
-                }
-              }}
-              buttonStyle="solid"
-              optionType="button"
-              size="large"
-              style={{ marginTop: 16 }}
-            >
-              <Radio.Button value="light">
-                <Space size={8}>
-                  <BulbFilled style={{ color: '#faad14' }} />
-                  浅色模式
-                </Space>
-              </Radio.Button>
-              <Radio.Button value="dark">
-                <Space size={8}>
-                  <BulbOutlined style={{ color: '#1890ff' }} />
-                  暗黑模式
-                </Space>
-              </Radio.Button>
-            </Radio.Group>
-            
-            <Alert
-              type="info"
-              showIcon
-              message="主题说明"
-              description={isDarkMode 
-                ? "当前为暗黑模式，适合夜间使用，减少眼睛疲劳。" 
-                : "当前为浅色模式，适合白天使用，界面更清晰。"}
-              style={{ marginTop: 16 }}
-            />
-          </div>
-
-          <Divider />
-
-          <div className={styles.section}>
-            <Title level={4}>基本设置</Title>
-            
-            <Form layout="vertical">
-              <Form.Item label="项目保存路径">
-                <Input 
-                  placeholder="/Users/username/PlotCraft AI/projects" 
-                  suffix={<Button type="text" size="small">浏览</Button>}
-                />
-              </Form.Item>
-              
-              <Form.Item label="默认视频分辨率">
-                <Select
-                  defaultValue="1080p"
-                  options={[
-                    { label: '720p', value: '720p' },
-                    { label: '1080p', value: '1080p' },
-                    { label: '2K', value: '2k' },
-                    { label: '4K', value: '4k' },
-                  ]}
-                />
-              </Form.Item>
-              
-              <Form.Item label="默认帧率">
-                <Select
-                  defaultValue="24"
-                  options={[
-                    { label: '24 fps', value: '24' },
-                    { label: '30 fps', value: '30' },
-                    { label: '60 fps', value: '60' },
-                  ]}
-                />
-              </Form.Item>
-              
-              <Form.Item label="自动保存间隔">
-                <InputNumber min={1} max={60} defaultValue={5} />
-                <Text type="secondary" style={{ marginLeft: 8 }}>分钟</Text>
-              </Form.Item>
-            </Form>
-          </div>
-
-          <Divider />
-
-          <div className={styles.section}>
-            <Title level={4}>开关设置</Title>
-            
-            <div className={styles.switchItem}>
-              <div className={styles.switchInfo}>
-                <Text strong>自动保存项目</Text>
-                <Text type="secondary">工作进度自动保存到本地</Text>
-              </div>
-              <Switch defaultChecked />
-            </div>
-            
-            <div className={styles.switchItem}>
-              <div className={styles.switchInfo}>
-                <Text strong>显示高级选项</Text>
-                <Text type="secondary">在界面中显示更多高级配置</Text>
-              </div>
-              <Switch />
-            </div>
-            
-            <div className={styles.switchItem}>
-              <div className={styles.switchInfo}>
-                <Text strong>启用快捷键</Text>
-                <Text type="secondary">使用键盘快捷键提高效率</Text>
-              </div>
-              <Switch defaultChecked />
-            </div>
-            
-            <div className={styles.switchItem}>
-              <div className={styles.switchInfo}>
-                <Text strong>启动时检查更新</Text>
-                <Text type="secondary">自动检查新版本并提示更新</Text>
-              </div>
-              <Switch defaultChecked />
-            </div>
-          </div>
-        </div>
-      )
-    },
-    {
-      key: 'account',
-      label: (
-        <span>
-          <UserOutlined /> 账户
-        </span>
-      ),
-      children: (
-        <div className={styles.tabContent}>
-          <Card className={styles.accountCard}>
-            <div className={styles.accountInfo}>
-              <Avatar size={80} className={styles.avatar}>
-                <UserOutlined />
-              </Avatar>
-              <div className={styles.accountDetail}>
-                <Title level={4}>用户账户</Title>
-                <Text type="secondary">创建时间：2026-02-15</Text>
-                <div className={styles.accountTags}>
-                  <Tag color="blue">免费版</Tag>
-                </div>
-              </div>
-            </div>
-          </Card>
-
-          <Divider />
-
-          <div className={styles.section}>
-            <Title level={4}>账户设置</Title>
-            
-            <Form layout="vertical">
-              <Form.Item label="显示名称">
-                <Input placeholder="输入您的名称" />
-              </Form.Item>
-              
-              <Form.Item label="邮箱">
-                <Input placeholder="your@email.com" />
-              </Form.Item>
-              
-              <Button type="primary">保存更改</Button>
-            </Form>
-          </div>
-        </div>
-      )
-    },
-    {
-      key: 'notification',
-      label: (
-        <span>
-          <BellOutlined /> 通知
-        </span>
-      ),
-      children: (
-        <div className={styles.tabContent}>
-          <div className={styles.section}>
-            <Title level={4}>通知设置</Title>
-            
-            <div className={styles.switchItem}>
-              <div className={styles.switchInfo}>
-                <Text strong>项目完成通知</Text>
-                <Text type="secondary">项目生成完成时推送通知</Text>
-              </div>
-              <Switch defaultChecked />
-            </div>
-            
-            <div className={styles.switchItem}>
-              <div className={styles.switchInfo}>
-                <Text strong>错误提醒</Text>
-                <Text type="secondary">发生错误时推送通知</Text>
-              </div>
-              <Switch defaultChecked />
-            </div>
-            
-            <div className={styles.switchItem}>
-              <div className={styles.switchInfo}>
-                <Text strong>API 配额提醒</Text>
-                <Text type="secondary">API 使用达到 80% 时提醒</Text>
-              </div>
-              <Switch defaultChecked />
-            </div>
-            
-            <div className={styles.switchItem}>
-              <div className={styles.switchInfo}>
-                <Text strong>更新推送</Text>
-                <Text type="secondary">新版本发布时推送通知</Text>
-              </div>
-              <Switch />
-            </div>
-          </div>
-        </div>
-      )
-    },
-    {
-      key: 'about',
-      label: (
-        <span>
-          <InfoCircleOutlined /> 关于
-        </span>
-      ),
-      children: (
-        <div className={styles.tabContent}>
-          <Card className={styles.aboutCard}>
-            <div className={styles.aboutHeader}>
-              <Title level={2}>🎬 PlotCraft AI</Title>
-              <Text type="secondary">AI 视频脚本视频智能创作平台</Text>
-            </div>
-            
-            <div className={styles.aboutInfo}>
-              <div className={styles.infoItem}>
-                <Text type="secondary">版本</Text>
-                <Text>v2.1.0</Text>
-              </div>
-              <div className={styles.infoItem}>
-                <Text type="secondary">构建时间</Text>
-                <Text>2026-02-22</Text>
-              </div>
-              <div className={styles.infoItem}>
-                <Text type="secondary">许可证</Text>
-                <Text>MIT</Text>
-              </div>
-            </div>
-            
-            <Divider />
-            
-            <Alert
-              type="info"
-              showIcon
-              message="感谢使用 PlotCraft AI"
-              description="如有问题或建议，请提交 Issue 或联系开发者。"
-            />
-          </Card>
-        </div>
-      )
-    }
-  ];
 
   return (
     <div className={styles.settings}>
       <Card className={styles.settingsCard}>
-        <Tabs
-          activeKey={activeTab}
-          onChange={setActiveTab}
-          items={tabItems}
-          className={styles.tabs}
-        />
+        <Tabs value={activeTab} onValueChange={setActiveTab} className={styles.tabs}>
+          <TabsList className="w-full justify-start flex-wrap h-auto gap-1">
+            <TabsTrigger value="api" className="flex items-center gap-2">
+              <ApiIcon className="h-4 w-4" /> API 配置
+            </TabsTrigger>
+            <TabsTrigger value="general" className="flex items-center gap-2">
+              <Settings className="h-4 w-4" /> 通用设置
+            </TabsTrigger>
+            <TabsTrigger value="account" className="flex items-center gap-2">
+              <User className="h-4 w-4" /> 账户
+            </TabsTrigger>
+            <TabsTrigger value="notification" className="flex items-center gap-2">
+              <Bell className="h-4 w-4" /> 通知
+            </TabsTrigger>
+            <TabsTrigger value="about" className="flex items-center gap-2">
+              <Info className="h-4 w-4" /> 关于
+            </TabsTrigger>
+          </TabsList>
+
+          {/* API 配置 */}
+          <TabsContent value="api" className="space-y-6">
+            <div className={styles.section}>
+              <h3 className="text-lg font-semibold mb-2">AI 模型 API</h3>
+              <p className="text-muted-foreground mb-4">
+                配置您使用的 AI 服务商 API 密钥，不同服务商支持不同的模型。
+              </p>
+              
+              <div className="space-y-4">
+                {apiProviders.map((provider) => (
+                  <Card key={provider.key} className={styles.providerCard}>
+                    <div className={styles.providerHeader}>
+                      <div className={styles.providerInfo}>
+                        <span className={styles.providerLogo}>{provider.logo}</span>
+                        <span className={styles.providerName}>{provider.name}</span>
+                        {apiKeys[provider.key] ? (
+                          <Badge variant="default" className="bg-green-500">已配置</Badge>
+                        ) : (
+                          <Badge variant="secondary">未配置</Badge>
+                        )}
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleSaveApiKey(provider.key)}
+                      >
+                        <Edit className="h-4 w-4 mr-1" />
+                        {apiKeys[provider.key] ? '修改' : '添加'}
+                      </Button>
+                    </div>
+                    
+                    <div className={styles.modelSelect}>
+                      <Label>选择模型：</Label>
+                      <Select defaultValue={provider.models[0]}>
+                        <SelectTrigger className="w-[200px]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {provider.models.map(m => (
+                            <SelectItem key={m} value={m}>{m}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+
+            <Separator />
+
+            <div className={styles.section}>
+              <h3 className="text-lg font-semibold mb-4">API 使用统计</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card className={styles.statCard}>
+                  <div className="flex items-center gap-4">
+                    <div className={styles.statIcon} style={{ background: '#e0e7ff', color: '#6366f1' }}>
+                      <Zap className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">本月调用</p>
+                      <p className="text-2xl font-bold">1,234</p>
+                    </div>
+                  </div>
+                </Card>
+                <Card className={styles.statCard}>
+                  <div className="flex items-center gap-4">
+                    <div className={styles.statIcon} style={{ background: '#fef3c7', color: '#f59e0b' }}>
+                      <Key className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">消耗 Tokens</p>
+                      <p className="text-2xl font-bold">567K</p>
+                    </div>
+                  </div>
+                </Card>
+                <Card className={styles.statCard}>
+                  <div className="flex items-center gap-4">
+                    <div className={styles.statIcon} style={{ background: '#d1fae5', color: '#10b981' }}>
+                      <CheckCircle className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">成功调用</p>
+                      <p className="text-2xl font-bold">98.5%</p>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* 通用设置 */}
+          <TabsContent value="general" className="space-y-6">
+            <div className={styles.section}>
+              <h3 className="text-lg font-semibold mb-2">主题设置</h3>
+              <p className="text-muted-foreground mb-4">
+                选择您喜欢的主题模式，主题更改将立即生效。
+              </p>
+              
+              <RadioGroup 
+                value={isDarkMode ? 'dark' : 'light'}
+                onValueChange={(value) => {
+                  if (value !== (isDarkMode ? 'dark' : 'light')) {
+                    toggleTheme();
+                  }
+                }}
+                className="flex flex-col gap-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="light" id="light" />
+                  <Label htmlFor="light" className="flex items-center gap-2">
+                    <Lightbulb className="h-4 w-4 text-yellow-500" />
+                    浅色模式
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="dark" id="dark" />
+                  <Label htmlFor="dark" className="flex items-center gap-2">
+                    <Lightbulb className="h-4 w-4 text-blue-500" />
+                    暗黑模式
+                  </Label>
+                </div>
+              </RadioGroup>
+              
+              <Alert className="mt-4">
+                <AlertDescription>
+                  {isDarkMode 
+                    ? "当前为暗黑模式，适合夜间使用，减少眼睛疲劳。" 
+                    : "当前为浅色模式，适合白天使用，界面更清晰。"}
+                </AlertDescription>
+              </Alert>
+            </div>
+
+            <Separator />
+
+            <div className={styles.section}>
+              <h3 className="text-lg font-semibold mb-4">基本设置</h3>
+              
+              <div className="space-y-4 max-w-md">
+                <div className="space-y-2">
+                  <Label>项目保存路径</Label>
+                  <div className="flex gap-2">
+                    <Input placeholder="/Users/username/PlotCraft AI/projects" className="flex-1" />
+                    <Button variant="outline" size="sm">浏览</Button>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>默认视频分辨率</Label>
+                  <Select defaultValue="1080p">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="720p">720p</SelectItem>
+                      <SelectItem value="1080p">1080p</SelectItem>
+                      <SelectItem value="2k">2K</SelectItem>
+                      <SelectItem value="4k">4K</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>默认帧率</Label>
+                  <Select defaultValue="24">
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="24">24 fps</SelectItem>
+                      <SelectItem value="30">30 fps</SelectItem>
+                      <SelectItem value="60">60 fps</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>自动保存间隔</Label>
+                  <div className="flex items-center gap-2">
+                    <Input type="number" min={1} max={60} defaultValue={5} className="w-20" />
+                    <span className="text-muted-foreground">分钟</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            <div className={styles.section}>
+              <h3 className="text-lg font-semibold mb-4">开关设置</h3>
+              
+              <div className="space-y-4">
+                <div className={styles.switchItem}>
+                  <div className={styles.switchInfo}>
+                    <Label>自动保存项目</Label>
+                    <p className="text-sm text-muted-foreground">工作进度自动保存到本地</p>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
+                
+                <div className={styles.switchItem}>
+                  <div className={styles.switchInfo}>
+                    <Label>显示高级选项</Label>
+                    <p className="text-sm text-muted-foreground">在界面中显示更多高级配置</p>
+                  </div>
+                  <Switch />
+                </div>
+                
+                <div className={styles.switchItem}>
+                  <div className={styles.switchInfo}>
+                    <Label>启用快捷键</Label>
+                    <p className="text-sm text-muted-foreground">使用键盘快捷键提高效率</p>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
+                
+                <div className={styles.switchItem}>
+                  <div className={styles.switchInfo}>
+                    <Label>启动时检查更新</Label>
+                    <p className="text-sm text-muted-foreground">自动检查新版本并提示更新</p>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* 账户 */}
+          <TabsContent value="account" className="space-y-6">
+            <Card className={styles.accountCard}>
+              <div className={styles.accountInfo}>
+                <Avatar className="h-20 w-20">
+                  <AvatarFallback><User className="h-8 w-8" /></AvatarFallback>
+                </Avatar>
+                <div className={styles.accountDetail}>
+                  <h3 className="text-lg font-semibold">用户账户</h3>
+                  <p className="text-sm text-muted-foreground">创建时间：2026-02-15</p>
+                  <Badge variant="outline" className="mt-2">免费版</Badge>
+                </div>
+              </div>
+            </Card>
+
+            <Separator />
+
+            <div className={styles.section}>
+              <h3 className="text-lg font-semibold mb-4">账户设置</h3>
+              
+              <div className="space-y-4 max-w-md">
+                <div className="space-y-2">
+                  <Label>显示名称</Label>
+                  <Input placeholder="输入您的名称" />
+                </div>
+                
+                <div className="space-y-2">
+                  <Label>邮箱</Label>
+                  <Input placeholder="your@email.com" />
+                </div>
+                
+                <Button>保存更改</Button>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* 通知 */}
+          <TabsContent value="notification" className="space-y-6">
+            <div className={styles.section}>
+              <h3 className="text-lg font-semibold mb-4">通知设置</h3>
+              
+              <div className="space-y-4">
+                <div className={styles.switchItem}>
+                  <div className={styles.switchInfo}>
+                    <Label>项目完成通知</Label>
+                    <p className="text-sm text-muted-foreground">项目生成完成时推送通知</p>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
+                
+                <div className={styles.switchItem}>
+                  <div className={styles.switchInfo}>
+                    <Label>错误提醒</Label>
+                    <p className="text-sm text-muted-foreground">发生错误时推送通知</p>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
+                
+                <div className={styles.switchItem}>
+                  <div className={styles.switchInfo}>
+                    <Label>API 配额提醒</Label>
+                    <p className="text-sm text-muted-foreground">API 使用达到 80% 时提醒</p>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
+                
+                <div className={styles.switchItem}>
+                  <div className={styles.switchInfo}>
+                    <Label>更新推送</Label>
+                    <p className="text-sm text-muted-foreground">新版本发布时推送通知</p>
+                  </div>
+                  <Switch />
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* 关于 */}
+          <TabsContent value="about" className="space-y-6">
+            <Card className={styles.aboutCard}>
+              <div className={styles.aboutHeader}>
+                <h2 className="text-2xl font-bold">🎬 PlotCraft AI</h2>
+                <p className="text-muted-foreground">AI 视频脚本视频智能创作平台</p>
+              </div>
+              
+              <div className={styles.aboutInfo}>
+                <div className={styles.infoItem}>
+                  <span className="text-muted-foreground">版本</span>
+                  <span>v2.1.0</span>
+                </div>
+                <div className={styles.infoItem}>
+                  <span className="text-muted-foreground">构建时间</span>
+                  <span>2026-02-22</span>
+                </div>
+                <div className={styles.infoItem}>
+                  <span className="text-muted-foreground">许可证</span>
+                  <span>MIT</span>
+                </div>
+              </div>
+              
+              <Alert className="mt-4">
+                <AlertDescription>
+                  感谢使用 PlotCraft AI，如有问题或建议，请提交 Issue 或联系开发者。
+                </AlertDescription>
+              </Alert>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </Card>
     </div>
   );
 };
 
 export default Settings;
+
+// Icon wrapper for Lucide
+const ApiIcon: React.FC<{ className?: string }> = ({ className }) => (
+  <Key className={className} />
+);

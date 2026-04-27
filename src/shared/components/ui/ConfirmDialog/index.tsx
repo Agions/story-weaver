@@ -1,11 +1,10 @@
 /**
  * 确认对话框组件
- * 提供确认、取消操作的模态对话框
  */
 
-import { ExclamationCircleOutlined, WarningOutlined, InfoCircleOutlined, CheckCircleOutlined } from '@ant-design/icons';
-import { Modal, Button, Progress } from 'antd';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AlertCircle, CheckCircle, Info, AlertTriangle } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import React, { useState, useCallback } from 'react';
 
 import styles from './ConfirmDialog.module.less';
@@ -34,11 +33,11 @@ export interface ConfirmDialogProps {
 }
 
 const iconMap = {
-  info: <InfoCircleOutlined className={styles.iconInfo} />,
-  success: <CheckCircleOutlined className={styles.iconSuccess} />,
-  warning: <WarningOutlined className={styles.iconWarning} />,
-  error: <ExclamationCircleOutlined className={styles.iconError} />,
-  confirm: <ExclamationCircleOutlined className={styles.iconConfirm} />,
+  info: <Info className="h-6 w-6 text-blue-500" />,
+  success: <CheckCircle className="h-6 w-6 text-green-500" />,
+  warning: <AlertTriangle className="h-6 w-6 text-yellow-500" />,
+  error: <AlertCircle className="h-6 w-6 text-red-500" />,
+  confirm: <AlertTriangle className="h-6 w-6 text-yellow-500" />,
 };
 
 export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
@@ -49,16 +48,9 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   icon,
   okText = '确定',
   cancelText = '取消',
-  okButtonProps,
-  cancelButtonProps,
   onOk,
   onCancel,
   loading = false,
-  maskClosable = false,
-  closable = false,
-  width = 416,
-  centered = true,
-  destroyOnClose = true,
   className,
 }) => {
   const [localLoading, setLocalLoading] = useState(false);
@@ -78,95 +70,38 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   }, [onOk]);
 
   return (
-    <Modal
-      open={open}
-      title={null}
-      footer={null}
-      onCancel={onCancel}
-      width={width}
-      centered={centered}
-      closable={closable}
-      maskClosable={maskClosable}
-      destroyOnClose={destroyOnClose}
-      className={`${styles.confirmDialog} ${className || ''}`}
-      wrapClassName={styles.wrap}
-    >
-      <AnimatePresence mode="wait">
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className={styles.content}
+    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onCancel?.()}>
+      <DialogContent className={className}>
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            {icon || iconMap[type]}
+            <DialogTitle>{title}</DialogTitle>
+          </div>
+          {content && (
+            <DialogDescription>{content}</DialogDescription>
+          )}
+        </DialogHeader>
+        <DialogFooter className="gap-2">
+          <Button
+            variant="outline"
+            onClick={onCancel}
+            disabled={loading || localLoading}
           >
-            <div className={styles.iconWrapper}>
-              {icon || iconMap[type]}
-            </div>
-            <div className={styles.message}>
-              <div className={styles.title}>{title}</div>
-              {content && <div className={styles.description}>{content}</div>}
-            </div>
-            <div className={styles.footer}>
-              <Button
-                {...cancelButtonProps}
-                onClick={onCancel}
-                disabled={loading || localLoading}
-              >
-                {cancelText}
-              </Button>
-              <Button
-                type={type === 'error' ? 'primary' : 'primary'}
-                danger={type === 'error'}
-                loading={loading || localLoading}
-                onClick={handleOk}
-                {...okButtonProps}
-              >
-                {okText}
-              </Button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </Modal>
+            {cancelText}
+          </Button>
+          <Button
+            variant={type === 'error' ? 'destructive' : 'default'}
+            onClick={handleOk}
+            disabled={loading || localLoading}
+          >
+            {okText}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 
-/**
- * 异步操作确认对话框
- * 支持进度显示的确认对话框
- */
-export interface AsyncConfirmDialogProps extends ConfirmDialogProps {
-  progress?: number;
-  status?: 'normal' | 'exception' | 'success' | 'active';
-}
-
-export const AsyncConfirmDialog: React.FC<AsyncConfirmDialogProps> = ({
-  progress,
-  status = 'active',
-  ...props
-}) => {
-  return (
-    <ConfirmDialog {...props}>
-      {progress !== undefined && (
-        <div className={styles.progress}>
-          <Progress
-            percent={Math.round(progress)}
-            status={status}
-            strokeColor={{
-              '0%': '#108ee9',
-              '100%': '#87d068',
-            }}
-          />
-        </div>
-      )}
-    </ConfirmDialog>
-  );
-};
-
-/**
- * 确认对话框 Hook
- */
 export interface UseConfirmOptions {
   title?: string;
   content?: string;

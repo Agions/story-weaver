@@ -1,11 +1,10 @@
 /**
  * Step 4: 角色设计
  */
-import { Card, Typography, Space, Button } from 'antd';
+import { User } from 'lucide-react';
 import React, { lazy } from 'react';
-
-const { Title, Paragraph } = Typography;
-import { UserOutlined } from '@ant-design/icons';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 import type { Character } from '@/core/types';
 
@@ -29,25 +28,30 @@ const StepContentCharacter: React.FC<StepContentCharacterProps> = ({
   onNext,
 }) => (
   <Card className={styles.stepCard}>
-    <Title level={4}>
-      <UserOutlined /> 角色设计
-    </Title>
-    <Paragraph>
-      为故事中的角色创建和管理形象档案，确保视觉一致性。
-    </Paragraph>
-    <div className={styles.characterDesignerContainer}>
-      <CharacterDesigner
-        characters={characters}
-        onChange={onChange}
-        projectId={projectId}
-      />
-    </div>
-    <div className={styles.stepActions}>
-      <Space>
-        <Button onClick={onPrev}>上一步</Button>
-        <Button type="primary" onClick={onNext}>下一步</Button>
-      </Space>
-    </div>
+    <CardHeader>
+      <CardTitle className="flex items-center gap-2">
+        <User className="h-5 w-5" />
+        角色设计
+      </CardTitle>
+    </CardHeader>
+    <CardContent>
+      <p className="text-muted-foreground mb-4">
+        为故事中的角色创建和管理形象档案，确保视觉一致性。
+      </p>
+      <div className={styles.characterDesignerContainer}>
+        <CharacterDesigner
+          characters={characters}
+          onChange={onChange}
+          projectId={projectId}
+        />
+      </div>
+      <div className={styles.stepActions}>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={onPrev}>上一步</Button>
+          <Button variant="default" onClick={onNext}>下一步</Button>
+        </div>
+      </div>
+    </CardContent>
   </Card>
 );
 

@@ -1,13 +1,11 @@
-@import '../../../../styles/variables.less';
-
 /* ==================== 卡片骨架屏 ==================== */
 
 .cardSkeleton {
-  margin-bottom: @spacing-md;
+  margin-bottom: var(--spacing-md, 12px);
 }
 
 .cover {
-  margin-bottom: @spacing-md;
+  margin-bottom: var(--spacing-md, 12px);
 }
 
 /* ==================== 列表骨架屏 ==================== */
@@ -15,17 +13,17 @@
 .listSkeleton {
   display: flex;
   flex-direction: column;
-  gap: @spacing-md;
+  gap: var(--spacing-md, 12px);
 }
 
 .listItem {
   display: flex;
   align-items: flex-start;
-  gap: @spacing-md;
-  padding: @spacing-md;
-  background: @component-background;
-  border-radius: @border-radius-base;
-  border: 1px solid @border-color-base;
+  gap: var(--spacing-md, 12px);
+  padding: var(--spacing-md, 12px);
+  background: var(--bg-color-component, #ffffff);
+  border-radius: var(--radius-base, 6px);
+  border: 1px solid var(--border-color, #e0e0e0);
 
   .avatar {
     flex-shrink: 0;
@@ -34,7 +32,7 @@
   .coverImage {
     width: 80px;
     height: 80px;
-    border-radius: @border-radius-base;
+    border-radius: var(--radius-base, 6px);
   }
 
   .content {
@@ -44,7 +42,7 @@
 
   .itemActions {
     display: flex;
-    gap: @spacing-xs;
+    gap: var(--spacing-xs, 4px);
     flex-shrink: 0;
   }
 }
@@ -54,25 +52,18 @@
 .formSkeleton {
   display: flex;
   flex-direction: column;
-  gap: @spacing-lg;
+  gap: var(--spacing-lg, 20px);
 }
 
 .formItem {
   display: flex;
   flex-direction: column;
-  gap: @spacing-sm;
-
-  .ant-skeleton-input {
-    max-width: 400px;
-  }
+  gap: var(--spacing-sm, 8px);
 }
 
 .formButton {
-  margin-top: @spacing-md;
-
-  .ant-btn {
-    min-width: 100px;
-  }
+  margin-top: var(--spacing-md, 12px);
+  min-width: 100px;
 }
 
 /* ==================== 统计卡片骨架屏 ==================== */
@@ -80,13 +71,13 @@
 .statisticSkeleton {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: @spacing-md;
+  gap: var(--spacing-md, 12px);
 }
 
 .statisticContent {
   display: flex;
   align-items: center;
-  gap: @spacing-md;
+  gap: var(--spacing-md, 12px);
 
   .icon {
     flex-shrink: 0;
@@ -96,23 +87,16 @@
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: @spacing-xs;
+    gap: var(--spacing-xs, 4px);
   }
 }
 
 /* ==================== 暗色模式适配 ==================== */
 
-:global(.dark-theme) {
+.dark-theme {
   .listItem {
-    background: @dark-component-background;
-    border-color: @dark-border-color;
-  }
-
-  .statisticContent {
-    .ant-card {
-      background: @dark-component-background;
-      border-color: @dark-border-color;
-    }
+    background: var(--bg-color-component, #1f1f1f);
+    border-color: var(--border-color, #303030);
   }
 }
 

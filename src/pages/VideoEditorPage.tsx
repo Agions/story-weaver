@@ -1,16 +1,15 @@
 import {
-  PlayCircleOutlined, PauseCircleOutlined,
-  SaveOutlined, UndoOutlined, RedoOutlined, DownloadOutlined,
-  UploadOutlined, DeleteOutlined, PlusOutlined,
-  FullscreenOutlined
-} from '@ant-design/icons';
+  Play, Pause,
+  Save, Undo, Redo, Download,
+  Upload, Trash2, Plus,
+  Maximize
+} from 'lucide-react';
 import { invoke } from '@tauri-apps/api/core';
 import { open, save } from '@tauri-apps/plugin-dialog';
-import {
-  Layout, Card, Button, Dropdown, Space, Typography, Tabs,
-  Row, Col, Progress, Tooltip, message, Empty, Tag,
-  Modal
-} from 'antd';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
+import { toast } from '@/shared/components/ui/Toast';
 import React, { useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 
@@ -120,10 +119,10 @@ const VideoEditor: React.FC = () => {
 
         setKeyframes(frames);
 
-        message.success('视频加载成功');
+        toast.success('视频加载成功');
       } catch (error) {
         logger.error('视频分析失败:', error);
-        message.error('视频分析失败，请检查文件格式');
+        toast.error('视频分析失败，请检查文件格式');
       } finally {
         setLoading(false);
       }
@@ -202,7 +201,7 @@ const VideoEditor: React.FC = () => {
     setSegments(newSegments);
     addToHistory(newSegments);
     setSelectedSegmentIndex(newSegments.length - 1);
-    message.success('已添加新片段');
+    toast.success('已添加新片段');
   };
 
   // 删除片段
@@ -211,7 +210,7 @@ const VideoEditor: React.FC = () => {
     setSegments(newSegments);
     addToHistory(newSegments);
     setSelectedSegmentIndex(-1);
-    message.success('已删除片段');
+    toast.success('已删除片段');
   };
 
   // 选择片段
@@ -242,10 +241,10 @@ const VideoEditor: React.FC = () => {
 
       await tauriService.writeText(projectId || 'new', JSON.stringify(projectToSave));
 
-      message.success('项目保存成功');
+      toast.success('项目保存成功');
     } catch (error) {
       logger.error('保存失败:', error);
-      message.error('保存失败，请重试');
+      toast.error('保存失败，请重试');
     } finally {
       setIsSaving(false);
     }
@@ -254,7 +253,7 @@ const VideoEditor: React.FC = () => {
   // 导出视频
   const handleExportVideo = async () => {
     if (segments.length === 0) {
-      message.warning('请先添加需要导出的片段');
+      toast.warning('请先添加需要导出的片段');
       return;
     }
 
@@ -317,13 +316,13 @@ const VideoEditor: React.FC = () => {
         setExportProgress(100);
         setExportStatus('导出完成!');
 
-        message.success(`视频导出成功: ${result}`);
+        toast.success(`视频导出成功: ${result}`);
       } finally {
         clearInterval(progressInterval);
       }
     } catch (error) {
       logger.error('导出失败:', error);
-      message.error(`导出失败: ${error}`);
+      toast.error(`导出失败: ${error}`);
     } finally {
       setTimeout(() => {
         setIsExporting(false);
@@ -354,7 +353,7 @@ const VideoEditor: React.FC = () => {
       <div className={styles.leftTools}>
         <Button
           type="primary"
-          icon={<UploadOutlined />}
+          icon={<Upload />}
           onClick={handleLoadVideo}
           loading={loading}
         >
@@ -363,7 +362,7 @@ const VideoEditor: React.FC = () => {
 
         <Tooltip title="撤销">
           <Button
-            icon={<UndoOutlined />}
+            icon={<Undo />}
             disabled={historyIndex <= 0}
             onClick={handleUndo}
           />
@@ -371,7 +370,7 @@ const VideoEditor: React.FC = () => {
 
         <Tooltip title="重做">
           <Button
-            icon={<RedoOutlined />}
+            icon={<Redo />}
             disabled={historyIndex >= editHistory.length - 1}
             onClick={handleRedo}
           />
@@ -379,7 +378,7 @@ const VideoEditor: React.FC = () => {
 
         <Tooltip title="添加片段">
           <Button
-            icon={<PlusOutlined />}
+            icon={<Plus />}
             onClick={handleAddSegment}
             disabled={!videoSrc}
           />
@@ -388,7 +387,7 @@ const VideoEditor: React.FC = () => {
 
       <div className={styles.rightTools}>
         <Button
-          icon={<SaveOutlined />}
+          icon={<Save />}
           onClick={handleSaveProject}
           loading={isSaving}
           disabled={!videoSrc}
@@ -398,7 +397,7 @@ const VideoEditor: React.FC = () => {
 
         <Button
           type="primary"
-          icon={<DownloadOutlined />}
+          icon={<Download />}
           onClick={handleExportVideo}
           loading={isExporting}
           disabled={!videoSrc || segments.length === 0}
@@ -414,7 +413,7 @@ const VideoEditor: React.FC = () => {
     <div className={styles.playerControls}>
       <Button
         type="text"
-        icon={isPlaying ? <PauseCircleOutlined /> : <PlayCircleOutlined />}
+        icon={isPlaying ? <PauseCircle /> : <PlayCircle />}
         onClick={togglePlayPause}
         size="large"
         disabled={!videoSrc}
@@ -436,7 +435,7 @@ const VideoEditor: React.FC = () => {
       <Tooltip title="全屏">
         <Button
           type="text"
-          icon={<FullscreenOutlined />}
+          icon={<Maximize />}
           disabled={!videoSrc}
         />
       </Tooltip>
@@ -465,7 +464,7 @@ const VideoEditor: React.FC = () => {
                     type="text"
                     size="small"
                     danger
-                    icon={<DeleteOutlined />}
+                    icon={<Trash2 />}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleDeleteSegment(index);
@@ -495,7 +494,7 @@ const VideoEditor: React.FC = () => {
 
       <Button
         type="dashed"
-        icon={<PlusOutlined />}
+        icon={<Plus />}
         block
         onClick={handleAddSegment}
         disabled={!videoSrc}
@@ -582,7 +581,7 @@ const VideoEditor: React.FC = () => {
                 <div className={styles.emptyPlayer}>
                   <Button
                     type="primary"
-                    icon={<UploadOutlined />}
+                    icon={<Upload />}
                     onClick={handleLoadVideo}
                     size="large"
                   >
@@ -670,7 +669,7 @@ const VideoEditor: React.FC = () => {
                         }}
                       >
                         <Button>
-                          {outputFormat.toUpperCase()} <DownloadOutlined />
+                          {outputFormat.toUpperCase()} <Download />
                         </Button>
                       </Dropdown>
                     </div>
@@ -692,7 +691,7 @@ const VideoEditor: React.FC = () => {
                           {videoQuality === 'low' ? '低 (720p)' :
                            videoQuality === 'medium' ? '中 (1080p)' :
                            videoQuality === 'high' ? '高 (1080p)' :
-                           '超清 (原画)'} <DownloadOutlined />
+                           '超清 (原画)'} <Download />
                         </Button>
                       </Dropdown>
                     </div>
