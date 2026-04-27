@@ -164,7 +164,6 @@ const CostDashboard: React.FC<CostDashboardProps> = ({ projectId }) => {
       {lastAlert && (
         <Alert
           variant="warning"
-          message={`预算告警：${lastAlert.period} 已使用 ${lastAlert.percent.toFixed(1)}%`}
           className={styles.alert}
         />
       )}

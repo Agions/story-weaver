@@ -4,6 +4,7 @@
  */
 
 import { toast } from '@/shared/components/ui';
+import { toast as sonnerToast } from 'sonner';
 import { useState, useCallback, useRef, useEffect } from 'react';
 
 import { useConfirm, ConfirmDialogProps } from '@/shared/components/ui/ConfirmDialog';
@@ -198,9 +199,9 @@ export const useMessage = (_options?: UseMessageOptions): UseMessageReturn => {
   }, []);
 
   const loading = useCallback((content: string, _duration = 0) => {
-    toast.loading(content);
-    // message.loading returns a function to dismiss the message
-    return key;
+    const id = sonnerToast.loading(content);
+    // Return dismiss function
+    return () => { sonnerToast.dismiss(id); };
   }, []);
 
   return { success, error, info, warning, loading };

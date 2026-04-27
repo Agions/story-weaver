@@ -13,18 +13,19 @@ import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
 import { Progress } from '@/components/ui/progress';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Skeleton as ShadcnSkeleton } from '@/components/ui/skeleton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import React, { useState } from 'react';
 
 import SubtitleEditor from '@/features/subtitle/components/SubtitleEditor';
-import { EmptyState, PageContainer, PageSection, GridStatistic, Skeleton, AnimateIn } from '@/shared/components/ui';
+import { EmptyState, PageContainer, PageSection, GridStatistic, AnimateIn } from '@/shared/components/ui';
 
 const Demo: React.FC = () => {
   const [activeTab, setActiveTab] = useState('buttons');
   const [subtitles, setSubtitles] = useState(mockSubtitles);
   const [currentTime, setCurrentTime] = useState(0);
-  const [sliderValue, setSliderValue] = useState(30);
-  const [sliderRange, setSliderRange] = useState<[number, number]>([20, 50]);
+  const [sliderValue, setSliderValue] = useState<number[]>([30]);
+  const [sliderRange, setSliderRange] = useState<number[]>([20, 50]);
   const [selectValue, setSelectValue] = useState('');
 
   // 模拟播放时间更新
@@ -35,7 +36,7 @@ const Demo: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const buttons = [
+  const buttons: { variant: 'default' | 'secondary' | 'outline' | 'ghost' | 'link' | 'destructive'; text: string }[] = [
     { variant: 'default', text: '主要按钮' },
     { variant: 'secondary', text: '默认按钮' },
     { variant: 'outline', text: '虚线按钮' },
@@ -104,14 +105,14 @@ const Demo: React.FC = () => {
             <PageSection title="加载状态">
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', width: '100%' }}>
                 <div style={{ display: 'flex', gap: '16px' }}>
-                  <Skeleton style={{ width: 32, height: 32, borderRadius: '50%' }} />
-                  <Skeleton style={{ width: 32, height: 32, borderRadius: '50%' }} />
-                  <Skeleton style={{ width: 32, height: 32, borderRadius: '50%' }} />
-                  <Skeleton style={{ width: 32, height: 32, borderRadius: '50%' }} />
+                  <ShadcnSkeleton style={{ width: 32, height: 32, borderRadius: '50%' }} />
+                  <ShadcnSkeleton style={{ width: 32, height: 32, borderRadius: '50%' }} />
+                  <ShadcnSkeleton style={{ width: 32, height: 32, borderRadius: '50%' }} />
+                  <ShadcnSkeleton style={{ width: 32, height: 32, borderRadius: '50%' }} />
                 </div>
-                <Skeleton style={{ width: '100%', height: 120 }} />
-                <Skeleton style={{ width: '100%', height: 80 }} />
-                <Skeleton style={{ width: '100%', height: 60 }} />
+                <ShadcnSkeleton style={{ width: '100%', height: 120 }} />
+                <ShadcnSkeleton style={{ width: '100%', height: 80 }} />
+                <ShadcnSkeleton style={{ width: '100%', height: 60 }} />
               </div>
             </PageSection>
           </AnimateIn>
@@ -191,9 +192,9 @@ const Demo: React.FC = () => {
             <div style={{ height: '1px', background: '#d9d9d9', margin: '24px 0' }}>滑动条</div>
 
             <div style={{ maxWidth: 400 }}>
-              <Slider value={sliderValue} onValueChange={(v) => setSliderValue(v as number)} max={100} step={1} />
+              <Slider value={sliderValue} onValueChange={(v) => setSliderValue(v)} max={100} step={1} />
               <div style={{ marginTop: 16 }}>
-                <Slider value={sliderRange} onValueChange={(v) => setSliderRange(v as [number, number])} max={100} step={1} />
+                <Slider value={sliderRange} onValueChange={(v) => setSliderRange(v)} max={100} step={1} />
               </div>
             </div>
           </Card>
@@ -216,7 +217,7 @@ const Demo: React.FC = () => {
                 <AvatarFallback><User style={{ width: 32, height: 32 }} /></AvatarFallback>
               </Avatar>
               <div style={{ position: 'relative', display: 'inline-block' }}>
-                <Avatar shape="square" style={{ width: 40, height: 40 }}>
+                <Avatar style={{ width: 40, height: 40, borderRadius: 0 }}>
                   <AvatarFallback><User /></AvatarFallback>
                 </Avatar>
                 <div style={{

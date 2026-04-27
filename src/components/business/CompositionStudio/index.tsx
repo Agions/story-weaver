@@ -425,16 +425,19 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
   // }, [composition.frames]);
 
   // 表格列
-  const columns: ColumnsType<any> = [
+  const columns: { title: string; dataIndex: string | string[]; key: string; width?: number; render?: (value: any, record: any, index?: number) => React.ReactNode }[] = [
     {
       title: '分镜',
       dataIndex: 'frameTitle',
       key: 'frameTitle',
       width: 150,
       render: (title: string, record: FrameAnimation) => (
-        <Tooltip title={frames.find(f => f.id === record.frameId)?.sceneDescription}>
-          {title}
-        </Tooltip>
+        <Tooltip>
+            <TooltipTrigger>{title}</TooltipTrigger>
+            <TooltipContent>
+              {frames.find(f => f.id === record.frameId)?.sceneDescription}
+            </TooltipContent>
+          </Tooltip>
       ),
     },
     {
@@ -471,6 +474,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
     },
     {
       title: '关键帧',
+      dataIndex: 'keyframes',
       key: 'keyframes',
       width: 80,
       render: (_: any, record: FrameAnimation) => (
@@ -481,6 +485,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
     },
     {
       title: '操作',
+      dataIndex: 'actions',
       key: 'actions',
       width: 150,
       render: (_: any, record: FrameAnimation) => (
@@ -628,7 +633,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
                     <Text>速度:</Text>
                     <Select
                       value={String(playbackSpeed)}
-                      onChange={(v) => setPlaybackSpeed(parseFloat(v))}
+                      onChange={(v) => setPlaybackSpeed(parseFloat(String(v)))}
                       style={{ width: 80 }}
                     >
                       <SelectItem value="0.5">0.5x</SelectItem>
@@ -819,17 +824,17 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
           <Divider orientation="left">添加关键帧</Divider>
           <Row gutter={16}>
             <Col span={8}>
-              <Form.Item label="时间点 (秒)">
+              <FormItem label="时间点 (秒)">
                 <InputNumber 
                   min={0} 
                   max={composition.masterSettings.frameDuration} 
                   style={{ width: '100%' }}
                   placeholder="0-3"
                 />
-              </Form.Item>
+              </FormItem>
             </Col>
             <Col span={8}>
-              <Form.Item label="属性">
+              <FormItem label="属性">
                 <Select placeholder="选择属性">
                   <SelectItem value="zoom">缩放</SelectItem>
                   <SelectItem value="rotation">旋转</SelectItem>
@@ -837,12 +842,12 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
                   <SelectItem value="pan-x">水平平移</SelectItem>
                   <SelectItem value="pan-y">垂直平移</SelectItem>
                 </Select>
-              </Form.Item>
+              </FormItem>
             </Col>
             <Col span={8}>
-              <Form.Item label="值">
+              <FormItem label="值">
                 <InputNumber style={{ width: '100%' }} placeholder="数值" />
-              </Form.Item>
+              </FormItem>
             </Col>
           </Row>
           <Button type="dashed" block icon={<Plus />}>
@@ -899,7 +904,7 @@ interface FrameEditFormProps {
 }
 
 const FrameEditForm: React.FC<FrameEditFormProps> = ({ frameId: _frameId, initialValues, onSave, onReset: _onReset }) => {
-  const [form] = Form.useForm();
+  //  // not available in compat Form
 
   const handleFinish = (values: any) => {
     onSave({
@@ -925,7 +930,6 @@ const FrameEditForm: React.FC<FrameEditFormProps> = ({ frameId: _frameId, initia
 
   return (
     <Form
-      form={form}
       layout="vertical"
       initialValues={{
         cameraMotion: initialValues?.cameraMotion?.type || null,
@@ -946,82 +950,82 @@ const FrameEditForm: React.FC<FrameEditFormProps> = ({ frameId: _frameId, initia
       <Divider orientation="left">镜头运动</Divider>
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item name="cameraMotion" label="运动类型">
+          <FormItem name="cameraMotion" label="运动类型">
             <Select placeholder="选择镜头运动">
               {CAMERA_MOTION_OPTIONS.map(opt => (
                 <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
               ))}
             </Select>
-          </Form.Item>
+          </FormItem>
         </Col>
         <Col span={12}>
-          <Form.Item name="cameraDuration" label="持续时间 (秒)">
+          <FormItem name="cameraDuration" label="持续时间 (秒)">
             <InputNumber min={0.1} max={10} style={{ width: '100%' }} />
-          </Form.Item>
+          </FormItem>
         </Col>
       </Row>
       <Row gutter={16}>
         <Col span={24}>
-          <Form.Item name="cameraIntensity" label="强度">
+          <FormItem name="cameraIntensity" label="强度">
             <Slider min={0} max={1} step={0.1} />
-          </Form.Item>
+          </FormItem>
         </Col>
       </Row>
 
       <Divider orientation="left">变换</Divider>
       <Row gutter={16}>
         <Col span={8}>
-          <Form.Item name="zoom" label="缩放">
+          <FormItem name="zoom" label="缩放">
             <InputNumber min={0.1} max={5} step={0.1} style={{ width: '100%' }} />
-          </Form.Item>
+          </FormItem>
         </Col>
         <Col span={8}>
-          <Form.Item name="panX" label="平移 X">
+          <FormItem name="panX" label="平移 X">
             <Slider min={-100} max={100} />
-          </Form.Item>
+          </FormItem>
         </Col>
         <Col span={8}>
-          <Form.Item name="panY" label="平移 Y">
+          <FormItem name="panY" label="平移 Y">
             <Slider min={-100} max={100} />
-          </Form.Item>
+          </FormItem>
         </Col>
       </Row>
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item name="rotation" label="旋转 (°)">
+          <FormItem name="rotation" label="旋转 (°)">
             <Slider min={-180} max={180} />
-          </Form.Item>
+          </FormItem>
         </Col>
         <Col span={12}>
-          <Form.Item name="opacity" label="透明度">
+          <FormItem name="opacity" label="透明度">
             <Slider min={0} max={1} step={0.01} />
-          </Form.Item>
+          </FormItem>
         </Col>
       </Row>
 
       <Divider orientation="left">滤镜效果</Divider>
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item name="blur" label="模糊 (px)">
+          <FormItem name="blur" label="模糊 (px)">
             <Slider min={0} max={20} />
-          </Form.Item>
+          </FormItem>
         </Col>
         <Col span={12}>
-          <Form.Item name="brightness" label="亮度 (%)">
+          <FormItem name="brightness" label="亮度 (%)">
             <Slider min={0} max={200} />
-          </Form.Item>
+          </FormItem>
         </Col>
       </Row>
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item name="contrast" label="对比度 (%)">
+          <FormItem name="contrast" label="对比度 (%)">
             <Slider min={0} max={200} />
-          </Form.Item>
+          </FormItem>
         </Col>
         <Col span={12}>
-          <Form.Item name="saturation" label="饱和度 (%)">
+          <FormItem name="saturation" label="饱和度 (%)">
             <Slider min={0} max={200} />
-          </Form.Item>
+          </FormItem>
         </Col>
       </Row>
     </Form>
@@ -1039,55 +1043,54 @@ interface GlobalSettingsFormProps {
 }
 
 const GlobalSettingsForm: React.FC<GlobalSettingsFormProps> = ({ initialValues, onSave }) => {
-  const [form] = Form.useForm();
+  
 
   return (
     <Form
-      form={form}
       layout="vertical"
       initialValues={initialValues}
       onFinish={onSave}
     >
-      <Form.Item name="frameDuration" label="默认帧时长 (秒)">
+      <FormItem name="frameDuration" label="默认帧时长 (秒)">
         <Slider min={1} max={10} step={0.5} />
-      </Form.Item>
+      </FormItem>
 
       <Divider orientation="left">默认转场</Divider>
       <Row gutter={16}>
         <Col span={12}>
-          <Form.Item name={['defaultTransition', 'effect']} label="转场效果">
+          <FormItem name="defaultTransition.effect" label="转场效果">
             <Select>
               {TRANSITION_OPTIONS.map(opt => (
                 <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
               ))}
             </Select>
-          </Form.Item>
+          </FormItem>
         </Col>
         <Col span={12}>
-          <Form.Item name={['defaultTransition', 'duration']} label="转场时长 (秒)">
+          <FormItem name="defaultTransition.duration" label="转场时长 (秒)">
             <InputNumber min={0.1} max={5} step={0.1} style={{ width: '100%' }} />
-          </Form.Item>
+          </FormItem>
         </Col>
       </Row>
       <Row gutter={16}>
         <Col span={24}>
-          <Form.Item name={['defaultTransition', 'easing']} label="缓动函数">
+          <FormItem name="defaultTransition.easing" label="缓动函数">
             <Select>
               <SelectItem value="linear">线性</SelectItem>
               <SelectItem value="ease-in">渐快</SelectItem>
               <SelectItem value="ease-out">渐慢</SelectItem>
               <SelectItem value="ease-in-out">先慢后快再慢</SelectItem>
             </Select>
-          </Form.Item>
+          </FormItem>
         </Col>
       </Row>
 
       <Divider orientation="left">逐段转场配置（可选）</Divider>
-      <Form.Item name="transitions" label="分镜间转场">
+      <FormItem name="transitions" label="分镜间转场">
         <Text type="secondary" style={{ display: 'block', marginTop: 8 }}>
           可指定特定分镜间的转场效果，留空则使用默认转场
         </Text>
-      </Form.Item>
+      </FormItem>
     </Form>
   );
 };

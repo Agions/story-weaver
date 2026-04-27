@@ -3,13 +3,6 @@ import {
   Robot, Send, Scissors, Audio, Lightbulb, Zap, FlaskConical
 } from 'lucide-react';
 import {
-  Send,
-  Languages,
-  Zap,
-  FlaskConical,
-  HelpCircle
-} from 'lucide-react';
-import {
   Button,
   Card,
   CardContent,

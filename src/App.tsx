@@ -4,7 +4,7 @@ import { Toaster } from 'sonner';
 
 import { getPageImporters, preloadPage } from '@/core/router/page-preload';
 import { runWhenIdle } from '@/core/utils/idle';
-import { toast } from '@/shared/components/ui/Toast';
+import { toast, notify } from '@/shared/components/ui/Toast';
 import './App.css';
 
 const importers = getPageImporters();
@@ -45,7 +45,7 @@ const App: React.FC = () => {
         logger.info('应用数据目录检查完成');
       } catch (error) {
         logger.error('应用初始化失败:', error);
-        toast.error('初始化失败', { description: '应用初始化失败，部分功能可能无法正常使用' });
+        notify.error({ message: '初始化失败', description: '应用初始化失败，部分功能可能无法正常使用' });
       }
     };
     
@@ -66,7 +66,7 @@ const App: React.FC = () => {
         logger.error("FFmpeg检查失败:", error);
         setFFmpegReady(false);
         setChecking(false);
-        toast.error('依赖检查失败', { description: '无法检测到FFmpeg，某些功能可能无法正常工作' });
+        notify.error({ message: '依赖检查失败', description: '无法检测到FFmpeg，某些功能可能无法正常工作' });
       }
     };
     

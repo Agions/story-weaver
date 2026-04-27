@@ -8,7 +8,7 @@ interface EmptyProps {
   children?: React.ReactNode;
 }
 
-const Empty: React.FC<EmptyProps> = ({
+const Empty: React.FC<EmptyProps> & { PRESENTED_IMAGE_SIMPLE?: React.ReactNode } = ({
   description,
   className,
   image,
@@ -26,6 +26,8 @@ const Empty: React.FC<EmptyProps> = ({
     </div>
   );
 };
+
+(Empty as any).PRESENTED_IMAGE_SIMPLE = null;
 
 export { Empty }
 export type { EmptyProps }

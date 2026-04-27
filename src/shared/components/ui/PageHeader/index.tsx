@@ -4,7 +4,7 @@
 
 import { ChevronRight } from 'lucide-react';
 import React from 'react';
-import { Breadcrumb, BreadcrumbContent, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
 
 import styles from './PageHeader.module.less';

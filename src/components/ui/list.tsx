@@ -33,13 +33,27 @@ interface ListProps {
   [key: string]: any;
 }
 
-const List: React.FC<ListProps> = ({ dataSource, renderItem, className, children, ...props }) => {
-  const items = dataSource?.map((item, index) => renderItem?.(item, index)) ?? [];
-  // Support render prop as children
-  if (!items.length && children) {
-    return <div className={cn("", className)} {...props}>{children}</div>;
-  }
-  return <div className={cn("", className)} {...props}>{items}</div>;
-};
+const List = Object.assign(
+  ({ dataSource, renderItem, className, children, ...props }: ListProps) => {
+    // Support antd-style List.Item children pattern
+    const itemChildren: React.ReactNode[] = [];
+    React.Children.forEach(children, (child: any) => {
+      if (child?.type === ListItem) {
+        itemChildren.push(child);
+      }
+    });
+
+    const items = dataSource?.map((item, index) => renderItem?.(item, index)) ?? [];
+    
+    if (itemChildren.length > 0) {
+      return <div className={cn("", className)} {...props}>{itemChildren}</div>;
+    }
+    if (!items.length && children) {
+      return <div className={cn("", className)} {...props}>{children}</div>;
+    }
+    return <div className={cn("", className)} {...props}>{items}</div>;
+  },
+  { Item: ListItem }
+);
 
 export { List, ListItem }

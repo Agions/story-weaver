@@ -51,21 +51,33 @@ export interface BadgeProps
   color?: string;
   count?: React.ReactNode;
   dot?: boolean;
+  icon?: React.ReactNode;
 }
 
-function Badge({ className, variant, status, text, color, count, dot, children, ...props }: BadgeProps) {
+function Badge({ className, variant, status, text, color, count, dot, icon, children, ...props }: BadgeProps) {
   // antd-style status Badge
   if (status || dot) {
     const dotColor = status ? statusColors[status] : statusColors.default
     return (
       <span className={cn("inline-flex items-center gap-2", className)} {...props}>
+        {icon && <span className="flex items-center">{icon}</span>}
         <span
           className={cn("inline-block w-2 h-2 rounded-full", dotColor)}
           style={color ? { backgroundColor: color } : undefined}
         />
         {text && <span className="text-xs">{text}</span>}
+        {count !== undefined && <span className="text-xs ml-1">{count}</span>}
       </span>
     )
+  }
+
+  if (count !== undefined) {
+    return (
+      <span className={cn(badgeVariants({ variant }), "relative inline-flex items-center justify-center min-w-[20px] h-5 px-1 text-xs rounded-full", className)} {...props}>
+        {icon && <span className="flex items-center mr-1">{icon}</span>}
+        {count}
+      </span>
+    );
   }
 
   return (

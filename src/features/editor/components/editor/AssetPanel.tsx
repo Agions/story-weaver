@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, Search, Bell, MoreHorizontal, Video, Audio, FileImage, FileText } from 'lucide-react';
+import { Upload, Search, Bell, MoreHorizontal, Video, Music, FileImage, FileText } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

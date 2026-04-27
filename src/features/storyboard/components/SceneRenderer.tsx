@@ -18,19 +18,25 @@ import {
   Building,
   Car,
   Coffee,
+} from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input, Textarea } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+
+import { Select as AntDSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Text, Title } from '@/components/ui/typography';
 import { Tag } from '@/components/ui/tag';
 import { Empty } from '@/components/ui/empty';
 import { Popconfirm } from '@/components/ui/confirm-dialog';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
-import { Tooltip as TooltipRoot, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip as TooltipRoot, TooltipContent, TooltipTrigger, Tooltip } from '@/components/ui/tooltip';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Collapse } from '@/components/ui/antd-compat';
 import { List, ListItem } from '@/components/ui/list';
+import { Space, Row, Col, Divider } from '@/components/ui/antd-compat';
+import { TextArea } from '@/components/ui/antd-compat';
+
 import React, { useState } from 'react';
 
 import styles from './SceneRenderer.module.less';

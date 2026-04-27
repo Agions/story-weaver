@@ -24,7 +24,7 @@ export const toast = {
   info: (msg: string, duration = 3) => 
     sonnerToast.info(msg, { duration: duration * 1000 }),
   
-  loading: (msg: string) => sonnerToast.loading(msg),
+  loading: (msg: string): string => sonnerToast.loading(msg),
 };
 
 export const notify = {

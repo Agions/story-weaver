@@ -193,8 +193,8 @@ const AntDSelect: React.FC<AntDSelectProps> = ({
 
   return (
     <Select 
-      value={value} 
-      defaultValue={defaultValue} 
+      value={isMultiple ? undefined : value as string | undefined}
+      defaultValue={isMultiple ? undefined : defaultValue as string | undefined} 
       onValueChange={handleValueChange}
       disabled={disabled}
     >

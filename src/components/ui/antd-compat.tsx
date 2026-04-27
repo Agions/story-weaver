@@ -7,6 +7,9 @@ import { Input as ShadcnInput } from '@/components/ui/input';
 import { List as ShadcnList, ListItem } from '@/components/ui/list';
 import { Tag as ShadcnTag } from '@/components/ui/tag';
 import { toast } from 'sonner';
+import { Table as ShadcnTable } from '@/components/ui/table';
+import { Empty as ShadcnEmpty } from '@/components/ui/empty';
+import { Progress as ShadcnProgress } from '@/components/ui/progress';
 import { Avatar as ShadcnAvatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Select as ShadcnSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
@@ -379,6 +382,8 @@ interface ModalProps {
   maskClosable?: boolean;
   closable?: boolean;
   destroyOnClose?: boolean;
+  okText?: React.ReactNode;
+  cancelText?: React.ReactNode;
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -459,15 +464,40 @@ const Modal: React.FC<ModalProps> = ({
   );
 };
 
+
+// Modal.confirm helper
+Modal.confirm = ({ title, content, onOk, onCancel }: { title?: React.ReactNode; content?: React.ReactNode; onOk?: () => void; onCancel?: () => void }) => {
+  const [open, setOpen] = React.useState(true);
+  return (
+    <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) onCancel?.(); }}>
+      <DialogContent>
+        {title && <DialogHeader><DialogTitle>{title}</DialogTitle></DialogHeader>}
+        {content && <div className="py-2">{content}</div>}
+        <DialogFooter>
+          <button type="button" onClick={() => { setOpen(false); onCancel?.(); }} className="px-4 py-2 text-sm border rounded-md hover:bg-accent">取消</button>
+          <button type="button" onClick={() => { setOpen(false); onOk?.(); }} className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90">确定</button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 // ============================================================
 // AntD-compatible Button
 // ============================================================
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps {
   type?: 'primary' | 'default' | 'dashed' | 'link' | 'text';
   size?: 'small' | 'middle' | 'large';
   icon?: React.ReactNode;
   shape?: 'default' | 'circle' | 'round';
-  block?: boolean;
+  block?:boolean;
+  className?: string;
+  children?: React.ReactNode;
+  disabled?: boolean;
+  htmlType?: React.ButtonHTMLAttributes<HTMLButtonElement>['type'];
+  onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  style?: React.CSSProperties;
+  danger?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -512,10 +542,15 @@ const Button: React.FC<ButtonProps> = ({
 // ============================================================
 // AntD-compatible Input (native input wrapper)
 // ============================================================
-interface AntDInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
+interface AntDInputProps {
   size?: 'large' | 'small' | 'middle';
   prefix?: React.ReactNode;
   suffix?: React.ReactNode;
+  className?: string;
+  placeholder?: string;
+  value?: string;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  ref?: React.Ref<HTMLInputElement>;
 }
 
 const AntDInput = React.forwardRef<HTMLInputElement, AntDInputProps>(
@@ -555,7 +590,7 @@ const AntdTag: React.FC<any> = ({ children, color, ...props }) => (
 // ============================================================
 // InputNumber component (native number input wrapper)
 // ============================================================
-interface InputNumberProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> {
+interface InputNumberProps {
   value?: number;
   defaultValue?: number;
   onChange?: (value: number | null) => void;
@@ -565,6 +600,8 @@ interface InputNumberProps extends Omit<React.InputHTMLAttributes<HTMLInputEleme
   size?: 'large' | 'small' | 'middle';
   style?: React.CSSProperties;
   className?: string;
+  placeholder?: string;
+  disabled?: boolean;
 }
 
 const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
@@ -609,6 +646,7 @@ InputNumber.displayName = 'InputNumber';
 // Divider component
 // ============================================================
 interface DividerProps {
+  style?: React.CSSProperties;
   orientation?: 'left' | 'right' | 'center';
   className?: string;
   children?: React.ReactNode;
@@ -638,10 +676,11 @@ interface RowProps {
   align?: 'top' | 'middle' | 'bottom' | 'stretch';
   justify?: 'start' | 'end' | 'center' | 'space-around' | 'space-between';
   className?: string;
+  style?: React.CSSProperties;
   children?: React.ReactNode;
 }
 
-const Row: React.FC<RowProps> = ({ gutter, align, justify, className, children }) => {
+const Row: React.FC<RowProps> = ({ gutter, align, justify, className, style, children }) => {
   const [gx, gy = 0] = Array.isArray(gutter) ? gutter : [gutter ?? 0, 0];
   return (
     <div
@@ -650,6 +689,7 @@ const Row: React.FC<RowProps> = ({ gutter, align, justify, className, children }
         gap: gy ? `${gy}px ${gx}px` : `${gx}px`,
         alignItems: align === 'top' ? 'flex-start' : align === 'middle' ? 'center' : align === 'bottom' ? 'flex-end' : 'stretch',
         justifyContent: justify === 'start' ? 'flex-start' : justify === 'end' ? 'flex-end' : justify === 'center' ? 'center' : justify === 'space-around' ? 'space-around' : justify === 'space-between' ? 'space-between' : 'flex-start',
+        ...style,
       }}
     >
       {children}
@@ -697,7 +737,7 @@ interface CollapsePanelProps {
 
 const CollapsePanel: React.FC<CollapsePanelProps> = ({ header, children }) => null;
 
-const Collapse: React.FC<CollapseProps> & { Panel: React.FC<CollapsePanelProps> } = ({
+const CollapseBase: React.FC<CollapseProps> = ({
   activeKey,
   defaultActiveKey,
   onChange,
@@ -765,7 +805,8 @@ const Collapse: React.FC<CollapseProps> & { Panel: React.FC<CollapsePanelProps> 
     </div>
   );
 };
-(Collapse as any).Panel = CollapsePanel;
+(CollapseBase as any).Panel = CollapsePanel;
+const Collapse = CollapseBase as unknown as React.FC<CollapseProps> & { Panel: React.FC<CollapsePanelProps> };
 
 // ============================================================
 // Card component (wraps shadcn Card)
@@ -797,7 +838,7 @@ interface AntdCardProps {
   extra?: React.ReactNode;
 }
 
-const AntdCard: React.FC<AntdCardProps> & { Meta: React.FC<CardMetaProps> } = ({
+const AntdCardBase: React.FC<AntdCardProps> = ({
   hoverable,
   className,
   cover,
@@ -821,7 +862,41 @@ const AntdCard: React.FC<AntdCardProps> & { Meta: React.FC<CardMetaProps> } = ({
     )}
   </ShadcnCard>
 );
-(AntdCard as any).Meta = CardMeta;
+(AntdCardBase as any).Meta = CardMeta;
+const AntdCard = AntdCardBase as unknown as React.FC<AntdCardProps> & { Meta: React.FC<CardMetaProps> };
+
+// ============================================================
+// Popconfirm component
+// ============================================================
+interface PopconfirmProps {
+  children?: React.ReactNode;
+  title?: React.ReactNode;
+  onConfirm?: () => void;
+  okText?: string;
+  cancelText?: string;
+  icon?: React.ReactNode;
+  disabled?: boolean;
+}
+
+const Popconfirm: React.FC<PopconfirmProps> = ({ children, title, onConfirm, okText = '确定', cancelText = '取消', disabled }) => {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <span>
+      <span onClick={() => !disabled && setOpen(true)}>{children}</span>
+      {open && (
+        <Dialog open={open} onOpenChange={(o) => { setOpen(o); }}>
+          <DialogContent>
+            {title && <DialogHeader><DialogTitle>{title}</DialogTitle></DialogHeader>}
+            <DialogFooter>
+              <button type="button" onClick={() => setOpen(false)} className="px-4 py-2 text-sm border rounded-md hover:bg-accent">{cancelText}</button>
+              <button type="button" onClick={() => { setOpen(false); onConfirm?.(); }} className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90">{okText}</button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+    </span>
+  );
+};
 
 // ============================================================
 // Option component (for Select children)
@@ -922,6 +997,9 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
 };
 
 // ============================================================
+// RcFile type alias (antd internal)
+export type RcFile = File & { uid?: string; };
+
 // Upload component
 // ============================================================
 interface UploadProps {
@@ -1040,15 +1118,9 @@ const AntDAvatar: React.FC<AntDAvatarProps> = ({ size = 'default', src, icon, cl
   );
 };
 
-// ============================================================
-// Typography (Text, Title, Paragraph)
-// ============================================================
-import { Text as ShadcnText, Title as ShadcnTitle, Paragraph as ShadcnParagraph } from '@/components/ui/typography';
 
-// ============================================================
-// useForm hook (antd-style form instance)
-// ============================================================
-import { useForm as useRhfForm, useFormContext as useRhfFormContext } from 'react-hook-form';
+
+
 
 interface UseFormReturn {
   getValues: () => any;
@@ -1110,6 +1182,9 @@ export {
   ListWrapper as List,
   ListItem,
   AntdTag as Tag,
+  ShadcnTable as Table,
+  ShadcnEmpty as Empty,
+  Popconfirm,
   type FormProps,
   type FormItemProps,
   type AntDSelectProps,

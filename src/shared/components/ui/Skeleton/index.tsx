@@ -4,7 +4,26 @@
  */
 
 import React from 'react';
-import { Skeleton } from '@/components/ui/skeleton';
+import { Skeleton as BaseSkeleton } from '@/components/ui/skeleton';
+
+// Local Skeleton wrapper with antd-style variant support
+function Skeleton({ variant, width, height, className, style, ...props }: {
+  variant?: 'text' | 'circular' | 'default';
+  width?: string | number;
+  height?: string | number;
+  className?: string;
+  style?: React.CSSProperties;
+} & React.HTMLAttributes<HTMLDivElement>) {
+  const variantClass = variant === 'circular' ? 'rounded-full' : variant === 'text' ? '' : '';
+  const defaultHeight = variant === 'text' ? '1em' : undefined;
+  return (
+    <BaseSkeleton
+      className={[variantClass, className].filter(Boolean).join(' ') || undefined}
+      style={{ width, height: height ?? defaultHeight, ...style }}
+      {...props}
+    />
+  );
+}
 
 import styles from './Skeleton.module.less';
 

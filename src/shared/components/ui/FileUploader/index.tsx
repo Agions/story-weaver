@@ -92,9 +92,14 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
       return false;
     }
 
-    // 调用自定义校验
+    // 调用自定义校验 (async handled via side-effects, sync return for shadcn)
     if (beforeUpload) {
-      return beforeUpload(file, files);
+      const result = beforeUpload(file, files);
+      if (result instanceof Promise) {
+        result.then(() => {}).catch(() => {});
+        return false;
+      }
+      return result;
     }
 
     return true;

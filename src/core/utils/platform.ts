@@ -117,7 +117,7 @@ class WebFileSystemAdapter implements FileSystemAdapter {
 
   async writeFile(path: string, data: Uint8Array): Promise<void> {
     // Web 端使用 download 方式
-    const blob = new Blob([data]);
+    const blob = new Blob([data as BlobPart]);
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
