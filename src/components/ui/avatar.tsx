@@ -12,7 +12,7 @@ const Avatar = React.forwardRef<
   AvatarProps
 >(({ className, size, style, ...props }, ref) => {
   const sizeMap: Record<string, number> = { small: 24, default: 40, large: 64 };
-  const pxSize = typeof size === 'number' ? size : sizeMap[size] || 40;
+  const pxSize = typeof size === 'number' ? size : (size ? sizeMap[size] : undefined) || 40;
   return (
     <AvatarPrimitive.Root
       ref={ref}

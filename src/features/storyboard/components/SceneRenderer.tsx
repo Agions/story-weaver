@@ -20,10 +20,11 @@ import {
   Coffee,
 } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/antd-compat';
 import { Input } from '@/components/ui/input';
 
-import { Select as AntDSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select as AntDSelect } from '@/components/ui/antd-compat';
+import { SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Text, Title } from '@/components/ui/typography';
 import { Tag } from '@/components/ui/tag';
 import { Empty } from '@/components/ui/empty';
@@ -553,7 +554,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
 
                 <div className={styles.formGroup}>
                   <Text type="secondary">类型</Text>
-                  <Select
+                  <AntDSelect
                     value={selectedScene.type}
                     onChange={(value) => updateScene(selectedScene.id, 'type', value)}
                     style={{ width: '100%' }}
@@ -571,7 +572,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
 
                 <div className={styles.formGroup}>
                   <Text type="secondary">氛围</Text>
-                  <Select
+                  <AntDSelect
                     value={selectedScene.atmosphere}
                     onChange={(value) => updateScene(selectedScene.id, 'atmosphere', value)}
                     style={{ width: '100%' }}
@@ -589,7 +590,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
 
                 <div className={styles.formGroup}>
                   <Text type="secondary">光照</Text>
-                  <Select
+                  <AntDSelect
                     value={selectedScene.lighting}
                     onChange={(value) => updateScene(selectedScene.id, 'lighting', value)}
                     style={{ width: '100%' }}
@@ -607,7 +608,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
 
                 <div className={styles.formGroup}>
                   <Text type="secondary">天气</Text>
-                  <Select
+                  <AntDSelect
                     value={selectedScene.weather}
                     onChange={(value) => updateScene(selectedScene.id, 'weather', value)}
                     style={{ width: '100%' }}
@@ -620,7 +621,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
 
                 <div className={styles.formGroup}>
                   <Text type="secondary">时段</Text>
-                  <Select
+                  <AntDSelect
                     value={selectedScene.timeOfDay}
                     onChange={(value) => updateScene(selectedScene.id, 'timeOfDay', value)}
                     style={{ width: '100%' }}
@@ -698,7 +699,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
 
                         <div className={styles.formGroup}>
                           <Text type="secondary">道具类型</Text>
-                          <Select
+                          <AntDSelect
                             value={prop.category}
                             onChange={(value) => updateProp(selectedScene.id, prop.id, 'category', value)}
                             style={{ width: '100%' }}

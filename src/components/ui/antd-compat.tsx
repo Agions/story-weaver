@@ -72,6 +72,9 @@ const Form: React.FC<FormProps> = ({
   );
 };
 
+// Form.Item as a property on Form
+(Form as any).Item = FormItem;
+
 interface FormItemProps {
   name?: string;
   label?: React.ReactNode;
@@ -386,7 +389,7 @@ interface ModalProps {
   cancelText?: React.ReactNode;
 }
 
-const Modal: React.FC<ModalProps> = ({
+const ModalFn: React.FC<ModalProps> = ({
   open,
   onCancel,
   onOk,
@@ -397,6 +400,8 @@ const Modal: React.FC<ModalProps> = ({
   className,
   maskClosable = true,
   closable = true,
+  okText,
+  cancelText,
 }) => {
   const [isOpen, setIsOpen] = React.useState(open ?? false);
 
@@ -441,21 +446,21 @@ const Modal: React.FC<ModalProps> = ({
         )}
         <div className="py-2">{children}</div>
         {footer && <div className="flex justify-end gap-2 mt-4">{footer}</div>}
-        {footer === undefined && onOk && (
+        {footer === undefined && (onOk || okText) && (
           <DialogFooter>
             <button
               type="button"
               onClick={handleCancel}
               className="px-4 py-2 text-sm border rounded-md hover:bg-accent"
             >
-              取消
+              {cancelText || '取消'}
             </button>
             <button
               type="button"
               onClick={handleOk}
               className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
             >
-              确定
+              {okText || '确定'}
             </button>
           </DialogFooter>
         )}
@@ -464,9 +469,8 @@ const Modal: React.FC<ModalProps> = ({
   );
 };
 
-
 // Modal.confirm helper
-Modal.confirm = ({ title, content, onOk, onCancel }: { title?: React.ReactNode; content?: React.ReactNode; onOk?: () => void; onCancel?: () => void }) => {
+const ModalConfirm = ({ title, content, onOk, onCancel }: { title?: React.ReactNode; content?: React.ReactNode; onOk?: () => void; onCancel?: () => void }) => {
   const [open, setOpen] = React.useState(true);
   return (
     <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) onCancel?.(); }}>
@@ -481,6 +485,24 @@ Modal.confirm = ({ title, content, onOk, onCancel }: { title?: React.ReactNode; 
     </Dialog>
   );
 };
+
+const Modal = ModalFn as unknown as React.FC<ModalProps> & { confirm: typeof ModalConfirm; confirmAlt: (props: { title?: React.ReactNode; content?: React.ReactNode; onOk?: () => void; onCancel?: () => void }) => React.ReactElement };
+(Modal as any).confirm = ({ title, content, onOk, onCancel }: { title?: React.ReactNode; content?: React.ReactNode; onOk?: () => void; onCancel?: () => void }) => {
+  const [open, setOpen] = React.useState(true);
+  return (
+    <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) onCancel?.(); }}>
+      <DialogContent>
+        {title && <DialogHeader><DialogTitle>{title}</DialogTitle></DialogHeader>}
+        {content && <div className="py-2">{content}</div>}
+        <DialogFooter>
+          <button type="button" onClick={() => { setOpen(false); onCancel?.(); }} className="px-4 py-2 text-sm border rounded-md hover:bg-accent">取消</button>
+          <button type="button" onClick={() => { setOpen(false); onOk?.(); }} className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90">确定</button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+(Modal as any).confirmAlt = ModalConfirm;
 
 // ============================================================
 // AntD-compatible Button
@@ -542,15 +564,10 @@ const Button: React.FC<ButtonProps> = ({
 // ============================================================
 // AntD-compatible Input (native input wrapper)
 // ============================================================
-interface AntDInputProps {
+interface AntDInputProps extends React.HTMLAttributes<HTMLInputElement> {
   size?: 'large' | 'small' | 'middle';
   prefix?: React.ReactNode;
   suffix?: React.ReactNode;
-  className?: string;
-  placeholder?: string;
-  value?: string;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>;
-  ref?: React.Ref<HTMLInputElement>;
 }
 
 const AntDInput = React.forwardRef<HTMLInputElement, AntDInputProps>(

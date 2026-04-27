@@ -112,4 +112,25 @@ const Popconfirm: React.FC<PopconfirmProps> = ({
   );
 };
 
-export { ConfirmDialog, Popconfirm }
+// AlertDialog components (shadcn-style, wraps ConfirmDialog)
+interface AlertDialogProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  children?: React.ReactNode;
+}
+
+const AlertDialog: React.FC<AlertDialogProps> = ({ children, ...props }) => (
+  <ConfirmDialog {...props}>{children}</ConfirmDialog>
+);
+
+const AlertDialogTrigger = ({ children, ...props }: any) => <>{children}</>;
+
+const AlertDialogContent: React.FC<any> = ({ children, ...props }) => <>{children}</>;
+const AlertDialogHeader: React.FC<any> = ({ children, ...props }) => <>{children}</>;
+const AlertDialogTitle: React.FC<any> = ({ children, ...props }) => <>{children}</>;
+const AlertDialogDescription: React.FC<any> = ({ children, ...props }) => <>{children}</>;
+const AlertDialogFooter: React.FC<any> = ({ children, ...props }) => <>{children}</>;
+const AlertDialogCancel: React.FC<any> = ({ children, ...props }) => <>{children}</>;
+const AlertDialogAction: React.FC<any> = ({ children, ...props }) => <>{children}</>;
+
+export { ConfirmDialog, Popconfirm, AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction }

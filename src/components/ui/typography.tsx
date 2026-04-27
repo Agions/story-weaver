@@ -3,10 +3,12 @@ import { cn } from "@/lib/utils"
 
 interface TextProps extends React.HTMLAttributes<HTMLSpanElement> {
   type?: 'secondary' | 'success' | 'warning' | 'danger' | 'disabled' | undefined;
+  ellipsis?: boolean;
+  strong?: boolean;
 }
 
 const Text = React.forwardRef<HTMLSpanElement, TextProps>(
-  ({ className, type, ...props }, ref) => {
+  ({ className, type, ellipsis, strong, style, ...props }, ref) => {
     const typeClass = type === 'secondary' ? 'text-muted-foreground' :
       type === 'success' ? 'text-green-600' :
       type === 'warning' ? 'text-yellow-600' :
@@ -15,7 +17,11 @@ const Text = React.forwardRef<HTMLSpanElement, TextProps>(
     return (
       <span
         ref={ref}
-        className={cn(typeClass, className)}
+        className={cn(typeClass, strong && 'font-bold', className)}
+        style={{
+          ...(ellipsis ? { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } : {}),
+          ...style,
+        }}
         {...props}
       />
     )
