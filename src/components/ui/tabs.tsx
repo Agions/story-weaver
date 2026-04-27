@@ -5,17 +5,67 @@ import { cn } from "@/lib/utils"
 
 interface TabsProps extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root> {
   defaultActiveKey?: string;
+  activeKey?: string;
+  onChange?: (key: string) => void;
   children?: React.ReactNode;
 }
 
 const Tabs = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Root>,
   TabsProps
->(({ defaultActiveKey, children, ...props }, ref) => (
-  <TabsPrimitive.Root ref={ref} defaultValue={defaultActiveKey} {...props}>
-    {children}
-  </TabsPrimitive.Root>
-));
+>(({ defaultActiveKey, activeKey, onChange, children, ...props }, ref) => {
+  // Collect TabPane children and render them as TabsList + TabsContent
+  const panes: { key: string; tab?: React.ReactNode; children?: React.ReactNode }[] = [];
+  const otherChildren: React.ReactNode[] = [];
+
+  React.Children.forEach(children, (child: any) => {
+    if (child?.type?.displayName === 'TabPane') {
+      panes.push({
+        key: child.props.key || '',
+        tab: child.props.tab,
+        children: child.props.children,
+      });
+    } else {
+      otherChildren.push(child);
+    }
+  });
+
+  if (panes.length > 0) {
+    return (
+      <TabsPrimitive.Root 
+        ref={ref} 
+        defaultValue={defaultActiveKey || panes[0]?.key} 
+        value={activeKey}
+        onValueChange={onChange}
+        {...props}
+      >
+        <TabsList>
+          {panes.map(p => (
+            <TabsTrigger key={p.key} value={String(p.key)}>{p.tab}</TabsTrigger>
+          ))}
+        </TabsList>
+        {panes.map(p => (
+          <TabsContent key={String(p.key)} value={String(p.key)}>
+            {p.children}
+          </TabsContent>
+        ))}
+        {otherChildren}
+      </TabsPrimitive.Root>
+    );
+  }
+
+  return (
+    <TabsPrimitive.Root 
+      ref={ref} 
+      defaultValue={defaultActiveKey} 
+      value={activeKey}
+      onValueChange={onChange}
+      {...props}
+    >
+      {children}
+    </TabsPrimitive.Root>
+  );
+});
 Tabs.displayName = "Tabs";
 
 const TabsList = React.forwardRef<
@@ -35,8 +85,8 @@ TabsList.displayName = TabsPrimitive.List.displayName
 
 const TabsTrigger = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger> & { tab?: React.ReactNode }
->(({ className, tab, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
+>(({ className, ...props }, ref) => (
   <TabsPrimitive.Trigger
     ref={ref}
     className={cn(
@@ -44,9 +94,7 @@ const TabsTrigger = React.forwardRef<
       className
     )}
     {...props}
-  >
-    {tab}
-  </TabsPrimitive.Trigger>
+  />
 ))
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
 
@@ -65,55 +113,18 @@ const TabsContent = React.forwardRef<
 ))
 TabsContent.displayName = TabsPrimitive.Content.displayName
 
-// TabPane: renders content when its key matches the active tab
+// TabPane: maps to TabsTrigger + TabsContent pair
 interface TabPaneProps {
   tab?: React.ReactNode;
   key?: string;
   children?: React.ReactNode;
+  className?: string;
 }
 
-const TabPane: React.FC<TabPaneProps> = ({ tab, key, children }) => {
-  // This component renders as a TabsTrigger + TabsContent pair
-  // The parent's TabPaneCollection extracts these
-  return null;
+const TabPane: React.FC<TabPaneProps> = ({ children }) => {
+  return <>{children}</>;
 };
+TabPane.displayName = 'TabPane';
 
-// Helper component to render TabPane children in antd style
-function renderAntdTabs(children: React.ReactNode): React.ReactNode {
-  // Extract panes from children and render as TabsList + TabsContent
-  const panes: { key: string; tab: React.ReactNode; children: React.ReactNode }[] = [];
-  
-  React.Children.forEach(children as React.ReactNode, (child: any) => {
-    if (child?.props?.key && child?.props?.tab !== undefined) {
-      panes.push({
-        key: String(child.props.key),
-        tab: child.props.tab,
-        children: child.props.children,
-      });
-    }
-  });
-  
-  if (panes.length === 0) {
-    return children;
-  }
-  
-  const [firstKey] = panes.map(p => p.key);
-  
-  return (
-    <Tabs defaultActiveKey={firstKey}>
-      <TabsList>
-        {panes.map(p => (
-          <TabsTrigger key={p.key} value={p.key} tab={p.tab} />
-        ))}
-      </TabsList>
-      {panes.map(p => (
-        <TabsContent key={p.key} value={p.key}>
-          {p.children}
-        </TabsContent>
-      ))}
-    </Tabs>
-  );
-}
-
-export { Tabs, TabsList, TabsTrigger, TabsContent, TabPane, renderAntdTabs }
+export { Tabs, TabsList, TabsTrigger, TabsContent, TabPane }
 export type { TabsProps }

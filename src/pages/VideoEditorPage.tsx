@@ -23,14 +23,9 @@ import {
   Modal,
   Row,
   Col,
+  Dropdown,
 } from '@/components/ui/antd-compat';
 import { Tabs, TabPane } from '@/components/ui/tabs';
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from '@/components/ui/dropdown-menu';
 
 // 导入组件和服务
 import { tauriService } from '@/core/services';

@@ -19,6 +19,12 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
+import {
+  DropdownMenu as DropdownMenuRoot,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from '@/components/ui/dropdown-menu';
 import { useForm as useRhfForm } from 'react-hook-form';
 import { Text as ShadcnText, Title as ShadcnTitle, Paragraph as ShadcnParagraph } from '@/components/ui/typography';
 import { Card as ShadcnCard } from '@/components/ui/card';
@@ -987,6 +993,41 @@ const Popconfirm: React.FC<PopconfirmProps> = ({ children, title, onConfirm, okT
 };
 
 // ============================================================
+// AntD-compatible Dropdown (wraps DropdownMenu)
+// ============================================================
+interface DropdownProps {
+  menu?: {
+    items?: { key: string; label: React.ReactNode; danger?: boolean }[];
+    onClick?: (info: { key: string }) => void;
+  };
+  children?: React.ReactNode;
+  trigger?: 'hover' | 'click' | 'contextMenu';
+}
+
+const AntDDropdown: React.FC<DropdownProps> = ({ menu, children }) => {
+  const [open, setOpen] = React.useState(false);
+  
+  return (
+    <DropdownMenuRoot open={open} onOpenChange={setOpen}>
+      <DropdownMenuTrigger asChild>
+        <span className="cursor-pointer inline-flex">{children}</span>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        {menu?.items?.map((item) => (
+          <DropdownMenuItem 
+            key={item.key} 
+            onClick={() => { menu?.onClick?.({ key: item.key }); setOpen(false); }}
+            className={cn(item.danger && "text-destructive")}
+          >
+            {item.label}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenuRoot>
+  );
+};
+
+// ============================================================
 // Option component (for Select children)
 // ============================================================
 interface OptionProps {
@@ -1274,6 +1315,7 @@ export {
   ShadcnProgress as Progress,
   Space,
   Popconfirm,
+  AntDDropdown as Dropdown,
   type FormProps,
   type FormItemProps,
   type AntDSelectProps,
