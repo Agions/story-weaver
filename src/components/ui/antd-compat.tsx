@@ -355,9 +355,11 @@ interface SpaceProps {
   children?: React.ReactNode;
   wrap?: boolean;
   style?: React.CSSProperties;
+  block?: boolean;
+  compact?: boolean;
 }
 
-const Space: React.FC<SpaceProps> = ({
+const Space = (({
   direction = 'horizontal',
   size = 'small',
   align,
@@ -365,7 +367,9 @@ const Space: React.FC<SpaceProps> = ({
   children,
   wrap,
   style,
-}) => {
+  block,
+  compact,
+}: SpaceProps) => {
   const gapMap: Record<string, string> = {
     small: '0.25rem',
     middle: '0.5rem',
@@ -375,14 +379,128 @@ const Space: React.FC<SpaceProps> = ({
   
   return (
     <div
-      className={cn("flex", direction === 'vertical' ? 'flex-col' : 'flex-row', wrap && 'flex-wrap', className)}
+      className={cn("flex", direction === 'vertical' ? 'flex-col' : 'flex-row', wrap && 'flex-wrap', block && 'w-full', className)}
       style={{
-        gap,
+        gap: compact ? 0 : gap,
         alignItems: align === 'start' ? 'flex-start' : align === 'end' ? 'flex-end' : align === 'baseline' ? 'baseline' : 'center',
         ...style,
       }}
     >
       {children}
+    </div>
+  );
+}) as unknown as React.FC<SpaceProps> & { Item: React.FC<{ children?: React.ReactNode; className?: string }>; Compact: React.FC<SpaceCompactProps> };
+
+const SpaceItem: React.FC<{ children?: React.ReactNode; className?: string }> = ({ children, className }) => (
+  <div className={cn("flex-1 min-w-0", className)}>{children}</div>
+);
+(Space as any).Item = SpaceItem;
+
+// Space.Compact - a compact mode where items are joined together
+interface SpaceCompactProps {
+  block?: boolean;
+  children?: React.ReactNode;
+  className?: string;
+}
+
+const SpaceCompact: React.FC<SpaceCompactProps> = ({ block, children, className }) => (
+  <div
+    className={cn("flex", block && 'w-full', className)}
+    style={{ gap: 0 }}
+  >
+    {children}
+  </div>
+);
+(Space as any).Compact = SpaceCompact;
+
+// ============================================================
+// AntD-compatible Spin (loading spinner)
+// ============================================================
+interface SpinProps {
+  size?: 'small' | 'default' | 'large';
+  tip?: React.ReactNode;
+  className?: string;
+  spinning?: boolean;
+  indicator?: React.ReactNode;
+  children?: React.ReactNode;
+}
+
+const Spin: React.FC<SpinProps> = ({
+  size = 'default',
+  tip,
+  className,
+  spinning = true,
+  indicator,
+  children,
+}) => {
+  const sizeMap = { small: '1rem', default: '1.5rem', large: '2rem' };
+  const spinnerSize = sizeMap[size];
+  
+  if (!spinning) return <>{children}</>;
+  
+  return (
+    <div className={cn("flex flex-col items-center justify-center gap-2", className)}>
+      {indicator || (
+        <span
+          className="inline-block animate-spin"
+          style={{ fontSize: spinnerSize, lineHeight: spinnerSize }}
+        >
+          ⟳
+        </span>
+      )}
+      {tip && <span className="text-sm text-muted-foreground">{tip}</span>}
+    </div>
+  );
+};
+
+// ============================================================
+// AntD-compatible Alert (wraps shadcn Alert)
+// ============================================================
+interface AntDAlertProps {
+  type?: 'success' | 'info' | 'warning' | 'error' | 'default';
+  showIcon?: boolean;
+  message?: React.ReactNode;
+  description?: React.ReactNode;
+  className?: string;
+  children?: React.ReactNode;
+  closeable?: boolean;
+  onClose?: () => void;
+}
+
+const typeIconMap: Record<string, React.ReactNode> = {
+  success: <span className="text-green-500">✓</span>,
+  warning: <span className="text-yellow-500">⚠</span>,
+  error: <span className="text-red-500">✕</span>,
+  info: <span className="text-blue-500">ℹ</span>,
+  default: <span className="text-muted-foreground">!</span>,
+};
+
+const typeVariantMap: Record<string, string> = {
+  success: 'default',
+  warning: 'default',
+  error: 'destructive',
+  info: 'default',
+  default: 'default',
+};
+
+const AntDAlert: React.FC<AntDAlertProps> = ({
+  type = 'default',
+  showIcon,
+  message,
+  description,
+  className,
+  children,
+}) => {
+  return (
+    <div className={cn("flex flex-col gap-1 p-3 rounded-md border", className)}>
+      <div className="flex items-start gap-2">
+        {showIcon && <span className="mt-0.5">{typeIconMap[type]}</span>}
+        <div className="flex flex-col gap-0.5">
+          {message && <div className="text-sm font-medium">{message}</div>}
+          {description && <div className="text-sm text-muted-foreground">{description}</div>}
+          {children}
+        </div>
+      </div>
     </div>
   );
 };
@@ -503,17 +621,18 @@ const ModalConfirm = ({ title, content, onOk, onCancel }: { title?: React.ReactN
   );
 };
 
-const Modal = ModalFn as unknown as React.FC<ModalProps> & { confirm: typeof ModalConfirm; confirmAlt: (props: { title?: React.ReactNode; content?: React.ReactNode; onOk?: () => void; onCancel?: () => void }) => React.ReactElement };
-(Modal as any).confirm = ({ title, content, onOk, onCancel }: { title?: React.ReactNode; content?: React.ReactNode; onOk?: () => void; onCancel?: () => void }) => {
+const Modal = ModalFn as unknown as React.FC<ModalProps> & { confirm: (props: { title?: React.ReactNode; content?: React.ReactNode; onOk?: () => void; onCancel?: () => void; okText?: React.ReactNode; cancelText?: React.ReactNode; okType?: string }) => React.ReactElement; confirmAlt: (props: { title?: React.ReactNode; content?: React.ReactNode; onOk?: () => void; onCancel?: () => void }) => React.ReactElement };
+(Modal as any).confirm = ({ title, content, onOk, onCancel, okText = '确定', cancelText = '取消', okType }: { title?: React.ReactNode; content?: React.ReactNode; onOk?: () => void; onCancel?: () => void; okText?: React.ReactNode; cancelText?: React.ReactNode; okType?: string }) => {
   const [open, setOpen] = React.useState(true);
+  const okClass = okType === 'danger' ? 'bg-red-500 text-white hover:bg-red-600' : 'bg-primary text-primary-foreground hover:bg-primary/90';
   return (
     <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) onCancel?.(); }}>
       <DialogContent>
         {title && <DialogHeader><DialogTitle>{title}</DialogTitle></DialogHeader>}
         {content && <div className="py-2">{content}</div>}
         <DialogFooter>
-          <button type="button" onClick={() => { setOpen(false); onCancel?.(); }} className="px-4 py-2 text-sm border rounded-md hover:bg-accent">取消</button>
-          <button type="button" onClick={() => { setOpen(false); onOk?.(); }} className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90">确定</button>
+          <button type="button" onClick={() => { setOpen(false); onCancel?.(); }} className="px-4 py-2 text-sm border rounded-md hover:bg-accent">{cancelText}</button>
+          <button type="button" onClick={() => { setOpen(false); onOk?.(); }} className={cn("px-4 py-2 text-sm rounded-md hover:bg-primary/90", okClass)}>{okText}</button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -615,6 +734,15 @@ interface ListGridSettings {
   column?: number;
 }
 
+interface ListItemProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+const ListItemWrapper: React.FC<ListItemProps> = ({ children, className }) => (
+  <div className={cn("py-2 border-b last:border-b-0", className)}>{children}</div>
+);
+
 interface ListWrapperProps<T = any> {
   size?: 'small' | 'middle' | 'large';
   className?: string;
@@ -622,11 +750,15 @@ interface ListWrapperProps<T = any> {
   grid?: ListGridSettings;
   dataSource?: T[];
   renderItem?: (item: T, index: number) => React.ReactNode;
+  locale?: { emptyText?: React.ReactNode };
 }
 
-const ListWrapper: React.FC<ListWrapperProps> = ({ size, className, children, grid, dataSource, renderItem }) => {
+const ListWrapper = (({ size, className, children, grid, dataSource, renderItem, locale }: ListWrapperProps<any>) => {
   // If dataSource and renderItem are provided, map over them
   if (dataSource && renderItem) {
+    if (dataSource.length === 0) {
+      return <div className={cn("py-4 text-center text-sm text-muted-foreground", className)}>{locale?.emptyText || '暂无数据'}</div>;
+    }
     const items = dataSource.map((item, index) => renderItem(item, index));
     
     // Apply grid layout if specified
@@ -648,7 +780,8 @@ const ListWrapper: React.FC<ListWrapperProps> = ({ size, className, children, gr
   }
   
   return <ShadcnList className={className}>{children}</ShadcnList>;
-};
+}) as unknown as React.FC<ListWrapperProps<any>> & { Item: React.FC<ListItemProps> };
+(ListWrapper as any).Item = ListItemWrapper;
 
 // ============================================================
 // AntD-compatible Tag
@@ -656,6 +789,76 @@ const ListWrapper: React.FC<ListWrapperProps> = ({ size, className, children, gr
 const AntdTag: React.FC<any> = ({ children, color, ...props }) => (
   <ShadcnTag color={color} {...props}>{children}</ShadcnTag>
 );
+
+// ============================================================
+// AntD-compatible Table
+// ============================================================
+interface TableColumn<T = any> {
+  title?: React.ReactNode;
+  dataIndex?: string;
+  key?: string;
+  width?: number | string;
+  render?: (value: any, record: T, index: number) => React.ReactNode;
+  [key: string]: any;
+}
+
+interface TableProps<T = any> {
+  dataSource?: T[];
+  columns?: TableColumn<T>[];
+  rowKey?: string | ((record: T) => string);
+  size?: 'small' | 'middle' | 'large';
+  pagination?: boolean | object;
+  className?: string;
+  onChange?: (pagination: any, filters: any, sorter: any) => void;
+  [key: string]: any;
+}
+
+const AntdTable: React.FC<TableProps> = ({ 
+  dataSource = [], 
+  columns = [], 
+  rowKey, 
+  size = 'middle',
+  className,
+  ...props 
+}) => {
+  const getRowKey = (record: any, index: number): string => {
+    if (typeof rowKey === 'function') return rowKey(record);
+    if (typeof rowKey === 'string') return record[rowKey] ?? String(index);
+    return String(index);
+  };
+
+  const sizeClass = size === 'small' ? 'text-xs' : size === 'large' ? 'text-base' : 'text-sm';
+
+  return (
+    <div className={cn("relative w-full overflow-auto", className)}>
+      <table className={cn("w-full caption-bottom", sizeClass)}>
+        <thead>
+          <tr className="border-b">{columns.map((col, i) => (
+            <th key={col.key || i} style={{ width: col.width }} className="text-left font-medium p-2">{col.title}</th>
+          ))}</tr>
+        </thead>
+        <tbody>
+          {dataSource.length === 0 ? (
+            <tr><td colSpan={columns.length} className="text-center p-4 text-muted-foreground">暂无数据</td></tr>
+          ) : (
+            dataSource.map((record, rowIndex) => (
+              <tr key={getRowKey(record, rowIndex)} className="border-b last:border-b-0 hover:bg-muted/50">
+                {columns.map((col, colIndex) => {
+                  const value = col.dataIndex ? record[col.dataIndex] : undefined;
+                  return (
+                    <td key={col.key || colIndex} className="p-2">
+                      {col.render ? col.render(value, record, rowIndex) : value}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+};
 
 // ============================================================
 // InputNumber component (native number input wrapper)
@@ -770,22 +973,40 @@ const Row: React.FC<RowProps> = ({ gutter, align, justify, className, style, chi
 interface ColProps {
   span?: number;
   offset?: number;
+  xs?: number;
+  sm?: number;
+  md?: number;
+  lg?: number;
+  xl?: number;
+  xxl?: number;
   className?: string;
   children?: React.ReactNode;
 }
 
-const Col: React.FC<ColProps> = ({ span = 24, offset, className, children }) => (
-  <div
-    className={cn(className)}
-    style={{
-      flexBasis: `${(span / 24) * 100}%`,
-      maxWidth: `${(span / 24) * 100}%`,
-      paddingLeft: offset ? `${(offset / 24) * 100}%` : undefined,
-    }}
-  >
-    {children}
-  </div>
-);
+const Col: React.FC<ColProps> = ({ span = 24, offset, xs, sm, md, lg, xl, xxl, className, children }) => {
+  // Responsive breakpoints: xs < 576, sm >= 576, md >= 768, lg >= 992, xl >= 1200, xxl >= 1400
+  const breakpoints: Record<string, number | undefined> = { xs, sm, md, lg, xl, xxl };
+  let spanVal = span;
+  
+  // Use largest matching breakpoint if set
+  const bpList: Array<[string, number | undefined]> = [['xxl', xxl], ['xl', xl], ['lg', lg], ['md', md], ['sm', sm], ['xs', xs]];
+  for (const [, val] of bpList) {
+    if (val !== undefined) { spanVal = val; break; }
+  }
+  
+  return (
+    <div
+      className={cn(className)}
+      style={{
+        flexBasis: `${(spanVal / 24) * 100}%`,
+        maxWidth: `${(spanVal / 24) * 100}%`,
+        paddingLeft: offset ? `${(offset / 24) * 100}%` : undefined,
+      }}
+    >
+      {children}
+    </div>
+  );
+};
 
 // ============================================================
 // Collapse (wraps existing Accordion)
@@ -922,6 +1143,7 @@ interface AntdCardProps {
   extra?: React.ReactNode;
   title?: React.ReactNode;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
+  style?: React.CSSProperties;
 }
 
 const AntdCardBase: React.FC<AntdCardProps> = ({
@@ -934,8 +1156,9 @@ const AntdCardBase: React.FC<AntdCardProps> = ({
   extra,
   title,
   onClick,
+  style,
 }) => (
-  <ShadcnCard className={cn(hoverable && "hover:shadow-md transition-shadow cursor-pointer", className)} onClick={onClick}>
+  <ShadcnCard className={cn(hoverable && "hover:shadow-md transition-shadow cursor-pointer", className)} onClick={onClick} style={style}>
     {title && (
       <div className="flex items-center justify-between px-6 py-4 border-b">
         <div className="flex items-center gap-2">{title}</div>
@@ -997,11 +1220,11 @@ const Popconfirm: React.FC<PopconfirmProps> = ({ children, title, onConfirm, okT
 // ============================================================
 interface DropdownProps {
   menu?: {
-    items?: { key: string; label: React.ReactNode; danger?: boolean }[];
+    items?: Array<{ key: string; label: React.ReactNode; danger?: boolean; type?: string; onClick?: () => void }>;
     onClick?: (info: { key: string }) => void;
   };
   children?: React.ReactNode;
-  trigger?: 'hover' | 'click' | 'contextMenu';
+  trigger?: 'hover' | 'click' | 'contextMenu' | ('hover' | 'click' | 'contextMenu')[];
 }
 
 const AntDDropdown: React.FC<DropdownProps> = ({ menu, children }) => {
@@ -1136,6 +1359,8 @@ interface UploadProps {
   showUploadList?: boolean;
   beforeUpload?: (file: File) => boolean | Promise<boolean>;
   accept?: string;
+  multiple?: boolean;
+  customRequest?: (info: any) => void;
   children?: React.ReactNode;
   onChange?: (info: any) => void;
   className?: string;
@@ -1146,6 +1371,8 @@ const Upload: React.FC<UploadProps> = ({
   showUploadList,
   beforeUpload,
   accept,
+  multiple,
+  customRequest,
   children,
   onChange,
   className,
@@ -1153,15 +1380,23 @@ const Upload: React.FC<UploadProps> = ({
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const rcFile = file as any;
-      rcFile.uid = Math.random().toString(36).slice(2);
-      onChange?.({ file: rcFile, fileList: [rcFile] });
-      if (beforeUpload) {
-        beforeUpload(file);
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      if (customRequest) {
+        customRequest({ fileList: Array.from(files) });
+      } else {
+        Array.from(files).forEach(file => {
+          const rcFile = file as any;
+          rcFile.uid = Math.random().toString(36).slice(2);
+          onChange?.({ file: rcFile, fileList: [rcFile] });
+          if (beforeUpload) {
+            beforeUpload(file);
+          }
+        });
       }
     }
+    // Reset input so same file can be selected again
+    e.target.value = '';
   };
 
   if (listType === 'picture-card') {
@@ -1177,6 +1412,7 @@ const Upload: React.FC<UploadProps> = ({
           ref={inputRef}
           type="file"
           accept={accept}
+          multiple={multiple}
           className="hidden"
           onChange={handleChange}
         />
@@ -1191,6 +1427,7 @@ const Upload: React.FC<UploadProps> = ({
         ref={inputRef}
         type="file"
         accept={accept}
+        multiple={multiple}
         className="hidden"
         onChange={handleChange}
       />
@@ -1310,10 +1547,13 @@ export {
   ListWrapper as List,
   ListItem,
   AntdTag as Tag,
-  ShadcnTable as Table,
+  AntdTable as Table,
   ShadcnEmpty as Empty,
   ShadcnProgress as Progress,
   Space,
+  SpaceItem,
+  Spin,
+  AntDAlert as Alert,
   Popconfirm,
   AntDDropdown as Dropdown,
   type FormProps,
@@ -1337,4 +1577,7 @@ export {
   type ButtonProps,
   type AntDInputProps,
   type ListWrapperProps,
+  type ListItemProps,
+  type SpinProps,
+  type AntDAlertProps,
 };

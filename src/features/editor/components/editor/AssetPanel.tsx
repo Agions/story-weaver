@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Upload, Search, Bell, MoreHorizontal, Video, Music, FileImage, FileText } from 'lucide-react';
+import { Upload as LucideUpload, Search, Bell, MoreHorizontal, Video, Music, FileImage, FileText, Mic } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,6 +16,7 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs';
+import { Dropdown, Upload as AntUpload } from '@/components/ui/antd-compat';
 import { EmptyState } from '@/shared/components/ui';
 import { toast } from '@/shared/components/ui';
 
@@ -144,7 +145,7 @@ const AssetPanel: React.FC<AssetPanelProps> = () => {
       case 'audio':
         return (
           <div className={styles.assetIconContainer}>
-            <Audio className={styles.assetIcon} />
+            <Mic className={styles.assetIcon} />
           </div>
         );
       case 'image':
@@ -220,16 +221,16 @@ const AssetPanel: React.FC<AssetPanelProps> = () => {
       </Tabs>
 
       <div className={styles.uploadContainer}>
-        <Upload
+        <AntUpload
           multiple
           showUploadList={false}
           customRequest={handleUpload}
         >
           <Button variant="outline" className="w-full">
-            <Upload className="h-4 w-4 mr-2" />
+            <LucideUpload className="h-4 w-4 mr-2" />
             上传素材
           </Button>
-        </Upload>
+        </AntUpload>
       </div>
 
       <div className={styles.assetList}>

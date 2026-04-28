@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  Robot, Send, Scissors, Audio, Lightbulb, Zap, FlaskConical
+  Bot, Send, Scissors, Radio, Lightbulb, Zap, FlaskConical, CircleQuestionMark as HelpCircle, Languages
 } from 'lucide-react';
 import {
   Card,
@@ -198,7 +198,7 @@ const AIAssistant: React.FC<AIAssistantProps> = () => {
         <div className={styles.messageAvatar}>
           {message.role === 'ai' ? (
             <Avatar className={styles.aiAvatar}>
-              <Robot size={20} />
+              <Bot size={20} />
             </Avatar>
           ) : (
             <Avatar
@@ -229,7 +229,7 @@ const AIAssistant: React.FC<AIAssistantProps> = () => {
     <div className={styles.aiAssistantContainer}>
       <div className={styles.aiHeader}>
         <Title level={4} className={styles.aiTitle}>
-          <Robot className={styles.aiIcon} /> AI助手
+          <Bot className={styles.aiIcon} /> AI助手
         </Title>
       </div>
 
@@ -392,7 +392,7 @@ const AIAssistant: React.FC<AIAssistantProps> = () => {
                   <Text>识别精度</Text>
                   <Slider
                     value={precision}
-                    onValueChange={setPrecision}
+                    onValueChange={(v) => setPrecision(Array.isArray(v) ? v[0] : v)}
                     max={100}
                     min={0}
                     step={1}
@@ -530,7 +530,7 @@ const AIAssistant: React.FC<AIAssistantProps> = () => {
                   <Text>关键内容优先级</Text>
                   <Slider
                     value={keyContentPriority}
-                    onValueChange={setKeyContentPriority}
+                    onValueChange={(v) => setKeyContentPriority(Array.isArray(v) ? v[0] : v)}
                     max={100}
                     min={0}
                     step={1}
@@ -546,7 +546,7 @@ const AIAssistant: React.FC<AIAssistantProps> = () => {
                   <Text>场景检测灵敏度</Text>
                   <Slider
                     value={sceneSensitivity}
-                    onValueChange={setSceneSensitivity}
+                    onValueChange={(v) => setSceneSensitivity(Array.isArray(v) ? v[0] : v)}
                     max={100}
                     min={0}
                     step={1}
@@ -594,7 +594,7 @@ const AIAssistant: React.FC<AIAssistantProps> = () => {
 
                   <div className={styles.enhanceOption}>
                     <Card className={styles.enhanceCard}>
-                      <Audio className={styles.enhanceIcon} />
+                      <Radio className={styles.enhanceIcon} />
                       <div className={styles.enhanceTitle}>音频降噪</div>
                       <div className={styles.enhanceDesc}>移除背景噪音</div>
                       <Button size="sm" className={styles.enhanceButton}>应用</Button>

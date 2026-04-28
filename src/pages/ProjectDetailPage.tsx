@@ -12,12 +12,14 @@ import {
   Zap,
   DollarSign,
 } from 'lucide-react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Card } from '@/components/ui/antd-compat';
+import { Button } from '@/components/ui/antd-compat';
+import { Tabs, TabsContent, TabsList, TabsTrigger, TabPane } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/antd-compat';
+import { Select } from '@/components/ui/antd-compat';
+import { Alert } from '@/components/ui/antd-compat';
+import { Modal, Spin, Space, Empty, List } from '@/components/ui/antd-compat';
+import { Title, Text, Paragraph } from '@/components/ui/typography';
 import { toast } from '@/shared/components/ui/Toast';
 import { ConfirmDialog } from '@/shared/components/ui/ConfirmDialog';
 import React, { Suspense, lazy, useEffect, useMemo, useState } from 'react';
@@ -51,8 +53,7 @@ const CompositionStudio = lazy(importCompositionStudio);
 const AudioEditor = lazy(importAudioEditor);
 const CostDashboard = lazy(importCostDashboard);
 
-const { Title, Text, Paragraph } = Typography;
-const { TabPane } = Tabs;
+
 
 const ProjectDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -295,7 +296,7 @@ const ProjectDetail: React.FC = () => {
       setActiveScript(newScript);
 
       // 保存到文件，显示loading
-      toast.loading('正在保存剧本...', 0.5);
+      toast.loading('正在保存剧本...');
       tauriService.writeText(updatedProject.id, JSON.stringify(updatedProject))
         .then(() => {
           updateProject(updatedProject.id, updatedProject);
@@ -612,7 +613,7 @@ const ProjectDetail: React.FC = () => {
                           style={{ width: '100%' }}
                           placeholder="选择分镜"
                           value={selectedFrameId}
-                          onChange={setSelectedFrameId}
+                          onChange={(v) => setSelectedFrameId(v as string | undefined)}
                           options={storyboardFrames.map((frame, index) => ({
                             label: `${index + 1}. ${frame.title || `分镜 ${index + 1}`}`,
                             value: frame.id
@@ -670,14 +671,14 @@ const ProjectDetail: React.FC = () => {
                           <Select
                             placeholder="选择版本A"
                             value={compareLeftVersionId}
-                            onChange={setCompareLeftVersionId}
+                            onChange={(v) => setCompareLeftVersionId(v as string | undefined)}
                             style={{ width: 200 }}
                             options={storyboardVersions.map(v => ({ value: v.id, label: v.label }))}
                           />
                           <Select
                             placeholder="选择版本B"
                             value={compareRightVersionId}
-                            onChange={setCompareRightVersionId}
+                            onChange={(v) => setCompareRightVersionId(v as string | undefined)}
                             style={{ width: 200 }}
                             options={storyboardVersions.map(v => ({ value: v.id, label: v.label }))}
                           />

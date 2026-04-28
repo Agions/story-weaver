@@ -14,6 +14,10 @@ interface AntDSliderProps {
   step?: number;
   disabled?: boolean;
   className?: string;
+  tooltip?: {
+    formatter?: (value: number) => string;
+  };
+  marks?: Record<number, string>;
 }
 
 const Slider = React.forwardRef<
@@ -25,11 +29,13 @@ const Slider = React.forwardRef<
     defaultValue, 
     onValueChange, 
     onChange, 
-    max, 
-    min, 
-    step, 
+    max = 100, 
+    min = 0, 
+    step = 1, 
     disabled, 
     className, 
+    tooltip: _tooltip, // accepted but not used (Radix slider has no native tooltip)
+    marks: _marks, // accepted but not used (Radix slider has no native marks)
     ...props 
   }, ref) => {
     // Normalize to array for Radix

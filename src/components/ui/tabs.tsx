@@ -3,17 +3,28 @@ import * as TabsPrimitive from "@radix-ui/react-tabs"
 
 import { cn } from "@/lib/utils"
 
-interface TabsProps extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.Root> {
+interface TabItem {
+  key?: string;
+  label?: React.ReactNode;
+  children?: React.ReactNode;
+}
+
+interface TabsProps {
   defaultActiveKey?: string;
   activeKey?: string;
   onChange?: (key: string) => void;
+  onValueChange?: (key: string) => void;
   children?: React.ReactNode;
+  size?: 'small' | 'default' | 'large';
+  items?: TabItem[];
+  className?: string;
+  defaultValue?: string;
 }
 
 const Tabs = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Root>,
   TabsProps
->(({ defaultActiveKey, activeKey, onChange, children, ...props }, ref) => {
+>(({ defaultActiveKey, activeKey, onChange, onValueChange, children, size, items, className, defaultValue, ...props }, ref) => {
   // Collect TabPane children and render them as TabsList + TabsContent
   const panes: { key: string; tab?: React.ReactNode; children?: React.ReactNode }[] = [];
   const otherChildren: React.ReactNode[] = [];
@@ -30,16 +41,42 @@ const Tabs = React.forwardRef<
     }
   });
 
+  // Support items prop for programmatic tab definition
+  if (items && items.length > 0) {
+    return (
+      <TabsPrimitive.Root
+        ref={ref}
+        defaultValue={defaultValue || defaultActiveKey || items[0]?.key}
+        value={activeKey}
+        onValueChange={onChange ?? onValueChange}
+        className={className}
+        {...props}
+      >
+        <TabsList size={size}>
+          {items.map((item, i) => (
+            <TabsTrigger key={item.key || String(i)} value={String(item.key || i)}>{item.label}</TabsTrigger>
+          ))}
+        </TabsList>
+        {items.map((item, i) => (
+          <TabsContent key={String(item.key || i)} value={String(item.key || i)}>
+            {item.children}
+          </TabsContent>
+        ))}
+      </TabsPrimitive.Root>
+    );
+  }
+
   if (panes.length > 0) {
     return (
       <TabsPrimitive.Root 
         ref={ref} 
-        defaultValue={defaultActiveKey || panes[0]?.key} 
+        defaultValue={defaultValue || defaultActiveKey || panes[0]?.key} 
         value={activeKey}
-        onValueChange={onChange}
+        onValueChange={onChange ?? onValueChange}
+        className={className}
         {...props}
       >
-        <TabsList>
+        <TabsList size={size}>
           {panes.map(p => (
             <TabsTrigger key={p.key} value={String(p.key)}>{p.tab}</TabsTrigger>
           ))}
@@ -54,33 +91,39 @@ const Tabs = React.forwardRef<
     );
   }
 
+
   return (
     <TabsPrimitive.Root 
       ref={ref} 
-      defaultValue={defaultActiveKey} 
+      defaultValue={defaultValue || defaultActiveKey} 
       value={activeKey}
-      onValueChange={onChange}
+      onValueChange={onChange ?? onValueChange}
+      className={className}
       {...props}
     >
       {children}
     </TabsPrimitive.Root>
-  );
+  )
 });
 Tabs.displayName = "Tabs";
 
 const TabsList = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.List>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.List
-    ref={ref}
-    className={cn(
-      "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
-      className
-    )}
-    {...props}
-  />
-))
+  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List> & { size?: string }
+>(({ className, size, ...props }, ref) => {
+  const sizeClass = size === 'small' ? 'h-8 text-xs' : size === 'large' ? 'h-12 text-base' : 'h-10 text-sm';
+  return (
+    <TabsPrimitive.List
+      ref={ref}
+      className={cn(
+        "inline-flex items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
+        sizeClass,
+        className
+      )}
+      {...props}
+    />
+  );
+})
 TabsList.displayName = TabsPrimitive.List.displayName
 
 const TabsTrigger = React.forwardRef<
