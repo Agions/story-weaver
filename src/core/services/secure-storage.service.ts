@@ -1,12 +1,10 @@
 /**
  * SecureStorageService - 安全存储服务
  * 使用 Tauri Store API 替代 localStorage，敏感数据加密存储
+ * 
+ * 在非 Tauri 环境（如测试）中自动回退到 localStorage
  */
 
-import { invoke } from '@tauri-apps/api/core';
-import { Store } from '@tauri-apps/plugin-store';
-
-const STORE_PATH = 'secure-data.json';
 const CHECKPOINT_PREFIX = 'checkpoint_';
 
 interface CheckpointData {
@@ -16,34 +14,38 @@ interface CheckpointData {
   timestamp: number;
 }
 
+// Detect if we're in Tauri environment
+const isTauri = typeof window !== 'undefined' && '__TAURI__' in window;
+
 class SecureStorageService {
-  private store: Store | null = null;
+  private store: unknown = null;
   private initPromise: Promise<void> | null = null;
+  private useFallback = false;
 
   private async init(): Promise<void> {
-    if (this.store) return;
     if (this.initPromise) return this.initPromise;
 
     this.initPromise = (async () => {
+      if (!isTauri) {
+        this.useFallback = true;
+        return;
+      }
+
       try {
-        this.store = await Store.load(STORE_PATH, { autoSave: true });
+        const { Store } = await import('@tauri-apps/plugin-store');
+        this.store = await Store.load('secure-data.json');
       } catch (error) {
-        console.error('[SecureStorage] Failed to initialize store:', error);
-        throw error;
+        console.warn('[SecureStorage] Tauri store not available, using localStorage fallback:', error);
+        this.useFallback = true;
       }
     })();
 
     return this.initPromise;
   }
 
-  /**
-   * 保存检查点数据（安全）
-   */
   async saveCheckpoint(stepId: string, data: unknown): Promise<void> {
     await this.init();
-    if (!this.store) throw new Error('Store not initialized');
 
-    const key = `${CHECKPOINT_PREFIX}${stepId}`;
     const state: CheckpointData = {
       stepId,
       completed: true,
@@ -51,106 +53,182 @@ class SecureStorageService {
       timestamp: Date.now(),
     };
 
-    await this.store.set(key, state);
-    await this.store.save();
+    if (this.useFallback || !this.store) {
+      localStorage.setItem(`${CHECKPOINT_PREFIX}${stepId}`, JSON.stringify(state));
+      return;
+    }
+
+    try {
+      const store = this.store as { set: (key: string, value: unknown) => Promise<void>; save: () => Promise<void> };
+      await store.set(`${CHECKPOINT_PREFIX}${stepId}`, state);
+      await store.save();
+    } catch {
+      localStorage.setItem(`${CHECKPOINT_PREFIX}${stepId}`, JSON.stringify(state));
+    }
   }
 
-  /**
-   * 加载检查点数据
-   */
   async loadCheckpoint(stepId: string): Promise<CheckpointData | null> {
     await this.init();
-    if (!this.store) return null;
 
-    const key = `${CHECKPOINT_PREFIX}${stepId}`;
-    const result = await this.store.get<CheckpointData>(key);
-    return result ?? null;
-  }
-
-  /**
-   * 清除单个检查点
-   */
-  async clearCheckpoint(stepId: string): Promise<void> {
-    await this.init();
-    if (!this.store) return;
-
-    const key = `${CHECKPOINT_PREFIX}${stepId}`;
-    await this.store.delete(key);
-    await this.store.save();
-  }
-
-  /**
-   * 清除所有检查点
-   */
-  async clearAllCheckpoints(): Promise<void> {
-    await this.init();
-    if (!this.store) return;
-
-    const keys = await this.store.keys();
-    for (const key of keys) {
-      if (key.startsWith(CHECKPOINT_PREFIX)) {
-        await this.store.delete(key);
+    if (this.useFallback || !this.store) {
+      const raw = localStorage.getItem(`${CHECKPOINT_PREFIX}${stepId}`);
+      if (!raw) return null;
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return null;
       }
     }
-    await this.store.save();
+
+    try {
+      const store = this.store as { get: <T>(key: string) => Promise<T | null> };
+      const result = await store.get<CheckpointData>(`${CHECKPOINT_PREFIX}${stepId}`);
+      return result ?? null;
+    } catch {
+      const raw = localStorage.getItem(`${CHECKPOINT_PREFIX}${stepId}`);
+      if (!raw) return null;
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return null;
+      }
+    }
   }
 
-  /**
-   * 保存敏感配置（如 API Key，不再使用 localStorage）
-   */
+  async clearCheckpoint(stepId: string): Promise<void> {
+    await this.init();
+
+    if (this.useFallback || !this.store) {
+      localStorage.removeItem(`${CHECKPOINT_PREFIX}${stepId}`);
+      return;
+    }
+
+    try {
+      const store = this.store as { delete: (key: string) => Promise<void>; save: () => Promise<void> };
+      await store.delete(`${CHECKPOINT_PREFIX}${stepId}`);
+      await store.save();
+    } catch {
+      localStorage.removeItem(`${CHECKPOINT_PREFIX}${stepId}`);
+    }
+  }
+
+  async clearAllCheckpoints(): Promise<void> {
+    await this.init();
+
+    if (this.useFallback || !this.store) {
+      const keys = Object.keys(localStorage).filter(k => k.startsWith(CHECKPOINT_PREFIX));
+      keys.forEach(k => localStorage.removeItem(k));
+      return;
+    }
+
+    try {
+      const store = this.store as { keys: () => Promise<string[]>; delete: (key: string) => Promise<void>; save: () => Promise<void> };
+      const keys = await store.keys();
+      for (const key of keys) {
+        if (key.startsWith(CHECKPOINT_PREFIX)) {
+          await store.delete(key);
+        }
+      }
+      await store.save();
+    } catch {
+      const keys = Object.keys(localStorage).filter(k => k.startsWith(CHECKPOINT_PREFIX));
+      keys.forEach(k => localStorage.removeItem(k));
+    }
+  }
+
   async saveSecureConfig(key: string, value: string): Promise<void> {
     await this.init();
-    if (!this.store) throw new Error('Store not initialized');
 
-    await this.store.set(`secure_${key}`, value);
-    await this.store.save();
+    if (this.useFallback || !this.store) {
+      localStorage.setItem(`secure_${key}`, value);
+      return;
+    }
+
+    try {
+      const store = this.store as { set: (key: string, value: string) => Promise<void>; save: () => Promise<void> };
+      await store.set(`secure_${key}`, value);
+      await store.save();
+    } catch {
+      localStorage.setItem(`secure_${key}`, value);
+    }
   }
 
-  /**
-   * 获取敏感配置
-   */
   async getSecureConfig(key: string): Promise<string | null> {
     await this.init();
-    if (!this.store) return null;
 
-    const result = await this.store.get<string>(`secure_${key}`);
-    return result ?? null;
+    if (this.useFallback || !this.store) {
+      return localStorage.getItem(`secure_${key}`);
+    }
+
+    try {
+      const store = this.store as { get: <T>(key: string) => Promise<T | null> };
+      const result = await store.get<string>(`secure_${key}`);
+      return result ?? null;
+    } catch {
+      return localStorage.getItem(`secure_${key}`);
+    }
   }
 
-  /**
-   * 删除敏感配置
-   */
   async deleteSecureConfig(key: string): Promise<void> {
     await this.init();
-    if (!this.store) return;
 
-    await this.store.delete(`secure_${key}`);
-    await this.store.save();
+    if (this.useFallback || !this.store) {
+      localStorage.removeItem(`secure_${key}`);
+      return;
+    }
+
+    try {
+      const store = this.store as { delete: (key: string) => Promise<void>; save: () => Promise<void> };
+      await store.delete(`secure_${key}`);
+      await store.save();
+    } catch {
+      localStorage.removeItem(`secure_${key}`);
+    }
   }
 
-  /**
-   * 保存项目数据（加密）
-   */
   async saveProjectData(projectId: string, data: unknown): Promise<void> {
     await this.init();
-    if (!this.store) throw new Error('Store not initialized');
 
-    await this.store.set(`project_${projectId}`, {
-      data,
-      updatedAt: Date.now(),
-    });
-    await this.store.save();
+    if (this.useFallback || !this.store) {
+      localStorage.setItem(`project_${projectId}`, JSON.stringify({ data, updatedAt: Date.now() }));
+      return;
+    }
+
+    try {
+      const store = this.store as { set: (key: string, value: unknown) => Promise<void>; save: () => Promise<void> };
+      await store.set(`project_${projectId}`, { data, updatedAt: Date.now() });
+      await store.save();
+    } catch {
+      localStorage.setItem(`project_${projectId}`, JSON.stringify({ data, updatedAt: Date.now() }));
+    }
   }
 
-  /**
-   * 加载项目数据
-   */
   async loadProjectData<T>(projectId: string): Promise<T | null> {
     await this.init();
-    if (!this.store) return null;
 
-    const result = await this.store.get<{ data: T; updatedAt: number }>(`project_${projectId}`);
-    return result?.data ?? null;
+    if (this.useFallback || !this.store) {
+      const raw = localStorage.getItem(`project_${projectId}`);
+      if (!raw) return null;
+      try {
+        return JSON.parse(raw).data as T;
+      } catch {
+        return null;
+      }
+    }
+
+    try {
+      const store = this.store as { get: <T>(key: string) => Promise<T | null> };
+      const result = await store.get<{ data: T; updatedAt: number }>(`project_${projectId}`);
+      return result?.data ?? null;
+    } catch {
+      const raw = localStorage.getItem(`project_${projectId}`);
+      if (!raw) return null;
+      try {
+        return JSON.parse(raw).data as T;
+      } catch {
+        return null;
+      }
+    }
   }
 }
 

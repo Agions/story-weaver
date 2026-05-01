@@ -67,7 +67,7 @@ export const CharacterSchema = z.object({
   name: z.string(),
   description: z.string(),
   avatar: z.string().optional(),
-  expressions: z.record(z.string()).optional(),
+  expressions: z.record(z.string(), z.string()).optional(),
   appearances: z.array(z.string()).optional(),
 });
 
@@ -195,7 +195,7 @@ export const ProjectSchema = z.object({
   updatedAt: z.number(),
   status: z.enum(['draft', 'processing', 'completed', 'failed']),
   thumbnail: z.string().optional(),
-  settings: z.record(z.unknown()).optional(),
+  settings: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const ProjectListResponseSchema = z.object({

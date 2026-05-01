@@ -4,9 +4,7 @@
  */
 
 import { logger } from '@/core/utils/logger';
-
-// Type for service constructor
-type ServiceConstructor<T = unknown> = new (...args: unknown[]) => T;
+import React, { useContext, createContext, useMemo } from 'react';
 
 // Token type for DI
 export const DI_TOKEN = Symbol('DI_TOKEN');
@@ -54,11 +52,11 @@ export class DIContainer {
    */
   registerSingleton<T>(token: InjectionToken<T>, instance: T): void;
   registerSingleton<T>(token: InjectionToken<T>, factory: () => T): void;
-  registerSingleton<T>(token: InjectionToken<T>, factoryOrInstance: T | (() => T)): void {
+  registerSingleton<T>(token: InjectionToken<T>, factoryOrInstance: T | ((...args: unknown[]) => T)): void {
     const isFactory = typeof factoryOrInstance === 'function';
     this.services.set(token.__token, {
       singleton: true,
-      factory: isFactory ? factoryOrInstance : undefined,
+      factory: isFactory ? (factoryOrInstance as () => T) : undefined,
       instance: isFactory ? undefined : factoryOrInstance,
     });
   }
@@ -108,7 +106,7 @@ export class DIContainer {
 
     try {
       if (entry.factory) {
-        const instance = entry.factory() as T;
+        const instance = (entry.factory as () => T)();
         if (entry.singleton) {
           entry.instance = instance;
         }
@@ -165,19 +163,10 @@ export const PIPELINE_SERVICE_TOKEN = createToken<unknown>('PIPELINE_SERVICE');
 // ============ Container Setup Helper ============
 
 export function setupContainer(): void {
-  // This function sets up the actual service bindings
-  // Import and use in AppProvider or main.ts
-  
   logger.info('[DI] Setting up container with service bindings');
-  
-  // Register services here when implementations are available
-  // Example:
-  // container.registerSingleton(AI_SERVICE_TOKEN, new AIService());
 }
 
-// ============ Hook for using DI in React ============
-
-import { useContext, createContext, useMemo } from 'react';
+// ============ React Hooks for DI ============
 
 const DIContext = createContext<DIContainer | null>(null);
 
@@ -191,13 +180,10 @@ export const DIProvider: React.FC<{ container?: DIContainer; children: React.Rea
 
 export function useContainer(): DIContainer {
   const ctx = useContext(DIContext);
-  if (!ctx) {
-    return globalContainer;
-  }
-  return ctx;
+  return ctx || globalContainer;
 }
 
 export function useService<T>(token: InjectionToken<T>): T {
-  const container = useContainer();
-  return useMemo(() => container.resolve(token), [container, token]);
+  const containerInstance = useContainer();
+  return useMemo(() => containerInstance.resolve(token), [containerInstance, token]);
 }
