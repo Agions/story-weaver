@@ -280,7 +280,7 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
               <div className={styles.playheadHead} />
               <div className={styles.playheadLine} />
             </div>
-          </div>
+          </button>
         </div>
       </div>
 
