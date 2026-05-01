@@ -1,15 +1,8 @@
-import React, { useState } from 'react';
-import { Upload as LucideUpload, Search, Bell, MoreHorizontal, Video, Music, FileImage, FileText, Mic } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Upload as LucideUpload, Search, MoreHorizontal, Video, Music, FileImage, FileText, Mic } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import {
   Tabs,
   TabsContent,
@@ -19,116 +12,62 @@ import {
 import { Dropdown, Upload as AntUpload } from '@/components/ui/antd-compat';
 import { EmptyState } from '@/shared/components/ui';
 import { toast } from '@/shared/components/ui';
-
+import { assetService, Asset } from '@/shared/services/asset.service';
+import { formatDuration, formatSizeMB } from '@/utils/format';
 import { logger } from '@/core/utils/logger';
 
 import styles from './AssetPanel.module.less';
 
-interface Asset {
-  id: string;
-  name: string;
-  type: 'video' | 'audio' | 'image' | 'text';
-  src: string;
-  thumbnail?: string;
-  duration?: number;
-  size: number;
-  tags: string[];
+interface AssetPanelProps {
+  projectId?: string;
 }
 
-// 模拟素材数据
-const mockAssets: Asset[] = [
-  {
-    id: 'video-1',
-    name: '片段1.mp4',
-    type: 'video',
-    src: 'https://example.com/video1.mp4',
-    thumbnail: 'https://picsum.photos/96/54?random=1',
-    duration: 45,
-    size: 10.5,
-    tags: ['入场']
-  },
-  {
-    id: 'video-2',
-    name: '片段2.mp4',
-    type: 'video',
-    src: 'https://example.com/video2.mp4',
-    thumbnail: 'https://picsum.photos/96/54?random=2',
-    duration: 30,
-    size: 8.2,
-    tags: ['特写']
-  },
-  {
-    id: 'audio-1',
-    name: '背景音乐.mp3',
-    type: 'audio',
-    src: 'https://example.com/audio1.mp3',
-    duration: 120,
-    size: 3.5,
-    tags: ['音乐']
-  },
-  {
-    id: 'image-1',
-    name: 'logo.png',
-    type: 'image',
-    src: 'https://example.com/image1.png',
-    thumbnail: 'https://picsum.photos/96/54?random=3',
-    size: 0.8,
-    tags: ['素材']
-  },
-  {
-    id: 'text-1',
-    name: '字幕1',
-    type: 'text',
-    src: 'Hello World',
-    size: 0.1,
-    tags: ['字幕']
-  }
-];
-
-interface AssetPanelProps {}
-
-const AssetPanel: React.FC<AssetPanelProps> = () => {
+const AssetPanel: React.FC<AssetPanelProps> = ({ projectId }) => {
   const [activeTab, setActiveTab] = useState('all');
-  const [assets, setAssets] = useState<Asset[]>(mockAssets);
+  const [assets, setAssets] = useState<Asset[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  // 加载资产数据
+  const loadAssets = useCallback(() => {
+    setLoading(true);
+    try {
+      const allAssets = assetService.getAll(projectId);
+      setAssets(allAssets);
+    } catch (error) {
+      logger.error('Failed to load assets', error);
+      toast.error('加载素材失败');
+    } finally {
+      setLoading(false);
+    }
+  }, [projectId]);
+
+  useEffect(() => {
+    loadAssets();
+  }, [loadAssets]);
 
   // 过滤显示的素材
   const filteredAssets = assets.filter(asset => {
-    // 按类型过滤
     if (activeTab !== 'all' && asset.type !== activeTab) {
       return false;
     }
-
-    // 按搜索词过滤
     if (searchQuery && !asset.name.toLowerCase().includes(searchQuery.toLowerCase())) {
       return false;
     }
-
     return true;
   });
 
   // 删除素材
   const handleDelete = (id: string) => {
-    setAssets(assets.filter(asset => asset.id !== id));
+    if (assetService.delete(id)) {
+      setAssets(prev => prev.filter(asset => asset.id !== id));
+      toast.success('素材已删除');
+    }
   };
 
   // 添加到时间轴
   const addToTimeline = (asset: Asset) => {
     logger.info('添加到时间轴', asset);
-    // 这里将来会实现与Timeline组件的交互
-  };
-
-  // 格式化时长显示
-  const formatDuration = (seconds?: number): string => {
-    if (!seconds) return '';
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  // 格式化文件大小
-  const formatSize = (mb: number): string => {
-    return mb < 1 ? `${Math.round(mb * 1000)} KB` : `${mb.toFixed(1)} MB`;
   };
 
   // 渲染素材缩略图或图标
@@ -167,10 +106,31 @@ const AssetPanel: React.FC<AssetPanelProps> = () => {
     }
   };
 
-  // 上传素材
-  const handleUpload = (info: unknown) => {
-    logger.info('上传文件', info);
-    // 实际项目中会处理文件上传和转码
+  // 上传素材处理
+  const handleUpload = async (info: { file: File }) => {
+    const file = info.file;
+    
+    try {
+      const type = file.type.startsWith('video/') ? 'video' 
+        : file.type.startsWith('audio/') ? 'audio'
+        : file.type.startsWith('image/') ? 'image'
+        : 'text';
+      
+      const asset = assetService.add({
+        name: file.name,
+        type,
+        src: URL.createObjectURL(file),
+        size: file.size / (1024 * 1024),
+        tags: [],
+        projectId
+      });
+
+      setAssets(prev => [asset, ...prev]);
+      toast.success('素材上传成功');
+    } catch (error) {
+      logger.error('Upload failed', error);
+      toast.error('上传失败');
+    }
   };
 
   // 素材项操作菜单
@@ -191,7 +151,7 @@ const AssetPanel: React.FC<AssetPanelProps> = () => {
       onClick: () => logger.info('复制', id)
     },
     {
-      type: 'divider'
+      type: 'divider' as const
     },
     {
       key: '4',
@@ -206,6 +166,7 @@ const AssetPanel: React.FC<AssetPanelProps> = () => {
       <div className={styles.assetSearch}>
         <Input
           placeholder="搜索素材..."
+          value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
@@ -234,7 +195,12 @@ const AssetPanel: React.FC<AssetPanelProps> = () => {
       </div>
 
       <div className={styles.assetList}>
-        {filteredAssets.length > 0 ? (
+        {loading ? (
+          <EmptyState
+            title="加载中..."
+            description="正在获取素材数据"
+          />
+        ) : filteredAssets.length > 0 ? (
           filteredAssets.map(asset => (
             <div key={asset.id} className={styles.assetItem}>
               <div
@@ -255,7 +221,7 @@ const AssetPanel: React.FC<AssetPanelProps> = () => {
                 <div className={styles.assetInfo}>
                   <div className={styles.assetName} title={asset.name}>{asset.name}</div>
                   <div className={styles.assetDetails}>
-                    <span className={styles.assetSize}>{formatSize(asset.size)}</span>
+                    <span className={styles.assetSize}>{formatSizeMB(asset.size)}</span>
                     {asset.tags.map(tag => (
                       <span key={tag} className={styles.assetTag}>{tag}</span>
                     ))}
@@ -281,7 +247,7 @@ const AssetPanel: React.FC<AssetPanelProps> = () => {
                   ? "没有素材"
                   : `没有${activeTab === 'video' ? '视频' : activeTab === 'audio' ? '音频' : activeTab === 'image' ? '图片' : '文本'}素材`
             }
-            description="请尝试其他搜索词或上传新素材"
+            description={searchQuery ? "请尝试其他搜索词" : "点击上方按钮上传素材"}
           />
         )}
       </div>

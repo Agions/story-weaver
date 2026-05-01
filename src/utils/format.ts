@@ -149,4 +149,22 @@ export const formatPercent = (value: number, decimals: number = 0): string => {
   
   const percent = value * 100;
   return `${percent.toFixed(decimals)}%`;
+};
+
+/**
+ * 格式化MB为友好显示
+ * @param mb MB大小
+ * @returns 格式化后的大小字符串 (如: 1.5 MB, 500 KB)
+ */
+export const formatSizeMB = (mb: number): string => {
+  if (mb < 0.001) {
+    return '< 1 KB';
+  }
+  if (mb < 1) {
+    return `${Math.round(mb * 1000)} KB`;
+  }
+  if (mb >= 1024) {
+    return `${(mb / 1024).toFixed(1)} GB`;
+  }
+  return `${mb.toFixed(1)} MB`;
 }; 
