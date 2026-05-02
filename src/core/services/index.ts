@@ -14,6 +14,10 @@ export type { LipSyncOptions, LipSyncResult, TalkingFaceOptions, TalkingFaceResu
 export { videoCompositorService, default as VideoCompositorService } from './video-compositor.service';
 export type { Scene, SubtitleTrack as VideoSubtitleTrack, Subtitle as VideoSubtitle, BackgroundMusic, CompositionOptions, CompositionResult, ExportProgress as VideoExportProgress } from './video-compositor.service';
 
+// FFmpeg.wasm 服务
+export { ffmpegWasmService, default as FFmpegWasmService, loadFFmpeg, isFFmpegWasmAvailable } from './ffmpeg-wasm.service';
+export type { CompositionOptions as FFmpegCompositionOptions, CompositionResult as FFmpegCompositionResult, ExportProgress as FFmpegExportProgress } from './ffmpeg-wasm.service';
+
 // 视频脚本流水线服务
 export { mangaPipelineService, default as MangaPipelineService } from './manga-pipeline.service';
 export type { PipelineConfig as MangaPipelineConfig, PipelineScene, PipelineResult as MangaPipelineResult, PipelineProgress } from './manga-pipeline.service';

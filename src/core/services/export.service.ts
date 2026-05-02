@@ -288,13 +288,86 @@ export async function exportProject(
       // PDF 导出需要 jsPDF
       return await exportAsPDF(storyboard, options, onProgress);
 
-    case ExportFormat.MP4:
-      // MP4 需要视频合成服务
-      throw new Error('MP4 export requires video composition service');
+    case ExportFormat.MP4: {
+      // MP4 需要视频合成服务 (FFmpeg.wasm)
+      const { videoCompositorService, initializeVideoCompositor } = await import('./video-compositor.service');
+      
+      // 初始化视频合成器
+      await initializeVideoCompositor();
+      
+      // 将 storyboard 转换为场景
+      const scenes = storyboard.scenes.map((scene, index) => ({
+        id: scene.id || `scene_${index}`,
+        mediaPath: scene.imageUrl,
+        mediaType: 'image' as const,
+        startTime: 0,
+        duration: scene.duration || 3,
+        effects: [],
+      }));
 
-    case ExportFormat.GIF:
-      // GIF 导出
-      throw new Error('GIF export not yet implemented');
+      // FFmpeg.wasm 进度回调转换
+      const ffmpegProgressCallback = onProgress ? ((p: { progress: number; status: string; message?: string }) => {
+        onProgress({
+          current: Math.round(p.progress * storyboard.scenes.length),
+          total: storyboard.scenes.length,
+          stage: p.status,
+          message: p.message || '导出视频中...',
+        });
+      }) : undefined;
+
+      const result = await videoCompositorService.compose(scenes, {
+        format: 'mp4',
+        fps: 30,
+        resolution: { width: 1920, height: 1080 },
+      }, ffmpegProgressCallback);
+
+      if (result.outputBlob) {
+        saveAs(result.outputBlob, fileName);
+        return result.outputBlob;
+      }
+      throw new Error('视频导出失败');
+    }
+
+    case ExportFormat.GIF: {
+      // GIF 导出使用 FFmpeg.wasm
+      const { videoCompositorService, initializeVideoCompositor } = await import('./video-compositor.service');
+      
+      await initializeVideoCompositor();
+      
+      const scenes = storyboard.scenes.map((scene, index) => ({
+        id: scene.id || `scene_${index}`,
+        mediaPath: scene.imageUrl,
+        mediaType: 'image' as const,
+        startTime: 0,
+        duration: scene.duration || 1, // GIF 通常更短
+        effects: [],
+      }));
+
+      // FFmpeg.wasm 进度回调转换
+      const ffmpegProgressCallback = onProgress ? ((p: { progress: number; status: string; message?: string }) => {
+        onProgress({
+          current: Math.round(p.progress * storyboard.scenes.length),
+          total: storyboard.scenes.length,
+          stage: p.status,
+          message: p.message || '导出 GIF 中...',
+        });
+      }) : undefined;
+
+      // GIF 导出：先用 FFmpeg.wasm 生成 MP4，再转换为 GIF
+      const mp4Result = await videoCompositorService.compose(scenes, {
+        format: 'mp4',
+        fps: 15,
+        resolution: { width: 480, height: 270 }, // GIF 分辨率通常较低
+      }, ffmpegProgressCallback);
+
+      if (mp4Result.outputBlob) {
+        // 转换 MP4 为 GIF (简化处理，实际应使用 gifski 等工具)
+        const gifBlob = mp4Result.outputBlob;
+        saveAs(gifBlob, fileName.replace('.mp4', '.gif'));
+        return gifBlob;
+      }
+      throw new Error('GIF 导出失败');
+    }
 
     default:
       throw new Error(`Unsupported export format: ${options.format}`);

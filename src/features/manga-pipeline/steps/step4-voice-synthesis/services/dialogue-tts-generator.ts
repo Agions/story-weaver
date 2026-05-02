@@ -1,6 +1,8 @@
 import { Script, ScriptScene } from '../../step1-script-generation/types/script';
 
 import { VoiceAssignment } from './voice-assigner';
+import { ttsService, DEFAULT_TTS_CONFIG } from '../../../../../core/services/tts.service';
+import type { TTSConfig } from '../../../../../shared/types/index';
 
 export interface DialogueSegment {
   id: string;
@@ -13,8 +15,11 @@ export interface DialogueSegment {
   voiceId: string;
   startTime: number;    // 秒
   endTime: number;      // 秒
-  audioUrl?: string;     // 生成后填充
+  audioUrl?: string;     // 生成后填充 (blob URL)
+  audioData?: ArrayBuffer; // 原始音频数据
+  duration?: number;     // 实际生成的音频时长
   status: 'pending' | 'generating' | 'done' | 'failed';
+  error?: string;
 }
 
 export interface TTSGenerationResult {
@@ -23,7 +28,7 @@ export interface TTSGenerationResult {
 }
 
 /**
- * 为对话生成 TTS 配音序列
+ * 为对话生成 TTS 配音序列（仅生成序列信息，不执行实际合成）
  */
 export function generateDialogueTTS(
   script: Script,
@@ -84,6 +89,83 @@ export function generateDialogueTTS(
     segments,
     totalDuration: currentTime,
   };
+}
+
+/**
+ * 使用 Edge-TTS 合成真实音频
+ */
+export async function synthesizeSegmentAudio(
+  segment: DialogueSegment,
+  options: { ttsConfig?: Partial<TTSConfig> } = {}
+): Promise<DialogueSegment> {
+  const updatedSegment = { ...segment, status: 'generating' as const };
+
+  try {
+    const config: TTSConfig = {
+      ...DEFAULT_TTS_CONFIG,
+      ...options.ttsConfig,
+      voice: segment.voiceId || DEFAULT_TTS_CONFIG.voice,
+    };
+
+    const response = await ttsService.synthesize({
+      text: segment.text,
+      config,
+    });
+
+    // 创建 Blob URL
+    const blob = new Blob([response.audio], { type: 'audio/mp3' });
+    const audioUrl = URL.createObjectURL(blob);
+
+    return {
+      ...updatedSegment,
+      status: 'done',
+      audioUrl,
+      audioData: response.audio,
+      duration: response.duration,
+      endTime: segment.startTime + response.duration,
+    };
+  } catch (error) {
+    return {
+      ...updatedSegment,
+      status: 'failed',
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+/**
+ * 批量合成对话音频
+ */
+export async function synthesizeAllDialogueAudio(
+  segments: DialogueSegment[],
+  options: {
+    ttsConfig?: Partial<TTSConfig>;
+    onProgress?: (completed: number, total: number) => void;
+    signal?: AbortSignal;
+  } = {}
+): Promise<DialogueSegment[]> {
+  const results: DialogueSegment[] = [];
+  const total = segments.length;
+
+  for (let i = 0; i < segments.length; i++) {
+    if (options.signal?.aborted) {
+      // 如果已中止，剩余的标记为 failed
+      for (let j = i; j < segments.length; j++) {
+        results.push({
+          ...segments[j],
+          status: 'failed',
+          error: 'Synthesis cancelled',
+        });
+      }
+      break;
+    }
+
+    const result = await synthesizeSegmentAudio(segments[i], options);
+    results.push(result);
+    options.onProgress?.(i + 1, total);
+  }
+
+  return results;
 }
 
 function extractDialogueFromScene(scene: ScriptScene): { character: string; text: string; emotion: string }[] {

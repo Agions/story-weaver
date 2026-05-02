@@ -226,10 +226,12 @@ describe('dialogue-tts-generator', () => {
         startTime: 0,
         endTime: 3,
         status: 'done',
-        audioUrl: 'https://example.com/audio.mp3',
+        audioUrl: 'blob:https://example.com/audio.mp3',
+        duration: 2.5,
       };
 
       expect(segmentWithAudio.audioUrl).toBeDefined();
+      expect(segmentWithAudio.duration).toBe(2.5);
     });
   });
 });
