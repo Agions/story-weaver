@@ -91,7 +91,9 @@ export function parseStoryboardResponse(raw: string): StoryboardOutput {
     if (jsonMatch) {
       return JSON.parse(jsonMatch[1]);
     }
-  } catch {}
+  } catch (e) {
+    // 忽略解析错误
+  }
   
   return {
     panels: [],

@@ -255,17 +255,17 @@ export async function exportProject(
   const fileName = options.fileName || generateFileName(storyboard.title, options.format);
 
   switch (options.format) {
-    case ExportFormat.ZIP:
+    case ExportFormat.ZIP: {
       const zipBlob = await exportAsZip(storyboard, options, onProgress);
       saveAs(zipBlob, fileName);
       return zipBlob;
-
-    case ExportFormat.ASS:
+    }
+    case ExportFormat.ASS: {
       const assContent = generateASS(storyboard);
       const assBlob = new Blob([assContent], { type: 'text/plain' });
       saveAs(assBlob, fileName);
       return assBlob;
-
+    }
     case ExportFormat.PDF:
       // PDF 导出需要 jsPDF
       return await exportAsPDF(storyboard, options, onProgress);
