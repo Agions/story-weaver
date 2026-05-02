@@ -14,7 +14,6 @@ import {
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { toast } from 'sonner';
 
-import { Form, FormItem, Select, InputNumber, Space, Divider, Modal, Row, Col } from '@/components/ui/antd-compat';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Empty } from '@/components/ui/empty';
@@ -37,6 +36,7 @@ import {
   TooltipProvider,
 } from '@/components/ui/tooltip';
 import { Text } from '@/components/ui/typography';
+import { Form, FormItem, Select, InputNumber, Space, Divider, Modal, Row, Col } from '@/components/ui/ui-components';
 import type {
   StoryboardFrame,
   CompositionProject,

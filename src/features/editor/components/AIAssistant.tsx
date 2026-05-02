@@ -3,7 +3,7 @@ import {
 } from 'lucide-react';
 import React, { useState } from 'react';
 
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -63,7 +63,7 @@ const Collapsible: React.FC<CollapsibleProps> = ({ header, children, ghost, clas
   );
 };
 
-interface AIAssistantProps {}
+type AIAssistantProps = Record<string, never>;
 
 const AIAssistant: React.FC<AIAssistantProps> = () => {
   const [activeTab, setActiveTab] = useState('chat');
@@ -353,7 +353,7 @@ const AIAssistant: React.FC<AIAssistantProps> = () => {
                       <Text>过滤语气词</Text>
                       <Tooltip>
                         <TooltipTrigger><HelpCircle /></TooltipTrigger>
-                        <TooltipContent>移除'嗯'、'啊'等语气词,使字幕更加清晰</TooltipContent>
+                        <TooltipContent>移除{`'`}嗯{`'`}、{`'`}啊{`'`}等语气词,使字幕更加清晰</TooltipContent>
                       </Tooltip>
                     </div>
                   </div>

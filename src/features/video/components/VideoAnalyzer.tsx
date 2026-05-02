@@ -55,7 +55,7 @@ const VideoAnalyzer: React.FC<VideoAnalyzerProps> = ({
       
       // 提取关键帧
       const keyFrameCount = Math.min(5, Math.ceil(videoMetadata.duration / 60));
-      const keyFrames = await invoke<string[]>('extract_key_frames', {
+      await invoke<string[]>('extract_key_frames', {
         path: selectedVideoUrl,
         count: keyFrameCount
       }).catch(err => {
@@ -66,7 +66,7 @@ const VideoAnalyzer: React.FC<VideoAnalyzerProps> = ({
       setProgress(70);
       
       // 生成缩略图
-      const thumbnail = await invoke<string>('generate_thumbnail', {
+      await invoke<string>('generate_thumbnail', {
         path: selectedVideoUrl
       }).catch(err => {
         logger.error('生成缩略图失败:', err);

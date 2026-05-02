@@ -13,7 +13,6 @@ import {
   DollarSign,
   Settings,
   Search,
-  Loader2
 } from 'lucide-react';
 import React, { useState, useMemo } from 'react';
 
@@ -24,7 +23,6 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip } from '@/components/ui/tooltip';
 import { MODEL_PROVIDERS } from '@/core/config/models.config';
 import { LLM_MODELS } from '@/core/constants';

@@ -35,10 +35,10 @@ const Tabs = React.forwardRef<
   const panes: { key: string; tab?: React.ReactNode; children?: React.ReactNode }[] = [];
   const otherChildren: React.ReactNode[] = [];
 
-  React.Children.forEach(children, (child: any) => {
+  React.Children.forEach(children, (child: React.ReactElement) => {
     if (child?.type?.displayName === 'TabPane') {
       panes.push({
-        key: child.props.key || '',
+        key: child.props.key ?? '',
         tab: child.props.tab,
         children: child.props.children,
       });
@@ -52,7 +52,7 @@ const Tabs = React.forwardRef<
     return (
       <TabsPrimitive.Root
         ref={ref}
-        defaultValue={initialDefault || items[0]?.key}
+        defaultValue={initialDefault ?? items[0]?.key}
         value={controlledValue}
         onValueChange={handleChange}
         className={className}
@@ -60,11 +60,11 @@ const Tabs = React.forwardRef<
       >
         <TabsList size={size}>
           {items.map((item, i) => (
-            <TabsTrigger key={item.key || String(i)} value={String(item.key || i)}>{item.label}</TabsTrigger>
+            <TabsTrigger key={item.key ?? String(i)} value={String(item.key ?? i)}>{item.label}</TabsTrigger>
           ))}
         </TabsList>
         {items.map((item, i) => (
-          <TabsContent key={String(item.key || i)} value={String(item.key || i)}>
+          <TabsContent key={String(item.key ?? i)} value={String(item.key ?? i)}>
             {item.children}
           </TabsContent>
         ))}
@@ -76,7 +76,7 @@ const Tabs = React.forwardRef<
     return (
       <TabsPrimitive.Root
         ref={ref}
-        defaultValue={initialDefault || panes[0]?.key}
+        defaultValue={initialDefault ?? panes[0]?.key}
         value={controlledValue}
         onValueChange={handleChange}
         className={className}

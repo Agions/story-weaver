@@ -7,22 +7,25 @@ import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { toast } from '@/components/ui/sonner';
 import { Tooltip } from '@/components/ui/tooltip';
-import { tauriService } from '@/core/services';
 import type { ScriptData } from '@/core/types';
 import { logger } from '@/core/utils/logger';
 
 import styles from './ExportPanel.module.less';
 
 // 导出脚本到文件
-const exportScript = async (script: ScriptData, format: 'txt' | 'srt', path: string) => {
-  const { tauriService: ts } = await import('@/core/services');
-  let content = '';
-  if (format === 'txt') {
-    content = script.content || '';
-  } else if (format === 'srt') {
-    content = (script as { srt?: string }).srt || '';
+const _getFormatIcon = (format: ExportFormat) => {
+  switch (format) {
+    case 'txt':
+      return <FileText size={16} />;
+    case 'srt':
+      return <FileText size={16} />;
+    case 'pdf':
+      return <FileType size={16} />;
+    case 'html':
+      return <Globe size={16} />;
+    default:
+      return <FileText size={16} />;
   }
-  await ts.writeText(path, content);
 };
 
 // 导出格式
@@ -60,22 +63,6 @@ const ExportPanel: React.FC<ExportPanelProps> = ({ script }) => {
       toast.error('导出失败，请稍后重试');
     } finally {
       setExporting(false);
-    }
-  };
-
-  // 根据格式返回对应图标
-  const getFormatIcon = (format: ExportFormat) => {
-    switch (format) {
-      case 'txt':
-        return <FileText size={16} />;
-      case 'srt':
-        return <FileText size={16} />;
-      case 'pdf':
-        return <FileType size={16} />;
-      case 'html':
-        return <Globe size={16} />;
-      default:
-        return <FileText size={16} />;
     }
   };
 

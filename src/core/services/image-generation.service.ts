@@ -178,7 +178,7 @@ export async function generateWithSeedream(
   const imageData = response.data?.data?.[0];
 
   return {
-    url: imageData?.url || '',
+    url: imageData?.url ?? '',
     width: parseSize(size).width,
     height: parseSize(size).height,
     model: 'seedream-5.0',
@@ -225,7 +225,7 @@ export async function generateWithKling(
   const imageData = response.data?.images?.[0];
 
   return {
-    url: imageData?.url || '',
+    url: imageData?.url ?? '',
     width: imageData?.width || 1024,
     height: imageData?.height || 1024,
     model: 'kling-1.6',
@@ -271,7 +271,7 @@ export async function generateVideoWithKling(
   const videoData = response.data;
 
   return {
-    url: videoData?.url || '',
+    url: videoData?.url ?? '',
     coverUrl: videoData?.cover_url,
     duration,
     width: videoData?.width || 1920,
@@ -321,7 +321,7 @@ export async function generateWithVidu(
   const imageData = response.data?.data?.[0];
 
   return {
-    url: imageData?.url || '',
+    url: imageData?.url ?? '',
     width: imageData?.width || 1024,
     height: imageData?.height || 1024,
     model: 'vidu-2.0',
@@ -367,7 +367,7 @@ export async function generateVideoWithVidu(
   const videoData = response.data;
 
   return {
-    url: videoData?.url || '',
+    url: videoData?.url ?? '',
     coverUrl: videoData?.cover_image_url,
     duration,
     width: videoData?.width || 1920,
@@ -418,7 +418,7 @@ export async function generateVideoWithSeedance(
   const videoData = response.data?.data?.[0];
 
   return {
-    url: videoData?.url || '',
+    url: videoData?.url ?? '',
     coverUrl: videoData?.cover_image_url,
     duration,
     width: videoData?.width || 1920,
@@ -438,7 +438,7 @@ export async function generateImage(
   prompt: string,
   options: ImageGenerationOptions = {}
 ): Promise<ImageGenerationResult> {
-  const model = options.model || 'seedream-5.0';
+  const model = options.model ?? 'seedream-5.0';
 
   switch (model) {
     case 'seedream-5.0':
@@ -460,7 +460,7 @@ export async function generateVideo(
   prompt: string,
   options: VideoGenerationOptions = {}
 ): Promise<VideoGenerationResult> {
-  const model = options.model || 'seedance-2.0';
+  const model = options.model ?? 'seedance-2.0';
 
   switch (model) {
     case 'seedance-2.0':
@@ -504,17 +504,17 @@ export async function getVideoStatus(taskId: string, model: string = 'seedance-2
     }
   });
 
-  const data = response.data?.data || response.data;
+  const data = response.data?.data ?? response.data;
 
   return {
-    url: data?.url || '',
+    url: data?.url ?? '',
     coverUrl: data?.cover_image_url || data?.cover_url,
     duration: data?.duration || 5,
     width: data?.width || 1920,
     height: data?.height || 1080,
     model,
     taskId,
-    status: data?.status || 'processing'
+    status: data?.status ?? 'processing'
   };
 }
 

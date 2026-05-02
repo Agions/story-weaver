@@ -11,13 +11,14 @@ import {
 } from 'lucide-react';
 import React, { useState, useCallback, useEffect } from 'react';
 
-import { message, Tag, TextArea, Text, Title, Option, Select } from '@/components/ui/antd-compat';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Slider } from '@/components/ui/slider';
 import {
   Tooltip,
 } from '@/components/ui/tooltip';
+import { message, Tag, TextArea, Text, Title, Option, Select } from '@/components/ui/ui-components';
 
 import styles from './StoryboardEditor.module.less';
 

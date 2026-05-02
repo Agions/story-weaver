@@ -244,7 +244,7 @@ const AntDSelect: React.FC<AntDSelectProps> = ({
   );
 };
 
-// Add .Group and .Button as static properties to Radio for antd-style usage
+// Add .Group and .Button as static properties to Radio for style usage
 
 // ============================================================
 // AntD-compatible Radio.Group with button style
@@ -330,18 +330,18 @@ interface RadioButtonProps {
 }
 
 const RadioButton: React.FC<RadioButtonProps> = ({ children, ...props }) => (
-  <RadioGroup {...props} options={[{ value: props.value || '', label: children || '' }]} />
+  <RadioGroup {...props} options={[{ value: props.value ?? '', label: children ?? '' }]} />
 );
 
-const Radio: React.FC<any> = (props) => (
+const Radio: React.FC<React.ComponentPropsWithoutRef<'input'>> = (props) => (
   <label className="flex items-center gap-2 cursor-pointer">
     <input type="radio" {...props} className="accent-primary" />
     <span className="text-sm">{props.children}</span>
   </label>
 );
 
-(Radio as any).Group = RadioGroup;
-(Radio as any).Button = RadioButton;
+(Radio as unknown as { Group: typeof RadioGroup; Button: typeof RadioButton }).Group = RadioGroup;
+(Radio as unknown as { Group: typeof RadioGroup; Button: typeof RadioButton }).Button = RadioButton;
 
 // ============================================================
 // Space component (flex gap wrapper)
@@ -439,7 +439,7 @@ const Spin: React.FC<SpinProps> = ({
   
   return (
     <div className={cn("flex flex-col items-center justify-center gap-2", className)}>
-      {indicator || (
+      {indicator ?? (
         <span
           className="inline-block animate-spin"
           style={{ fontSize: spinnerSize, lineHeight: spinnerSize }}
@@ -581,14 +581,14 @@ const ModalFn: React.FC<ModalProps> = ({
               onClick={handleCancel}
               className="px-4 py-2 text-sm border rounded-md hover:bg-accent"
             >
-              {cancelText || '取消'}
+              {cancelText ?? '取消'}
             </button>
             <button
               type="button"
               onClick={handleOk}
               className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
             >
-              {okText || '确定'}
+              {okText ?? '确定'}
             </button>
           </DialogFooter>
         )}
@@ -687,7 +687,7 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
-      type={props.htmlType || 'button'}
+      type={props.htmlType ?? 'button'}
       disabled={disabled || loading}
       className={cn(
         "inline-flex items-center justify-center gap-2 font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
@@ -763,13 +763,13 @@ const ListWrapper = (({ size: _size, className, children, grid, dataSource, rend
   // If dataSource and renderItem are provided, map over them
   if (dataSource && renderItem) {
     if (dataSource.length === 0) {
-      return <div className={cn("py-4 text-center text-sm text-muted-foreground", className)}>{locale?.emptyText || '暂无数据'}</div>;
+      return <div className={cn("py-4 text-center text-sm text-muted-foreground", className)}>{locale?.emptyText ?? '暂无数据'}</div>;
     }
     const items = dataSource.map((item, index) => renderItem(item, index));
     
     // Apply grid layout if specified
     if (grid) {
-      const colCount = grid.column || grid.md || 3;
+      const colCount = grid.column ?? grid.md ?? 3;
       return (
         <div 
           className={cn("grid gap-4", className)}
@@ -840,7 +840,7 @@ const AntdTable: React.FC<TableProps> = ({
       <table className={cn("w-full caption-bottom", sizeClass)}>
         <thead>
           <tr className="border-b">{columns.map((col, i) => (
-            <th key={col.key || i} style={{ width: col.width }} className="text-left font-medium p-2">{col.title}</th>
+            <th key={col.key ?? i} style={{ width: col.width }} className="text-left font-medium p-2">{col.title}</th>
           ))}</tr>
         </thead>
         <tbody>
@@ -852,7 +852,7 @@ const AntdTable: React.FC<TableProps> = ({
                 {columns.map((col, colIndex) => {
                   const value = col.dataIndex ? record[col.dataIndex] : undefined;
                   return (
-                    <td key={col.key || colIndex} className="p-2">
+                    <td key={col.key ?? colIndex} className="p-2">
                       {col.render ? col.render(value, record, rowIndex) : value}
                     </td>
                   );
@@ -1381,7 +1381,7 @@ const ColorPicker: React.FC<ColorPickerProps> = ({
 };
 
 // ============================================================
-// RcFile type alias (antd internal)
+// RcFile type alias (internal)
 export type RcFile = File & { uid?: string; };
 
 // Upload component

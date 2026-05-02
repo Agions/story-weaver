@@ -115,16 +115,16 @@ export async function syncLipWithSyncSo(
     }
   });
 
-  const data = response.data || response;
+  const data = response.data ?? response;
 
   return {
-    url: data?.url || '',
+    url: data?.url ?? '',
     coverUrl: data?.cover_url,
     width: data?.width || 1920,
     height: data?.height || 1080,
     duration: data?.duration || 0,
     taskId: data?.task_id,
-    status: data?.status || 'processing'
+    status: data?.status ?? 'processing'
   };
 }
 
@@ -151,19 +151,19 @@ export async function generateTalkingFace(
     data: {
       source_image: imageUrl,
       driven_audio: audioUrl,
-      driver: options.driver || 'audio',
+      driver: options.driver ?? 'audio',
       expression_strength: options.expressionStrength || 1.0,
       head_pose: options.headPose !== false
     }
   });
 
-  const data = response.data || response;
+  const data = response.data ?? response;
 
   return {
-    url: data?.url || '',
+    url: data?.url ?? '',
     coverUrl: data?.cover_url,
     taskId: data?.task_id,
-    status: data?.status || 'processing'
+    status: data?.status ?? 'processing'
   };
 }
 
@@ -205,16 +205,16 @@ export async function getLipSyncStatus(taskId: string): Promise<LipSyncResult> {
     }
   });
 
-  const data = response.data || response;
+  const data = response.data ?? response;
 
   return {
-    url: data?.url || '',
+    url: data?.url ?? '',
     coverUrl: data?.cover_url,
     width: data?.width || 1920,
     height: data?.height || 1080,
     duration: data?.duration || 0,
     taskId,
-    status: data?.status || 'processing',
+    status: data?.status ?? 'processing',
     error: data?.error
   };
 }
@@ -233,13 +233,13 @@ export async function getTalkingFaceStatus(taskId: string): Promise<TalkingFaceR
     }
   });
 
-  const data = response.data || response;
+  const data = response.data ?? response;
 
   return {
-    url: data?.url || '',
+    url: data?.url ?? '',
     coverUrl: data?.cover_url,
     taskId,
-    status: data?.status || 'processing'
+    status: data?.status ?? 'processing'
   };
 }
 

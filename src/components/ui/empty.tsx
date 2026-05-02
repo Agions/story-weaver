@@ -17,7 +17,7 @@ const Empty: React.FC<EmptyProps> & { PRESENTED_IMAGE_SIMPLE?: React.ReactNode }
 }) => {
   return (
     <div className={cn("flex flex-col items-center justify-center py-8 text-center", className)}>
-      {image || (
+      {image ?? (
         <div className="mb-4 text-4xl opacity-20">📭</div>
       )}
       {description && (

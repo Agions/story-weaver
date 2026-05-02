@@ -63,7 +63,7 @@ interface VideoExporterProps {
 }
 
 const VideoExporter: React.FC<VideoExporterProps> = ({
-  projectId,
+  projectId: _projectId,
   projectName = '未命名项目',
   estimatedDuration = 0,
   onExport,
@@ -97,8 +97,8 @@ const VideoExporter: React.FC<VideoExporterProps> = ({
   // 计算预计文件大小
   const estimatedFileSize = useCallback(() => {
     const { width, height } = RESOLUTION_VALUES[resolution];
-    const pixels = width * height;
-    const frameRateValue = frameRate;
+    const _pixels = width * height;
+    const _frameRateValue = frameRate;
     const bitrate = QUALITY_PRESETS[quality].bitrate;
     const bitrateMbps = parseFloat(bitrate);
 

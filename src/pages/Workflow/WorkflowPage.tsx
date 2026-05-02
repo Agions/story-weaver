@@ -28,7 +28,7 @@ const WORKFLOW_STEPS = [
 const WorkflowPage: React.FC = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('workflow');
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, _setCurrentStep] = useState(0);
 
   const handleStartWorkflow = () => {
     toast.info('开始创建工作流...');

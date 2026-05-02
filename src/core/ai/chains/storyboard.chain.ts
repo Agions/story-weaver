@@ -91,7 +91,7 @@ export function parseStoryboardResponse(raw: string): StoryboardOutput {
     if (jsonMatch) {
       return JSON.parse(jsonMatch[1]);
     }
-  } catch (e) {
+  } catch (_e) {
     // 忽略解析错误
   }
   

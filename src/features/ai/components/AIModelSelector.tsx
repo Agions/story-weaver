@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
 import {
-  Bot,
   CheckCircle,
   HelpCircle,
   Video,
@@ -10,19 +9,16 @@ import {
   Zap,
   Settings,
   Search,
-  Image as ImageIcon
 } from 'lucide-react';
 import React, { useState } from 'react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { RadioGroup } from '@/components/ui/radio-group';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Tooltip } from '@/components/ui/tooltip';
 
 import styles from './AIModelSelector.module.less';

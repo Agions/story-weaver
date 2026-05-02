@@ -3,7 +3,7 @@
  * Handles project serialization, import, and export
  */
 
-import type { ProjectData, ExportFormat, ProjectExportData, ImportOptions, ExportOptions } from './project.types';
+import type { ProjectData, ProjectExportData, ImportOptions, ExportOptions } from './project.types';
 
 class ProjectImportExportService {
   private readonly CURRENT_VERSION = '2.0.0';

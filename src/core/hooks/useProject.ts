@@ -102,7 +102,8 @@ export function useProject(_projectId?: string): UseProjectReturn {
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [taskStatus, setTaskStatus] = useState<TaskStatus | null>(null);
+  const [_taskStatus, _setTaskStatus] = useState<TaskStatus | null>(null);
+  const taskStatus = _taskStatus;
   
   // 最近项目
   const recentProjects = useMemo(() => {

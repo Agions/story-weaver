@@ -105,7 +105,7 @@ function evaluateDialogueNaturalness(
 function evaluateCharacterConsistency(
   script: Script,
   issues: EvaluationIssue[],
-  suggestions: string[]
+  _suggestions: string[]
 ): number {
   let score = 100;
 

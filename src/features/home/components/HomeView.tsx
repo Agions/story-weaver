@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { Separator } from '@/components/ui/separator';
 import { useProjectStore } from '@/shared/stores/project.store';

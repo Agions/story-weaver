@@ -9,8 +9,6 @@ import React from 'react';
 import { Button as ShadcnButton } from '@/components/ui/button';
 import { cn } from '@/shared/utils/class-names';
 
-import styles from './Button.module.less';
-
 interface ButtonProps {
   variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
   size?: 'default' | 'sm' | 'lg' | 'icon';

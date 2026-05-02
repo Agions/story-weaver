@@ -123,7 +123,7 @@ export function useWorkflow(callbacks?: WorkflowCallbacks): UseWorkflowReturn {
     if (config?.autoGenerateScript && config?.preferredTemplate) {
       updateStep('script-generate');
     }
-  }, [updateStep, updateStatus]);
+  }, [updateStep, updateStatus, analyze]);
 
   const selectTemplate = useCallback((_template: ScriptTemplate) => {
     setState(prev => ({

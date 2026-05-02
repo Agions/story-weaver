@@ -21,7 +21,6 @@ import {
 } from 'lucide-react';
 import React, { useState } from 'react';
 
-import { Button , Select as AntDSelect , Collapse , Space, Row, Col, Divider , TextArea } from '@/components/ui/antd-compat';
 import { Popconfirm } from '@/components/ui/confirm-dialog';
 import { Empty } from '@/components/ui/empty';
 import { Input } from '@/components/ui/input';
@@ -30,6 +29,7 @@ import { Slider } from '@/components/ui/slider';
 import { Tag } from '@/components/ui/tag';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Text, Title } from '@/components/ui/typography';
+import { Button , Select as AntDSelect , Collapse , Space, Row, Col, Divider , TextArea } from '@/components/ui/ui-components';
 
 
 import styles from './SceneRenderer.module.less';

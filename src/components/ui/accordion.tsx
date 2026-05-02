@@ -2,11 +2,11 @@
 
 import * as React from "react"
 
-// Import antd-compat Collapse for re-export as Accordion
-import { Collapse as AntDCollapse, CollapsePanel as AntDCollapsePanel } from './antd-compat';
-import type { CollapseProps, CollapsePanelProps } from './antd-compat';
+// Import Collapse for re-export as Accordion
+import { Collapse as AntDCollapse, CollapsePanel as AntDCollapsePanel } from './ui-components';
+import type { CollapseProps, CollapsePanelProps } from './ui-components';
 
-// Re-export antd-compat Collapse as Accordion and AccordionItem
+// Re-export Collapse as Accordion and AccordionItem
 export const Accordion = AntDCollapse;
 export const AccordionItem = AntDCollapsePanel;
 export type { CollapseProps as AccordionProps, CollapsePanelProps as AccordionItemProps };

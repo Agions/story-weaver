@@ -135,13 +135,13 @@ class EnhancedConsistencyService {
   createCharacter(characterData: Partial<Character>): Character {
     const character: Character = {
       id: characterData.id || `char_${uuidv4().slice(0, 8)}`,
-      name: characterData.name || '未命名角色',
-      description: characterData.description || '',
-      appearance: characterData.appearance || this.getDefaultAppearance(),
-      personality: characterData.personality || [],
-      expressions: characterData.expressions || this.getDefaultExpressions(),
+      name: characterData.name ?? '未命名角色',
+      description: characterData.description ?? '',
+      appearance: characterData.appearance ?? this.getDefaultAppearance(),
+      personality: characterData.personality ?? [],
+      expressions: characterData.expressions ?? this.getDefaultExpressions(),
       voice: characterData.voice,
-      referenceImages: characterData.referenceImages || [],
+      referenceImages: characterData.referenceImages ?? [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
@@ -304,7 +304,7 @@ class EnhancedConsistencyService {
     );
     
     let prompt = '【多角色场景】\n\n';
-    prompt += `场景描述: ${scene || '多人互动场景'}\n\n`;
+    prompt += `场景描述: ${scene ?? '多人互动场景'}\n\n`;
     prompt += '【角色列表】\n\n';
     prompt += prompts.join('\n\n---\n\n');
     
@@ -323,15 +323,15 @@ class EnhancedConsistencyService {
   createDramaStyle(styleData: Partial<DramaStyle>): DramaStyle {
     const style: DramaStyle = {
       id: styleData.id || `style_${uuidv4().slice(0, 8)}`,
-      name: styleData.name || '默认风格',
-      genre: styleData.genre || 'drama',
-      tone: styleData.tone || 'neutral',
-      pacing: styleData.pacing || 'normal',
-      artStyle: styleData.artStyle || 'anime',
-      colorPalette: styleData.colorPalette || ['#FFFFFF', '#000000', '#FF6B6B'],
-      lightingStyle: styleData.lightingStyle || '自然光',
-      characteristics: styleData.characteristics || [],
-      basePrompt: styleData.basePrompt || ''
+      name: styleData.name ?? '默认风格',
+      genre: styleData.genre ?? 'drama',
+      tone: styleData.tone ?? 'neutral',
+      pacing: styleData.pacing ?? 'normal',
+      artStyle: styleData.artStyle ?? 'anime',
+      colorPalette: styleData.colorPalette ?? ['#FFFFFF', '#000000', '#FF6B6B'],
+      lightingStyle: styleData.lightingStyle ?? '自然光',
+      characteristics: styleData.characteristics ?? [],
+      basePrompt: styleData.basePrompt ?? ''
     };
 
     this.styleCache.set(style.id, style);
@@ -495,7 +495,7 @@ class EnhancedConsistencyService {
       neutral: ['平静', '正常', '面无表情']
     };
 
-    const keywords = emotionKeywords[expectedEmotion] || [];
+    const keywords = emotionKeywords[expectedEmotion] ?? [];
     const hasEmotion = keywords.some(kw => actualDescription.includes(kw));
 
     if (!hasEmotion) {
@@ -548,7 +548,7 @@ class EnhancedConsistencyService {
     const library = this.loadCharacterLibrary(projectId);
     if (!library) return '# 角色库为空\n\n请先创建角色。';
 
-    let handbook = `# ${library.dramaStyle?.name || '视频脚本'} 角色参考手册\n\n`;
+    let handbook = `# ${library.dramaStyle?.name ?? '视频脚本'} 角色参考手册\n\n`;
     handbook += `生成时间: ${new Date().toLocaleString('zh-CN')}\n\n`;
     handbook += `---\n\n`;
 
@@ -563,7 +563,7 @@ class EnhancedConsistencyService {
     library.characters.forEach(char => {
       handbook += `## ${char.name}\n\n`;
       handbook += `**ID**: ${char.id}\n\n`;
-      handbook += `**描述**: ${char.description || '无'}\n\n`;
+      handbook += `**描述**: ${char.description ?? '无'}\n\n`;
       
       // 外观
       handbook += `### 外观特征\n\n`;
@@ -644,7 +644,7 @@ ${this.generateDramaStylePrompt(style)}
 
     for (let i = 0; i < sentences.length; i += 2) {
       const sentence = sentences[i];
-      const punctuation = sentences[i + 1] || '';
+      const punctuation = sentences[i + 1] ?? '';
 
       if (sentence.length > 30) {
         // 在逗号处拆分

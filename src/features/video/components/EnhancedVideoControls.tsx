@@ -22,7 +22,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 
 import styles from './EnhancedVideoControls.module.less';
 
-const { ControlBar } = { ControlBar: 'div' };
+const { _ControlBar } = { _ControlBar: 'div' };
 
 // ============================================
 // 类型定义
@@ -133,7 +133,7 @@ export const VideoControls: React.FC<VideoControlsProps> = ({
   };
 
   // 播放速率菜单
-  const playbackRateMenu = {
+  const _playbackRateMenu = {
     items: playbackRates.map((rate) => ({
       key: rate,
       label: (
@@ -146,7 +146,7 @@ export const VideoControls: React.FC<VideoControlsProps> = ({
   };
 
   // 进度百分比
-  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+  const _progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
     <div className={`${styles.controls} ${className || ''}`}>

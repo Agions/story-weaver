@@ -308,7 +308,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   icon,
   actions,
   clickable = false,
-  loading = false,
+  loading: _loading = false,
   onClick,
   className,
   footer,
@@ -356,7 +356,7 @@ export const GridStatistic: React.FC<GridStatisticProps> = ({
   gutter = [16, 16],
   className,
 }) => {
-  const colSpan = Math.floor(24 / columns);
+  const _colSpan = Math.floor(24 / columns);
   
   return (
     <div 

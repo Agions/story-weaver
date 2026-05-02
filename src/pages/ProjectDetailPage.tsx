@@ -16,16 +16,15 @@ import React, { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Modal, Spin, Space, Empty, List , Alert , Select , Input , Button , Card } from '@/components/ui/antd-compat';
 import { Tabs, TabPane } from '@/components/ui/tabs';
 import { Title, Text, Paragraph } from '@/components/ui/typography';
+import { Modal, Spin, Space, Empty, List , Alert , Select , Input , Button , Card } from '@/components/ui/ui-components';
 import { collaborationService, costService, qualityGateService, reviewExportService , tauriService } from '@/core/services';
 import type { EvaluationScores, FrameComment, StoryboardVersion, VersionDiffSummary } from '@/core/services';
 import { runWhenIdle } from '@/core/utils/idle';
 import { logger } from '@/core/utils/logger';
 import type { NovelMetadata } from '@/features/script/components/NovelImporter';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
-
 import { toast } from '@/shared/components/ui/Toast';
 import { useProjectStore } from '@/shared/stores';
 import type { ProjectData } from '@/shared/types';
@@ -67,7 +66,7 @@ const ProjectDetail: React.FC = () => {
   const [compareLeftVersionId, setCompareLeftVersionId] = useState<string | undefined>(undefined);
   const [compareRightVersionId, setCompareRightVersionId] = useState<string | undefined>(undefined);
   const [versionDiff, setVersionDiff] = useState<VersionDiffSummary | null>(null);
-  const preloadByTab: Record<string, Array<() => Promise<unknown>>> = {
+  const preloadByTab = useMemo<Record<string, Array<() => Promise<unknown>>>>(() => ({
     novel: [importScriptEditor],
     'script-edit': [importCharacterDesigner, importRenderCenter],
     storyboard: [importRenderCenter, importCompositionStudio],
@@ -77,14 +76,14 @@ const ProjectDetail: React.FC = () => {
     audio: [importCostDashboard],
     cost: [],
     export: [],
-  };
+  }), []);
 
-  const preloadTabModules = (tabKey: string) => {
+  const preloadTabModules = useCallback((tabKey: string) => {
     const tasks = preloadByTab[tabKey] || [];
     tasks.forEach(task => {
       void task();
     });
-  };
+  }, [preloadByTab]);
 
   const renderTabLabel = (tabKey: string, icon: React.ReactNode, label: string) => (
     <span onMouseEnter={() => preloadTabModules(tabKey)} onFocus={() => preloadTabModules(tabKey)}>
@@ -99,9 +98,12 @@ const ProjectDetail: React.FC = () => {
 
     const warmup = () => preloadTabModules(activeTab);
     return runWhenIdle(warmup, { timeoutMs: 120 });
-  }, [activeTab]);
+  }, [activeTab, preloadByTab, preloadTabModules]);
 
-  const storyboardFrames: StoryboardFrame[] = Array.isArray(project?.storyboardFrames) ? project.storyboardFrames : [];
+  const storyboardFrames = useMemo<StoryboardFrame[]>(
+    () => Array.isArray(project?.storyboardFrames) ? project.storyboardFrames : [],
+    [project?.storyboardFrames]
+  );
   const evaluationSummary: EvaluationScores | undefined = project?.evaluationReport?.summary || project?.evaluationSummary;
   const exportQualityGate = useMemo(
     () =>

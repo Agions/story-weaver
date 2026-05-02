@@ -108,7 +108,7 @@ const Popconfirm: React.FC<PopconfirmProps> = ({
       okText={okText}
       cancelText={cancelText}
     >
-      <div onClick={(e) => { e.stopPropagation(); setIsOpen(true); }}>
+      <div onClick={(e) => { e.stopPropagation(); setIsOpen(true); }} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); setIsOpen(true); } }} role="button" tabIndex={0}>
         {children}
       </div>
     </ConfirmDialog>
@@ -122,18 +122,18 @@ interface AlertDialogProps {
   children?: React.ReactNode;
 }
 
-const AlertDialog: React.FC<AlertDialogProps> = ({ children, ...props }) => (
-  <ConfirmDialog {...props}>{children}</ConfirmDialog>
+const AlertDialog: React.FC<AlertDialogProps> = ({ children, ..._props }) => (
+  <ConfirmDialog {..._props}>{children}</ConfirmDialog>
 );
 
-const AlertDialogTrigger = ({ children, ...props }: any) => <>{children}</>;
+const AlertDialogTrigger = ({ children, ..._props }: React.PropsWithChildren) => <>{children}</>;
 
-const AlertDialogContent: React.FC<any> = ({ children, ...props }) => <>{children}</>;
-const AlertDialogHeader: React.FC<any> = ({ children, ...props }) => <>{children}</>;
-const AlertDialogTitle: React.FC<any> = ({ children, ...props }) => <>{children}</>;
-const AlertDialogDescription: React.FC<any> = ({ children, ...props }) => <>{children}</>;
-const AlertDialogFooter: React.FC<any> = ({ children, ...props }) => <>{children}</>;
-const AlertDialogCancel: React.FC<any> = ({ children, ...props }) => <>{children}</>;
-const AlertDialogAction: React.FC<any> = ({ children, ...props }) => <>{children}</>;
+const AlertDialogContent: React.FC<React.PropsWithChildren> = ({ children, ..._props }) => <>{children}</>;
+const AlertDialogHeader: React.FC<React.PropsWithChildren> = ({ children, ..._props }) => <>{children}</>;
+const AlertDialogTitle: React.FC<React.PropsWithChildren> = ({ children, ..._props }) => <>{children}</>;
+const AlertDialogDescription: React.FC<React.PropsWithChildren> = ({ children, ..._props }) => <>{children}</>;
+const AlertDialogFooter: React.FC<React.PropsWithChildren> = ({ children, ..._props }) => <>{children}</>;
+const AlertDialogCancel: React.FC<React.PropsWithChildren> = ({ children, ..._props }) => <>{children}</>;
+const AlertDialogAction: React.FC<React.PropsWithChildren> = ({ children, ..._props }) => <>{children}</>;
 
 export { ConfirmDialog, Popconfirm, AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction }

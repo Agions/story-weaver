@@ -23,7 +23,7 @@ const badgeVariants = cva(
           "border-transparent bg-blue-100 text-blue-800 hover:bg-blue-100/80",
         gold:
           "border-transparent bg-yellow-500 text-white hover:bg-yellow-500/80",
-        // antd status colors
+        // status colors
         processing: "border-transparent bg-blue-500 text-white",
         error: "border-transparent bg-red-500 text-white",
       },
@@ -55,7 +55,7 @@ export interface BadgeProps
 }
 
 function Badge({ className, variant, status, text, color, count, dot, icon, children, ...props }: BadgeProps) {
-  // antd-style status Badge
+  // status Badge
   if (status || dot) {
     const dotColor = status ? statusColors[status] : statusColors.default
     return (

@@ -36,7 +36,7 @@ interface ListProps {
 
 const List = Object.assign(
   ({ dataSource, renderItem, className, children, ...props }: ListProps) => {
-    // Support antd-style List.Item children pattern
+    // Support List.Item children pattern
     const itemChildren: React.ReactNode[] = [];
     React.Children.forEach(children, (child: any) => {
       if (child?.type === ListItem) {

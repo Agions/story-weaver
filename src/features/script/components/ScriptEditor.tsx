@@ -20,14 +20,6 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -83,9 +75,9 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({
   initialSegments = [],
   onSave,
   onExport,
-  script,
-  metadata,
-  onScriptUpdate,
+  script: _script,
+  metadata: _metadata,
+  onScriptUpdate: _onScriptUpdate,
 }) => {
   const [segments, setSegments] = useState<VideoSegment[]>(initialSegments);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -242,12 +234,12 @@ const ScriptEditor: React.FC<ScriptEditorProps> = ({
   };
 
   // 表格列定义
-  const columns = [
+  const _columns = [
     {
       title: '时间',
       key: 'time',
       width: 180,
-      render: (_: unknown, record: VideoSegment, index: number) => (
+      render: (_: unknown, record: VideoSegment, _index: number) => (
         <span>
           {formatDuration(record.start)} - {formatDuration(record.end)}
         </span>

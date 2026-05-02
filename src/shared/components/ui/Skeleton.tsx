@@ -68,8 +68,8 @@ export interface CardSkeletonProps {
 export const CardSkeleton: React.FC<CardSkeletonProps> = ({
   title = true,
   avatar = true,
-  cover = false,
-  active = true,
+  _cover = false,
+  _active = true,
   className,
 }) => {
   return (
@@ -100,7 +100,7 @@ export interface ListSkeletonProps {
 export const ListSkeleton: React.FC<ListSkeletonProps> = ({
   count = 3,
   avatar = true,
-  active = true,
+  _active = true,
   className,
 }) => {
   return (
@@ -134,7 +134,7 @@ export const FormSkeleton: React.FC<FormSkeletonProps> = ({
   count = 4,
   labels = true,
   button = true,
-  active = true,
+  _active = true,
   className,
 }) => {
   return (
@@ -172,7 +172,7 @@ export const StatisticSkeleton: React.FC<StatisticSkeletonProps> = ({
   icon = true,
   title = true,
   value = true,
-  active = true,
+  _active = true,
   className,
 }) => {
   return (

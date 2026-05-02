@@ -70,7 +70,7 @@ export function parseScriptAnalysisResponse(raw: string): Partial<ScriptAnalysis
     if (jsonMatch) {
       return JSON.parse(jsonMatch[1]);
     }
-  } catch (e) {
+  } catch (_e) {
     // 忽略 JSON 解析错误，尝试其他方式
   }
   

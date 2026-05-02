@@ -17,12 +17,12 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 
 import CostDashboard from '@/components/business/CostDashboard';
-import { useForm } from '@/components/ui/antd-compat';
 import { Button } from '@/components/ui/button';
 import {
   Card,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { useForm } from '@/components/ui/ui-components';
 import { aiService, tauriService , audioPipelineService, collaborationService, costService, qualityGateService, reviewExportService, storyAnalysisService } from '@/core/services';
 import type { EvaluationScores, FrameComment, QualityGateIssue, StoryboardVersion, VersionDiffSummary } from '@/core/services';
 import type { ExportSettings, StoryAnalysis, Character, CompositionProject } from '@/core/types';
@@ -123,7 +123,7 @@ const ProjectEdit: React.FC = () => {
   const [initialLoading, setInitialLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const evaluationSummary: EvaluationScores | undefined = project?.evaluationReport?.summary || project?.evaluationSummary;
+  const evaluationSummary: EvaluationScores | undefined = project?.evaluationReport?.summary ?? project?.evaluationSummary;
 
   const exportQualityGate = useMemo(
     () =>
@@ -134,7 +134,7 @@ const ProjectEdit: React.FC = () => {
     [storyboardFrames, evaluationSummary]
   );
 
-  const preloadByStep: Record<number, Array<() => Promise<unknown>>> = {
+  const preloadByStep = useMemo<Record<number, Array<() => Promise<unknown>>>>(() => ({
     0: [],
     1: [],
     2: [],
@@ -144,19 +144,19 @@ const ProjectEdit: React.FC = () => {
     6: [],
     7: [],
     8: [],
-  };
+  }), []);
 
-  const preloadStepModules = (step: number) => {
-    const tasks = preloadByStep[step] || [];
+  const preloadStepModules = useCallback((step: number) => {
+    const tasks = preloadByStep[step] ?? [];
     tasks.forEach(task => { void task(); });
-  };
+  }, [preloadByStep]);
 
   useEffect(() => {
-    const tasks = preloadByStep[currentStep] || [];
+    const tasks = preloadByStep[currentStep] ?? [];
     if (tasks.length === 0) return;
     const warmup = () => preloadStepModules(currentStep);
     return runWhenIdle(warmup, { timeoutMs: 120 });
-  }, [currentStep]);
+  }, [currentStep, preloadByStep, preloadStepModules]);
 
   // 初始化 - 加载项目数据（如果是编辑现有项目）
   useEffect(() => {
@@ -184,8 +184,8 @@ const ProjectEdit: React.FC = () => {
           if (Array.isArray(projectData.storyboardComments) || Array.isArray(projectData.storyboardVersions)) {
             collaborationService.hydrate(
               projectData.id,
-              projectData.storyboardComments || [],
-              projectData.storyboardVersions || []
+              projectData.storyboardComments ?? [],
+              projectData.storyboardVersions ?? []
             );
             setStoryboardComments(collaborationService.listComments(projectData.id));
             setStoryboardVersions(collaborationService.listVersions(projectData.id));
@@ -273,17 +273,17 @@ const ProjectEdit: React.FC = () => {
   const buildStoryboardDraft = (analysis: StoryAnalysis): StoryboardFrame[] => {
     const draft = analysis.chapters.slice(0, 20).map((chapter, index) => ({
       id: `frame_${Date.now()}_${index}`,
-      title: chapter.title || `分镜 ${index + 1}`,
-      sceneDescription: chapter.summary || '',
+      title: chapter.title ?? `分镜 ${index + 1}`,
+      sceneDescription: chapter.summary ?? '',
       composition: index % 2 === 0 ? '三分法' : '中心构图',
       cameraType: index % 3 === 0 ? 'wide' : index % 3 === 1 ? 'medium' : 'closeup',
-      dialogue: chapter.keyEvents?.[0] || '',
+      dialogue: chapter.keyEvents?.[0] ?? '',
       duration: 5,
     }));
     return draft.length > 0 ? draft : [{
       id: `frame_${Date.now()}_0`,
       title: '分镜 1',
-      sceneDescription: analysis.summary || '',
+      sceneDescription: analysis.summary ?? '',
       composition: '三分法',
       cameraType: 'medium',
       dialogue: '',
@@ -313,7 +313,7 @@ const ProjectEdit: React.FC = () => {
     if (!project?.id) return;
     collaborationService.saveVersion({
       projectId: project.id,
-      label: versionLabel.trim() || `版本-${new Date().toLocaleTimeString()}`,
+      label: versionLabel.trim() ?? `版本-${new Date().toLocaleTimeString()}`,
       createdBy: 'current-user',
       payload: storyboardFrames,
     });
@@ -443,23 +443,23 @@ const ProjectEdit: React.FC = () => {
       const formData = form.getFieldsValue();
       const now = new Date().toISOString();
       const projectData: ProjectData = {
-        id: project?.id || uuid(),
+        id: project?.id ?? uuid(),
         name: formData.name,
         description: formData.description,
         content: content,
-        createdAt: project?.createdAt || now,
+        createdAt: project?.createdAt ?? now,
         updatedAt: now,
-        novelMetadata: novelMetadata || undefined,
-        storyAnalysis: storyAnalysis || undefined,
+        novelMetadata: novelMetadata ?? undefined,
+        storyAnalysis: storyAnalysis ?? undefined,
         storyboardFrames: storyboardFrames.length > 0 ? storyboardFrames : undefined,
         storyboardComments: storyboardComments.length > 0 ? storyboardComments : undefined,
         storyboardVersions: storyboardVersions.length > 0 ? storyboardVersions : undefined,
         characters: characters.length > 0 ? characters : undefined,
-        composition: composition || undefined,
+        composition: composition ?? undefined,
         audioConfig: audioConfig,
         exportPreset,
         exportSettings,
-        script: scriptText || undefined
+        script: scriptText ?? undefined
       };
       await tauriService.writeText(projectData.id, JSON.stringify(projectData));
       toast.success('项目保存成功');
@@ -494,7 +494,7 @@ const ProjectEdit: React.FC = () => {
       const mdContent = reviewExportService.toMarkdown({
         project: {
           id: project.id,
-          name: form.getFieldValue('name') || project.name || '未命名项目',
+          name: form.getFieldValue('name') ?? project.name ?? '未命名项目',
           storyboardFrameCount: storyboardFrames.length,
         },
         comments: projectComments,
@@ -508,7 +508,7 @@ const ProjectEdit: React.FC = () => {
         mdContent,
         {
           projectId: project.id,
-          projectName: form.getFieldValue('name') || project.name || '未命名项目',
+          projectName: form.getFieldValue('name') ?? project.name ?? '未命名项目',
           source: 'project_edit',
         },
       );
@@ -666,7 +666,7 @@ const ProjectEdit: React.FC = () => {
             exportPreset={exportPreset}
             exportSettings={exportSettings}
             projectId={project?.id}
-            projectName={form.getFieldValue('name') || '未命名项目'}
+            projectName={form.getFieldValue('name') ?? '未命名项目'}
             storyboardFrameCount={storyboardFrames.length}
             qualityGateIssues={exportQualityGate.issues}
             qualityGatePassed={exportQualityGate.passed}
@@ -744,7 +744,7 @@ const ProjectEdit: React.FC = () => {
             <Input
               placeholder="请输入项目名称"
               maxLength={100}
-              defaultValue={project?.name || ''}
+              defaultValue={project?.name ?? ''}
             />
           </div>
           <div className="space-y-2">
@@ -754,7 +754,7 @@ const ProjectEdit: React.FC = () => {
               placeholder="请输入项目描述（选填）"
               maxLength={500}
               rows={2}
-              defaultValue={project?.description || ''}
+              defaultValue={project?.description ?? ''}
             />
           </div>
         </div>

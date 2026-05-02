@@ -307,7 +307,7 @@ export async function exportProject(
 async function exportAsPDF(
   storyboard: StoryboardData,
   options: ExportOptions,
-  onProgress?: ProgressCallback
+  _onProgress?: ProgressCallback
 ): Promise<Blob> {
   // 动态导入 jsPDF
   const { default: jsPDF } = await import('jspdf');

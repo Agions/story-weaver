@@ -73,7 +73,7 @@ export class PipelineEngine {
 
   getStatus(): PipelineExecutionState {
     return {
-      workflowId: this.options.workflowId || '',
+      workflowId: this.options.workflowId ?? '',
       status: this.status,
       stepStates: new Map(),
       context: new Map() as unknown as PipelineContext,
@@ -265,10 +265,10 @@ export function createPipelineEngine(config: {
  */
 export const LoggerMiddleware: PipelineMiddleware = {
   name: 'logger',
-  onStepStart: (stepId, input) => {
+  onStepStart: (stepId, _input) => {
     logger.info(`[Pipeline:Step] Starting: ${stepId}`);
   },
-  onStepComplete: (stepId, output) => {
+  onStepComplete: (stepId, _output) => {
     logger.info(`[Pipeline:Step] Completed: ${stepId}`);
   },
   onStepError: (stepId, error) => {

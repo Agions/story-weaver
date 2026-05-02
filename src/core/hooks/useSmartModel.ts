@@ -217,7 +217,7 @@ export function useSmartModel() {
   }, [generate]);
 
   // 获取使用统计
-  const getStats = useCallback((): UsageStats => {
+  const _getStats = useCallback((): UsageStats => {
     const costStats = costService.getStats();
 
     const totalCalls = Object.values(costStats.byModel).reduce((sum, cost) => {
@@ -241,7 +241,7 @@ export function useSmartModel() {
   }, []);
 
   // 获取优化建议
-  const getSuggestions = useCallback((): string[] => {
+  const _getSuggestions = useCallback((): string[] => {
     return costService.getOptimizationSuggestions();
   }, []);
 
@@ -256,8 +256,8 @@ export function useSmartModel() {
   }, []);
 
   // 计算属性
-  const stats = useMemo(() => getStats(), [lastResult]);
-  const suggestions = useMemo(() => getSuggestions(), [lastResult]);
+  const stats = useMemo(() => costService.getStats(), []);
+  const suggestions = useMemo(() => costService.getOptimizationSuggestions(), []);
 
   return {
     // 状态

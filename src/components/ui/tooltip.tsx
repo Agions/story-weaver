@@ -15,11 +15,11 @@ interface TooltipProps {
   [key: string]: any;
 }
 
-// Tooltip as wrapper with title prop (antd pattern)
+// Tooltip as wrapper with title prop
 const TooltipWithTitle = React.forwardRef<
   React.ElementRef<typeof TooltipPrimitive.Root>,
   TooltipProps
->(({ title, children, ...props }, ref) => (
+>(({ title, children, ...props }, _ref) => (
   <TooltipPrimitive.Root {...props}>
     <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
     <TooltipPrimitive.Portal>

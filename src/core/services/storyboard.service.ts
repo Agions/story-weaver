@@ -42,7 +42,7 @@ export class StoryboardService {
    * 获取当前项目的所有分镜
    */
   getAll(): StoryboardFrame[] {
-    return this.storyboards.get(this.projectId || 'default') || [];
+    return this.storyboards.get(this.projectId ?? 'default') ?? [];
   }
 
   /**
@@ -59,18 +59,18 @@ export class StoryboardService {
   create(frameData: Partial<StoryboardFrame> & { title: string; sceneDescription: string }): StoryboardFrame {
     // const now = new Date().toISOString();
     const frame: StoryboardFrame = {
-      id: frameData.id || uuidv4(),
+      id: frameData.id ?? uuidv4(),
       title: frameData.title,
       sceneDescription: frameData.sceneDescription,
-      composition: frameData.composition || '中心构图',
-      cameraType: frameData.cameraType || 'medium',
-      dialogue: frameData.dialogue || '',
+      composition: frameData.composition ?? '中心构图',
+      cameraType: frameData.cameraType ?? 'medium',
+      dialogue: frameData.dialogue ?? '',
       duration: frameData.duration || 5,
       imageUrl: frameData.imageUrl,
     };
 
-    const key = this.projectId || 'default';
-    const frames = this.storyboards.get(key) || [];
+    const key = this.projectId ?? 'default';
+    const frames = this.storyboards.get(key) ?? [];
     frames.push(frame);
     this.storyboards.set(key, frames);
 
@@ -84,8 +84,8 @@ export class StoryboardService {
    * 更新分镜帧
    */
   update(id: string, updates: Partial<StoryboardFrame>): StoryboardFrame | null {
-    const key = this.projectId || 'default';
-    const frames = this.storyboards.get(key) || [];
+    const key = this.projectId ?? 'default';
+    const frames = this.storyboards.get(key) ?? [];
     const index = frames.findIndex(f => f.id === id);
 
     if (index === -1) return null;
@@ -103,8 +103,8 @@ export class StoryboardService {
    * 删除分镜帧
    */
   delete(id: string): boolean {
-    const key = this.projectId || 'default';
-    const frames = this.storyboards.get(key) || [];
+    const key = this.projectId ?? 'default';
+    const frames = this.storyboards.get(key) ?? [];
     const index = frames.findIndex(f => f.id === id);
 
     if (index === -1) return false;
@@ -122,16 +122,16 @@ export class StoryboardService {
    * 批量创建分镜帧
    */
   bulkCreate(frameDataList: Array<Partial<StoryboardFrame> & { title: string; sceneDescription: string }>): StoryboardFrame[] {
-    const key = this.projectId || 'default';
-    const frames = this.storyboards.get(key) || [];
+    const key = this.projectId ?? 'default';
+    const frames = this.storyboards.get(key) ?? [];
 
     const newFrames = frameDataList.map(data => ({
-      id: data.id || uuidv4(),
+      id: data.id ?? uuidv4(),
       title: data.title,
       sceneDescription: data.sceneDescription,
-      composition: data.composition || '中心构图',
-      cameraType: data.cameraType || 'medium',
-      dialogue: data.dialogue || '',
+      composition: data.composition ?? '中心构图',
+      cameraType: data.cameraType ?? 'medium',
+      dialogue: data.dialogue ?? '',
       duration: data.duration || 5,
       imageUrl: data.imageUrl,
     }));
@@ -149,7 +149,7 @@ export class StoryboardService {
    * 清空所有分镜
    */
   clear(): void {
-    const key = this.projectId || 'default';
+    const key = this.projectId ?? 'default';
     this.storyboards.set(key, []);
     this.notifyChange();
     this.saveToStorage();
@@ -211,18 +211,18 @@ ${script.content}
 
       // 确保每帧都有必要字段
       const frames = parsedFrames.map((f, i) => ({
-        id: f.id || uuidv4(),
-        title: f.title || `分镜 ${i + 1}`,
-        sceneDescription: f.sceneDescription || '场景描述',
-        composition: f.composition || '中心构图',
-        cameraType: f.cameraType || 'medium',
-        dialogue: f.dialogue || '',
+        id: f.id ?? uuidv4(),
+        title: f.title ?? `分镜 ${i + 1}`,
+        sceneDescription: f.sceneDescription ?? '场景描述',
+        composition: f.composition ?? '中心构图',
+        cameraType: f.cameraType ?? 'medium',
+        dialogue: f.dialogue ?? '',
         duration: f.duration || 5,
         imageUrl: f.imageUrl,
       }));
 
       // 保存到当前项目
-      const key = this.projectId || 'default';
+      const key = this.projectId ?? 'default';
       this.storyboards.set(key, frames);
 
       this.notifyChange();
@@ -253,7 +253,7 @@ ${script.content}
       // 调用图像生成服务
       const result = await imageGenerationService.generateImage(prompt, {
         ...options,
-        model: options.model || 'seedream-5.0',
+        model: options.model ?? 'seedream-5.0',
       });
 
       // 更新分镜
@@ -261,7 +261,7 @@ ${script.content}
         this.update(frameId, { imageUrl: result.url });
       }
 
-      return result.url || null;
+      return result.url ?? null;
 
     } catch (error) {
       logger.error('Failed to generate frame image:', error);
@@ -321,7 +321,7 @@ ${script.content}
       dolly: '推拉镜头',
       tracking: '跟随镜头',
     };
-    parts.push(`镜头：${cameraMap[frame.cameraType] || frame.cameraType}`);
+    parts.push(`镜头：${cameraMap[frame.cameraType] ?? frame.cameraType}`);
 
     // 风格要求
     parts.push('风格：专业视频分镜，画面精美，氛围感强');
@@ -372,7 +372,7 @@ ${script.content}
       const start = i * chunkSize;
       const end = Math.min(start + chunkSize, paragraphs.length);
       const sceneContent = paragraphs.slice(start, end).join(' ');
-      scenes.push(sceneContent || `场景 ${i + 1}`);
+      scenes.push(sceneContent ?? `场景 ${i + 1}`);
     }
 
     return scenes;
@@ -412,7 +412,7 @@ ${script.content}
       const stored = localStorage.getItem(storageKey);
       if (stored) {
         const frames = JSON.parse(stored) as StoryboardFrame[];
-        this.storyboards.set(this.projectId || 'default', frames);
+        this.storyboards.set(this.projectId ?? 'default', frames);
       }
     } catch (error) {
       logger.error('Failed to load storyboards from storage:', error);
@@ -454,7 +454,7 @@ ${script.content}
       const imported = JSON.parse(jsonData) as StoryboardFrame[];
       const validFrames = imported.filter(f => f.id && f.title && f.sceneDescription);
 
-      const key = this.projectId || 'default';
+      const key = this.projectId ?? 'default';
       this.storyboards.set(key, validFrames);
 
       this.notifyChange();

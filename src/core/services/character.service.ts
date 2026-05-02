@@ -73,18 +73,18 @@ export class CharacterService {
     const character: Character = {
       id: characterData.id || uuidv4(),
       name: characterData.name,
-      role: characterData.role || 'supporting',
-      description: characterData.description || '',
+      role: characterData.role ?? 'supporting',
+      description: characterData.description ?? '',
       appearance: characterData.appearance,
-      clothing: characterData.clothing || [],
-      expressions: characterData.expressions || [],
+      clothing: characterData.clothing ?? [],
+      expressions: characterData.expressions ?? [],
       consistency: {
         seed,
         weights: consistencyObj?.weights,
         referenceImages: consistencyObj?.referenceImages,
       },
       voice: characterData.voice,
-      tags: characterData.tags || [],
+      tags: characterData.tags ?? [],
       createdAt: now,
       updatedAt: now,
     };
@@ -157,18 +157,18 @@ export class CharacterService {
     const newCharacters = characters.map(data => ({
       id: data.id || uuidv4(),
       name: data.name,
-      role: data.role || 'supporting',
-      description: data.description || '',
+      role: data.role ?? 'supporting',
+      description: data.description ?? '',
       appearance: data.appearance,
-      clothing: data.clothing || [],
-      expressions: data.expressions || [],
+      clothing: data.clothing ?? [],
+      expressions: data.expressions ?? [],
       consistency: {
         seed: (data.consistency as CharacterConsistency | undefined)?.seed ?? Math.floor(Math.random() * 10000),
         weights: (data.consistency as CharacterConsistency | undefined)?.weights,
         referenceImages: (data.consistency as CharacterConsistency | undefined)?.referenceImages,
       },
       voice: data.voice,
-      tags: data.tags || [],
+      tags: data.tags ?? [],
       createdAt: now,
       updatedAt: now,
     }));
@@ -217,7 +217,7 @@ export class CharacterService {
       consistency: {
         ...(char.consistency as CharacterConsistency),
         referenceImages: [
-          ...((char.consistency as CharacterConsistency)?.referenceImages || []),
+          ...((char.consistency as CharacterConsistency)?.referenceImages ?? []),
           imageUrl,
         ],
       },
@@ -383,9 +383,9 @@ function templateToCharacterData(
   overrides?: Partial<CharacterAppearance & { name: string; description: string }>
 ): Omit<Character, 'id' | 'createdAt' | 'updatedAt'> {
   return {
-    name: overrides?.name || template.name,
+    name: overrides?.name ?? template.name,
     role: template.category as Character['role'],
-    description: overrides?.description || template.description,
+    description: overrides?.description ?? template.description,
     appearance: { ...template.appearance, ...overrides },
     clothing: template.clothing,
     expressions: template.expressions,

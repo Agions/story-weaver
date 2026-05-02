@@ -37,7 +37,7 @@ const Progress = React.forwardRef<
     const radius = 45;
     const circumference = 2 * Math.PI * radius;
     const offset = circumference - (displayValue / 100) * circumference;
-    const statusColor = status === 'success' ? '#52c41a' : status === 'exception' ? '#ff4d4f' : strokeColor || '#1E88E5';
+    const statusColor = status === 'success' ? '#52c41a' : status === 'exception' ? '#ff4d4f' : strokeColor ?? '#1E88E5';
     
     return (
       <div className={cn("relative inline-flex items-center justify-center", className)} style={{ width: 120, height: 120 }}>
@@ -47,7 +47,7 @@ const Progress = React.forwardRef<
             cy="60"
             r={radius}
             fill="none"
-            stroke={trailColor || "#e6e6e6"}
+            stroke={trailColor ?? "#e6e6e6"}
             strokeWidth="8"
           />
           <circle

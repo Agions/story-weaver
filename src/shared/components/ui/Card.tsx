@@ -34,7 +34,7 @@ export const Card: React.FC<CardProps> = ({
   title,
   extra,
   bodyStyle,
-  borderless = false,
+  _borderless = false,
   ...props
 }) => {
   const cardClass = cn(

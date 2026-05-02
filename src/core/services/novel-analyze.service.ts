@@ -122,14 +122,14 @@ ${content.slice(0, 2000)}
 
       return {
         id: novelId,
-        title: (data as any).title || '未命名小说',
+        title: (data as any).title ?? '未命名小说',
         author: data.author,
         genre: data.genre,
         summary: data.summary,
-        wordCount: data.wordCount || content.length,
-        chapterCount: data.chapterCount || 1,
-        tags: data.tags || [],
-        language: data.language || 'zh',
+        wordCount: data.wordCount ?? content.length,
+        chapterCount: data.chapterCount ?? 1,
+        tags: data.tags ?? [],
+        language: data.language ?? 'zh',
         createdAt: new Date().toISOString(),
       };
     } catch {
@@ -170,7 +170,7 @@ ${content.slice(0, 2000)}
         for (let i = 0; i < matches.length && i < this.config.maxChapters; i++) {
           const match = matches[i];
           const start = match.index;
-          const title = match[1]?.trim() || match[0].trim();
+          const title = match[1]?.trim() ?? match[0].trim();
 
           if (start !== undefined && start > currentPosition) {
             const chapterContent = content.slice(currentPosition, start).trim();
@@ -178,7 +178,7 @@ ${content.slice(0, 2000)}
               chapters.push({
                 id: `chapter_${novelId}_${i}`,
                 novelId,
-                title: title || `第${i + 1}章`,
+                title: title ?? `第${i + 1}章`,
                 content: chapterContent,
                 order: i,
                 wordCount: chapterContent.length,
@@ -276,7 +276,7 @@ ${chapter.content.slice(0, 3000)}${chapter.content.length > 3000 ? '...' : ''}
             time: sceneData.time,
             startPosition: 0,
             endPosition: sceneData.content?.length || 0,
-            characters: sceneData.characters || [],
+            characters: sceneData.characters ?? [],
             dialogues: [],
             emotions: [],
             tags: [],
@@ -391,13 +391,13 @@ ${content.slice(0, 5000)}
 
       return characters.map((char: Partial<Character>, index: number) => ({
         id: `char_${Date.now()}_${index}`,
-        name: char.name || '未知角色',
-        aliases: char.aliases || [],
-        description: char.description || '',
-        appearance: char.appearance || '',
-        personality: char.personality || '',
-        background: char.background || '',
-        role: char.role || 'minor',
+        name: char.name ?? '未知角色',
+        aliases: char.aliases ?? [],
+        description: char.description ?? '',
+        appearance: char.appearance ?? '',
+        personality: char.personality ?? '',
+        background: char.background ?? '',
+        role: char.role ?? 'minor',
         importance: char.importance || 1,
         dialogues: [],
         relationships: [],
@@ -417,13 +417,13 @@ ${content.slice(0, 5000)}
 
     // 简单规则：提取所有人名
     const namePattern = /([A-Z][a-z]+|[「『]?[\u4e00-\u9fa5]{2,4}[」』]?)/g;
-    const matches = allText.match(namePattern) || [];
+    const matches = allText.match(namePattern) ?? [];
 
     const nameCount = new Map<string, number>();
     for (const name of matches) {
       const cleanName = name.replace(/[「』]/g, '').trim();
       if (cleanName.length >= 2 && cleanName.length <= 4) {
-        nameCount.set(cleanName, (nameCount.get(cleanName) || 0) + 1);
+        nameCount.set(cleanName, (nameCount.get(cleanName) ?? 0) + 1);
       }
     }
 
@@ -491,10 +491,10 @@ ${content.slice(0, 5000)}
           }
 
           if (dialogueContent) {
-            if (!dialogueMap.has(characterName || 'unknown')) {
-              dialogueMap.set(characterName || 'unknown', []);
+            if (!dialogueMap.has(characterName ?? 'unknown')) {
+              dialogueMap.set(characterName ?? 'unknown', []);
             }
-            dialogueMap.get(characterName || 'unknown')!.push({
+            dialogueMap.get(characterName ?? 'unknown')!.push({
               content: dialogueContent.trim(),
               position: match.index,
             });
@@ -514,7 +514,7 @@ ${content.slice(0, 5000)}
           scene.dialogues.push({
             id: `dialogue_${scene.id}_${scene.dialogues.length}`,
             sceneId: scene.id,
-            character: matchedCharacter?.name || character,
+            character: matchedCharacter?.name ?? character,
             content: dialog.content,
             position: dialog.position,
           });
@@ -532,7 +532,7 @@ ${content.slice(0, 5000)}
       for (const para of paragraphs) {
         if (para.trim() && !dialogueContent.includes(para.trim())) {
           if (para.length > 20 && !/^[「『""]/.test(para)) {
-            scene.narrator = (scene.narrator || '') + para;
+            scene.narrator = (scene.narrator ?? '') + para;
           }
         }
       }
@@ -568,11 +568,11 @@ ${content.slice(0, 5000)}
 
       for (const [emotion, keywords] of Object.entries(emotionKeywords)) {
         for (const keyword of keywords) {
-          const count = (content.match(new RegExp(keyword, 'g')) || []).length;
+          const count = (content.match(new RegExp(keyword, 'g')) ?? []).length;
           if (count > 0) {
             emotionCounts.set(
               emotion as EmotionType,
-              (emotionCounts.get(emotion as EmotionType) || 0) + count
+              (emotionCounts.get(emotion as EmotionType) ?? 0) + count
             );
           }
         }
@@ -603,8 +603,8 @@ ${content.slice(0, 5000)}
 请为以下小说场景生成详细的图像生成描述。
 
 场景信息：
-- 地点：${scene.location || '未指定'}
-- 时间：${scene.time || '未指定'}
+- 地点：${scene.location ?? '未指定'}
+- 时间：${scene.time ?? '未指定'}
 - 内容：${scene.content.slice(0, 500)}
 - 角色：${scene.characters.join('、')}
 
@@ -643,14 +643,14 @@ ${content.slice(0, 5000)}
 
         results.push({
           sceneId: scene.id,
-          description: data.description || '',
-          visualElements: data.visualElements || [],
-          mood: data.mood || '',
+          description: data.description ?? '',
+          visualElements: data.visualElements ?? [],
+          mood: data.mood ?? '',
           colorPalette: data.colorPalette,
           lighting: data.lighting,
           cameraAngle: data.cameraAngle,
-          imagePrompt: data.imagePrompt || this.generateDefaultPrompt(scene),
-          negativePrompt: data.negativePrompt || 'low quality, blurry, distorted',
+          imagePrompt: data.imagePrompt ?? this.generateDefaultPrompt(scene),
+          negativePrompt: data.negativePrompt ?? 'low quality, blurry, distorted',
         });
       } catch {
         // 使用默认提示词
@@ -709,7 +709,7 @@ ${content.slice(0, 5000)}
       for (const emotion of scene.emotions) {
         emotionCounts.set(
           emotion.type,
-          (emotionCounts.get(emotion.type) || 0) + 1
+          (emotionCounts.get(emotion.type) ?? 0) + 1
         );
       }
 
@@ -753,12 +753,12 @@ ${content.slice(0, 5000)}
 
     // 中文名模式
     const cnPattern = /[\u4e00-\u9fa5]{2,4}(?=(说|道|问|答|喊|叫|回答|告诉))/g;
-    const cnMatches = text.match(cnPattern) || [];
+    const cnMatches = text.match(cnPattern) ?? [];
     cnMatches.forEach(n => names.add(n));
 
     // 英文名模式
     const enPattern = /[A-Z][a-z]+(?=\s+says|\s+asks|\s+answered)/g;
-    const enMatches = text.match(enPattern) || [];
+    const enMatches = text.match(enPattern) ?? [];
     enMatches.forEach(n => names.add(n));
 
     return Array.from(names).slice(0, 5);
@@ -814,7 +814,7 @@ ${content.slice(0, 5000)}
   ): string {
     const lines: string[] = [
       `# ${result.metadata.title}`,
-      `作者：${result.metadata.author || '未知'}`,
+      `作者：${result.metadata.author ?? '未知'}`,
       `字数：${result.metadata.wordCount}`,
       `角色数：${result.characters.length}`,
       '',
@@ -836,8 +836,8 @@ ${content.slice(0, 5000)}
     for (const scene of result.scenes) {
       lines.push(
         `【场景 ${scene.sceneNumber}】`,
-        `  地点：${scene.location || '未指定'}`,
-        `  时间：${scene.time || '未指定'}`,
+        `  地点：${scene.location ?? '未指定'}`,
+        `  时间：${scene.time ?? '未指定'}`,
         `  角色：${scene.characters.join('、')}`,
         ''
       );

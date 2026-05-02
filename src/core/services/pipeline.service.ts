@@ -7,6 +7,8 @@
 
 import { v4 as uuidv4 } from 'uuid';
 
+import { logger } from '@/core/utils/logger';
+
 // ========== 类型定义 ==========
 
 export type PipelineStepId = 
@@ -221,7 +223,13 @@ class Pipeline {
       getVariable: (name) => this.variables.get(name),
       setVariable: (name, value) => this.variables.set(name, value),
       log: (message, level = 'info') => {
-        console[level === 'error' ? 'error' : level === 'warn' ? 'warn' : 'info'](`[Pipeline ${this.workflowId}] ${message}`);
+        if (level === 'error') {
+          logger.error(`[Pipeline ${this.workflowId}] ${message}`);
+        } else if (level === 'warn') {
+          logger.warn(`[Pipeline ${this.workflowId}] ${message}`);
+        } else {
+          logger.info(`[Pipeline ${this.workflowId}] ${message}`);
+        }
       }
     };
 

@@ -28,7 +28,7 @@ export function generateScenes(
   const eventsByLocation = groupEventsByLocation(events);
   const locationKeys = Object.keys(eventsByLocation);
 
-  let _sceneIndex = 1;
+  const _sceneIndex = 1;
   let sceneIdCounter = 1;
 
   for (const location of locationKeys) {
@@ -71,8 +71,6 @@ export function generateScenes(
         emotion: dominantEmotion,
         content,
       });
-
-      _sceneIndex++;
     }
   }
 

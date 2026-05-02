@@ -33,12 +33,12 @@ const tagVariants = cva(
 export interface TagProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof tagVariants> {
-  color?: string; // for backward compatibility with antd color prop
+  color?: string; // for backward compatibility with color prop
   icon?: React.ReactNode;
 }
 
 function Tag({ className, variant, color, icon, children, style, ...props }: TagProps) {
-  // Support antd-style color prop for common colors
+  // Support color prop for common colors
   let resolvedVariant: VariantProps<typeof tagVariants>["variant"] = variant;
   if (color && !variant) {
     switch (color) {

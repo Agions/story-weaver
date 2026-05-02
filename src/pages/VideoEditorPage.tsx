@@ -10,6 +10,8 @@ import React, { useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
+import { Tabs, TabPane } from '@/components/ui/tabs';
+import { Tooltip } from '@/components/ui/tooltip';
 import {
   Button,
   Card,
@@ -23,11 +25,7 @@ import {
   Row,
   Col,
   Dropdown,
-} from '@/components/ui/antd-compat';
-import { Tabs, TabPane } from '@/components/ui/tabs';
-import { Tooltip } from '@/components/ui/tooltip';
-
-// 导入组件和服务
+} from '@/components/ui/ui-components';
 import { tauriService } from '@/core/services';
 import { logger } from '@/core/utils/logger';
 

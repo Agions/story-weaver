@@ -19,13 +19,13 @@ import React, { useState, useCallback } from 'react';
 import { toast } from 'sonner';
 
 import { Alert } from '@/components/ui/alert';
-import { Form, FormItem, useForm, Input, Select, Space, Divider, RadioGroup, Radio, RadioButton } from '@/components/ui/antd-compat';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card as CardBase } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Tag } from '@/components/ui/tag';
 import { Text, Title, Paragraph } from '@/components/ui/typography';
+import { Form, FormItem, useForm, Input, Select, Space, Divider, RadioGroup, Radio, RadioButton } from '@/components/ui/ui-components';
 import { useModel, useModelCost } from '@/core/hooks/useModel';
 import { useProject } from '@/core/hooks/useProject';
 import type { ScriptData, ScriptSegment } from '@/core/types';

@@ -52,7 +52,7 @@ export async function clearAllCheckpoints(): Promise<void> {
  */
 export async function hasCheckpoint(stepId: string): Promise<boolean> {
   const checkpoint = await loadCheckpoint(stepId);
-  return checkpoint !== null && checkpoint.completed;
+  return checkpoint?.completed ?? false;
 }
 
 /**

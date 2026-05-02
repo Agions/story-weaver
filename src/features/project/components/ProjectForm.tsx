@@ -25,7 +25,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
     try {
       await onSubmit(values);
       toast.success('保存成功');
-    } catch (error) {
+    } catch (_error) {
       toast.error('保存失败');
     }
   };

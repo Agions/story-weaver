@@ -3,7 +3,7 @@ import * as React from "react"
 
 import { cn } from "@/shared/utils/class-names"
 
-import { TextArea as AntDTextarea } from './antd-compat';
+import { TextArea as AntDTextarea } from './ui-components';
 
 export interface InputProps extends React.ComponentProps<"input"> {
   icon?: React.ReactNode;
@@ -13,7 +13,7 @@ export interface InputProps extends React.ComponentProps<"input"> {
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, icon, allowClear, value, onChange, ...props }, ref) => {
     const [internalValue, setInternalValue] = React.useState('');
-    const effectiveValue = value !== undefined ? value : internalValue;
+    const effectiveValue = value ?? internalValue;
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (value === undefined) setInternalValue(e.target.value);
       onChange?.(e);
@@ -57,7 +57,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 )
 Input.displayName = "Input"
 
-// antd-compatible Textarea
+// Textarea component
 export const Textarea = AntDTextarea;
 
 export { Input }

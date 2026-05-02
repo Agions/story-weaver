@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import App from './App';
-
 import { ThemeProvider } from '@/context/ThemeContext';
 import './index.css';
 import './assets/theme.less';
 import { logger } from '@/core/utils/logger';
+
+import App from './App';
 
 // 防止控制台出现错误消息
 window.addEventListener('error', (e) => {

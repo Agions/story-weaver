@@ -93,7 +93,7 @@ function buildSearchQuery(scene: StoryboardScene): SearchQuery {
   
   // 场景类型
   const sceneTypeMatch = description.prompt.match(/scene type:\s*([^,]+)/);
-  if (sceneTypeMatch && sceneTypeMatch[1]) {
+  if (sceneTypeMatch?.[1]) {
     keywords.push(sceneTypeMatch[1]);
   }
   

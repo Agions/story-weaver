@@ -71,7 +71,7 @@ export const SettingsProvider: React.FC<{ children: ReactNode }> = ({ children }
         mediaQuery.removeListener(handleChange);
       }
     };
-  }, [settings.theme]);
+  }, [settings.theme, settings]);
   
   // 应用语言设置
   useEffect(() => {

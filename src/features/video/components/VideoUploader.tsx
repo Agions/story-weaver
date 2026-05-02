@@ -52,7 +52,7 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ onUploadSuccess, initialV
   };
 
   const customRequest = async (options: CustomRequestOptions) => {
-    const { file, onSuccess, onError, onProgress } = options;
+    const { file: _file, onProgress } = options;
     setUploading(true);
     setProgress(0);
 

@@ -5,8 +5,6 @@
 
 import { logger } from '@/core/utils/logger';
 
-import { storageService } from './storage/storage.service';
-
 export interface Asset {
   id: string;
   name: string;

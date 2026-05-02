@@ -71,7 +71,7 @@ function VideoPlayer({
       videoElement.removeEventListener('ended', handleEnded);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
     };
-  }, [onTimeUpdate, onEnded]);
+  }, [videoRef, onTimeUpdate, onEnded]);
 
   const togglePlay = () => {
     const videoElement = videoRef.current;

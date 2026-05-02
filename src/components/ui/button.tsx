@@ -43,7 +43,7 @@ export interface ButtonProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonE
   variant?: ShadcnVariant;
   size?: ShadcnSize;
   asChild?: boolean;
-  // antd-style props (accepted but merged into variant/size)
+  // style props (accepted but merged into variant/size)
   type?: 'primary' | 'default' | 'dashed' | 'link' | 'text' | 'button' | 'submit' | 'reset';
   htmlType?: 'button' | 'submit' | 'reset';
   icon?: React.ReactNode;
@@ -67,7 +67,7 @@ const sizeMap: Record<string, ShadcnSize> = {
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, type, htmlType, icon, shape, block, danger, loading, children, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
-    // Prefer antd-style type prop for variant/size mapping, fallback to shadcn variant/size
+    // Prefer style type prop for variant/size mapping, fallback to shadcn variant/size
     const effectiveVariant = danger ? 'destructive' : (type ? (variantMap[type] ?? variant) : variant);
     const effectiveSize = size ? (sizeMap[size as string] ?? size) : size;
     const blockClass = block ? 'w-full' : '';

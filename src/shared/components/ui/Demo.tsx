@@ -6,7 +6,7 @@
 import { User, Star, Heart, MessageCircle, Video, Zap, Cloud } from 'lucide-react';
 import React, { useState } from 'react';
 
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';

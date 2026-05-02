@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import React from 'react';
 
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { useTheme } from '@/context/ThemeContext';
 
 import styles from './WorkflowSteps.module.less';

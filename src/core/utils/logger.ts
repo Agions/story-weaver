@@ -97,12 +97,14 @@ class Logger {
   debug(message: string, data?: unknown): void {
     if (!this.shouldLog(LogLevel.DEBUG)) return;
     const parts = this.formatMessage(LogLevel.DEBUG, message, data);
+    // eslint-disable-next-line no-console
     console.debug(...parts);
   }
 
   info(message: string, data?: unknown): void {
     if (!this.shouldLog(LogLevel.INFO)) return;
     const parts = this.formatMessage(LogLevel.INFO, message, data);
+    // eslint-disable-next-line no-console
     console.info(...parts);
   }
 
@@ -121,6 +123,7 @@ class Logger {
   success(message: string, data?: unknown): void {
     if (!this.shouldLog(LogLevel.INFO)) return;
     const msg = `${getColorCode('success')}✓ ${message}${getColorCode('reset')}`;
+    // eslint-disable-next-line no-console
     console.info(msg, data ?? '');
   }
 

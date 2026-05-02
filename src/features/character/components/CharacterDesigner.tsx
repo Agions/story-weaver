@@ -35,10 +35,7 @@ import {
   ListItem,
   useForm,
   type RcFile,
-} from '@/components/ui/antd-compat';
-
-
-// 使用项目中定义的类型
+} from '@/components/ui/ui-components';
 import {
   getTemplatesByCategory,
   templateToCharacter,

@@ -6,7 +6,7 @@ import React, { lazy } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import type { EvaluationScores , QualityGateIssue } from '@/core/services';
+import type { QualityGateIssue } from '@/core/services';
 import type { ExportSettings } from '@/core/types';
 import { toast } from '@/shared/components/ui/Toast';
 

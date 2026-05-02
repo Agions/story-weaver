@@ -47,8 +47,8 @@ export interface UseProjectReturn {
   resetProject: () => void;
 }
 
-export function useProject(projectId?: string): UseProjectReturn {
-  const navigate = useNavigate();
+export function useProject(_projectId?: string): UseProjectReturn {
+  const _navigate = useNavigate();
   const [project, setProject] = useState<ProjectData | null>(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -113,11 +113,11 @@ export function useProject(projectId?: string): UseProjectReturn {
 
   // 自动加载
   useEffect(() => {
-    if (projectId) {
-      loadProject(projectId);
+    if (_projectId) {
+      loadProject(_projectId);
     }
-     
-  }, [projectId, loadProject]);
+    
+  }, [_projectId, loadProject]);
 
   return {
     project,

@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import React, { useState, useRef, useEffect } from 'react';
 
-import { message, Space, Tag, Row, Col, Table, Empty, Progress } from '@/components/ui/antd-compat';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Popconfirm, AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/confirm-dialog';
@@ -22,6 +21,7 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Tabs } from '@/components/ui/tabs';
 import { Tooltip } from '@/components/ui/tooltip';
+import { message, Space, Tag, Row, Col, Table, Empty, Progress } from '@/components/ui/ui-components';
 import { logger } from '@/core/utils/logger';
 
 import styles from './AudioEditor.module.less';
@@ -170,20 +170,25 @@ const AudioEditor: React.FC<AudioEditorProps> = ({
         effectVolume,
       });
     }
-  }, [voiceTracks, backgroundMusic, soundEffects, masterVolume, voiceVolume, musicVolume, effectVolume]);
+  }, [voiceTracks, backgroundMusic, soundEffects, masterVolume, voiceVolume, musicVolume, effectVolume, onConfigChange]);
 
   // 清理音频元素
   useEffect(() => {
+    // Capture refs at effect time to use in cleanup
+    const voiceRefs = voiceAudioRefs.current;
+    const sfxRefs = sfxAudioRefs.current;
+    const musicRef = musicAudioRef.current;
+
     return () => {
-      voiceAudioRefs.current.forEach((audio) => {
+      voiceRefs.forEach((audio) => {
         audio.pause();
         audio.src = '';
       });
-      if (musicAudioRef.current) {
-        musicAudioRef.current.pause();
-        musicAudioRef.current.src = '';
+      if (musicRef) {
+        musicRef.pause();
+        musicRef.src = '';
       }
-      sfxAudioRefs.current.forEach((audio) => {
+      sfxRefs.forEach((audio) => {
         audio.pause();
         audio.src = '';
       });
@@ -194,7 +199,7 @@ const AudioEditor: React.FC<AudioEditorProps> = ({
         }
       });
     };
-  }, []);
+  }, [voiceTracks]);
 
   // ========== 配音轨道处理 ==========
   const handleVoiceImport = async () => {

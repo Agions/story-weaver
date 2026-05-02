@@ -5,12 +5,10 @@ import { Edit } from 'lucide-react';
 import React, { lazy } from 'react';
 
 import { Alert } from '@/components/ui/alert';
-import { TextArea } from '@/components/ui/antd-compat';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import type { StoryAnalysis } from '@/core/types';
+import { TextArea } from '@/components/ui/ui-components';
 import type { NovelMetadata } from '@/features/script/components/NovelImporter';
-import { toast } from '@/shared/components/ui/Toast';
 
 import styles from '../../ProjectEdit.module.less';
 

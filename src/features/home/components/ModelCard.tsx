@@ -4,9 +4,7 @@ import {
   AlertCircle,
   Key,
   Settings,
-  Download,
-  ExternalLink,
-  Copy
+  ExternalLink
 } from 'lucide-react';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -44,7 +42,7 @@ interface ModelCardProps {
 const ModelCard: React.FC<ModelCardProps> = ({
   modelType,
   onSelect,
-  onRequestApiKey
+  onRequestApiKey: _onRequestApiKey
 }) => {
   const { aiModelsSettings, selectedAIModel } = useLegacyStore();
   const navigate = useNavigate();

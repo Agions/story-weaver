@@ -1,15 +1,16 @@
-import { Upload as LucideUpload, Search, MoreHorizontal, Video, Music, FileImage, FileText, Mic } from 'lucide-react';
+import {
+  Upload as LucideUpload, MoreHorizontal, Video, FileImage, FileText, Mic
+} from 'lucide-react';
 import React, { useState, useEffect, useCallback } from 'react';
 
-import { Dropdown, Upload as AntUpload } from '@/components/ui/antd-compat';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
   Tabs,
-  TabsContent,
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs';
+import { Dropdown, Upload as AntUpload } from '@/components/ui/ui-components';
 import { logger } from '@/core/utils/logger';
 import { EmptyState , toast } from '@/shared/components/ui';
 import { assetService, Asset } from '@/shared/services/asset.service';

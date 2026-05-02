@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
 import { Alert } from '@/components/ui/alert';
-import { Space } from '@/components/ui/antd-compat';
 import { Card } from '@/components/ui/card';
+import { Space } from '@/components/ui/ui-components';
 
 import NovelImporter from './NovelImporter';
 import ScriptGenerator from './ScriptGenerator';
@@ -20,11 +20,11 @@ const ScriptGeneratorView: React.FC = () => {
     setNovelMetadata(metadata);
   };
 
-  const handleGenerationStart = () => {
+  const _handleGenerationStart = () => {
     setIsGenerating(true);
   };
 
-  const handleGenerationComplete = () => {
+  const _handleGenerationComplete = () => {
     setIsGenerating(false);
   };
 

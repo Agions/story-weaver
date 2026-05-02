@@ -81,7 +81,7 @@ export class OpenAICompatibleProvider implements AIProvider {
             if (data === '[DONE]') return;
             try {
               onChunk(JSON.parse(data));
-            } catch (e) {
+            } catch (_e) {
               // 忽略解析错误
             }
           }
