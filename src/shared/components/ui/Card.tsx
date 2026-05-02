@@ -7,7 +7,7 @@ import React from 'react';
 import { Card as ShadcnCard, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/shared/utils/class-names';
 
-import styles from './index.module.less';
+import styles from './Card.module.less';
 
 interface CardProps {
   hoverable?: boolean;

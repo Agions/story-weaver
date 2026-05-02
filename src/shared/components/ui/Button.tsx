@@ -8,7 +8,7 @@ import { Loader2 } from 'lucide-react';
 import { Button as ShadcnButton } from '@/components/ui/button';
 import { cn } from '@/shared/utils/class-names';
 
-import styles from './index.module.less';
+import styles from './Button.module.less';
 
 interface ButtonProps {
   variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
