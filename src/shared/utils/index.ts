@@ -6,11 +6,10 @@
 import { open } from '@tauri-apps/plugin-dialog';
 import * as fs from '@tauri-apps/plugin-fs';
 import { Variants, Easing } from 'framer-motion';
-import { jsPDF } from 'jspdf';
 import { useState, useEffect, useCallback } from 'react';
 
-import 'jspdf-autotable';
 import { logger } from '@/core/utils/logger';
+import { exportScriptToPDF } from '@/core/utils/pdf-export';
 
 // ========== General Utilities ==========
 
@@ -901,138 +900,6 @@ export function useTranslation() {
   
   return { t, language, changeLanguage };
 }
-
-// ========== Tauri Utilities ==========
-
-export const selectFile = async (options: {
-  extensions?: string[];
-  title?: string;
-}): Promise<string> => {
-  try {
-    const selected = await open({
-      multiple: false,
-      filters: options.extensions
-        ? [{ name: '视频文件', extensions: options.extensions }]
-        : undefined,
-      title: options.title || '选择文件',
-    });
-    return selected as string || '';
-  } catch (error) {
-    logger.error('选择文件时出错:', error);
-    return '';
-  }
-};
-
-export const readTextFile = async (path: string): Promise<string> => {
-  try {
-    return await fs.readTextFile(path);
-  } catch (error) {
-    logger.error('读取文件时出错:', error);
-    throw error;
-  }
-};
-
-export const writeTextFile = async (path: string, contents: string): Promise<void> => {
-  try {
-    await fs.writeTextFile(path, contents);
-  } catch (error) {
-    logger.error('写入文件时出错:', error);
-    throw error;
-  }
-};
-
-export const fileExists = async (path: string): Promise<boolean> => {
-  try {
-    return await fs.exists(path);
-  } catch (error) {
-    logger.error('检查文件是否存在时出错:', error);
-    return false;
-  }
-};
-
-// ========== PDF Export ==========
-
-declare module 'jspdf' {
-  interface jsPDF {
-    autoTable: (options: unknown) => jsPDF;
-  }
-}
-
-export const exportScriptToPDF = (script: {
-  content: Array<{
-    startTime: number;
-    endTime: number;
-    content: string;
-    type: string;
-  }>;
-  createdAt: string;
-  updatedAt: string;
-}, projectName: string) => {
-  const doc = new jsPDF();
-  
-  const title = `${projectName} - 解说脚本`;
-  doc.setProperties({
-    title,
-    author: 'PanelFlow AI',
-    creator: 'PanelFlow AI Script Generator',
-    subject: '视频解说脚本',
-  });
-  
-  doc.setFontSize(18);
-  doc.text(title, 14, 20);
-  
-  doc.setFontSize(10);
-  doc.text(`创建时间: ${new Date(script.createdAt).toLocaleString()}`, 14, 30);
-  doc.text(`最后更新: ${new Date(script.updatedAt).toLocaleString()}`, 14, 35);
-  
-  const totalDuration = script.content.reduce(
-    (acc, segment) => acc + (segment.endTime - segment.startTime), 0
-  );
-  doc.text(`总时长: ${Math.floor(totalDuration / 60)}分${totalDuration % 60}秒`, 14, 40);
-  doc.text(`段落数: ${script.content.length}`, 14, 45);
-  
-  const formatTime = (seconds: number): string => {
-    const min = Math.floor(seconds / 60);
-    const sec = Math.floor(seconds % 60);
-    return `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
-  };
-  
-  const tableData = script.content.map((segment) => [
-    `${formatTime(segment.startTime)} - ${formatTime(segment.endTime)}`,
-    segment.type === 'narration' ? '旁白' : segment.type === 'dialogue' ? '对话' : '描述',
-    segment.content,
-  ]);
-  
-  doc.autoTable({
-    startY: 50,
-    head: [['时间', '类型', '内容']],
-    body: tableData,
-    headStyles: { fillColor: [24, 144, 255] },
-    styles: { overflow: 'linebreak', cellWidth: 'auto' },
-    columnStyles: {
-      0: { cellWidth: 40 },
-      1: { cellWidth: 25 },
-      2: { cellWidth: 'auto' },
-    },
-  });
-  
-  const pageCount = (doc.internal as any).pages.length - 1;
-  for (let i = 1; i <= pageCount; i++) {
-    doc.setPage(i);
-    doc.setFontSize(8);
-    doc.text(
-      `PanelFlow AI - 第 ${i} 页，共 ${pageCount} 页`,
-      doc.internal.pageSize.getWidth() / 2,
-      doc.internal.pageSize.getHeight() - 10,
-      { align: 'center' }
-    );
-  }
-  
-  const filename = `${projectName.replace(/[^\w\s]/gi, '')}_脚本_${new Date().toISOString().slice(0, 10)}.pdf`;
-  doc.save(filename);
-  
-  return filename;
-};
 
 // ========== React Hooks Re-exports ==========
 

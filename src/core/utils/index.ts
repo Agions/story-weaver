@@ -9,6 +9,7 @@ export * from './retryRequest';
 export * from './idle';
 export * from './motion';
 export * from './platform';
+export * from './tauri';
 
 // Re-export from shared/utils for backwards compatibility
 export {
