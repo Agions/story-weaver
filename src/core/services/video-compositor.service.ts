@@ -108,14 +108,26 @@ export async function composeVideo(
   throw new Error('视频合成需要 Tauri 环境或支持 SharedArrayBuffer 的浏览器');
 }
 
+// 将 URL/string 转为 Blob
+async function toBlob(input: Blob | string): Promise<Blob> {
+  if (typeof input === 'string') {
+    const response = await fetch(input);
+    if (!response.ok) throw new Error(`Failed to fetch: ${response.status}`);
+    return await response.blob();
+  }
+  return input;
+}
+
 // 添加字幕
 export async function addSubtitles(
-  videoBlob: Blob,
+  videoInput: Blob | string,
   subtitles: SubtitleTrack,
   style: SubtitleStyle = {},
   outputFormat: 'mp4' | 'webm' = 'mp4',
   progressCallback?: ProgressCallback
 ): Promise<CompositionResult> {
+  const videoBlob = await toBlob(videoInput);
+
   // Tauri 模式
   if (isTauri()) {
     try {

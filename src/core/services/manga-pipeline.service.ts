@@ -22,10 +22,12 @@ import { ttsService } from './tts.service';
 import {
   composeVideo,
   addSubtitles,
+} from './video-compositor.service';
+import {
   type Scene,
   type SubtitleTrack,
   type CompositionOptions
-} from './video-compositor.service';
+} from './ffmpeg-wasm.service';
 
 // ========== 类型定义 ==========
 
