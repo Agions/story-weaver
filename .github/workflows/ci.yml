@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  # Opt out of Node.js 24 transition which may break npm PATH
+  # Keep Node 20 during transition period
   ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: "true"
 
 jobs:
@@ -21,22 +21,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Debug npm
-        run: |
-          echo "=== which node ==="
-          which node || echo "node not found"
-          echo "=== which npm ==="
-          which npm || echo "npm not found"
-          echo "=== node version ==="
-          node --version
-          echo "=== npm version ==="
-          npm --version || echo "npm not in PATH"
-          echo "=== PATH ==="
-          echo $PATH
-          echo "=== ls /usr/bin/npm* ==="
-          ls /usr/bin/npm* 2>/dev/null || echo "none in /usr/bin"
-          echo "=== ls /usr/local/bin/npm* ==="
-          ls /usr/local/bin/npm* 2>/dev/null || echo "none in /usr/local/bin"
       - run: npm ci --legacy-peer-deps
       - name: Run ESLint
         run: npm run lint
@@ -49,12 +33,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Debug npm
-        run: |
-          echo "=== which npm ==="
-          which npm || echo "npm not found"
-          echo "=== npm version ==="
-          npm --version || echo "npm not in PATH"
       - run: npm ci --legacy-peer-deps
       - run: npm test -- --runInBand --coverage
 
@@ -66,12 +44,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Debug npm
-        run: |
-          echo "=== which npm ==="
-          which npm || echo "npm not found"
-          echo "=== npm version ==="
-          npm --version || echo "npm not in PATH"
       - run: npm ci --legacy-peer-deps
       - run: npm run build
 
