@@ -1,98 +1,79 @@
+"use client"
+
 import * as React from "react"
-
 import { cn } from "@/shared/utils/class-names"
+import { Card as ShadcnCard } from '@/components/ui/card';
 
-interface CardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
+// ============================================================
+// Card component (wraps shadcn Card)
+// ============================================================
+interface CardMetaProps {
   title?: React.ReactNode;
-  extra?: React.ReactNode;
-  hoverable?: boolean;
-  cover?: React.ReactNode;
-  actions?: React.ReactNode[];
-  size?: 'small' | 'default';
-  footer?: React.ReactNode;
-  borderless?: boolean;
+  description?: React.ReactNode;
+  avatar?: React.ReactNode;
+  className?: string;
 }
 
-const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, title, extra, children, footer, borderless, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn(
-        "rounded-lg border bg-card text-card-foreground shadow-sm",
-        borderless ? "border-0 shadow-none" : "",
-        className
-      )}
-    >
-      {title && (
-        <div className="flex items-center justify-between px-6 py-4 border-b">
-          <div className="flex items-center gap-2">{title}</div>
-          {extra && <div>{extra}</div>}
-        </div>
-      )}
-      <div {...props}>{children}</div>
-      {footer && <div className="px-6 py-4 border-t">{footer}</div>}
+const CardMeta: React.FC<CardMetaProps> = ({ title, description, avatar }) => (
+  <div className="flex gap-3">
+    {avatar && <div className="flex-shrink-0">{avatar}</div>}
+    <div className="flex-1 min-w-0">
+      {title && <div className="font-medium text-sm">{title}</div>}
+      {description && <div className="text-xs text-muted-foreground mt-0.5">{description}</div>}
     </div>
-  )
-)
-Card.displayName = "Card"
+  </div>
+);
 
-const CardHeader = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex flex-col space-y-1.5 p-6", className)}
-    {...props}
-  />
-))
-CardHeader.displayName = "CardHeader"
+interface AntdCardProps {
+  hoverable?: boolean;
+  className?: string;
+  cover?: React.ReactNode;
+  actions?: React.ReactNode[];
+  children?: React.ReactNode;
+  size?: 'small' | 'default';
+  extra?: React.ReactNode;
+  title?: React.ReactNode;
+  footer?: React.ReactNode;
+  onClick?: React.MouseEventHandler<HTMLDivElement>;
+  style?: React.CSSProperties;
+}
 
-const CardTitle = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      "text-2xl font-semibold leading-none tracking-tight",
-      className
+const AntdCardBase: React.FC<AntdCardProps> = ({
+  hoverable,
+  className,
+  cover,
+  actions,
+  children,
+  size: _size,
+  extra,
+  title,
+  footer,
+  onClick,
+  style,
+}) => (
+  <ShadcnCard className={cn(hoverable && "hover:shadow-md transition-shadow cursor-pointer", className)} onClick={onClick} style={style}>
+    {title && (
+      <div className="flex items-center justify-between px-6 py-4 border-b">
+        <div className="flex items-center gap-2">{title}</div>
+        {extra && <div>{extra}</div>}
+      </div>
     )}
-    {...props}
-  />
-))
-CardTitle.displayName = "CardTitle"
+    {cover && <div className="p-4">{cover}</div>}
+    <div className="p-4">
+      {children}
+      {extra && !title && <div className="mt-2">{extra}</div>}
+    </div>
+    {actions && actions.length > 0 && (
+      <div className="flex border-t divide-x">
+        {actions.map((action, i) => (
+          <div key={i} className="flex-1 flex justify-center py-2 hover:bg-muted/50">{action}</div>
+        ))}
+      </div>
+    )}
+    {footer && <div className="px-6 py-4 border-t">{footer}</div>}
+  </ShadcnCard>
+);
+(AntdCardBase as any).Meta = CardMeta;
+const AntdCard = AntdCardBase as unknown as React.FC<AntdCardProps> & { Meta: React.FC<CardMetaProps> };
 
-const CardDescription = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
-    {...props}
-  />
-))
-CardDescription.displayName = "CardDescription"
-
-const CardContent = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
-))
-CardContent.displayName = "CardContent"
-
-const CardFooter = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn("flex items-center p-6 pt-0", className)}
-    {...props}
-  />
-))
-CardFooter.displayName = "CardFooter"
-
-export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }
+export { AntdCard as Card, CardMeta, type AntdCardProps, type CardMetaProps }
