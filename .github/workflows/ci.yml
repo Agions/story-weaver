@@ -7,7 +7,8 @@ on:
     branches: [main]
 
 env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "false"
+  # Opt out of Node.js 24 transition which may break npm PATH
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: "true"
 
 jobs:
   lint:
@@ -20,18 +21,22 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
-          cache-dependency-path: "package-lock.json"
-      - name: Get npm cache path
-        id: npm-cache
-        run: echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
-      - name: Cache npm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.npm-cache.outputs.dir }}
-          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
+      - name: Debug npm
+        run: |
+          echo "=== which node ==="
+          which node || echo "node not found"
+          echo "=== which npm ==="
+          which npm || echo "npm not found"
+          echo "=== node version ==="
+          node --version
+          echo "=== npm version ==="
+          npm --version || echo "npm not in PATH"
+          echo "=== PATH ==="
+          echo $PATH
+          echo "=== ls /usr/bin/npm* ==="
+          ls /usr/bin/npm* 2>/dev/null || echo "none in /usr/bin"
+          echo "=== ls /usr/local/bin/npm* ==="
+          ls /usr/local/bin/npm* 2>/dev/null || echo "none in /usr/local/bin"
       - run: npm ci --legacy-peer-deps
       - name: Run ESLint
         run: npm run lint
@@ -44,18 +49,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
-          cache-dependency-path: "package-lock.json"
-      - name: Get npm cache path
-        id: npm-cache-test
-        run: echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
-      - name: Cache npm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.npm-cache-test.outputs.dir }}
-          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
+      - name: Debug npm
+        run: |
+          echo "=== which npm ==="
+          which npm || echo "npm not found"
+          echo "=== npm version ==="
+          npm --version || echo "npm not in PATH"
       - run: npm ci --legacy-peer-deps
       - run: npm test -- --runInBand --coverage
 
@@ -67,18 +66,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
-          cache-dependency-path: "package-lock.json"
-      - name: Get npm cache path
-        id: npm-cache-build
-        run: echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
-      - name: Cache npm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.npm-cache-build.outputs.dir }}
-          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
+      - name: Debug npm
+        run: |
+          echo "=== which npm ==="
+          which npm || echo "npm not found"
+          echo "=== npm version ==="
+          npm --version || echo "npm not in PATH"
       - run: npm ci --legacy-peer-deps
       - run: npm run build
 
@@ -91,18 +84,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
-          cache-dependency-path: "package-lock.json"
-      - name: Get npm cache path
-        id: npm-cache-coverage
-        run: echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
-      - name: Cache npm cache
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.npm-cache-coverage.outputs.dir }}
-          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-
       - run: npm ci --legacy-peer-deps
       - name: Run tests with coverage
         run: npm test -- --runInBand --coverage --coverageThreshold='{"global":{"branches":20,"functions":20,"lines":25,"statements":20}}'
