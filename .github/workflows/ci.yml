@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-      - run: npm ci
+      - run: npm ci --legacy-peer-deps
       - name: Run ESLint
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
@@ -42,7 +42,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-      - run: npm ci
+      - run: npm ci --legacy-peer-deps
       - run: npm test -- --runInBand --coverage
 
   build:
@@ -70,7 +70,7 @@ jobs:
           key: ${{ runner.os }}-tsc-${{ hashFiles('src/**/*.ts', 'src/**/*.tsx', 'tsconfig.json') }}
           restore-keys: |
             ${{ runner.os }}-tsc-
-      - run: npm ci
+      - run: npm ci --legacy-peer-deps
       - run: npm run build
 
   coverage:
@@ -83,7 +83,7 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-      - run: npm ci
+      - run: npm ci --legacy-peer-deps
       - name: Run tests with coverage
         run: npm test -- --runInBand --coverage --coverageThreshold='{"global":{"branches":20,"functions":20,"lines":25,"statements":20}}'
       - name: Upload coverage to Codecov
