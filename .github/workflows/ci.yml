@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: "22"
           cache: 'pnpm'
-      - run: pnpm install
+      - run: pnpm install --shamefully-hoist
       - run: pnpm run lint
 
   test:
@@ -34,7 +34,7 @@ jobs:
         with:
           node-version: "22"
           cache: 'pnpm'
-      - run: pnpm install
+      - run: pnpm install --shamefully-hoist
       - run: pnpm test -- --runInBand --coverage
 
   build:
@@ -49,7 +49,7 @@ jobs:
         with:
           node-version: "22"
           cache: 'pnpm'
-      - run: pnpm install
+      - run: pnpm install --shamefully-hoist
       - run: pnpm run build
 
   coverage:
