@@ -1,11 +1,11 @@
-"use client"
+'use client';
 
 /**
  * AntD-compatible UI Components
- * 
+ *
  * This file re-exports components from both shadcn/ui and custom AntD-compatible wrappers.
  * Individual components have been split into separate files for better code organization.
- * 
+ *
  * @deprecated Import from individual component files directly for tree-shaking
  */
 
@@ -14,12 +14,20 @@
 // ============================================================
 
 import { User } from 'lucide-react';
-import * as React from "react"
+import * as React from 'react';
 import { useForm as useRhfForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import { Avatar as ShadcnAvatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { AntdCard, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { Avatar, AvatarImage, AvatarFallback, type AntDAvatarProps } from '@/components/ui/avatar';
+import {
+  Card as AntdCard,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from '@/components/ui/card';
+import { ColorPicker, type ColorPickerProps } from '@/components/ui/color-picker';
 import {
   Dialog,
   DialogContent,
@@ -35,12 +43,29 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 import { Empty as ShadcnEmpty } from '@/components/ui/empty';
+import { Row, Col, type RowProps, type ColProps } from '@/components/ui/grid';
 import { List as ShadcnList, ListItem } from '@/components/ui/list';
+import { message } from '@/components/ui/message';
+import { Modal, type ModalProps } from '@/components/ui/modal';
+import { Option, type OptionProps } from '@/components/ui/option';
+import { Popconfirm, type PopconfirmProps } from '@/components/ui/popconfirm';
 import { Progress as ShadcnProgress } from '@/components/ui/progress';
-import { Select as ShadcnSelect, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select as ShadcnSelect,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Tag as ShadcnTag } from '@/components/ui/tag';
-import { Text as ShadcnText, Title as ShadcnTitle, Paragraph as ShadcnParagraph } from '@/components/ui/typography';
-import { cn } from "@/shared/utils/class-names"
+import { TextArea, Textarea, type TextAreaProps } from '@/components/ui/textarea';
+import {
+  Text as ShadcnText,
+  Title as ShadcnTitle,
+  Paragraph as ShadcnParagraph,
+} from '@/components/ui/typography';
+import { Upload, type UploadProps } from '@/components/ui/upload';
+import { cn } from '@/shared/utils/class-names';
 
 // ============================================================
 // AntD-compatible Form (wraps react-hook-form + shadcn)
@@ -88,7 +113,9 @@ const Form: React.FC<FormProps> = ({
         if (onFinish) {
           const formData = new FormData(e.currentTarget);
           const values: Record<string, any> = {};
-          formData.forEach((v, k) => { values[k] = v; });
+          formData.forEach((v, k) => {
+            values[k] = v;
+          });
           // Merge with initialValues if form has them
           if (form && initialValues) {
             Object.assign(values, initialValues);
@@ -96,7 +123,11 @@ const Form: React.FC<FormProps> = ({
           onFinish(values);
         }
       }}
-      style={{ display: 'flex', flexDirection: layout === 'vertical' ? 'column' : 'row', gap: layout === 'horizontal' ? '1rem' : 0 }}
+      style={{
+        display: 'flex',
+        flexDirection: layout === 'vertical' ? 'column' : 'row',
+        gap: layout === 'horizontal' ? '1rem' : 0,
+      }}
     >
       {/* react-hook-form needs special handling, fall through for now */}
       {children}
@@ -114,13 +145,9 @@ interface FormItemProps {
   className?: string;
 }
 
-const FormItem: React.FC<FormItemProps> = ({
-  label,
-  children,
-  className,
-}) => {
+const FormItem: React.FC<FormItemProps> = ({ label, children, className }) => {
   return (
-    <div className={cn("flex flex-col gap-1", className)}>
+    <div className={cn('flex flex-col gap-1', className)}>
       {label && <label className="text-sm font-medium">{label}</label>}
       {children}
     </div>
@@ -168,9 +195,7 @@ const AntDSelect: React.FC<AntDSelectProps> = ({
   );
 
   React.useEffect(() => {
-     
     if (value !== undefined) setInternalValue(value);
-    
   }, [value]);
 
   const handleValueChange = (newValue: string) => {
@@ -188,7 +213,7 @@ const AntDSelect: React.FC<AntDSelectProps> = ({
 
   const handleRemoveTag = (tagToRemove: string) => {
     if (mode === 'tags') {
-      const updated = (internalValue as string[]).filter(t => t !== tagToRemove);
+      const updated = (internalValue as string[]).filter((t) => t !== tagToRemove);
       setInternalValue(updated);
       onChange?.(updated);
     }
@@ -197,7 +222,7 @@ const AntDSelect: React.FC<AntDSelectProps> = ({
   if (mode === 'tags') {
     const tags = Array.isArray(internalValue) ? internalValue : [];
     return (
-      <div className={cn("flex flex-col gap-1", className)} style={style}>
+      <div className={cn('flex flex-col gap-1', className)} style={style}>
         <div className="flex flex-wrap gap-1 min-h-[38px] p-1 border border-input rounded-md bg-background">
           {tags.map((tag) => (
             <span
@@ -240,7 +265,9 @@ const AntDSelect: React.FC<AntDSelectProps> = ({
           >
             <option value="">选择预设</option>
             {options.map((opt) => (
-              <option key={opt.value} value={opt.value}>{opt.label}</option>
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
             ))}
           </select>
         )}
@@ -304,7 +331,7 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
 }) => {
   if (optionType === 'button') {
     return (
-      <div className={cn("flex flex-wrap gap-1", className)} role="radiogroup">
+      <div className={cn('flex flex-wrap gap-1', className)} role="radiogroup">
         {(options ?? []).map((opt) => (
           <button
             key={opt.value}
@@ -312,13 +339,13 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
             disabled={opt.disabled}
             onClick={() => onChange?.(opt.value)}
             className={cn(
-              "px-3 py-1.5 text-sm rounded border transition-colors",
+              'px-3 py-1.5 text-sm rounded border transition-colors',
               (value ?? defaultValue) === opt.value
                 ? buttonStyle === 'solid'
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-primary/10 text-primary border-primary"
-                : "bg-background text-foreground border-input hover:bg-accent",
-              opt.disabled && "opacity-50 cursor-not-allowed"
+                  ? 'bg-primary text-primary-foreground border-primary'
+                  : 'bg-primary/10 text-primary border-primary'
+                : 'bg-background text-foreground border-input hover:bg-accent',
+              opt.disabled && 'opacity-50 cursor-not-allowed'
             )}
           >
             {opt.label}
@@ -329,9 +356,9 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
       </div>
     );
   }
-  
+
   return (
-    <div className={cn("flex flex-col gap-1", className)} role="radiogroup">
+    <div className={cn('flex flex-col gap-1', className)} role="radiogroup">
       {(options ?? []).map((opt) => (
         <label key={opt.value} className="flex items-center gap-2 cursor-pointer">
           <input
@@ -401,24 +428,41 @@ const Space = (({
     large: '1rem',
   };
   const gap = typeof size === 'number' ? `${size}px` : gapMap[size] || '0.5rem';
-  
+
   return (
     <div
-      className={cn("flex", direction === 'vertical' ? 'flex-col' : 'flex-row', wrap && 'flex-wrap', block && 'w-full', className)}
+      className={cn(
+        'flex',
+        direction === 'vertical' ? 'flex-col' : 'flex-row',
+        wrap && 'flex-wrap',
+        block && 'w-full',
+        className
+      )}
       style={{
         gap: compact ? 0 : gap,
-        alignItems: align === 'start' ? 'flex-start' : align === 'end' ? 'flex-end' : align === 'baseline' ? 'baseline' : 'center',
+        alignItems:
+          align === 'start'
+            ? 'flex-start'
+            : align === 'end'
+              ? 'flex-end'
+              : align === 'baseline'
+                ? 'baseline'
+                : 'center',
         ...style,
       }}
     >
       {children}
     </div>
   );
-}) as unknown as React.FC<SpaceProps> & { Item: React.FC<{ children?: React.ReactNode; className?: string }>; Compact: React.FC<SpaceCompactProps> };
+}) as unknown as React.FC<SpaceProps> & {
+  Item: React.FC<{ children?: React.ReactNode; className?: string }>;
+  Compact: React.FC<SpaceCompactProps>;
+};
 
-const SpaceItem: React.FC<{ children?: React.ReactNode; className?: string }> = ({ children, className }) => (
-  <div className={cn("flex-1 min-w-0", className)}>{children}</div>
-);
+const SpaceItem: React.FC<{ children?: React.ReactNode; className?: string }> = ({
+  children,
+  className,
+}) => <div className={cn('flex-1 min-w-0', className)}>{children}</div>;
 (Space as any).Item = SpaceItem;
 
 // Space.Compact - a compact mode where items are joined together
@@ -429,10 +473,7 @@ interface SpaceCompactProps {
 }
 
 const SpaceCompact: React.FC<SpaceCompactProps> = ({ block, children, className }) => (
-  <div
-    className={cn("flex", block && 'w-full', className)}
-    style={{ gap: 0 }}
-  >
+  <div className={cn('flex', block && 'w-full', className)} style={{ gap: 0 }}>
     {children}
   </div>
 );
@@ -460,11 +501,11 @@ const Spin: React.FC<SpinProps> = ({
 }) => {
   const sizeMap = { small: '1rem', default: '1.5rem', large: '2rem' };
   const spinnerSize = sizeMap[size];
-  
+
   if (!spinning) return <>{children}</>;
-  
+
   return (
-    <div className={cn("flex flex-col items-center justify-center gap-2", className)}>
+    <div className={cn('flex flex-col items-center justify-center gap-2', className)}>
       {indicator ?? (
         <span
           className="inline-block animate-spin"
@@ -509,7 +550,7 @@ const AntDAlert: React.FC<AntDAlertProps> = ({
   children,
 }) => {
   return (
-    <div className={cn("flex flex-col gap-1 p-3 rounded-md border", className)}>
+    <div className={cn('flex flex-col gap-1 p-3 rounded-md border', className)}>
       <div className="flex items-start gap-2">
         {showIcon && <span className="mt-0.5">{typeIconMap[type]}</span>}
         <div className="flex flex-col gap-0.5">
@@ -553,24 +594,39 @@ const Button: React.FC<ButtonProps> = ({
   loading,
   ...props
 }) => {
-  const sizeClass = size === 'small' ? 'h-8 px-3 text-xs' : size === 'large' ? 'h-11 px-6 text-base' : 'h-10 px-4 text-sm';
-  const shapeClass = shape === 'circle' ? 'rounded-full px-0 w-10' : shape === 'round' ? 'rounded-full' : 'rounded-md';
-  const typeClass = type === 'primary' ? 'bg-primary text-primary-foreground hover:bg-primary/90' :
-                    type === 'dashed' ? 'border border-dashed border-input hover:bg-accent' :
-                    type === 'link' ? 'text-primary underline hover:no-underline' :
-                    type === 'text' ? 'hover:bg-accent' :
-                    'bg-background border border-input hover:bg-accent';
+  const sizeClass =
+    size === 'small'
+      ? 'h-8 px-3 text-xs'
+      : size === 'large'
+        ? 'h-11 px-6 text-base'
+        : 'h-10 px-4 text-sm';
+  const shapeClass =
+    shape === 'circle'
+      ? 'rounded-full px-0 w-10'
+      : shape === 'round'
+        ? 'rounded-full'
+        : 'rounded-md';
+  const typeClass =
+    type === 'primary'
+      ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+      : type === 'dashed'
+        ? 'border border-dashed border-input hover:bg-accent'
+        : type === 'link'
+          ? 'text-primary underline hover:no-underline'
+          : type === 'text'
+            ? 'hover:bg-accent'
+            : 'bg-background border border-input hover:bg-accent';
 
   return (
     <button
       type={props.htmlType ?? 'button'}
       disabled={disabled || loading}
       className={cn(
-        "inline-flex items-center justify-center gap-2 font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+        'inline-flex items-center justify-center gap-2 font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50',
         sizeClass,
         shapeClass,
         typeClass,
-        block && "w-full",
+        block && 'w-full',
         className
       )}
       {...props}
@@ -583,7 +639,10 @@ const Button: React.FC<ButtonProps> = ({
 
 // AntD-compatible Input (native input wrapper)
 // ============================================================
-interface AntDInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'prefix'> {
+interface AntDInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  'size' | 'prefix'
+> {
   size?: 'large' | 'small' | 'middle';
   prefix?: React.ReactNode;
   suffix?: React.ReactNode;
@@ -593,9 +652,21 @@ const AntDInput = React.forwardRef<HTMLInputElement, AntDInputProps>(
   ({ size = 'middle', prefix, suffix, className, ...props }, ref) => {
     const sizeClass = size === 'large' ? 'h-11' : size === 'small' ? 'h-8' : 'h-10';
     return (
-      <div className={cn("flex items-center border border-input rounded-md bg-background px-3 py-1 focus-within:ring-2 focus-within:ring-ring", className)}>
+      <div
+        className={cn(
+          'flex items-center border border-input rounded-md bg-background px-3 py-1 focus-within:ring-2 focus-within:ring-ring',
+          className
+        )}
+      >
         {prefix && <span className="mr-2 text-muted-foreground">{prefix}</span>}
-        <input ref={ref} className={cn("flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground", sizeClass)} {...props} />
+        <input
+          ref={ref}
+          className={cn(
+            'flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground',
+            sizeClass
+          )}
+          {...props}
+        />
         {suffix && <span className="ml-2 text-muted-foreground">{suffix}</span>}
       </div>
     );
@@ -622,7 +693,7 @@ interface ListItemProps {
 }
 
 const ListItemWrapper: React.FC<ListItemProps> = ({ children, className }) => (
-  <div className={cn("py-2 border-b last:border-b-0", className)}>{children}</div>
+  <div className={cn('py-2 border-b last:border-b-0', className)}>{children}</div>
 );
 
 interface ListWrapperProps<T = any> {
@@ -635,32 +706,44 @@ interface ListWrapperProps<T = any> {
   locale?: { emptyText?: React.ReactNode };
 }
 
-const ListWrapper = (({ size: _size, className, children, grid, dataSource, renderItem, locale }: ListWrapperProps<any>) => {
+const ListWrapper = (({
+  size: _size,
+  className,
+  children,
+  grid,
+  dataSource,
+  renderItem,
+  locale,
+}: ListWrapperProps<any>) => {
   // If dataSource and renderItem are provided, map over them
   if (dataSource && renderItem) {
     if (dataSource.length === 0) {
-      return <div className={cn("py-4 text-center text-sm text-muted-foreground", className)}>{locale?.emptyText ?? '暂无数据'}</div>;
+      return (
+        <div className={cn('py-4 text-center text-sm text-muted-foreground', className)}>
+          {locale?.emptyText ?? '暂无数据'}
+        </div>
+      );
     }
     const items = dataSource.map((item, index) => renderItem(item, index));
-    
+
     // Apply grid layout if specified
     if (grid) {
       const colCount = grid.column ?? grid.md ?? 3;
       return (
-        <div 
-          className={cn("grid gap-4", className)}
-          style={{ 
-            gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))`
+        <div
+          className={cn('grid gap-4', className)}
+          style={{
+            gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))`,
           }}
         >
           {items}
         </div>
       );
     }
-    
+
     return <div className={className}>{items}</div>;
   }
-  
+
   return <ShadcnList className={className}>{children}</ShadcnList>;
 }) as unknown as React.FC<ListWrapperProps<any>> & { Item: React.FC<ListItemProps> };
 (ListWrapper as any).Item = ListItemWrapper;
@@ -669,7 +752,9 @@ const ListWrapper = (({ size: _size, className, children, grid, dataSource, rend
 // AntD-compatible Tag
 // ============================================================
 const AntdTag: React.FC<any> = ({ children, color, ...props }) => (
-  <ShadcnTag color={color} {...props}>{children}</ShadcnTag>
+  <ShadcnTag color={color} {...props}>
+    {children}
+  </ShadcnTag>
 );
 
 // ============================================================
@@ -710,19 +795,34 @@ const AntdTable: React.FC<TableProps> = ({
   const sizeClass = size === 'small' ? 'text-xs' : size === 'large' ? 'text-base' : 'text-sm';
 
   return (
-    <div className={cn("relative w-full overflow-auto", className)}>
-      <table className={cn("w-full caption-bottom", sizeClass)}>
+    <div className={cn('relative w-full overflow-auto', className)}>
+      <table className={cn('w-full caption-bottom', sizeClass)}>
         <thead>
-          <tr className="border-b">{columns.map((col, i) => (
-            <th key={col.key ?? i} style={{ width: col.width }} className="text-left font-medium p-2">{col.title}</th>
-          ))}</tr>
+          <tr className="border-b">
+            {columns.map((col, i) => (
+              <th
+                key={col.key ?? i}
+                style={{ width: col.width }}
+                className="text-left font-medium p-2"
+              >
+                {col.title}
+              </th>
+            ))}
+          </tr>
         </thead>
         <tbody>
           {dataSource.length === 0 ? (
-            <tr><td colSpan={columns.length} className="text-center p-4 text-muted-foreground">暂无数据</td></tr>
+            <tr>
+              <td colSpan={columns.length} className="text-center p-4 text-muted-foreground">
+                暂无数据
+              </td>
+            </tr>
           ) : (
             dataSource.map((record, rowIndex) => (
-              <tr key={getRowKey(record, rowIndex)} className="border-b last:border-b-0 hover:bg-muted/50">
+              <tr
+                key={getRowKey(record, rowIndex)}
+                className="border-b last:border-b-0 hover:bg-muted/50"
+              >
                 {columns.map((col, colIndex) => {
                   const value = col.dataIndex ? record[col.dataIndex] : undefined;
                   return (
@@ -759,12 +859,12 @@ interface InputNumberProps {
 
 const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
   ({ value, defaultValue, onChange, min, max, step, size, style, className, ...props }, ref) => {
-    const [internalValue, setInternalValue] = React.useState<number | undefined>(defaultValue ?? value);
+    const [internalValue, setInternalValue] = React.useState<number | undefined>(
+      defaultValue ?? value
+    );
 
     React.useEffect(() => {
-       
       if (value !== undefined) setInternalValue(value);
-       
     }, [value]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -785,7 +885,7 @@ const InputNumber = React.forwardRef<HTMLInputElement, InputNumberProps>(
         max={max}
         step={step}
         className={cn(
-          "flex w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+          'flex w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
           sizeClass,
           className
         )}
@@ -807,10 +907,14 @@ interface DividerProps {
   children?: React.ReactNode;
 }
 
-const Divider: React.FC<DividerProps> = ({ orientation: _orientation = 'left', className, children }) => {
+const Divider: React.FC<DividerProps> = ({
+  orientation: _orientation = 'left',
+  className,
+  children,
+}) => {
   if (children) {
     return (
-      <div className={cn("relative my-4", className)}>
+      <div className={cn('relative my-4', className)}>
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-border" />
         </div>
@@ -820,9 +924,8 @@ const Divider: React.FC<DividerProps> = ({ orientation: _orientation = 'left', c
       </div>
     );
   }
-  return <div className={cn("my-4 border-t border-border", className)} />;
+  return <div className={cn('my-4 border-t border-border', className)} />;
 };
-
 
 // ============================================================
 // Collapse (wraps existing Accordion)
@@ -850,7 +953,8 @@ interface CollapsePanelProps {
   children?: React.ReactNode;
 }
 
-const CollapsePanel: React.FC<CollapsePanelProps> = ({ header: _header, children: _children }) => null;
+const CollapsePanel: React.FC<CollapsePanelProps> = ({ header: _header, children: _children }) =>
+  null;
 
 const CollapseBase: React.FC<CollapseProps> = ({
   activeKey,
@@ -871,10 +975,8 @@ const CollapseBase: React.FC<CollapseProps> = ({
 
   React.useEffect(() => {
     if (activeKey !== undefined) {
-       
       setActiveKeys(new Set(Array.isArray(activeKey) ? activeKey : [activeKey]));
     }
-     
   }, [activeKey]);
 
   const toggleKey = (key: string) => {
@@ -888,13 +990,17 @@ const CollapseBase: React.FC<CollapseProps> = ({
     }
     setActiveKeys(newKeys);
     const result = accordion ? [...newKeys][0] || '' : [...newKeys];
-    onChange?.(newKeys.size === 0 ? (Array.isArray(activeKey) ? [] : '') as any : result as any);
+    onChange?.(
+      newKeys.size === 0 ? ((Array.isArray(activeKey) ? [] : '') as any) : (result as any)
+    );
   };
 
   // Parse children to extract panels OR use items prop
   const panels: { key: string; header: React.ReactNode; children: React.ReactNode }[] = [];
   if (items) {
-    panels.push(...items.map(item => ({ key: item.key, header: item.label, children: item.children })));
+    panels.push(
+      ...items.map((item) => ({ key: item.key, header: item.label, children: item.children }))
+    );
   } else {
     React.Children.forEach(children, (child) => {
       if (child && React.isValidElement(child) && child.props?.key) {
@@ -908,7 +1014,7 @@ const CollapseBase: React.FC<CollapseProps> = ({
   }
 
   return (
-    <div className={cn("flex flex-col rounded-md", ghost ? "" : "border", className)}>
+    <div className={cn('flex flex-col rounded-md', ghost ? '' : 'border', className)}>
       {panels.map((panel) => {
         const isOpen = activeKeys.has(panel.key);
         return (
@@ -919,7 +1025,7 @@ const CollapseBase: React.FC<CollapseProps> = ({
               className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium hover:underline bg-background"
             >
               <span>{panel.header}</span>
-              <span className={cn("transition-transform", isOpen ? "rotate-180" : "")}>▼</span>
+              <span className={cn('transition-transform', isOpen ? 'rotate-180' : '')}>▼</span>
             </button>
             {isOpen && <div className="px-4 pb-4 text-sm">{panel.children}</div>}
           </div>
@@ -929,7 +1035,9 @@ const CollapseBase: React.FC<CollapseProps> = ({
   );
 };
 (CollapseBase as any).Panel = CollapsePanel;
-const Collapse = CollapseBase as unknown as React.FC<CollapseProps> & { Panel: React.FC<CollapsePanelProps> };
+const Collapse = CollapseBase as unknown as React.FC<CollapseProps> & {
+  Panel: React.FC<CollapsePanelProps>;
+};
 
 // ============================================================
 // AntD-compatible Dropdown (wraps DropdownMenu)
@@ -962,13 +1070,13 @@ export {
   message,
   ColorPicker,
   Upload,
-  AntDAvatar as Avatar,
+  Avatar,
   AvatarImage,
   AvatarFallback,
   ShadcnText as Text,
   ShadcnTitle as Title,
   ShadcnParagraph as Paragraph,
-  useForm,
+  useRhfForm as useForm,
   Button,
   AntDInput as Input,
   ListWrapper as List,
