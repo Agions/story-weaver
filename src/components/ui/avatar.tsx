@@ -1,57 +1,53 @@
-import * as AvatarPrimitive from "@radix-ui/react-avatar"
+"use client"
+
+import { User } from 'lucide-react';
 import * as React from "react"
 
-import { cn } from "@/shared/utils/class-names"
+import { Avatar as ShadcnAvatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
-interface AvatarProps extends React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root> {
-  size?: number | 'small' | 'default' | 'large';
+// ============================================================
+// Avatar with size prop (wraps shadcn Avatar)
+// ============================================================
+interface AntDAvatarProps {
+  size?: number | 'small' | 'large' | 'default';
+  src?: string;
+  icon?: React.ReactNode;
+  className?: string;
+  children?: React.ReactNode;
 }
 
-const Avatar = React.forwardRef<
-  React.ElementRef<typeof AvatarPrimitive.Root>,
-  AvatarProps
->(({ className, size, style, ...props }, ref) => {
+const AntDAvatar: React.FC<AntDAvatarProps> = ({ size = 'default', src, icon, className, children }) => {
   const sizeMap: Record<string, number> = { small: 24, default: 40, large: 64 };
-  const pxSize = typeof size === 'number' ? size : (size ? sizeMap[size] : undefined) ?? 40;
+  const pxSize = typeof size === 'number' ? size : sizeMap[size] || 40;
+
+  if (children) {
+    return (
+      <ShadcnAvatar style={{ width: pxSize, height: pxSize }} className={className}>
+        <AvatarFallback className="text-sm" style={{ width: pxSize, height: pxSize }}>
+          {children}
+        </AvatarFallback>
+      </ShadcnAvatar>
+    );
+  }
+
+  if (src) {
+    return (
+      <ShadcnAvatar style={{ width: pxSize, height: pxSize }} className={className}>
+        <AvatarImage src={src} style={{ width: pxSize, height: pxSize }} />
+        <AvatarFallback style={{ width: pxSize, height: pxSize }}>
+          {icon || <User />}
+        </AvatarFallback>
+      </ShadcnAvatar>
+    );
+  }
+
   return (
-    <AvatarPrimitive.Root
-      ref={ref}
-      className={cn(
-        "relative flex shrink-0 overflow-hidden rounded-full",
-        className
-      )}
-      style={{ width: pxSize, height: pxSize, ...style }}
-      {...props}
-    />
+    <ShadcnAvatar style={{ width: pxSize, height: pxSize }} className={className}>
+      <AvatarFallback style={{ width: pxSize, height: pxSize }}>
+        {icon || <User />}
+      </AvatarFallback>
+    </ShadcnAvatar>
   );
-})
-Avatar.displayName = AvatarPrimitive.Root.displayName
+};
 
-const AvatarImage = React.forwardRef<
-  React.ElementRef<typeof AvatarPrimitive.Image>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
->(({ className, ...props }, ref) => (
-  <AvatarPrimitive.Image
-    ref={ref}
-    className={cn("aspect-square h-full w-full", className)}
-    {...props}
-  />
-))
-AvatarImage.displayName = AvatarPrimitive.Image.displayName
-
-const AvatarFallback = React.forwardRef<
-  React.ElementRef<typeof AvatarPrimitive.Fallback>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
->(({ className, ...props }, ref) => (
-  <AvatarPrimitive.Fallback
-    ref={ref}
-    className={cn(
-      "flex h-full w-full items-center justify-center rounded-full bg-muted",
-      className
-    )}
-    {...props}
-  />
-))
-AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName
-
-export { Avatar, AvatarImage, AvatarFallback }
+export { AntDAvatar as Avatar, type AntDAvatarProps }
