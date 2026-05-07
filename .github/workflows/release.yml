@@ -261,7 +261,7 @@ jobs:
 
       - name: Package as tar.gz
         run: |
-          cd src-tauri/target/*/release
+          cd src-tauri/target/release
           tar -czf "PanelFlow-${{ needs.prepare.outputs.version }}-linux-x64.tar.gz" manga-ai
           echo "artifact_name=PanelFlow-${{ needs.prepare.outputs.version }}-linux-x64.tar.gz" >> $GITHUB_OUTPUT
 
