@@ -117,7 +117,7 @@ jobs:
         with:
           tag_name: ${{ needs.prepare.outputs.tag }}
           draft: true
-          files: ${{ needs.build-windows-x64.outputs.artifact_name }}
+          files: PanelFlow-${{ needs.prepare.outputs.version }}-windows-x64.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -171,7 +171,7 @@ jobs:
         with:
           tag_name: ${{ needs.prepare.outputs.tag }}
           draft: true
-          files: ${{ needs.build-windows-arm64.outputs.artifact_name }}
+          files: PanelFlow-${{ needs.prepare.outputs.version }}-windows-arm64.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -220,7 +220,7 @@ jobs:
         with:
           tag_name: ${{ needs.prepare.outputs.tag }}
           draft: true
-          files: ${{ needs.build-macos.outputs.artifact_name }}
+          files: PanelFlow-${{ needs.prepare.outputs.version }}-macos-universal.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -280,7 +280,7 @@ jobs:
         with:
           tag_name: ${{ needs.prepare.outputs.tag }}
           draft: true
-          files: ${{ needs.build-linux.outputs.artifact_name }}
+          files: PanelFlow-${{ needs.prepare.outputs.version }}-linux-x64.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
