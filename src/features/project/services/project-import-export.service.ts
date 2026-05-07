@@ -6,7 +6,7 @@
 import type { ProjectData, ProjectExportData, ImportOptions, ExportOptions } from './project.types';
 
 class ProjectImportExportService {
-  private readonly CURRENT_VERSION = '2.0.0';
+  private readonly CURRENT_VERSION = '1.0.0';
   private readonly MIN_SUPPORTED_VERSION = '1.0.0';
 
   /**
@@ -18,10 +18,10 @@ class ProjectImportExportService {
       exportedAt: new Date().toISOString(),
       project: this.prepareProjectForExport(project),
       metadata: {
-        appVersion: '2.0.0',
+        appVersion: '1.0.0',
         format: 'json',
-        includesMedia: options.includeMedia ?? false
-      }
+        includesMedia: options.includeMedia ?? false,
+      },
     };
 
     return JSON.stringify(exportData, null, 2);
@@ -32,7 +32,7 @@ class ProjectImportExportService {
    */
   importFromJSON(jsonString: string, options: ImportOptions = {}): ProjectData {
     const data = JSON.parse(jsonString) as ProjectExportData;
-    
+
     if (!this.validateImportData(data)) {
       throw new Error('Invalid project data format');
     }
@@ -79,7 +79,7 @@ class ProjectImportExportService {
    */
   private validateImportData(data: unknown): data is ProjectExportData {
     if (!data || typeof data !== 'object') return false;
-    
+
     const exportData = data as Record<string, unknown>;
     return (
       typeof exportData.version === 'string' &&
@@ -97,7 +97,7 @@ class ProjectImportExportService {
     }
 
     const proj = project as Record<string, unknown>;
-    
+
     if (typeof proj.id !== 'string') {
       throw new Error('Missing project ID');
     }
@@ -128,7 +128,7 @@ class ProjectImportExportService {
 let serviceInstance: ProjectImportExportService | null = null;
 
 export function getProjectImportExportService(): ProjectImportExportService {
-  return serviceInstance ??= new ProjectImportExportService();
+  return (serviceInstance ??= new ProjectImportExportService());
 }
 
 export default ProjectImportExportService;

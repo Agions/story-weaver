@@ -24,21 +24,21 @@ export interface ProjectExportData {
 
 // 导入选项
 export interface ImportOptions {
-  merge?: boolean;        // 是否合并到现有项目
-  overwrite?: boolean;     // 是否覆盖同名项目
-  validate?: boolean;     // 是否验证数据
+  merge?: boolean; // 是否合并到现有项目
+  overwrite?: boolean; // 是否覆盖同名项目
+  validate?: boolean; // 是否验证数据
 }
 
 // 导出选项
 export interface ExportOptions {
   format: ExportFormat;
   includeMedia?: boolean; // 是否包含媒体文件
-  compress?: boolean;     // 是否压缩
+  compress?: boolean; // 是否压缩
   includeHistory?: boolean; // 是否包含历史记录
 }
 
 class ProjectImportExportService {
-  private readonly CURRENT_VERSION = '2.0.0';
+  private readonly CURRENT_VERSION = '1.0.0';
   private readonly MIN_SUPPORTED_VERSION = '1.0.0';
 
   /**
@@ -93,10 +93,7 @@ class ProjectImportExportService {
   /**
    * 导入项目
    */
-  async importProject(
-    data: string | File,
-    options: ImportOptions = {}
-  ): Promise<ProjectData> {
+  async importProject(data: string | File, options: ImportOptions = {}): Promise<ProjectData> {
     const defaultOptions: ImportOptions = {
       merge: false,
       overwrite: false,
@@ -255,7 +252,7 @@ class ProjectImportExportService {
   deleteBackup(backupId: string): void {
     localStorage.removeItem(`mangaai_backup_${backupId}`);
 
-    const backups = this.getBackupList().filter(b => b.id !== backupId);
+    const backups = this.getBackupList().filter((b) => b.id !== backupId);
     localStorage.setItem('mangaai_backups', JSON.stringify(backups));
   }
 
@@ -272,8 +269,8 @@ class ProjectImportExportService {
       createdAt: now,
       updatedAt: now,
       // 深拷贝子对象
-      videos: project.videos!.map(v => ({ ...v })),
-      scripts: project.scripts!.map(s => ({
+      videos: project.videos!.map((v) => ({ ...v })),
+      scripts: project.scripts!.map((s) => ({
         ...s,
         id: uuidv4(),
         createdAt: now,
@@ -285,7 +282,10 @@ class ProjectImportExportService {
   /**
    * 比较两个项目
    */
-  compareProjects(project1: ProjectData, project2: ProjectData): {
+  compareProjects(
+    project1: ProjectData,
+    project2: ProjectData
+  ): {
     identical: boolean;
     differences: string[];
   } {
@@ -324,7 +324,7 @@ class ProjectImportExportService {
     return {
       ...project,
       // 移除不必要的字段
-      videos: project.videos!.map(v => ({
+      videos: project.videos!.map((v) => ({
         ...v,
         // 不导出本地路径
         path: v.path ? '[导出时移除]' : v.path,
@@ -335,10 +335,7 @@ class ProjectImportExportService {
   /**
    * 处理导入的项目数据
    */
-  private processImportedProject(
-    project: ProjectData,
-    options: ImportOptions
-  ): ProjectData {
+  private processImportedProject(project: ProjectData, options: ImportOptions): ProjectData {
     const now = new Date().toISOString();
 
     // 生成新的 ID 或保留原有 ID
@@ -348,7 +345,7 @@ class ProjectImportExportService {
       createdAt: project.createdAt || now,
       updatedAt: now,
       // 处理视频
-      videos: project.videos!.map(v => ({
+      videos: project.videos!.map((v) => ({
         ...v,
         // 重置视频路径
         path: '',
