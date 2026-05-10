@@ -8,6 +8,7 @@ import React, { useCallback, useState, useRef } from 'react';
 
 import { logger } from '@/core/utils/logger';
 import toast from '@/shared/components/ui/Toast';
+import { generateId } from '@/shared/utils';
 
 import styles from './FileUploader.module.less';
 
@@ -32,7 +33,12 @@ export interface FileUploaderProps {
   /** 上传 URL */
   action?: string;
   /** 自定义上传请求 */
-  customRequest?: (options: { file: File; onSuccess: (response?: unknown) => void; onError: (error: Error) => void; onProgress: (percent: number) => void }) => void;
+  customRequest?: (options: {
+    file: File;
+    onSuccess: (response?: unknown) => void;
+    onError: (error: Error) => void;
+    onProgress: (percent: number) => void;
+  }) => void;
   /** 文件列表 */
   fileList?: UploadFile[];
   /** 文件变化回调 */
@@ -79,98 +85,110 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
 
   const currentFileList = externalFileList || internalFileList;
 
-  const generateId = () => Math.random().toString(36).substring(2, 15);
-
-  const handleFileValidation = useCallback((file: File, files: File[]): boolean => {
-    // 检查文件大小
-    if (maxSize && file.size > maxSize * 1024 * 1024) {
-      toast.error(`文件 ${file.name} 超过最大限制 ${maxSize}MB`);
-      return false;
-    }
-
-    // 检查文件数量
-    if (maxCount && files.length > maxCount) {
-      toast.error(`最多只能上传 ${maxCount} 个文件`);
-      return false;
-    }
-
-    // 调用自定义校验 (async handled via side-effects, sync return for shadcn)
-    if (beforeUpload) {
-      const result = beforeUpload(file, files);
-      if (result instanceof Promise) {
-        result
-          .then(() => {/* validation passed */})
-          .catch((err) => {
-            logger.warn('File validation warning:', err);
-          });
+  const handleFileValidation = useCallback(
+    (file: File, files: File[]): boolean => {
+      // 检查文件大小
+      if (maxSize && file.size > maxSize * 1024 * 1024) {
+        toast.error(`文件 ${file.name} 超过最大限制 ${maxSize}MB`);
         return false;
       }
-      return result;
-    }
 
-    return true;
-  }, [maxSize, maxCount, beforeUpload]);
-
-  const processFile = useCallback((file: File) => {
-    const uploadFile: UploadFile = {
-      uid: generateId(),
-      name: file.name,
-      status: 'pending',
-    };
-
-    const newFileList = [...currentFileList, uploadFile];
-    
-    if (customRequest) {
-      customRequest({
-        file,
-        onSuccess: (response) => {
-          uploadFile.status = 'done';
-          uploadFile.response = response;
-          const updated = newFileList.map(f => f.uid === uploadFile.uid ? uploadFile : f);
-          onChange?.({ file: uploadFile, fileList: updated });
-        },
-        onError: (error) => {
-          uploadFile.status = 'error';
-          uploadFile.error = error;
-          onError?.(error);
-          const updated = newFileList.map(f => f.uid === uploadFile.uid ? uploadFile : f);
-          onChange?.({ file: uploadFile, fileList: updated });
-        },
-        onProgress: (_percent) => {
-          uploadFile.status = 'uploading';
-          const updated = newFileList.map(f => f.uid === uploadFile.uid ? uploadFile : f);
-          onChange?.({ file: uploadFile, fileList: updated });
-        },
-      });
-    } else if (action) {
-      uploadFile.status = 'uploading';
-      onChange?.({ file: uploadFile, fileList: newFileList });
-    } else {
-      uploadFile.status = 'done';
-      uploadFile.url = URL.createObjectURL(file);
-      onChange?.({ file: uploadFile, fileList: newFileList });
-    }
-
-    setInternalFileList(newFileList);
-  }, [currentFileList, customRequest, action, onChange, onError]);
-
-  const handleFiles = useCallback((files: FileList | null) => {
-    if (!files) return;
-    
-    const fileArray = multiple ? Array.from(files) : [files[0]];
-    
-    for (const file of fileArray) {
-      if (handleFileValidation(file, fileArray)) {
-        processFile(file);
+      // 检查文件数量
+      if (maxCount && files.length > maxCount) {
+        toast.error(`最多只能上传 ${maxCount} 个文件`);
+        return false;
       }
-    }
-  }, [multiple, handleFileValidation, processFile]);
 
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!disabled) setDragOver(true);
-  }, [disabled]);
+      // 调用自定义校验 (async handled via side-effects, sync return for shadcn)
+      if (beforeUpload) {
+        const result = beforeUpload(file, files);
+        if (result instanceof Promise) {
+          result
+            .then(() => {
+              /* validation passed */
+            })
+            .catch((err) => {
+              logger.warn('File validation warning:', err);
+            });
+          return false;
+        }
+        return result;
+      }
+
+      return true;
+    },
+    [maxSize, maxCount, beforeUpload]
+  );
+
+  const processFile = useCallback(
+    (file: File) => {
+      const uploadFile: UploadFile = {
+        uid: generateId(),
+        name: file.name,
+        status: 'pending',
+      };
+
+      const newFileList = [...currentFileList, uploadFile];
+
+      if (customRequest) {
+        customRequest({
+          file,
+          onSuccess: (response) => {
+            uploadFile.status = 'done';
+            uploadFile.response = response;
+            const updated = newFileList.map((f) => (f.uid === uploadFile.uid ? uploadFile : f));
+            onChange?.({ file: uploadFile, fileList: updated });
+          },
+          onError: (error) => {
+            uploadFile.status = 'error';
+            uploadFile.error = error;
+            onError?.(error);
+            const updated = newFileList.map((f) => (f.uid === uploadFile.uid ? uploadFile : f));
+            onChange?.({ file: uploadFile, fileList: updated });
+          },
+          onProgress: (_percent) => {
+            uploadFile.status = 'uploading';
+            const updated = newFileList.map((f) => (f.uid === uploadFile.uid ? uploadFile : f));
+            onChange?.({ file: uploadFile, fileList: updated });
+          },
+        });
+      } else if (action) {
+        uploadFile.status = 'uploading';
+        onChange?.({ file: uploadFile, fileList: newFileList });
+      } else {
+        uploadFile.status = 'done';
+        uploadFile.url = URL.createObjectURL(file);
+        onChange?.({ file: uploadFile, fileList: newFileList });
+      }
+
+      setInternalFileList(newFileList);
+    },
+    [currentFileList, customRequest, action, onChange, onError]
+  );
+
+  const handleFiles = useCallback(
+    (files: FileList | null) => {
+      if (!files) return;
+
+      const fileArray = multiple ? Array.from(files) : [files[0]];
+
+      for (const file of fileArray) {
+        if (handleFileValidation(file, fileArray)) {
+          processFile(file);
+        }
+      }
+    },
+    [multiple, handleFileValidation, processFile]
+  );
+
+  const handleDragOver = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!disabled) setDragOver(true);
+    },
+    [disabled]
+  );
 
   const handleDragLeave = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -178,13 +196,16 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     setDragOver(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragOver(false);
-    if (disabled) return;
-    handleFiles(e.dataTransfer.files);
-  }, [disabled, handleFiles]);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDragOver(false);
+      if (disabled) return;
+      handleFiles(e.dataTransfer.files);
+    },
+    [disabled, handleFiles]
+  );
 
   const handleClick = useCallback(() => {
     if (!disabled) {
@@ -192,12 +213,15 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     }
   }, [disabled]);
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    handleFiles(e.target.files);
-    if (inputRef.current) {
-      inputRef.current.value = '';
-    }
-  }, [handleFiles]);
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      handleFiles(e.target.files);
+      if (inputRef.current) {
+        inputRef.current.value = '';
+      }
+    },
+    [handleFiles]
+  );
 
   const renderDragger = () => (
     <div
@@ -268,31 +292,21 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
  * 图片上传组件
  */
 export const ImageUploader: React.FC<Omit<FileUploaderProps, 'accept'>> = (props) => (
-  <FileUploader
-    accept="image/*"
-    {...props}
-  />
+  <FileUploader accept="image/*" {...props} />
 );
 
 /**
  * 视频上传组件
  */
 export const VideoUploader: React.FC<Omit<FileUploaderProps, 'accept'>> = (props) => (
-  <FileUploader
-    accept="video/*"
-    maxSize={500}
-    {...props}
-  />
+  <FileUploader accept="video/*" maxSize={500} {...props} />
 );
 
 /**
  * 文档上传组件
  */
 export const DocumentUploader: React.FC<Omit<FileUploaderProps, 'accept'>> = (props) => (
-  <FileUploader
-    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt"
-    {...props}
-  />
+  <FileUploader accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt" {...props} />
 );
 
 export default FileUploader;

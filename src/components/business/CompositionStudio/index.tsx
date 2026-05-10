@@ -1,4 +1,3 @@
-
 import { motion } from 'framer-motion';
 import {
   PlayCircle,
@@ -29,14 +28,19 @@ import {
 } from '@/components/ui/table';
 import { Tag } from '@/components/ui/tag';
 import { Timeline, TimelineItem } from '@/components/ui/timeline';
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider,
-} from '@/components/ui/tooltip';
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
 import { Text } from '@/components/ui/typography';
-import { Form, FormItem, Select, InputNumber, Space, Divider, Modal, Row, Col } from '@/components/ui/ui-components';
+import {
+  Form,
+  FormItem,
+  Select,
+  InputNumber,
+  Space,
+  Divider,
+  Modal,
+  Row,
+  Col,
+} from '@/components/ui/ui-components';
 import type {
   StoryboardFrame,
   CompositionProject,
@@ -44,6 +48,7 @@ import type {
   TransitionConfig,
   AnimationKeyframe,
 } from '@/core/types';
+import { generatePrefixedId } from '@/shared/utils';
 
 import styles from './index.module.less';
 
@@ -91,7 +96,7 @@ const DEFAULT_TRANSITION: TransitionConfig = {
 };
 
 // 生成唯一ID
-const generateId = () => `comp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+const generateId = () => generatePrefixedId('comp');
 
 const CompositionStudio: React.FC<CompositionStudioProps> = ({
   frames,
@@ -136,11 +141,11 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
   // 初始化帧动画配置
   useEffect(() => {
     if (frames.length > 0) {
-      const existingFrameIds = new Set(composition.frames.map(f => f.frameId));
-      const missingFrames = frames.filter(f => !existingFrameIds.has(f.id));
+      const existingFrameIds = new Set(composition.frames.map((f) => f.frameId));
+      const missingFrames = frames.filter((f) => !existingFrameIds.has(f.id));
 
       if (missingFrames.length > 0) {
-        const newFrames = missingFrames.map(frame => ({
+        const newFrames = missingFrames.map((frame) => ({
           frameId: frame.id,
           cameraMotion: null,
           zoom: 1,
@@ -158,7 +163,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
 
         // 使用函数式更新避免直接修改状态
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        setComposition(prev => ({
+        setComposition((prev) => ({
           ...prev,
           frames: [...prev.frames, ...newFrames],
           updatedAt: new Date().toISOString(),
@@ -176,7 +181,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
 
   // 打开关键帧编辑器
   const handleOpenKeyframes = (frameId: string) => {
-    const frameConfig = composition.frames.find(f => f.frameId === frameId);
+    const frameConfig = composition.frames.find((f) => f.frameId === frameId);
     setKeyframes(frameConfig?.keyframes ?? []);
     setEditingFrameId(frameId);
     setKeyframeModalVisible(true);
@@ -186,8 +191,8 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
   const handleSaveKeyframes = () => {
     if (!editingFrameId) return;
 
-    setComposition(prev => {
-      const newFrames = prev.frames.map(f =>
+    setComposition((prev) => {
+      const newFrames = prev.frames.map((f) =>
         f.frameId === editingFrameId
           ? { ...f, keyframes: [...keyframes].sort((a, b) => a.time - b.time) }
           : f
@@ -218,21 +223,21 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
 
   // 删除关键帧
   const handleDeleteKeyframe = (index: number) => {
-    setKeyframes(prev => prev.filter((_, i) => i !== index));
+    setKeyframes((prev) => prev.filter((_, i) => i !== index));
   };
 
   // 保存帧动画配置
   const handleSaveFrame = (values: Partial<FrameAnimation>) => {
     if (!editingFrameId) return;
 
-    setComposition(prev => {
-      const newFrames = prev.frames.map(f =>
+    setComposition((prev) => {
+      const newFrames = prev.frames.map((f) =>
         f.frameId === editingFrameId
-          ? { 
-              ...f, 
+          ? {
+              ...f,
               ...values,
               // 确保保留关键帧
-              keyframes: f.keyframes ?? []
+              keyframes: f.keyframes ?? [],
             }
           : f
       );
@@ -252,8 +257,8 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
   const handleResetFrame = () => {
     if (!editingFrameId) return;
 
-    setComposition(prev => {
-      const newFrames = prev.frames.map(f =>
+    setComposition((prev) => {
+      const newFrames = prev.frames.map((f) =>
         f.frameId === editingFrameId
           ? {
               frameId: f.frameId,
@@ -289,7 +294,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
 
   // 保存全局设置
   const handleSaveGlobalSettings = (values: any) => {
-    setComposition(prev => ({
+    setComposition((prev) => ({
       ...prev,
       masterSettings: {
         ...prev.masterSettings,
@@ -313,7 +318,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
     const exportData = {
       version: '1.0',
       projectId: composition.projectId,
-      frames: composition.frames.map(f => ({
+      frames: composition.frames.map((f) => ({
         frameId: f.frameId,
         duration: composition.masterSettings.frameDuration,
         cameraMotion: f.cameraMotion,
@@ -336,7 +341,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
     a.download = `composition-${projectId}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    
+
     toast.success('合成数据已导出');
   };
 
@@ -357,8 +362,8 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
   useEffect(() => {
     if (!isPlaying) return;
 
-    const frameDuration = composition.masterSettings.frameDuration * 1000 / playbackSpeed;
-    const startTime = Date.now() - (currentFrameIndex * frameDuration);
+    const frameDuration = (composition.masterSettings.frameDuration * 1000) / playbackSpeed;
+    const startTime = Date.now() - currentFrameIndex * frameDuration;
 
     const animate = () => {
       const elapsed = Date.now() - startTime;
@@ -383,12 +388,18 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [isPlaying, currentFrameIndex, frames.length, composition.masterSettings.frameDuration, playbackSpeed]);
+  }, [
+    isPlaying,
+    currentFrameIndex,
+    frames.length,
+    composition.masterSettings.frameDuration,
+    playbackSpeed,
+  ]);
 
   // 下一帧
   const handleNext = () => {
     if (currentFrameIndex < frames.length - 1) {
-      setCurrentFrameIndex(prev => prev + 1);
+      setCurrentFrameIndex((prev) => prev + 1);
     } else {
       setIsPlaying(false);
     }
@@ -397,7 +408,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
   // 上一帧
   const handlePrev = () => {
     if (currentFrameIndex > 0) {
-      setCurrentFrameIndex(prev => prev - 1);
+      setCurrentFrameIndex((prev) => prev - 1);
     }
   };
 
@@ -483,15 +494,15 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
   //     width: 150,
   //     render: (_: any, record: FrameAnimation) => (
   //       <Space>
-  //         <Button 
-  //           size="small" 
+  //         <Button
+  //           size="small"
   //           icon={<Edit />}
   //           onClick={() => handleEditFrame(record.frameId)}
   //         >
   //           编辑
   //         </Button>
-  //         <Button 
-  //           size="small" 
+  //         <Button
+  //           size="small"
   //           icon={<Key />}
   //           onClick={() => handleOpenKeyframes(record.frameId)}
   //         >
@@ -504,7 +515,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
 
   // 当前帧的动画配置
   const currentFrameConfig = useMemo(() => {
-    return composition.frames.find(f => f.frameId === frames[currentFrameIndex]?.id);
+    return composition.frames.find((f) => f.frameId === frames[currentFrameIndex]?.id);
   }, [composition.frames, currentFrameIndex, frames]);
 
   // 当前帧对象
@@ -521,44 +532,35 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
         }
         extra={
           <Space>
-            <Button 
-              icon={<Settings />} 
-              onClick={handleOpenGlobalSettings}
-            >
+            <Button icon={<Settings />} onClick={handleOpenGlobalSettings}>
               全局设置
             </Button>
-            <Button 
-              icon={<Palette />}
-              onClick={() => setPreviewModalVisible(true)}
-            >
+            <Button icon={<Palette />} onClick={() => setPreviewModalVisible(true)}>
               效果预览
             </Button>
-            <Button 
-              icon={<Download />} 
+            <Button
+              icon={<Download />}
               onClick={handleExportComposition}
               disabled={composition.frames.length === 0}
             >
               导出数据
             </Button>
             {!isPlaying ? (
-              <Button 
-                type="primary" 
-                icon={<PlayCircle />} 
+              <Button
+                type="primary"
+                icon={<PlayCircle />}
                 onClick={handlePlay}
                 disabled={frames.length === 0}
               >
                 播放预览
               </Button>
             ) : (
-              <Button 
-                icon={<PauseCircle />} 
-                onClick={handlePause}
-              >
+              <Button icon={<PauseCircle />} onClick={handlePause}>
                 暂停
               </Button>
             )}
-            <Button 
-              icon={<FastForward />} 
+            <Button
+              icon={<FastForward />}
               onClick={handleNext}
               disabled={currentFrameIndex >= frames.length - 1}
             >
@@ -581,16 +583,16 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
                     x: (currentFrameConfig?.pan?.x ?? 0) * 5,
                     y: (currentFrameConfig?.pan?.y ?? 0) * 5,
                   }}
-                  transition={{ 
+                  transition={{
                     duration: composition.masterSettings.frameDuration,
-                    ease: "easeInOut"
+                    ease: 'easeInOut',
                   }}
                   style={{
                     filter: `
-                      blur(${(currentFrameConfig?.filters?.blur ?? 0)}px)
-                      brightness(${(currentFrameConfig?.filters?.brightness ?? 100)}%)
-                      contrast(${(currentFrameConfig?.filters?.contrast ?? 100)}%)
-                      saturate(${(currentFrameConfig?.filters?.saturation ?? 100)}%)
+                      blur(${currentFrameConfig?.filters?.blur ?? 0}px)
+                      brightness(${currentFrameConfig?.filters?.brightness ?? 100}%)
+                      contrast(${currentFrameConfig?.filters?.contrast ?? 100}%)
+                      saturate(${currentFrameConfig?.filters?.saturation ?? 100}%)
                     `,
                   }}
                 >
@@ -600,7 +602,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
                 <Empty description="请先完成场景渲染" />
               )}
               <div className={styles.frameIndicator}>
-                帧 {currentFrameIndex + 1} / {frames.length} · 
+                帧 {currentFrameIndex + 1} / {frames.length} ·
                 {composition.masterSettings.frameDuration}s
               </div>
             </div>
@@ -654,14 +656,16 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
               <Row gutter={8} align="middle">
                 <Col span={14}>
                   <Text>
-                    {composition.masterSettings.defaultTransition.effect}
-                    ({composition.masterSettings.defaultTransition.duration}s)
+                    {composition.masterSettings.defaultTransition.effect}(
+                    {composition.masterSettings.defaultTransition.duration}s)
                   </Text>
                 </Col>
                 <Col span={10}>
-                  <Button 
+                  <Button
                     size="small"
-                    onClick={() => handlePreviewTransition(composition.masterSettings.defaultTransition)}
+                    onClick={() =>
+                      handlePreviewTransition(composition.masterSettings.defaultTransition)
+                    }
                   >
                     预览
                   </Button>
@@ -685,11 +689,13 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
                   <TableBody>
                     {composition.frames.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">暂无动画配置</TableCell>
+                        <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                          暂无动画配置
+                        </TableCell>
                       </TableRow>
                     ) : (
                       composition.frames.map((record) => {
-                        const frame = frames.find(f => f.id === record.frameId);
+                        const frame = frames.find((f) => f.id === record.frameId);
                         const type = record.cameraMotion?.type;
                         return (
                           <TableRow key={record.frameId}>
@@ -706,9 +712,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
                               </TooltipProvider>
                             </TableCell>
                             <TableCell>
-                              <Tag color={type ? 'blue' : 'default'}>
-                                {type ?? '静止'}
-                              </Tag>
+                              <Tag color={type ? 'blue' : 'default'}>{type ?? '静止'}</Tag>
                             </TableCell>
                             <TableCell>{((record.zoom ?? 1) * 100).toFixed(0)}%</TableCell>
                             <TableCell>{(record.rotation ?? 0).toFixed(0)}°</TableCell>
@@ -750,7 +754,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
 
       {/* 帧编辑模态框 */}
       <Modal
-        title={`编辑动画 - ${frames.find(f => f.id === editingFrameId)?.title ?? ''}`}
+        title={`编辑动画 - ${frames.find((f) => f.id === editingFrameId)?.title ?? ''}`}
         open={frameModalVisible}
         onCancel={() => {
           setFrameModalVisible(false);
@@ -763,7 +767,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
         {editingFrameId && (
           <FrameEditForm
             frameId={editingFrameId}
-            initialValues={composition.frames.find(f => f.frameId === editingFrameId)}
+            initialValues={composition.frames.find((f) => f.frameId === editingFrameId)}
             onSave={handleSaveFrame}
             onReset={handleResetFrame}
           />
@@ -772,7 +776,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
 
       {/* 关键帧编辑器模态框 */}
       <Modal
-        title={`关键帧编辑 - ${frames.find(f => f.id === editingFrameId)?.title ?? ''}`}
+        title={`关键帧编辑 - ${frames.find((f) => f.id === editingFrameId)?.title ?? ''}`}
         open={keyframeModalVisible}
         onOk={handleSaveKeyframes}
         onCancel={() => {
@@ -791,11 +795,7 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
             ) : (
               <Timeline>
                 {keyframes.map((kf, idx) => (
-                  <TimelineItem
-                    key={idx}
-                    dot={<Tag color="blue">{kf.time}s</Tag>}
-                    color="blue"
-                  >
+                  <TimelineItem key={idx} dot={<Tag color="blue">{kf.time}s</Tag>} color="blue">
                     <Space>
                       <span className="font-semibold">{kf.property}</span>
                       <span>= {kf.value}</span>
@@ -813,14 +813,14 @@ const CompositionStudio: React.FC<CompositionStudioProps> = ({
               </Timeline>
             )}
           </div>
-          
+
           <Divider orientation="left">添加关键帧</Divider>
           <Row gutter={16}>
             <Col span={8}>
               <FormItem label="时间点 (秒)">
-                <InputNumber 
-                  min={0} 
-                  max={composition.masterSettings.frameDuration} 
+                <InputNumber
+                  min={0}
+                  max={composition.masterSettings.frameDuration}
                   style={{ width: '100%' }}
                   placeholder="0-3"
                 />
@@ -896,7 +896,12 @@ interface FrameEditFormProps {
   onReset: () => void;
 }
 
-const FrameEditForm: React.FC<FrameEditFormProps> = ({ frameId: _frameId, initialValues, onSave, onReset: _onReset }) => {
+const FrameEditForm: React.FC<FrameEditFormProps> = ({
+  frameId: _frameId,
+  initialValues,
+  onSave,
+  onReset: _onReset,
+}) => {
   //  // not available in compat Form
 
   const handleFinish = (values: any) => {
@@ -945,8 +950,10 @@ const FrameEditForm: React.FC<FrameEditFormProps> = ({ frameId: _frameId, initia
         <Col span={12}>
           <FormItem name="cameraMotion" label="运动类型">
             <Select placeholder="选择镜头运动">
-              {CAMERA_MOTION_OPTIONS.map(opt => (
-                <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+              {CAMERA_MOTION_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
               ))}
             </Select>
           </FormItem>
@@ -1036,14 +1043,8 @@ interface GlobalSettingsFormProps {
 }
 
 const GlobalSettingsForm: React.FC<GlobalSettingsFormProps> = ({ initialValues, onSave }) => {
-  
-
   return (
-    <Form
-      layout="vertical"
-      initialValues={initialValues}
-      onFinish={onSave}
-    >
+    <Form layout="vertical" initialValues={initialValues} onFinish={onSave}>
       <FormItem name="frameDuration" label="默认帧时长 (秒)">
         <Slider min={1} max={10} step={0.5} />
       </FormItem>
@@ -1053,8 +1054,10 @@ const GlobalSettingsForm: React.FC<GlobalSettingsFormProps> = ({ initialValues, 
         <Col span={12}>
           <FormItem name="defaultTransition.effect" label="转场效果">
             <Select>
-              {TRANSITION_OPTIONS.map(opt => (
-                <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+              {TRANSITION_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
               ))}
             </Select>
           </FormItem>

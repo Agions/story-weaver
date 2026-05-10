@@ -6,6 +6,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 import type { VideoInfo } from '@/core/types';
+import { generatePrefixedId } from '@/shared/utils';
 
 // 播放状态
 export type PlaybackStatus = 'playing' | 'paused' | 'stopped';
@@ -19,12 +20,12 @@ export interface TimelineItem {
   type: TimelineItemType;
   name: string;
   sourceId?: string; // 对应的源素材ID
-  startTime: number;  // 在时间线上的开始时间（毫秒）
-  duration: number;   // 持续时间（毫秒）
-  trimStart: number;  // 裁剪开始时间
-  trimEnd: number;   // 裁剪结束时间
-  volume?: number;   // 音量 0-100
-  opacity?: number;  // 透明度 0-100
+  startTime: number; // 在时间线上的开始时间（毫秒）
+  duration: number; // 持续时间（毫秒）
+  trimStart: number; // 裁剪开始时间
+  trimEnd: number; // 裁剪结束时间
+  volume?: number; // 音量 0-100
+  opacity?: number; // 透明度 0-100
   effects?: TimelineEffect[];
 }
 
@@ -72,15 +73,15 @@ export interface VideoEditorState {
 
   // 播放状态
   playbackStatus: PlaybackStatus;
-  currentTime: number;      // 当前播放时间（毫秒）
-  volume: number;          // 音量 0-100
+  currentTime: number; // 当前播放时间（毫秒）
+  volume: number; // 音量 0-100
   isMuted: boolean;
-  playbackRate: number;     // 播放速率
+  playbackRate: number; // 播放速率
 
   // 时间线
   timelineItems: TimelineItem[];
-  duration: number;         // 总时长（毫秒）
-  zoom: number;            // 缩放比例
+  duration: number; // 总时长（毫秒）
+  zoom: number; // 缩放比例
 
   // 字幕
   subtitles: SubtitleItem[];
@@ -155,7 +156,7 @@ export interface VideoEditorState {
   resetEditor: () => void;
 }
 
-const generateId = () => `item_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+const generateId = () => generatePrefixedId('item');
 
 const MAX_HISTORY = 50;
 
@@ -210,7 +211,7 @@ export const useVideoEditorStore = create<VideoEditorState>()(
       },
 
       setVolume: (volume) => set({ volume: Math.max(0, Math.min(100, volume)) }),
-      toggleMute: () => set(state => ({ isMuted: !state.isMuted })),
+      toggleMute: () => set((state) => ({ isMuted: !state.isMuted })),
       setPlaybackRate: (rate) => set({ playbackRate: rate }),
 
       // 时间线操作
@@ -218,7 +219,7 @@ export const useVideoEditorStore = create<VideoEditorState>()(
         const id = generateId();
         const newItem = { ...item, id };
 
-        set(state => {
+        set((state) => {
           const newItems = [...state.timelineItems, newItem];
           const newDuration = Math.max(state.duration, item.startTime + item.duration);
 
@@ -233,16 +234,16 @@ export const useVideoEditorStore = create<VideoEditorState>()(
       },
 
       removeTimelineItem: (id) => {
-        set(state => ({
-          timelineItems: state.timelineItems.filter(item => item.id !== id),
-          selectedItems: state.selectedItems.filter(itemId => itemId !== id),
+        set((state) => ({
+          timelineItems: state.timelineItems.filter((item) => item.id !== id),
+          selectedItems: state.selectedItems.filter((itemId) => itemId !== id),
         }));
         get().saveToHistory();
       },
 
       updateTimelineItem: (id, updates) => {
-        set(state => ({
-          timelineItems: state.timelineItems.map(item =>
+        set((state) => ({
+          timelineItems: state.timelineItems.map((item) =>
             item.id === id ? { ...item, ...updates } : item
           ),
         }));
@@ -251,14 +252,12 @@ export const useVideoEditorStore = create<VideoEditorState>()(
 
       moveTimelineItem: (id, newStartTime) => {
         const { timelineItems } = get();
-        const item = timelineItems.find(i => i.id === id);
+        const item = timelineItems.find((i) => i.id === id);
         if (!item) return;
 
-        set(state => ({
-          timelineItems: state.timelineItems.map(i =>
-            i.id === id
-              ? { ...i, startTime: Math.max(0, newStartTime) }
-              : i
+        set((state) => ({
+          timelineItems: state.timelineItems.map((i) =>
+            i.id === id ? { ...i, startTime: Math.max(0, newStartTime) } : i
           ),
         }));
         get().saveToHistory();
@@ -266,7 +265,7 @@ export const useVideoEditorStore = create<VideoEditorState>()(
 
       splitTimelineItem: (id, time) => {
         const { timelineItems } = get();
-        const item = timelineItems.find(i => i.id === id);
+        const item = timelineItems.find((i) => i.id === id);
         if (!item) return;
 
         const relativeTime = time - item.startTime;
@@ -290,19 +289,15 @@ export const useVideoEditorStore = create<VideoEditorState>()(
           trimStart: item.trimStart + relativeTime,
         };
 
-        set(state => ({
-          timelineItems: [
-            ...state.timelineItems.filter(i => i.id !== id),
-            part1,
-            part2,
-          ],
+        set((state) => ({
+          timelineItems: [...state.timelineItems.filter((i) => i.id !== id), part1, part2],
         }));
         get().saveToHistory();
       },
 
       duplicateTimelineItem: (id) => {
         const { timelineItems } = get();
-        const item = timelineItems.find(i => i.id === id);
+        const item = timelineItems.find((i) => i.id === id);
         if (!item) return;
 
         const newId = generateId();
@@ -313,7 +308,7 @@ export const useVideoEditorStore = create<VideoEditorState>()(
           startTime: item.startTime + item.duration,
         };
 
-        set(state => ({
+        set((state) => ({
           timelineItems: [...state.timelineItems, newItem],
         }));
         get().saveToHistory();
@@ -322,7 +317,7 @@ export const useVideoEditorStore = create<VideoEditorState>()(
       // 字幕操作
       addSubtitle: (subtitle) => {
         const id = generateId();
-        set(state => ({
+        set((state) => ({
           subtitles: [...state.subtitles, { ...subtitle, id }],
         }));
         get().saveToHistory();
@@ -330,43 +325,39 @@ export const useVideoEditorStore = create<VideoEditorState>()(
       },
 
       removeSubtitle: (id) => {
-        set(state => ({
-          subtitles: state.subtitles.filter(s => s.id !== id),
+        set((state) => ({
+          subtitles: state.subtitles.filter((s) => s.id !== id),
         }));
         get().saveToHistory();
       },
 
       updateSubtitle: (id, updates) => {
-        set(state => ({
-          subtitles: state.subtitles.map(s =>
-            s.id === id ? { ...s, ...updates } : s
-          ),
+        set((state) => ({
+          subtitles: state.subtitles.map((s) => (s.id === id ? { ...s, ...updates } : s)),
         }));
         get().saveToHistory();
       },
 
-      toggleSubtitles: () => set(state => ({ subtitleEnabled: !state.subtitleEnabled })),
+      toggleSubtitles: () => set((state) => ({ subtitleEnabled: !state.subtitleEnabled })),
 
       // 标记操作
       addMarker: (marker) => {
         const id = generateId();
-        set(state => ({
+        set((state) => ({
           markers: [...state.markers, { ...marker, id }],
         }));
         return id;
       },
 
       removeMarker: (id) => {
-        set(state => ({
-          markers: state.markers.filter(m => m.id !== id),
+        set((state) => ({
+          markers: state.markers.filter((m) => m.id !== id),
         }));
       },
 
       updateMarker: (id, updates) => {
-        set(state => ({
-          markers: state.markers.map(m =>
-            m.id === id ? { ...m, ...updates } : m
-          ),
+        set((state) => ({
+          markers: state.markers.map((m) => (m.id === id ? { ...m, ...updates } : m)),
         }));
       },
 

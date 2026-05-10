@@ -29,14 +29,28 @@ import { Slider } from '@/components/ui/slider';
 import { Tag } from '@/components/ui/tag';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Text, Title } from '@/components/ui/typography';
-import { Button , Select as AntDSelect , Collapse , Space, Row, Col, Divider , TextArea } from '@/components/ui/ui-components';
-
+import {
+  Button,
+  Select as AntDSelect,
+  Collapse,
+  Space,
+  Row,
+  Col,
+  Divider,
+  TextArea,
+} from '@/components/ui/ui-components';
+import { generatePrefixedId } from '@/shared/utils';
 
 import styles from './SceneRenderer.module.less';
 
 // AntD Typography shims
-const Paragraph: React.FC<React.HTMLAttributes<HTMLParagraphElement>> = ({ children, ...props }) => (
-  <p className="text-sm" {...props}>{children}</p>
+const Paragraph: React.FC<React.HTMLAttributes<HTMLParagraphElement>> = ({
+  children,
+  ...props
+}) => (
+  <p className="text-sm" {...props}>
+    {children}
+  </p>
 );
 
 // 场景类型选项
@@ -150,7 +164,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
   // editing key tracking removed as unused
 
   // 生成唯一ID
-  const generateId = () => `scene_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  const generateId = () => generatePrefixedId('scene');
 
   // 添加场景
   const addScene = () => {
@@ -191,9 +205,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
 
   // 更新场景
   const updateScene = (id: string, field: keyof Scene, value: Scene[keyof Scene]) => {
-    const updatedScenes = scenes.map((s) =>
-      s.id === id ? { ...s, [field]: value } : s
-    );
+    const updatedScenes = scenes.map((s) => (s.id === id ? { ...s, [field]: value } : s));
     setScenes(updatedScenes);
 
     if (selectedScene?.id === id) {
@@ -247,17 +259,24 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
     const scene = scenes.find((s) => s.id === sceneId);
     if (!scene) return;
 
-    updateScene(sceneId, 'props', scene.props.filter((p) => p.id !== propId));
+    updateScene(
+      sceneId,
+      'props',
+      scene.props.filter((p) => p.id !== propId)
+    );
   };
 
   // 更新道具
-  const updateProp = (sceneId: string, propId: string, field: keyof SceneProp, value: ScenePropValue) => {
+  const updateProp = (
+    sceneId: string,
+    propId: string,
+    field: keyof SceneProp,
+    value: ScenePropValue
+  ) => {
     const scene = scenes.find((s) => s.id === sceneId);
     if (!scene) return;
 
-    const updatedProps = scene.props.map((p) =>
-      p.id === propId ? { ...p, [field]: value } : p
-    );
+    const updatedProps = scene.props.map((p) => (p.id === propId ? { ...p, [field]: value } : p));
     updateScene(sceneId, 'props', updatedProps);
   };
 
@@ -281,12 +300,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
           <Title level={5} className={styles.sidebarTitle}>
             场景列表
           </Title>
-          <Button
-            type="primary"
-            icon={<Plus />}
-            size="small"
-            onClick={addScene}
-          >
+          <Button type="primary" icon={<Plus />} size="small" onClick={addScene}>
             新建场景
           </Button>
         </div>
@@ -309,9 +323,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
                   onClick={() => handleSceneSelect(scene)}
                 >
                   <div className={styles.sceneItemContent}>
-                    <div className={styles.sceneIcon}>
-                      {getSceneTypeIcon(scene.type)}
-                    </div>
+                    <div className={styles.sceneIcon}>{getSceneTypeIcon(scene.type)}</div>
                     <div className={styles.sceneInfo}>
                       <Text className={styles.sceneName} ellipsis>
                         {scene.name}
@@ -320,7 +332,8 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
                         color={getAtmosphereColor(scene.atmosphere)}
                         className={styles.atmosphereTag}
                       >
-                        {ATMOSPHERE_OPTIONS.find((a) => a.value === scene.atmosphere)?.label ?? scene.atmosphere}
+                        {ATMOSPHERE_OPTIONS.find((a) => a.value === scene.atmosphere)?.label ??
+                          scene.atmosphere}
                       </Tag>
                     </div>
                     <div className={styles.sceneActions}>
@@ -383,10 +396,12 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
               </Title>
               <Space>
                 <Tag icon={getSceneTypeIcon(selectedScene.type)}>
-                  {SCENE_TYPE_OPTIONS.find((t) => t.value === selectedScene.type)?.label ?? selectedScene.type}
+                  {SCENE_TYPE_OPTIONS.find((t) => t.value === selectedScene.type)?.label ??
+                    selectedScene.type}
                 </Tag>
                 <Tag color={getAtmosphereColor(selectedScene.atmosphere)}>
-                  {ATMOSPHERE_OPTIONS.find((a) => a.value === selectedScene.atmosphere)?.label ?? selectedScene.atmosphere}
+                  {ATMOSPHERE_OPTIONS.find((a) => a.value === selectedScene.atmosphere)?.label ??
+                    selectedScene.atmosphere}
                 </Tag>
               </Space>
             </div>
@@ -412,19 +427,31 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
                 <Col span={8}>
                   <div className={styles.infoItem}>
                     <Lightbulb />
-                    <Text>{LIGHTING_OPTIONS.find((l) => l.value === selectedScene.lighting)?.label ?? selectedScene.lighting}</Text>
+                    <Text>
+                      {LIGHTING_OPTIONS.find((l) => l.value === selectedScene.lighting)?.label ??
+                        selectedScene.lighting}
+                    </Text>
                   </div>
                 </Col>
                 <Col span={8}>
                   <div className={styles.infoItem}>
                     <Cloud />
-                    <Text>{WEATHER_OPTIONS.find((w) => w.value === selectedScene.weather)?.label ?? selectedScene.weather}</Text>
+                    <Text>
+                      {WEATHER_OPTIONS.find((w) => w.value === selectedScene.weather)?.label ??
+                        selectedScene.weather}
+                    </Text>
                   </div>
                 </Col>
                 <Col span={8}>
                   <div className={styles.infoItem}>
                     <Sun />
-                    <Text>{selectedScene.timeOfDay === 'day' ? '白天' : selectedScene.timeOfDay === 'night' ? '夜晚' : selectedScene.timeOfDay}</Text>
+                    <Text>
+                      {selectedScene.timeOfDay === 'day'
+                        ? '白天'
+                        : selectedScene.timeOfDay === 'night'
+                          ? '夜晚'
+                          : selectedScene.timeOfDay}
+                    </Text>
                   </div>
                 </Col>
               </Row>
@@ -494,10 +521,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
           </>
         ) : (
           <div className={styles.emptyPreview}>
-            <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description="请选择或创建一个场景"
-            />
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="请选择或创建一个场景" />
           </div>
         )}
       </div>
@@ -561,7 +585,9 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
                   <Text type="secondary">氛围</Text>
                   <AntDSelect
                     value={selectedScene.atmosphere}
-                    onChange={(value) => updateScene(selectedScene.id, 'atmosphere', value as string)}
+                    onChange={(value) =>
+                      updateScene(selectedScene.id, 'atmosphere', value as string)
+                    }
                     style={{ width: '100%' }}
                     options={ATMOSPHERE_OPTIONS.map((opt) => ({
                       value: opt.value,
@@ -610,7 +636,9 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
                   <Text type="secondary">时段</Text>
                   <AntDSelect
                     value={selectedScene.timeOfDay}
-                    onChange={(value) => updateScene(selectedScene.id, 'timeOfDay', value as string)}
+                    onChange={(value) =>
+                      updateScene(selectedScene.id, 'timeOfDay', value as string)
+                    }
                     style={{ width: '100%' }}
                     options={[
                       { value: 'dawn', label: '黎明' },
@@ -631,7 +659,9 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
                   <Text type="secondary">背景描述（用于AI生成）</Text>
                   <TextArea
                     value={selectedScene.backgroundDescription}
-                    onChange={(e) => updateScene(selectedScene.id, 'backgroundDescription', e.target.value)}
+                    onChange={(e) =>
+                      updateScene(selectedScene.id, 'backgroundDescription', e.target.value)
+                    }
                     placeholder="详细描述场景的背景环境..."
                     rows={4}
                   />
@@ -679,7 +709,9 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
                           <Text type="secondary">道具名称</Text>
                           <Input
                             value={prop.name}
-                            onChange={(e) => updateProp(selectedScene.id, prop.id, 'name', e.target.value)}
+                            onChange={(e) =>
+                              updateProp(selectedScene.id, prop.id, 'name', e.target.value)
+                            }
                             placeholder="道具名称"
                           />
                         </div>
@@ -688,7 +720,9 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
                           <Text type="secondary">道具类型</Text>
                           <AntDSelect
                             value={prop.category}
-                            onChange={(value) => updateProp(selectedScene.id, prop.id, 'category', value as any)}
+                            onChange={(value) =>
+                              updateProp(selectedScene.id, prop.id, 'category', value as any)
+                            }
                             style={{ width: '100%' }}
                             options={PROP_CATEGORIES.map((c) => ({
                               value: c.value,
@@ -754,7 +788,9 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
                               <Text type="secondary">缩放</Text>
                               <Slider
                                 value={prop.scale}
-                                onChange={(value) => updateProp(selectedScene.id, prop.id, 'scale', value)}
+                                onChange={(value) =>
+                                  updateProp(selectedScene.id, prop.id, 'scale', value)
+                                }
                                 min={0.1}
                                 max={3}
                                 step={0.1}
@@ -766,7 +802,9 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
                               <Text type="secondary">旋转</Text>
                               <Slider
                                 value={prop.rotation}
-                                onChange={(value) => updateProp(selectedScene.id, prop.id, 'rotation', value)}
+                                onChange={(value) =>
+                                  updateProp(selectedScene.id, prop.id, 'rotation', value)
+                                }
                                 min={-180}
                                 max={180}
                               />
@@ -782,10 +820,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
           </>
         ) : (
           <div className={styles.emptyEditor}>
-            <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description="请选择场景进行编辑"
-            />
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="请选择场景进行编辑" />
           </div>
         )}
       </div>
