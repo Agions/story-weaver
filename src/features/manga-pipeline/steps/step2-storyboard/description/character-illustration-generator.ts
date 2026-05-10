@@ -1,4 +1,4 @@
-import { CharacterCard } from '../../step1-script-generation/types/character';
+import { EMOTION_KEYWORDS } from '../../../utils/emotion-constants';
 import {
   buildCharacterReferencePrompts,
   buildCharacterPrompt,
@@ -10,20 +10,21 @@ import {
   COMIC_STYLE,
   SKETCH_STYLE,
 } from '../../../utils/prompt-template';
+import { CharacterCard } from '../../step1-script-generation/types/character';
 
 // ========== 角色立绘（增强版：含三视图）============
 
 export interface CharacterIllustration {
   characterId: string;
   name: string;
-  prompt: string;             // 默认正面 prompt
+  prompt: string; // 默认正面 prompt
   negativePrompt: string;
   pose: string;
   expression: string;
   outfit: string;
   // --- 增强：角色一致性系统 ---
-  referenceViews: CharacterView[];   // 三视图（正面/侧面/全身）
-  referencePrompt: string;          // 角色特征 token（用于视频生成绑定）
+  referenceViews: CharacterView[]; // 三视图（正面/侧面/全身）
+  referencePrompt: string; // 角色特征 token（用于视频生成绑定）
   style: string;
 }
 
@@ -38,7 +39,7 @@ export interface CharacterIllustrationInput {
  * 生成角色立绘（增强版，支持旧签名兼容）
  * - 基础：正面姿态 prompt
  * - 增强：生成三视图 reference sheet，用于后续视频生成角色绑定
- * 
+ *
  * @param input - 新签名：{ character, style?, generateReferenceViews? }
  *        或者（旧兼容）：character, style?
  */
@@ -64,9 +65,9 @@ export function generateCharacterIllustration(
   const { character, style: s = 'anime', generateReferenceViews = true } = input;
 
   const preset = getStylePreset(s);
-  
+
   const isDefaultAppearance = character.appearance === '普通外貌，着装简洁';
-  
+
   // 生成基础 prompt（正面）
   const prompt = buildCharacterPrompt({
     subject: character.name,
@@ -117,9 +118,7 @@ function buildCharacterReferenceToken(
 ): string {
   const parts: string[] = [
     character.name,
-    character.appearance !== '普通外貌，着装简洁'
-      ? character.appearance
-      : '',
+    character.appearance !== '普通外貌，着装简洁' ? character.appearance : '',
     getPersonalityPose('').expression, // 使用中性表情
   ].filter(Boolean);
 
@@ -160,7 +159,7 @@ export interface EnhancedCharacterConstraint {
 export function buildCharacterConstraints(
   illustrations: CharacterIllustration[]
 ): EnhancedCharacterConstraint[] {
-  return illustrations.map(illust => ({
+  return illustrations.map((illust) => ({
     characterId: illust.characterId,
     name: illust.name,
     appearance: extractField(illust.prompt, 'appearance') || illust.outfit,
@@ -184,7 +183,7 @@ function extractField(prompt: string, field: string): string | undefined {
 export interface SceneDescription {
   sceneId: string;
   sceneNumber: number;
-  prompt: string;             // AI 绘图 prompt
+  prompt: string; // AI 绘图 prompt
   negativePrompt: string;
   styleHint: string;
   aspectRatio: '16:9' | '9:16' | '4:3' | '1:1';
@@ -226,26 +225,39 @@ export const LEGACY_STYLE_PRESETS: Record<string, StylePreset> = {
 };
 
 export function generateSceneDescription(
-  scene: { id: string; sceneNumber: number; location?: string; timeOfDay: string;
-    weather?: string; characters: string[]; type: string; emotion?: string;
-    cameraHint?: string; content: string },
+  scene: {
+    id: string;
+    sceneNumber: number;
+    location?: string;
+    timeOfDay: string;
+    weather?: string;
+    characters: string[];
+    type: string;
+    emotion?: string;
+    cameraHint?: string;
+    content: string;
+  },
   style: string = 'default',
   characterConstraints?: EnhancedCharacterConstraint[]
 ): SceneDescription {
   const preset = LEGACY_STYLE_PRESETS[style] || LEGACY_STYLE_PRESETS['default'];
-  const ctxStyle = style === 'anime' ? ANIME_STYLE
-    : style === 'comic' ? COMIC_STYLE
-    : style === 'sketch' ? SKETCH_STYLE
-    : { ...preset, lightingPresets: [], cameraHints: [] };
+  const ctxStyle =
+    style === 'anime'
+      ? ANIME_STYLE
+      : style === 'comic'
+        ? COMIC_STYLE
+        : style === 'sketch'
+          ? SKETCH_STYLE
+          : { ...preset, lightingPresets: [], cameraHints: [] };
 
   // 构建角色约束 prompt
   const charRefs: CharacterRefPrompt[] | undefined = characterConstraints
-    ?.filter(c => scene.characters.some(n =>
-      n.toLowerCase() === c.name.toLowerCase() ||
-      n.includes(c.name) ||
-      c.name.includes(n)
-    ))
-    .map(c => ({
+    ?.filter((c) =>
+      scene.characters.some(
+        (n) => n.toLowerCase() === c.name.toLowerCase() || n.includes(c.name) || c.name.includes(n)
+      )
+    )
+    .map((c) => ({
       name: c.name,
       appearance: c.appearance,
       outfit: c.outfit,
@@ -293,10 +305,14 @@ export function generateSceneDescription(
 
 function getStylePreset(style: string) {
   switch (style) {
-    case 'anime': return ANIME_STYLE;
-    case 'comic': return COMIC_STYLE;
-    case 'sketch': return SKETCH_STYLE;
-    default: return ANIME_STYLE;
+    case 'anime':
+      return ANIME_STYLE;
+    case 'comic':
+      return COMIC_STYLE;
+    case 'sketch':
+      return SKETCH_STYLE;
+    default:
+      return ANIME_STYLE;
   }
 }
 
@@ -310,48 +326,63 @@ function getPersonalityPose(
   // speakingStyle only overrides when EXPLICITLY set to casual/formal
   // '普通' (default/normal) should fall through to personality-based behavior
   const isExplicitCasual = s.includes('口语化') || s.includes('Casual') || s.includes('casual');
-  const isExplicitFormal = s.includes('正式') && !s.includes('普通') ||
-                           s.includes('Formal') || s.includes('formal');
+  const isExplicitFormal =
+    (s.includes('正式') && !s.includes('普通')) || s.includes('Formal') || s.includes('formal');
 
   if (isExplicitCasual) {
-    return { pose: 'casual pose, relaxed stance, one hand in pocket', expression: 'relaxed expression, easy smile' };
+    return {
+      pose: 'casual pose, relaxed stance, one hand in pocket',
+      expression: 'relaxed expression, easy smile',
+    };
   }
   if (isExplicitFormal) {
-    return { pose: 'formal pose, upright posture, hands at sides', expression: 'formal expression, composed demeanor' };
+    return {
+      pose: 'formal pose, upright posture, hands at sides',
+      expression: 'formal expression, composed demeanor',
+    };
   }
 
   // personality-based poses (when speakingStyle is '普通' or unset)
   if (p.includes('开朗') || p.includes('活泼')) {
-    return { pose: 'dynamic pose, one hand raised, energetic stance', expression: 'bright smile, cheerful expression, open eyes' };
+    return {
+      pose: 'dynamic pose, one hand raised, energetic stance',
+      expression: 'bright smile, cheerful expression, open eyes',
+    };
   }
   if (p.includes('内向') || p.includes('沉默')) {
-    return { pose: 'subtle pose, arms crossed, guarded stance', expression: 'reserved expression, slight smile, downward gaze' };
+    return {
+      pose: 'subtle pose, arms crossed, guarded stance',
+      expression: 'reserved expression, slight smile, downward gaze',
+    };
   }
   if (p.includes('急躁') || p.includes('暴躁')) {
-    return { pose: 'tense pose, leaning forward, assertive stance', expression: 'intense expression, furrowed brow, determined look' };
+    return {
+      pose: 'tense pose, leaning forward, assertive stance',
+      expression: 'intense expression, furrowed brow, determined look',
+    };
   }
   if (p.includes('谨慎') || p.includes('冷静')) {
-    return { pose: 'steady pose, hands clasped, balanced stance', expression: 'serene expression, composed look, alert eyes' };
+    return {
+      pose: 'steady pose, hands clasped, balanced stance',
+      expression: 'serene expression, composed look, alert eyes',
+    };
   }
 
   return { pose: 'natural pose, relaxed stance', expression: 'neutral expression, relaxed look' };
 }
 
 function getEmotionKeyword(emotion?: string): string {
-  const map: Record<string, string> = {
-    tense: 'dark atmosphere, suspenseful',
-    angry: 'red tones, harsh lighting, dramatic',
-    sad: 'blue tones, soft lighting, melancholic',
-    happy: 'bright colors, warm lighting, cheerful',
-    surprising: 'dynamic composition, dramatic lighting',
-    neutral: 'balanced lighting, natural colors',
-  };
-  return map[emotion || ''] || 'balanced lighting, natural atmosphere';
+  return EMOTION_KEYWORDS[emotion || ''] || 'balanced lighting, natural atmosphere';
 }
 
 function estimateDuration(sceneType: string, contentLength: number): number {
   const base: Record<string, number> = {
-    '对话': 8, '动作': 12, '追逐': 15, '对峙': 10, '情感': 10, '独白': 6,
+    对话: 8,
+    动作: 12,
+    追逐: 15,
+    对峙: 10,
+    情感: 10,
+    独白: 6,
   };
   const baseVal = base[sceneType] || 8;
   return baseVal + Math.min(Math.floor(contentLength / 50) * 1, 5);

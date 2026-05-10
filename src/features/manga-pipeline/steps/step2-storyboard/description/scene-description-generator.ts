@@ -1,14 +1,15 @@
+import { EMOTION_PROMPTS } from '../../../utils/emotion-constants';
 import { ScriptScene } from '../../step1-script-generation/types/script';
 
 export interface SceneDescription {
   sceneId: string;
   sceneNumber: number;
-  prompt: string;          // AI 绘图 prompt
-  negativePrompt: string;   // 反向 prompt
-  styleHint: string;       // 风格标签
+  prompt: string; // AI 绘图 prompt
+  negativePrompt: string; // 反向 prompt
+  styleHint: string; // 风格标签
   aspectRatio: '16:9' | '9:16' | '4:3' | '1:1';
-  duration: number;         // 秒
-  characterConstraints?: CharacterConstraint[];  // 角色一致性约束
+  duration: number; // 秒
+  characterConstraints?: CharacterConstraint[]; // 角色一致性约束
   location?: string;
   emotion?: string;
 }
@@ -16,10 +17,10 @@ export interface SceneDescription {
 export interface CharacterConstraint {
   characterId: string;
   name: string;
-  appearance: string;    // 外观描述
-  pose: string;          // 姿态
-  expression: string;    // 表情
-  outfit: string;        // 服装
+  appearance: string; // 外观描述
+  pose: string; // 姿态
+  expression: string; // 表情
+  outfit: string; // 服装
 }
 
 export interface StylePreset {
@@ -121,14 +122,15 @@ function buildCharacterConstraintPrompts(
   constraints: CharacterConstraint[]
 ): string[] {
   const prompts: string[] = [];
-  const sceneCharNames = scene.characters.map(c => c.trim());
+  const sceneCharNames = scene.characters.map((c) => c.trim());
 
   for (const constraint of constraints) {
     // 检查该约束角色是否在当前场景中出现
     const isInScene = sceneCharNames.some(
-      name => name.toLowerCase() === constraint.name.toLowerCase() ||
-             name.includes(constraint.name) ||
-             constraint.name.includes(name)
+      (name) =>
+        name.toLowerCase() === constraint.name.toLowerCase() ||
+        name.includes(constraint.name) ||
+        constraint.name.includes(name)
     );
 
     if (isInScene) {
@@ -146,26 +148,18 @@ function buildCharacterConstraintPrompts(
 }
 
 function getEmotionPrompts(emotion: string): string[] {
-  const emotionMap: Record<string, string[]> = {
-    tense: ['dark atmosphere', 'suspenseful lighting', 'dynamic tension'],
-    angry: ['red tones', 'harsh lighting', 'dramatic shadows'],
-    sad: ['blue tones', 'soft lighting', 'melancholic mood'],
-    happy: ['bright colors', 'warm lighting', 'cheerful atmosphere'],
-    surprising: ['dynamic composition', 'dramatic lighting', 'unexpected angle'],
-    neutral: ['balanced lighting', 'natural colors', 'calm atmosphere'],
-  };
-  return emotionMap[emotion] || emotionMap['neutral'];
+  return EMOTION_PROMPTS[emotion] || EMOTION_PROMPTS['neutral'];
 }
 
 function estimateDuration(scene: ScriptScene): number {
   // 基于场景类型和内容长度估算
   const baseDuration: Record<string, number> = {
-    '对话': 8,
-    '动作': 12,
-    '追逐': 15,
-    '对峙': 10,
-    '情感': 10,
-    '独白': 6,
+    对话: 8,
+    动作: 12,
+    追逐: 15,
+    对峙: 10,
+    情感: 10,
+    独白: 6,
   };
   const base = baseDuration[scene.type] || 8;
   // 内容越长，时长越长（最多加 5 秒）
