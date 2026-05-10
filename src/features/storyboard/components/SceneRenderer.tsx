@@ -398,9 +398,11 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
                 <div className={styles.previewPlaceholder}>
                   <MapPin style={{ fontSize: 64, color: '#d9d9d9' }} />
                   <Text type="secondary">场景预览区域</Text>
-                  <Paragraph type="secondary" style={{ marginTop: 8, textAlign: 'center' }}>
-                    {selectedScene.backgroundDescription || '请输入背景描述'}
-                  </Paragraph>
+                  <div style={{ marginTop: 8, textAlign: 'center' }}>
+                    <Text type="secondary">
+                      {selectedScene.backgroundDescription || '请输入背景描述'}
+                    </Text>
+                  </div>
                 </div>
               )}
             </div>
@@ -686,7 +688,7 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
                           <Text type="secondary">道具类型</Text>
                           <AntDSelect
                             value={prop.category}
-                            onChange={(value) => updateProp(selectedScene.id, prop.id, 'category', value)}
+                            onChange={(value) => updateProp(selectedScene.id, prop.id, 'category', value as any)}
                             style={{ width: '100%' }}
                             options={PROP_CATEGORIES.map((c) => ({
                               value: c.value,

@@ -23,6 +23,7 @@ interface RadioGroupProps {
   children?: React.ReactNode;
   options?: RadioOption[];
   className?: string;
+  disabled?: boolean;
 }
 
 interface RadioButtonProps extends React.InputHTMLAttributes<HTMLInputElement> {

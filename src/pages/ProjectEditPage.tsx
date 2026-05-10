@@ -77,7 +77,7 @@ const ProjectEdit: React.FC = () => {
   const { projectId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const [form] = useForm();
+  const [form] = useForm() as any;
 
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);

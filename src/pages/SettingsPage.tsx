@@ -212,7 +212,7 @@ const Settings: React.FC = () => {
               
               <RadioGroup 
                 value={isDarkMode ? 'dark' : 'light'}
-                onValueChange={(value) => {
+                onChange={(value: string) => {
                   if (value !== (isDarkMode ? 'dark' : 'light')) {
                     toggleTheme();
                   }

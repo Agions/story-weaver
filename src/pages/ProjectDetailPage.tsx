@@ -290,14 +290,14 @@ const ProjectDetail: React.FC = () => {
       };
 
       // 先更新UI
-      setProject(updatedProject);
-      setActiveScript(newScript);
+      setProject(updatedProject as any);
+      setActiveScript(newScript as any);
 
       // 保存到文件，显示loading
       toast.loading('正在保存剧本...');
       tauriService.writeText(updatedProject.id, JSON.stringify(updatedProject))
         .then(() => {
-          updateProject(updatedProject.id, updatedProject);
+          updateProject(updatedProject.id, updatedProject as any);
           toast.success('剧本创建成功');
         })
         .catch(error => {
@@ -330,10 +330,10 @@ const ProjectDetail: React.FC = () => {
       };
       
       // 更新脚本列表
-      const updatedScripts = project.scripts.map((script: Script) =>
+      const updatedScripts = (project.scripts ?? []).map((script: Script) =>
         script.id === activeScript.id ? updatedScript : script
       );
-      
+
       // 更新项目
       const updatedProject = {
         ...project,
@@ -342,13 +342,13 @@ const ProjectDetail: React.FC = () => {
       };
       
       // 先更新UI
-      setProject(updatedProject);
-      setActiveScript(updatedScript);
+      setProject(updatedProject as any);
+      setActiveScript(updatedScript as any);
 
       // 保存到文件
       tauriService.writeText(updatedProject.id, JSON.stringify(updatedProject))
         .then(() => {
-          updateProject(updatedProject.id, updatedProject);
+          updateProject(updatedProject.id, updatedProject as any);
           toast.success('脚本内容已保存');
         })
         .catch(error => {
@@ -568,7 +568,7 @@ const ProjectDetail: React.FC = () => {
                   <Tabs
                     activeKey={activeScript?.id}
                     onChange={key => {
-                      const script = project.scripts.find((s: Script) => s.id === key);
+                      const script = (project.scripts ?? []).find((s: Script) => s.id === key);
                       if (script) setActiveScript(script);
                     }}
                   >
@@ -579,7 +579,7 @@ const ProjectDetail: React.FC = () => {
                       >
                         <Suspense fallback={<Spin />}>
                           <ScriptEditor
-                            segments={script.content ?? []}
+                            segments={script.content as any}
                             onSegmentsChange={handleScriptChange}
                           />
                         </Suspense>
@@ -792,10 +792,10 @@ const ProjectDetail: React.FC = () => {
             key="composition"
           >
             <div className={styles.workflowSection}>
-              {activeScript?.content && activeScript.content.length > 0 && project.storyboardFrames?.length > 0 ? (
+              {activeScript?.content && activeScript.content.length > 0 && (project.storyboardFrames?.length ?? 0) > 0 ? (
                 <Suspense fallback={<Spin />}>
                   <CompositionStudio
-                    frames={project.storyboardFrames}
+                    frames={project.storyboardFrames as any}
                     projectId={project?.id}
                     onCompositionChange={(comp) => {
                       persistProjectPatch({ composition: comp });

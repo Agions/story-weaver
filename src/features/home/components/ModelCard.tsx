@@ -213,7 +213,7 @@ const ModelCard: React.FC<ModelCardProps> = ({
                 >
                   {isSelected ? '当前默认' : '设为默认'}
                 </Button>
-                <Tooltip content="管理模型设置">
+                <Tooltip title="管理模型设置">
                   <Button
                     variant="ghost"
                     size="small"

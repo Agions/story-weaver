@@ -1,7 +1,15 @@
 import { Script } from '../step1-script-generation/types/script';
 
-import { generateCharacterIllustration, CharacterIllustration } from './description/character-illustration-generator';
-import { generateSceneDescription, SceneDescription, CharacterConstraint } from './description/scene-description-generator';
+import {
+  generateCharacterIllustration,
+  buildCharacterConstraints,
+  type CharacterIllustration,
+  type EnhancedCharacterConstraint,
+} from './description/character-illustration-generator';
+import {
+  generateSceneDescription,
+  type SceneDescription,
+} from './description/character-illustration-generator';
 
 export interface Storyboard {
   scriptId: string;
@@ -28,43 +36,72 @@ export interface StoryboardOptions {
   style?: string;       // 'anime' | 'comic' | 'sketch'
   includeCharacters?: boolean;  // 是否生成角色立绘
   aspectRatio?: SceneDescription['aspectRatio'];
+  /** 启用增强角色一致性系统（三视图） */
+  enhancedCharacterConsistency?: boolean;
 }
 
+/**
+ * 构建故事板（增强版）
+ * 
+ * 增强点：
+ * 1. 生成角色三视图 reference sheet
+ * 2. 构建角色特征 token 供视频生成使用
+ * 3. 为每个场景生成 videoPrompt（视频生成专用）
+ */
 export function composeStoryboard(
   script: Script,
   options: StoryboardOptions = {}
 ): Storyboard {
-  const { style = 'anime', includeCharacters = true } = options;
+  const {
+    style = 'anime',
+    includeCharacters = true,
+    enhancedCharacterConsistency = true,
+  } = options;
 
-  // 先生成角色立绘（用于后续一致性约束）
+  // Step 1: 生成角色立绘（含三视图）
   const characterIllustrations: CharacterIllustration[] = includeCharacters
-    ? script.characters.map(char => generateCharacterIllustration(char, style))
+    ? script.characters.map(char =>
+        generateCharacterIllustration({
+          character: char,
+          style,
+          generateReferenceViews: enhancedCharacterConsistency,
+        })
+      )
     : [];
 
-  // 构建角色一致性约束
-  const characterConstraints: CharacterConstraint[] = characterIllustrations.map(
-    (illust): CharacterConstraint => ({
-      characterId: illust.characterId,
-      name: illust.name,
-      appearance: illust.prompt.match(/appearance: ([^,]+)/)?.[1] || '',
-      pose: illust.pose,
-      expression: illust.expression,
-      outfit: illust.outfit,
-    })
+  // Step 2: 构建增强角色约束（包含 referencePrompt）
+  const characterConstraints: EnhancedCharacterConstraint[] = buildCharacterConstraints(
+    characterIllustrations
   );
 
-  // 生成场景描述（注入角色一致性约束）
+  // Step 3: 生成场景描述（注入角色一致性约束 + 视频 prompt）
   const storyboardScenes: StoryboardScene[] = script.scenes.map(scene => {
-    const description = generateSceneDescription(scene, style, characterConstraints);
-    // 允许通过 options 覆盖宽高比
+    const description = generateSceneDescription(
+      {
+        id: scene.id,
+        sceneNumber: scene.sceneNumber,
+        location: (scene as any).location,
+        timeOfDay: (scene as any).timeOfDay || '白天',
+        weather: (scene as any).weather,
+        characters: scene.characters,
+        type: (scene as any).type || '对话',
+        emotion: (scene as any).emotion,
+        cameraHint: (scene as any).cameraHint,
+        content: scene.content,
+      },
+      style,
+      characterConstraints
+    );
+
     if (options.aspectRatio) {
       description.aspectRatio = options.aspectRatio;
     }
+
     return {
       sceneId: scene.id,
       sceneNumber: scene.sceneNumber,
       description,
-      status: 'pending',
+      status: 'pending' satisfies StoryboardScene['status'],
     };
   });
 

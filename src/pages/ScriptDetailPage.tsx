@@ -48,14 +48,14 @@ const ScriptDetail: React.FC = () => {
       return;
     }
 
-    setProject(currentProject);
-    setScript(currentScript);
-    setSegments(Array.isArray(currentScript.content) ? currentScript.content : []);
+    setProject(currentProject as any);
+    setScript(currentScript as any);
+    setSegments(Array.isArray(currentScript.content) ? currentScript.content : [] as any);
     setLoading(false);
   }, [projectId, scriptId, projects, navigate]);
 
   const handleSegmentsChange = (newSegments: unknown[]) => {
-    setSegments(newSegments);
+    setSegments(newSegments as any);
   };
 
   const handleSave = async () => {
@@ -70,7 +70,7 @@ const ScriptDetail: React.FC = () => {
         updatedAt: new Date().toISOString()
       };
 
-      const updatedScripts = project.scripts.map((s: Script) =>
+      const updatedScripts = (project.scripts ?? []).map((s: Script) =>
         s.id === script.id ? updatedScript : s
       );
 
@@ -80,9 +80,9 @@ const ScriptDetail: React.FC = () => {
         updatedAt: new Date().toISOString()
       };
 
-      setProject(updatedProject);
-      setScript(updatedScript);
-      updateProject(updatedProject.id, updatedProject);
+      setProject(updatedProject as any);
+      setScript(updatedScript as any);
+      updateProject(updatedProject.id, updatedProject as any);
       await tauriService.writeText(updatedProject.id, JSON.stringify(updatedProject));
 
       toast.success('保存成功');
@@ -119,7 +119,7 @@ const ScriptDetail: React.FC = () => {
     if (!project || !script) return;
 
     try {
-      const updatedScripts = project.scripts.filter((s: Script) => s.id !== script.id);
+      const updatedScripts = (project.scripts ?? []).filter((s: Script) => s.id !== script.id);
 
       const updatedProject = {
         ...project,
@@ -216,7 +216,7 @@ const ScriptDetail: React.FC = () => {
 
       <div className={styles.editorContainer}>
         <ScriptEditor
-          segments={segments}
+          segments={segments as any}
           onSegmentsChange={handleSegmentsChange}
         />
       </div>

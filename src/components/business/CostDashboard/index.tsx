@@ -123,14 +123,14 @@ const CostDashboard: React.FC<CostDashboardProps> = ({ projectId }) => {
       dataIndex: 'createdAt',
       key: 'createdAt',
       width: 170,
-      render: (v: string) => new Date(v).toLocaleString(),
+      render: (v: any) => new Date(v!).toLocaleString(),
     },
     {
       title: '来源',
       dataIndex: 'source',
       key: 'source',
       width: 120,
-      render: (v: string) => (
+      render: (v: any) => (
         <Badge variant="outline">{v === 'project_edit' ? '编辑页' : v === 'project_detail' ? '详情页' : '未知'}</Badge>
       ),
     },
@@ -139,9 +139,9 @@ const CostDashboard: React.FC<CostDashboardProps> = ({ projectId }) => {
       dataIndex: 'status',
       key: 'status',
       width: 100,
-      render: (v: ReviewExportStatus) => (
-        <Badge variant={statusColorMap[v] === 'success' ? 'default' : statusColorMap[v] === 'destructive' ? 'destructive' : 'secondary'}>
-          {statusLabelMap[v]}
+      render: (v: any) => (
+        <Badge variant={(statusColorMap as any)[v] === 'success' ? 'default' : (statusColorMap as any)[v] === 'destructive' ? 'destructive' : 'secondary'}>
+          {(statusLabelMap as any)[v]}
         </Badge>
       ),
     },
@@ -155,11 +155,11 @@ const CostDashboard: React.FC<CostDashboardProps> = ({ projectId }) => {
   ];
 
   const columns: TableColumn<CostRecord>[] = [
-    { title: '时间', dataIndex: 'timestamp', key: 'timestamp', width: 120, render: (v: string) => new Date(v).toLocaleDateString() },
-    { title: '类型', dataIndex: 'type', key: 'type', width: 90, render: (v: string) => <Badge variant="outline">{v}</Badge> },
+    { title: '时间', dataIndex: 'timestamp', key: 'timestamp', width: 120, render: (v: any) => new Date(v).toLocaleDateString() },
+    { title: '类型', dataIndex: 'type', key: 'type', width: 90, render: (v: any) => <Badge variant="outline">{v}</Badge> },
     { title: 'Provider', dataIndex: 'provider', key: 'provider', width: 100 },
-    { title: '模型', dataIndex: 'model', key: 'model', width: 120, render: (v?: string) => v ?? '-' },
-    { title: '成本', dataIndex: 'cost', key: 'cost', width: 100, render: (v: number) => fmt(v) },
+    { title: '模型', dataIndex: 'model', key: 'model', width: 120, render: (v: any) => v ?? '-' },
+    { title: '成本', dataIndex: 'cost', key: 'cost', width: 100, render: (v: any) => fmt(v) },
   ];
 
   const updateBudget = (key: 'daily' | 'weekly' | 'monthly', value?: number | null) => {

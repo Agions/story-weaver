@@ -830,7 +830,7 @@ const AntdTable: React.FC<TableProps<Record<string, unknown>>> = ({
                   const value = col.dataIndex ? (record as Record<string, unknown>)[col.dataIndex as string] : undefined;
                   return (
                     <td key={col.key ?? colIndex} className="p-2">
-                      {col.render ? col.render(value as string | number | Record<string, unknown>, record as Record<string, unknown>, rowIndex) : value}
+                      {col.render ? col.render(value as string | number | Record<string, unknown>, record as Record<string, unknown>, rowIndex) : (value as React.ReactNode)}
                     </td>
                   );
                 })}

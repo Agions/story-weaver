@@ -153,7 +153,6 @@ export const PageContainer: React.FC<PageContainerProps> = ({
     return (
       <Card
         className={`${styles.container} ${compact ? styles.compact : ''} ${className ?? ''}`}
-        borderless
       >
         {animated ? <div className={styles.animated}>{content}</div> : content}
       </Card>
