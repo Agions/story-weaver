@@ -54,7 +54,7 @@ export function evaluateScript(script: Script): EvaluationResult {
     pacingScore,
     overallGrade,
     issues,
-    suggestions: [...new Set(suggestions)],  // 去重
+    suggestions: Array.from(new Set(suggestions)),  // 去重
   };
 }
 
