@@ -15,6 +15,7 @@ export interface WorkflowData {
   name?: string;
   nodes?: NodeTemplate[];
   edges?: unknown[];
+  connections?: unknown[];
   metadata?: Record<string, unknown>;
 }
 

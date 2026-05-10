@@ -13,6 +13,7 @@ interface DropdownMenuItem {
   label?: React.ReactNode;
   danger?: boolean;
   onClick?: () => void;
+  type?: 'divider';
 }
 
 interface DropdownProps {

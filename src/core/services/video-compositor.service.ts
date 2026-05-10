@@ -387,7 +387,7 @@ export async function extractFrames(
         const frameName = `frame_${String(i).padStart(4, '0')}.png`;
         try {
           const data = await ff.readFile(`${frameDir}/${frameName}`);
-          const blob = new Blob([data], { type: 'image/png' });
+          const blob = new Blob([data as BlobPart], { type: 'image/png' });
           frameFiles.push(URL.createObjectURL(blob));
           i++;
         } catch {

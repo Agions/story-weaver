@@ -118,6 +118,9 @@ export interface ProjectData {
   novelMetadata?: unknown;
   storyboardComments?: unknown[];
   storyboardVersions?: unknown[];
+  storyboardFrames?: unknown[];
+  evaluationReport?: unknown;
+  evaluationSummary?: unknown;
 }
 
 /**

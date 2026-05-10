@@ -51,7 +51,8 @@ const Upload: React.FC<UploadProps> = ({
     const files = e.target.files;
     if (files && files.length > 0) {
       if (customRequest) {
-        customRequest({ fileList: Array.from(files) });
+        const rcFile: RcFile = Object.assign(files[0], { uid: crypto.randomUUID() });
+        customRequest({ file: rcFile, fileList: Array.from(files) as RcFile[] });
       } else {
         Array.from(files).forEach(file => {
           const rcFile: RcFile = Object.assign(file, { uid: crypto.randomUUID() });
@@ -105,4 +106,4 @@ const Upload: React.FC<UploadProps> = ({
   );
 };
 
-export { Upload, type UploadProps, type RcFile }
+export { Upload, type UploadProps }

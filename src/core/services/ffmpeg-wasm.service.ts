@@ -365,7 +365,7 @@ export async function composeVideoWithFFmpeg(
 
   // 读取输出文件
   const data = await ff.readFile(outputFile);
-  const blob = new Blob([data], { type: `video/${format}` });
+  const blob = new Blob([data as BlobPart], { type: `video/${format}` });
 
   // 清理临时文件
   for (const file of inputFiles) {
@@ -442,7 +442,7 @@ export async function addSubtitlesWithFFmpeg(
 
   // 读取输出
   const data = await ff.readFile(outputPath);
-  const resultBlob = new Blob([data], { type: `video/${outputFormat}` });
+  const resultBlob = new Blob([data as BlobPart], { type: `video/${outputFormat}` });
 
   // 清理
   await ff.deleteFile('input_video');
@@ -518,7 +518,7 @@ export async function addBackgroundMusicWithFFmpeg(
 
   // 读取输出
   const data = await ff.readFile(outputPath);
-  const resultBlob = new Blob([data], { type: `video/${outputFormat}` });
+  const resultBlob = new Blob([data as BlobPart], { type: `video/${outputFormat}` });
 
   // 清理
   await ff.deleteFile('input_video');
@@ -603,7 +603,7 @@ export async function exportVideoWithFFmpeg(
 
   // 读取输出
   const data = await ff.readFile(outputPath);
-  const resultBlob = new Blob([data], { type: `video/${outputFormat}` });
+  const resultBlob = new Blob([data as BlobPart], { type: `video/${outputFormat}` });
 
   // 清理
   await ff.deleteFile('input');
@@ -668,7 +668,7 @@ export async function concatenateVideosWithFFmpeg(
 
   // 读取输出
   const data = await ff.readFile(outputPath);
-  const resultBlob = new Blob([data], { type: `video/${outputFormat}` });
+  const resultBlob = new Blob([data as BlobPart], { type: `video/${outputFormat}` });
 
   // 清理
   for (let i = 0; i < videoBlobs.length; i++) {

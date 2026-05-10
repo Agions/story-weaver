@@ -28,7 +28,7 @@ import type { StoryboardFrame } from '@/features/storyboard/components/Storyboar
 import { toast } from '@/shared/components/ui/Toast';
 import { useProjectStore } from '@/shared/stores';
 import type { ProjectData } from '@/shared/types';
-import type { Script } from '@/shared/types/script';
+import type { Script, ScriptSegment } from '@/shared/types/script';
 
 
 import styles from './ProjectDetail.module.less';

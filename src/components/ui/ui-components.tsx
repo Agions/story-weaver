@@ -15,7 +15,7 @@
 
 import { User } from 'lucide-react';
 import * as React from 'react';
-import { useForm as useRhfForm } from 'react-hook-form';
+import { useForm as useRhfForm, type UseFormReturn as RhfUseFormReturn } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { Avatar, AvatarImage, AvatarFallback, type AntDAvatarProps } from '@/components/ui/avatar';
@@ -26,6 +26,8 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
+  CardMeta,
+  type CardMetaProps,
 } from '@/components/ui/card';
 import { ColorPicker, type ColorPickerProps } from '@/components/ui/color-picker';
 import {
@@ -42,6 +44,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import { Dropdown as AntDDropdown } from '@/components/ui/dropdown';
 import { Empty as ShadcnEmpty } from '@/components/ui/empty';
 import { Row, Col, type RowProps, type ColProps } from '@/components/ui/grid';
 import { List as ShadcnList, ListItem } from '@/components/ui/list';
@@ -85,7 +88,7 @@ interface ValidationRule {
 }
 
 interface FormProps {
-  form?: UseFormReturn<FormValues>;
+  form?: RhfUseFormReturn<FormValues>;
   layout?: 'vertical' | 'horizontal' | 'inline';
   onFinish?: (values: FormValues) => void;
   initialValues?: FormValues;
@@ -108,7 +111,7 @@ const Form: React.FC<FormProps> = ({
       onSubmit={(e) => {
         e.preventDefault();
         if (form) {
-          form.submit();
+          form.handleSubmit((data) => { onFinish?.(data as FormValues); })();
         }
         if (onFinish) {
           const formData = new FormData(e.currentTarget);
@@ -778,7 +781,7 @@ interface TableProps<T = Record<string, unknown>> {
   onChange?: (pagination: unknown, filters: Record<string, unknown>, sorter: unknown) => void;
 }
 
-const AntdTable: React.FC<TableProps> = ({
+const AntdTable: React.FC<TableProps<Record<string, unknown>>> = ({
   dataSource = [],
   columns = [],
   rowKey,
@@ -786,8 +789,8 @@ const AntdTable: React.FC<TableProps> = ({
   className,
   ..._props
 }) => {
-  const getRowKey = (record: T, index: number): string => {
-    if (typeof rowKey === 'function') return rowKey(record);
+  const getRowKey = (record: Record<string, unknown>, index: number): string => {
+    if (typeof rowKey === 'function') return (rowKey as (r: Record<string, unknown>) => string)(record);
     if (typeof rowKey === 'string') return String(record[rowKey] ?? index);
     return String(index);
   };
@@ -824,10 +827,10 @@ const AntdTable: React.FC<TableProps> = ({
                 className="border-b last:border-b-0 hover:bg-muted/50"
               >
                 {columns.map((col, colIndex) => {
-                  const value = col.dataIndex ? record[col.dataIndex] : undefined;
+                  const value = col.dataIndex ? (record as Record<string, unknown>)[col.dataIndex as string] : undefined;
                   return (
                     <td key={col.key ?? colIndex} className="p-2">
-                      {col.render ? col.render(value, record, rowIndex) : value}
+                      {col.render ? col.render(value as string | number | Record<string, unknown>, record as Record<string, unknown>, rowIndex) : value}
                     </td>
                   );
                 })}
