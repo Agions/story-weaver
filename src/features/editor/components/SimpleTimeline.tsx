@@ -9,12 +9,13 @@ import {
   ZoomOut,
   Volume2,
   GripVertical,
-  Video
+  Video,
 } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
+import { formatTimeWithMs } from '@/shared/utils';
 
 import styles from './SimpleTimeline.module.less';
 
@@ -54,21 +55,17 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
   isPlaying = false,
   onPlayPause,
   zoom = 1,
-  onZoomChange
+  onZoomChange,
 }) => {
   const timelineRef = useRef<HTMLDivElement>(null);
   const [localZoom, setLocalZoom] = useState(zoom);
 
   // 格式化时间
-  const formatTime = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    const ms = Math.floor((seconds % 1) * 10);
-    return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${ms}`;
-  };
 
   // 处理时间轴点击
-  const handleTimelineClick = (e: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>) => {
+  const handleTimelineClick = (
+    e: React.MouseEvent<HTMLDivElement> | React.KeyboardEvent<HTMLDivElement>
+  ) => {
     if (!timelineRef.current || duration === 0) return;
 
     const rect = timelineRef.current.getBoundingClientRect();
@@ -94,19 +91,19 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
   // 生成时间刻度
   const generateTimeMarkers = () => {
     if (duration === 0) return [];
-    
+
     const markers = [];
     const interval = localZoom > 2 ? 1 : localZoom > 1 ? 5 : 10;
     const totalSeconds = Math.ceil(duration / interval) * interval;
-    
+
     for (let i = 0; i <= totalSeconds; i += interval) {
       markers.push({
         time: i,
-        label: formatTime(i),
-        position: (i / duration) * 100
+        label: formatTimeWithMs(i),
+        position: (i / duration) * 100,
       });
     }
-    
+
     return markers;
   };
 
@@ -119,7 +116,7 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
     return {
       left: `${left}%`,
       width: `${width}%`,
-      backgroundColor: segment.color || '#1E88E5'
+      backgroundColor: segment.color || '#1E88E5',
     };
   };
 
@@ -137,12 +134,12 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
               className={styles.playBtn}
             />
           </Tooltip>
-          
+
           <div className={styles.timeDisplay}>
-            <span style={{ fontWeight: 600 }}>{formatTime(currentTime)}</span>
-            <span style={{ color: 'rgba(0,0,0,0.45)' }}> / {formatTime(duration)}</span>
+            <span style={{ fontWeight: 600 }}>{formatTimeWithMs(currentTime)}</span>
+            <span style={{ color: 'rgba(0,0,0,0.45)' }}> / {formatTimeWithMs(duration)}</span>
           </div>
-          
+
           <div style={{ display: 'flex', gap: 4 }}>
             <Tooltip title="后退一帧">
               <Button variant="ghost" size="sm" icon={<SkipBack />} />
@@ -156,14 +153,9 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
         <div className={styles.rightTools}>
           <div style={{ display: 'flex', gap: 8 }}>
             <Tooltip title="添加片段">
-              <Button
-                variant="ghost"
-                size="sm"
-                icon={<Plus />}
-                onClick={onAddSegment}
-              />
+              <Button variant="ghost" size="sm" icon={<Plus />} onClick={onAddSegment} />
             </Tooltip>
-            
+
             {selectedSegmentId && (
               <Tooltip title="删除片段">
                 <Button
@@ -174,24 +166,14 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
                 />
               </Tooltip>
             )}
-            
+
             <div className={styles.zoomControls}>
               <Tooltip title="缩小">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  icon={<ZoomOut />}
-                  onClick={handleZoomOut}
-                />
+                <Button variant="ghost" size="sm" icon={<ZoomOut />} onClick={handleZoomOut} />
               </Tooltip>
               <span className={styles.zoomLevel}>{Math.round(localZoom * 100)}%</span>
               <Tooltip title="放大">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  icon={<ZoomIn />}
-                  onClick={handleZoomIn}
-                />
+                <Button variant="ghost" size="sm" icon={<ZoomIn />} onClick={handleZoomIn} />
               </Tooltip>
             </div>
           </div>
@@ -232,14 +214,25 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
             className={styles.tracks}
             ref={timelineRef as unknown as React.RefObject<HTMLDivElement>}
             onClick={handleTimelineClick}
-            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleTimelineClick(e as unknown as React.KeyboardEvent<HTMLDivElement>); }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ')
+                handleTimelineClick(e as unknown as React.KeyboardEvent<HTMLDivElement>);
+            }}
             role="slider"
             aria-label="Timeline tracks"
             aria-valuenow={currentTime}
             aria-valuemin={0}
             aria-valuemax={duration || 100}
             tabIndex={0}
-            style={{ background: 'none', border: 'none', padding: 0, cursor: 'default', textAlign: 'left', width: '100%', display: 'block' }}
+            style={{
+              background: 'none',
+              border: 'none',
+              padding: 0,
+              cursor: 'default',
+              textAlign: 'left',
+              width: '100%',
+              display: 'block',
+            }}
           >
             {/* 视频轨道 */}
             <div className={styles.track}>
@@ -252,7 +245,12 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
                     e.stopPropagation();
                     onSegmentSelect?.(segment.id);
                   }}
-                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); onSegmentSelect?.(segment.id); } }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.stopPropagation();
+                      onSegmentSelect?.(segment.id);
+                    }
+                  }}
                   role="button"
                   tabIndex={0}
                   aria-label={segment.name}
@@ -261,7 +259,7 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
                   <span className={styles.segmentName}>{segment.name}</span>
                 </div>
               ))}
-              
+
               {/* 如果没有片段显示提示 */}
               {segments.length === 0 && (
                 <div className={styles.emptyTrack}>
@@ -293,16 +291,13 @@ const SimpleTimeline: React.FC<SimpleTimelineProps> = ({
       <div className={styles.statusBar}>
         <div className={styles.leftStatus}>
           <span className={styles.tag}>{segments.length} 个片段</span>
-          <span style={{ color: 'rgba(0,0,0,0.45)' }}>
-            总时长: {formatTime(duration)}
-          </span>
+          <span style={{ color: 'rgba(0,0,0,0.45)' }}>总时长: {formatTimeWithMs(duration)}</span>
         </div>
         <div className={styles.rightStatus}>
           <span style={{ color: 'rgba(0,0,0,0.45)' }}>
-            {selectedSegmentId 
-              ? `已选择: ${segments.find(s => s.id === selectedSegmentId)?.name || '未知'}`
-              : '未选择片段'
-            }
+            {selectedSegmentId
+              ? `已选择: ${segments.find((s) => s.id === selectedSegmentId)?.name || '未知'}`
+              : '未选择片段'}
           </span>
         </div>
       </div>

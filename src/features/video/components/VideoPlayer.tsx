@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Tooltip } from '@/components/ui/tooltip';
+import { formatTime } from '@/shared/utils';
 
 import styles from './VideoPlayer.module.less';
 
@@ -114,12 +115,6 @@ function VideoPlayer({
     }
   };
 
-  const formatTime = (time: number): string => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-  };
-
   return (
     <div className={styles.videoPlayerContainer} ref={containerRef}>
       <div className={styles.videoWrapper}>
@@ -194,7 +189,7 @@ function VideoPlayer({
           </div>
         </div>
       </div>
-      
+
       {/* 预览按钮 */}
       <div className={styles.previewButtonContainer}>
         <Tooltip title="全屏预览">
@@ -212,4 +207,4 @@ function VideoPlayer({
   );
 }
 
-export default VideoPlayer; 
+export default VideoPlayer;
