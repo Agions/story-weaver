@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import type { ScriptSegment } from '@/core/types';
 import { logger } from '@/core/utils/logger';
-import { formatTime, formatSRTTime } from '@/shared/utils';
+import { formatTime, formatSRTTime, formatASSTime, formatVTTTime } from '@/shared/utils';
 
 import { aiService } from './ai.service';
 
@@ -263,7 +263,7 @@ ${item.text}
     const content = track.items
       .map((item) => {
         const position = this.getVTTPosition(track.style.position, track.style.margin);
-        return `${this.formatVTTTime(item.startTime)} --> ${this.formatVTTTime(item.endTime)}${position}\n${item.text}\n`;
+        return `${formatVTTTime(item.startTime)} --> ${formatVTTTime(item.endTime)}${position}\n${item.text}\n`;
       })
       .join('\n');
 
@@ -291,7 +291,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
     const events = track.items
       .map((item) => {
-        return `Dialogue: 0,${this.formatASSTime(item.startTime)},${this.formatASSTime(item.endTime)},Default,,0,0,0,,${item.text}`;
+        return `Dialogue: 0,${formatASSTime(item.startTime)},${formatASSTime(item.endTime)},Default,,0,0,0,,${item.text}`;
       })
       .join('\n');
 
@@ -504,30 +504,6 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     }
 
     return timeframes;
-  }
-
-  /**
-   * 格式化 VTT 时间
-   */
-  private formatVTTTime(seconds: number): string {
-    const hours = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    const secs = Math.floor(seconds % 60);
-    const ms = Math.floor((seconds % 1) * 1000);
-
-    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}.${ms.toString().padStart(3, '0')}`;
-  }
-
-  /**
-   * 格式化 ASS 时间
-   */
-  private formatASSTime(seconds: number): string {
-    const hours = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    const secs = Math.floor(seconds % 60);
-    const cs = Math.floor((seconds % 1) * 100);
-
-    return `${hours}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}.${cs.toString().padStart(2, '0')}`;
   }
 
   /**

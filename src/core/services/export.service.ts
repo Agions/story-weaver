@@ -13,7 +13,7 @@ import { saveAs } from 'file-saver';
 import JSZip from 'jszip';
 
 import { logger } from '@/core/utils/logger';
-import { formatSRTTime } from '@/shared/utils';
+import { formatSRTTime, formatASSTime } from '@/shared/utils';
 
 export enum ExportFormat {
   PDF = 'pdf',
@@ -241,17 +241,6 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
   }
 
   return lines.join('\n');
-}
-
-/**
- * 格式化 ASS 时间
- */
-function formatASSTime(seconds: number): string {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = Math.floor(seconds % 60);
-  const cs = Math.floor((seconds % 1) * 100);
-  return `${String(h).padStart(1, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.${String(cs).padStart(2, '0')}`;
 }
 
 /**
