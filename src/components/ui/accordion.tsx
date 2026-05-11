@@ -1,6 +1,6 @@
-"use client"
+'use client';
 
-import * as React from "react"
+import * as React from 'react';
 
 // Import Collapse for re-export as Accordion
 import { Collapse as AntDCollapse, CollapsePanel as AntDCollapsePanel } from './ui-components';
@@ -12,14 +12,14 @@ export const AccordionItem = AntDCollapsePanel;
 export type { CollapseProps as AccordionProps, CollapsePanelProps as AccordionItemProps };
 
 // AccordionTrigger - wraps header for use within AccordionItem
-export const AccordionTrigger: React.FC<{ children: React.ReactNode; className?: string }> = ({ children }) => (
-  <>{children}</>
-);
+export function AccordionTrigger({ children }: { children: React.ReactNode; className?: string }) {
+  return <>{children}</>;
+}
 
-// AccordionContent - wraps content for use within AccordionItem  
-export const AccordionContent: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <>{children}</>
-);
+// AccordionContent - wraps content for use within AccordionItem
+export function AccordionContent({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
+}
 
 // Shadcn-style Accordion with items prop
 interface AccordionItemData {
@@ -35,15 +35,13 @@ interface AccordionShadcnProps {
   items?: AccordionItemData[];
 }
 
-const AccordionShadcn: React.FC<AccordionShadcnProps> = ({
+function AccordionShadcn({
   defaultActiveKey = [],
   ghost = false,
   className = '',
   items = [],
-}) => {
-  const [activeKeys, setActiveKeys] = React.useState<Set<string>>(
-    new Set(defaultActiveKey)
-  );
+}: AccordionShadcnProps) {
+  const [activeKeys, setActiveKeys] = React.useState<Set<string>>(new Set(defaultActiveKey));
 
   const toggleKey = (key: string) => {
     setActiveKeys((prev) => {
@@ -74,6 +72,6 @@ const AccordionShadcn: React.FC<AccordionShadcnProps> = ({
       })}
     </div>
   );
-};
+}
 
 export { AccordionShadcn };

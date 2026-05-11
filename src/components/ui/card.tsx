@@ -1,8 +1,8 @@
-"use client"
+'use client';
 
-import * as React from "react"
+import * as React from 'react';
 
-import { cn } from "@/shared/utils/class-names"
+import { cn } from '@/shared/utils/class-names';
 
 // ============================================================
 // Shadcn Card Primitive Components (inline - no external shadcn dep)
@@ -11,28 +11,20 @@ import { cn } from "@/shared/utils/class-names"
 function ShadcnCard({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn(
-        "rounded-xl border bg-card text-card-foreground shadow-sm",
-        className
-      )}
+      className={cn('rounded-xl border bg-card text-card-foreground shadow-sm', className)}
       {...props}
     />
   );
 }
 
 function CardHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn("flex flex-col space-y-1.5 p-6", className)}
-      {...props}
-    />
-  );
+  return <div className={cn('flex flex-col space-y-1.5 p-6', className)} {...props} />;
 }
 
 function CardTitle({ className, children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h3
-      className={cn("font-semibold leading-none tracking-tight", className)}
+      className={cn('font-semibold leading-none tracking-tight', className)}
       aria-label={children ? undefined : 'Card title'}
       {...props}
     >
@@ -42,25 +34,15 @@ function CardTitle({ className, children, ...props }: React.HTMLAttributes<HTMLH
 }
 
 function CardDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
-  return (
-    <p
-      className={cn("text-sm text-muted-foreground", className)}
-      {...props}
-    />
-  );
+  return <p className={cn('text-sm text-muted-foreground', className)} {...props} />;
 }
 
 function CardContent({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("p-6 pt-0", className)} {...props} />;
+  return <div className={cn('p-6 pt-0', className)} {...props} />;
 }
 
 function CardFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn("flex items-center p-6 pt-0", className)}
-      {...props}
-    />
-  );
+  return <div className={cn('flex items-center p-6 pt-0', className)} {...props} />;
 }
 
 // ============================================================
@@ -73,15 +55,17 @@ interface CardMetaProps {
   className?: string;
 }
 
-const CardMeta: React.FC<CardMetaProps> = ({ title, description, avatar }) => (
-  <div className="flex gap-3">
-    {avatar && <div className="flex-shrink-0">{avatar}</div>}
-    <div className="flex-1 min-w-0">
-      {title && <div className="font-medium text-sm">{title}</div>}
-      {description && <div className="text-xs text-muted-foreground mt-0.5">{description}</div>}
+function CardMeta({ title, description, avatar }: CardMetaProps) {
+  return (
+    <div className="flex gap-3">
+      {avatar && <div className="flex-shrink-0">{avatar}</div>}
+      <div className="flex-1 min-w-0">
+        {title && <div className="font-medium text-sm">{title}</div>}
+        {description && <div className="text-xs text-muted-foreground mt-0.5">{description}</div>}
+      </div>
     </div>
-  </div>
-);
+  );
+}
 
 // ============================================================
 // AntdCard - AntD-compatible Card with hoverable/cover/actions/extra/title props
@@ -100,7 +84,7 @@ interface AntdCardProps {
   style?: React.CSSProperties;
 }
 
-const AntdCard: React.FC<AntdCardProps> = ({
+function AntdCard({
   hoverable,
   className,
   cover,
@@ -112,29 +96,37 @@ const AntdCard: React.FC<AntdCardProps> = ({
   footer,
   onClick,
   style,
-}) => (
-  <ShadcnCard className={cn(hoverable && "hover:shadow-md transition-shadow cursor-pointer", className)} onClick={onClick} style={style}>
-    {title && (
-      <div className="flex items-center justify-between px-6 py-4 border-b">
-        <div className="flex items-center gap-2">{title}</div>
-        {extra && <div>{extra}</div>}
+}: AntdCardProps) {
+  return (
+    <ShadcnCard
+      className={cn(hoverable && 'hover:shadow-md transition-shadow cursor-pointer', className)}
+      onClick={onClick}
+      style={style}
+    >
+      {title && (
+        <div className="flex items-center justify-between px-6 py-4 border-b">
+          <div className="flex items-center gap-2">{title}</div>
+          {extra && <div>{extra}</div>}
+        </div>
+      )}
+      {cover && <div className="p-4">{cover}</div>}
+      <div className="p-4">
+        {children}
+        {extra && !title && <div className="mt-2">{extra}</div>}
       </div>
-    )}
-    {cover && <div className="p-4">{cover}</div>}
-    <div className="p-4">
-      {children}
-      {extra && !title && <div className="mt-2">{extra}</div>}
-    </div>
-    {actions && actions.length > 0 && (
-      <div className="flex border-t divide-x">
-        {actions.map((action, i) => (
-          <div key={i} className="flex-1 flex justify-center py-2 hover:bg-muted/50">{action}</div>
-        ))}
-      </div>
-    )}
-    {footer && <div className="px-6 py-4 border-t">{footer}</div>}
-  </ShadcnCard>
-);
+      {actions && actions.length > 0 && (
+        <div className="flex border-t divide-x">
+          {actions.map((action, i) => (
+            <div key={i} className="flex-1 flex justify-center py-2 hover:bg-muted/50">
+              {action}
+            </div>
+          ))}
+        </div>
+      )}
+      {footer && <div className="px-6 py-4 border-t">{footer}</div>}
+    </ShadcnCard>
+  );
+}
 (AntdCard as any).Meta = CardMeta;
 
 // ============================================================

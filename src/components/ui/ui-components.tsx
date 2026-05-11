@@ -37,6 +37,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
+import { Dropdown as AntDDropdown } from '@/components/ui/dropdown';
 import {
   DropdownMenu as DropdownMenuRoot,
   DropdownMenuTrigger,
@@ -44,7 +45,6 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
-import { Dropdown as AntDDropdown } from '@/components/ui/dropdown';
 import { Empty as ShadcnEmpty } from '@/components/ui/empty';
 import { Row, Col, type RowProps, type ColProps } from '@/components/ui/grid';
 import { List as ShadcnList, ListItem } from '@/components/ui/list';
@@ -97,21 +97,23 @@ interface FormProps {
   Item?: typeof FormItem;
 }
 
-const Form: React.FC<FormProps> = ({
+function Form({
   form,
   layout = 'vertical',
   onFinish,
   initialValues,
   className,
   children,
-}) => {
+}: FormProps) {
   return (
     <form
       className={className}
       onSubmit={(e) => {
         e.preventDefault();
         if (form) {
-          form.handleSubmit((data) => { onFinish?.(data as FormValues); })();
+          form.handleSubmit((data) => {
+            onFinish?.(data as FormValues);
+          })();
         }
         if (onFinish) {
           const formData = new FormData(e.currentTarget);
@@ -136,7 +138,7 @@ const Form: React.FC<FormProps> = ({
       {children}
     </form>
   );
-};
+}
 
 // Form.Item as a property on Form - defined after FormItem declaration
 interface FormItemProps {
@@ -148,14 +150,14 @@ interface FormItemProps {
   className?: string;
 }
 
-const FormItem: React.FC<FormItemProps> = ({ label, children, className }) => {
+function FormItem({ label, children, className }: FormItemProps) {
   return (
     <div className={cn('flex flex-col gap-1', className)}>
       {label && <label className="text-sm font-medium">{label}</label>}
       {children}
     </div>
   );
-};
+}
 
 (Form as any).Item = FormItem;
 
@@ -181,7 +183,7 @@ interface AntDSelectProps {
   children?: React.ReactNode;
 }
 
-const AntDSelect: React.FC<AntDSelectProps> = ({
+function AntDSelect({
   value,
   defaultValue,
   onChange,
@@ -192,7 +194,7 @@ const AntDSelect: React.FC<AntDSelectProps> = ({
   className,
   disabled,
   children,
-}) => {
+}: AntDSelectProps) {
   const [internalValue, setInternalValue] = React.useState<string | string[]>(
     (defaultValue as string | string[]) || (mode === 'tags' ? [] : '')
   );
@@ -298,7 +300,7 @@ const AntDSelect: React.FC<AntDSelectProps> = ({
       </SelectContent>
     </ShadcnSelect>
   );
-};
+}
 
 // Add .Group and .Button as static properties to Radio for style usage
 
@@ -322,7 +324,7 @@ interface RadioGroupProps {
   className?: string;
 }
 
-const RadioGroup: React.FC<RadioGroupProps> = ({
+function RadioGroup({
   value,
   defaultValue,
   onChange,
@@ -331,7 +333,7 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
   children,
   options,
   className,
-}) => {
+}: RadioGroupProps) {
   if (optionType === 'button') {
     return (
       <div className={cn('flex flex-wrap gap-1', className)} role="radiogroup">
@@ -377,7 +379,7 @@ const RadioGroup: React.FC<RadioGroupProps> = ({
       {children}
     </div>
   );
-};
+}
 
 interface RadioButtonProps {
   value?: string;
@@ -385,16 +387,18 @@ interface RadioButtonProps {
   children?: React.ReactNode;
 }
 
-const RadioButton: React.FC<RadioButtonProps> = ({ children, ...props }) => (
-  <RadioGroup {...props} options={[{ value: props.value ?? '', label: children ?? '' }]} />
-);
+function RadioButton({ children, ...props }: RadioButtonProps) {
+  return <RadioGroup {...props} options={[{ value: props.value ?? '', label: children ?? '' }]} />;
+}
 
-const Radio: React.FC<React.ComponentPropsWithoutRef<'input'>> = (props) => (
-  <label className="flex items-center gap-2 cursor-pointer">
-    <input type="radio" {...props} className="accent-primary" />
-    <span className="text-sm">{props.children}</span>
-  </label>
-);
+function Radio(props: React.ComponentPropsWithoutRef<'input'>) {
+  return (
+    <label className="flex items-center gap-2 cursor-pointer">
+      <input type="radio" {...props} className="accent-primary" />
+      <span className="text-sm">{props.children}</span>
+    </label>
+  );
+}
 
 (Radio as unknown as { Group: typeof RadioGroup; Button: typeof RadioButton }).Group = RadioGroup;
 (Radio as unknown as { Group: typeof RadioGroup; Button: typeof RadioButton }).Button = RadioButton;
@@ -457,15 +461,14 @@ const Space = (({
       {children}
     </div>
   );
-}) as unknown as React.FC<SpaceProps> & {
-  Item: React.FC<{ children?: React.ReactNode; className?: string }>;
-  Compact: React.FC<SpaceCompactProps>;
+}) as unknown as any & {
+  Item: (props: { children?: React.ReactNode; className?: string }) => JSX.Element;
+  Compact: (props: SpaceCompactProps) => JSX.Element;
 };
 
-const SpaceItem: React.FC<{ children?: React.ReactNode; className?: string }> = ({
-  children,
-  className,
-}) => <div className={cn('flex-1 min-w-0', className)}>{children}</div>;
+function SpaceItem({ children, className }: { children?: React.ReactNode; className?: string }) {
+  return <div className={cn('flex-1 min-w-0', className)}>{children}</div>;
+}
 (Space as any).Item = SpaceItem;
 
 // Space.Compact - a compact mode where items are joined together
@@ -475,11 +478,13 @@ interface SpaceCompactProps {
   className?: string;
 }
 
-const SpaceCompact: React.FC<SpaceCompactProps> = ({ block, children, className }) => (
-  <div className={cn('flex', block && 'w-full', className)} style={{ gap: 0 }}>
-    {children}
-  </div>
-);
+function SpaceCompact({ block, children, className }: SpaceCompactProps) {
+  return (
+    <div className={cn('flex', block && 'w-full', className)} style={{ gap: 0 }}>
+      {children}
+    </div>
+  );
+}
 (Space as any).Compact = SpaceCompact;
 
 // ============================================================
@@ -494,14 +499,14 @@ interface SpinProps {
   children?: React.ReactNode;
 }
 
-const Spin: React.FC<SpinProps> = ({
+function Spin({
   size = 'default',
   tip,
   className,
   spinning = true,
   indicator,
   children,
-}) => {
+}: SpinProps) {
   const sizeMap = { small: '1rem', default: '1.5rem', large: '2rem' };
   const spinnerSize = sizeMap[size];
 
@@ -520,7 +525,7 @@ const Spin: React.FC<SpinProps> = ({
       {tip && <span className="text-sm text-muted-foreground">{tip}</span>}
     </div>
   );
-};
+}
 
 // ============================================================
 // AntD-compatible Alert (wraps shadcn Alert)
@@ -544,14 +549,14 @@ const typeIconMap: Record<string, React.ReactNode> = {
   default: <span className="text-muted-foreground">!</span>,
 };
 
-const AntDAlert: React.FC<AntDAlertProps> = ({
+function AntDAlert({
   type = 'default',
   showIcon,
   message,
   description,
   className,
   children,
-}) => {
+}: AntDAlertProps) {
   return (
     <div className={cn('flex flex-col gap-1 p-3 rounded-md border', className)}>
       <div className="flex items-start gap-2">
@@ -564,7 +569,7 @@ const AntDAlert: React.FC<AntDAlertProps> = ({
       </div>
     </div>
   );
-};
+}
 
 // ============================================================
 // AntD-compatible Button
@@ -585,7 +590,7 @@ interface ButtonProps {
   danger?: boolean;
 }
 
-const Button: React.FC<ButtonProps> = ({
+function Button({
   type = 'default',
   size = 'middle',
   icon,
@@ -596,7 +601,7 @@ const Button: React.FC<ButtonProps> = ({
   disabled,
   loading,
   ...props
-}) => {
+}: ButtonProps) {
   const sizeClass =
     size === 'small'
       ? 'h-8 px-3 text-xs'
@@ -638,7 +643,7 @@ const Button: React.FC<ButtonProps> = ({
       {children}
     </button>
   );
-};
+}
 
 // AntD-compatible Input (native input wrapper)
 // ============================================================
@@ -695,9 +700,9 @@ interface ListItemProps {
   className?: string;
 }
 
-const ListItemWrapper: React.FC<ListItemProps> = ({ children, className }) => (
-  <div className={cn('py-2 border-b last:border-b-0', className)}>{children}</div>
-);
+function ListItemWrapper({ children, className }: ListItemProps) {
+  return <div className={cn('py-2 border-b last:border-b-0', className)}>{children}</div>;
+}
 
 interface ListWrapperProps<T = any> {
   size?: 'small' | 'middle' | 'large';
@@ -709,7 +714,7 @@ interface ListWrapperProps<T = any> {
   locale?: { emptyText?: React.ReactNode };
 }
 
-const ListWrapper = (({
+function ListWrapper({
   size: _size,
   className,
   children,
@@ -717,7 +722,7 @@ const ListWrapper = (({
   dataSource,
   renderItem,
   locale,
-}: ListWrapperProps<any>) => {
+}: ListWrapperProps<any>) {
   // If dataSource and renderItem are provided, map over them
   if (dataSource && renderItem) {
     if (dataSource.length === 0) {
@@ -748,18 +753,8 @@ const ListWrapper = (({
   }
 
   return <ShadcnList className={className}>{children}</ShadcnList>;
-}) as unknown as React.FC<ListWrapperProps<any>> & { Item: React.FC<ListItemProps> };
-(ListWrapper as any).Item = ListItemWrapper;
-
-// ============================================================
-// AntD-compatible Tag
-// ============================================================
-const AntdTag: React.FC<any> = ({ children, color, ...props }) => (
-  <ShadcnTag color={color} {...props}>
-    {children}
-  </ShadcnTag>
-);
-
+}
+(ListWrapper as unknown as any).Item = ListItemWrapper;
 // ============================================================
 // AntD-compatible Table
 // ============================================================
@@ -781,16 +776,17 @@ interface TableProps<T = Record<string, unknown>> {
   onChange?: (pagination: unknown, filters: Record<string, unknown>, sorter: unknown) => void;
 }
 
-const AntdTable: React.FC<TableProps<Record<string, unknown>>> = ({
+function AntdTable({
   dataSource = [],
   columns = [],
   rowKey,
   size = 'middle',
   className,
   ..._props
-}) => {
+}: TableProps<Record<string, unknown>>) {
   const getRowKey = (record: Record<string, unknown>, index: number): string => {
-    if (typeof rowKey === 'function') return (rowKey as (r: Record<string, unknown>) => string)(record);
+    if (typeof rowKey === 'function')
+      return (rowKey as (r: Record<string, unknown>) => string)(record);
     if (typeof rowKey === 'string') return String(record[rowKey] ?? index);
     return String(index);
   };
@@ -827,10 +823,18 @@ const AntdTable: React.FC<TableProps<Record<string, unknown>>> = ({
                 className="border-b last:border-b-0 hover:bg-muted/50"
               >
                 {columns.map((col, colIndex) => {
-                  const value = col.dataIndex ? (record as Record<string, unknown>)[col.dataIndex as string] : undefined;
+                  const value = col.dataIndex
+                    ? (record as Record<string, unknown>)[col.dataIndex as string]
+                    : undefined;
                   return (
                     <td key={col.key ?? colIndex} className="p-2">
-                      {col.render ? col.render(value as string | number | Record<string, unknown>, record as Record<string, unknown>, rowIndex) : (value as React.ReactNode)}
+                      {col.render
+                        ? col.render(
+                            value as string | number | Record<string, unknown>,
+                            record as Record<string, unknown>,
+                            rowIndex
+                          )
+                        : (value as React.ReactNode)}
                     </td>
                   );
                 })}
@@ -841,7 +845,18 @@ const AntdTable: React.FC<TableProps<Record<string, unknown>>> = ({
       </table>
     </div>
   );
-};
+}
+
+// ============================================================
+// AntD-compatible Tag
+// ============================================================
+function AntdTag({ children, color, ...props }: any) {
+  return (
+    <ShadcnTag color={color} {...props}>
+      {children}
+    </ShadcnTag>
+  );
+}
 
 // ============================================================
 // InputNumber component (native number input wrapper)
@@ -910,11 +925,7 @@ interface DividerProps {
   children?: React.ReactNode;
 }
 
-const Divider: React.FC<DividerProps> = ({
-  orientation: _orientation = 'left',
-  className,
-  children,
-}) => {
+function Divider({ orientation: _orientation = 'left', className, children }: DividerProps) {
   if (children) {
     return (
       <div className={cn('relative my-4', className)}>
@@ -928,7 +939,7 @@ const Divider: React.FC<DividerProps> = ({
     );
   }
   return <div className={cn('my-4 border-t border-border', className)} />;
-};
+}
 
 // ============================================================
 // Collapse (wraps existing Accordion)
@@ -956,10 +967,11 @@ interface CollapsePanelProps {
   children?: React.ReactNode;
 }
 
-const CollapsePanel: React.FC<CollapsePanelProps> = ({ header: _header, children: _children }) =>
-  null;
+function CollapsePanel({ header: _header, children: _children }: CollapsePanelProps) {
+  return null;
+}
 
-const CollapseBase: React.FC<CollapseProps> = ({
+function CollapseBase({
   activeKey,
   defaultActiveKey,
   onChange,
@@ -968,7 +980,7 @@ const CollapseBase: React.FC<CollapseProps> = ({
   children,
   items,
   ghost,
-}) => {
+}: CollapseProps) {
   const getDefaultActiveKey = () => {
     if (defaultActiveKey === undefined) return [];
     return Array.isArray(defaultActiveKey) ? defaultActiveKey : [defaultActiveKey];
@@ -1036,10 +1048,10 @@ const CollapseBase: React.FC<CollapseProps> = ({
       })}
     </div>
   );
-};
+}
 (CollapseBase as any).Panel = CollapsePanel;
-const Collapse = CollapseBase as unknown as React.FC<CollapseProps> & {
-  Panel: React.FC<CollapsePanelProps>;
+const Collapse = CollapseBase as unknown as ((props: CollapseProps) => JSX.Element) & {
+  Panel: (props: CollapsePanelProps) => JSX.Element;
 };
 
 // ============================================================
