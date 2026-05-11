@@ -15,7 +15,6 @@ import styles from '../../ProjectEdit.module.less';
 
 import CollaborationPanel from './CollaborationPanel';
 
-
 const StoryboardEditor = lazy(() => import('@/features/storyboard/components/StoryboardEditor'));
 
 export interface StepContentStoryboardProps {
@@ -45,7 +44,7 @@ export interface StepContentStoryboardProps {
   onNext: () => void;
 }
 
-const StepContentStoryboard: React.FC<StepContentStoryboardProps> = ({
+function StepContentStoryboard({
   storyboardFrames,
   storyAnalysis,
   selectedFrame,
@@ -70,68 +69,72 @@ const StepContentStoryboard: React.FC<StepContentStoryboardProps> = ({
   onVersionLabelChange,
   onPrev,
   onNext,
-}) => (
-  <Card className={styles.stepCard}>
-    <CardHeader>
-      <CardTitle className="flex items-center gap-2">
-        <Image className="h-5 w-5" />
-        分镜设计
-      </CardTitle>
-    </CardHeader>
-    <CardContent>
-      <p className="text-muted-foreground mb-4">
-        设计漫画分镜，确定每个场景的构图和镜头。
-      </p>
-      <div className={styles.storyboardContainer}>
-        <div className={styles.storyboardActions}>
-          <Button
-            variant="outline"
-            onClick={() => {
-              if (!storyAnalysis) {
-                toast.warning('请先完成 AI 结构化解析');
-                return;
-              }
-              onBuildDraft();
-              toast.success('已根据解析结果生成分镜草案');
-            }}
-          >
-            生成分镜草案
-          </Button>
+}: StepContentStoryboardProps) {
+  return (
+    <Card className={styles.stepCard}>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Image className="h-5 w-5" />
+          分镜设计
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-muted-foreground mb-4">设计漫画分镜，确定每个场景的构图和镜头。</p>
+        <div className={styles.storyboardContainer}>
+          <div className={styles.storyboardActions}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                if (!storyAnalysis) {
+                  toast.warning('请先完成 AI 结构化解析');
+                  return;
+                }
+                onBuildDraft();
+                toast.success('已根据解析结果生成分镜草案');
+              }}
+            >
+              生成分镜草案
+            </Button>
+          </div>
+          <StoryboardEditor
+            key={`${storyboardFrames.length}-${storyboardFrames[0]?.id || 'none'}`}
+            initialFrames={storyboardFrames}
+            focusFrameId={focusFrameId}
+            onChange={onFramesChange}
+            onFrameSelect={onFrameSelect}
+          />
+          <CollaborationPanel
+            projectId={projectId}
+            selectedFrame={selectedFrame}
+            commentDraft={commentDraft}
+            versionLabel={versionLabel}
+            compareLeftVersionId={compareLeftVersionId}
+            compareRightVersionId={compareRightVersionId}
+            versionDiff={versionDiff}
+            storyboardVersions={storyboardVersions}
+            onCommentDraftChange={onCommentDraftChange}
+            onAddComment={onAddComment}
+            onSaveVersion={onSaveVersion}
+            onCompareVersions={onCompareVersions}
+            onRollback={onRollback}
+            onLeftVersionChange={onLeftVersionChange}
+            onRightVersionChange={onRightVersionChange}
+            onVersionLabelChange={onVersionLabelChange}
+          />
         </div>
-        <StoryboardEditor
-          key={`${storyboardFrames.length}-${storyboardFrames[0]?.id || 'none'}`}
-          initialFrames={storyboardFrames}
-          focusFrameId={focusFrameId}
-          onChange={onFramesChange}
-          onFrameSelect={onFrameSelect}
-        />
-        <CollaborationPanel
-          projectId={projectId}
-          selectedFrame={selectedFrame}
-          commentDraft={commentDraft}
-          versionLabel={versionLabel}
-          compareLeftVersionId={compareLeftVersionId}
-          compareRightVersionId={compareRightVersionId}
-          versionDiff={versionDiff}
-          storyboardVersions={storyboardVersions}
-          onCommentDraftChange={onCommentDraftChange}
-          onAddComment={onAddComment}
-          onSaveVersion={onSaveVersion}
-          onCompareVersions={onCompareVersions}
-          onRollback={onRollback}
-          onLeftVersionChange={onLeftVersionChange}
-          onRightVersionChange={onRightVersionChange}
-          onVersionLabelChange={onVersionLabelChange}
-        />
-      </div>
-      <div className={styles.stepActions}>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={onPrev}>上一步</Button>
-          <Button variant="default" onClick={onNext}>下一步</Button>
+        <div className={styles.stepActions}>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={onPrev}>
+              上一步
+            </Button>
+            <Button variant="default" onClick={onNext}>
+              下一步
+            </Button>
+          </div>
         </div>
-      </div>
-    </CardContent>
-  </Card>
-);
+      </CardContent>
+    </Card>
+  );
+}
 
 export default StepContentStoryboard;

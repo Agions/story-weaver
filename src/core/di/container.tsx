@@ -53,7 +53,10 @@ export class DIContainer {
    */
   registerSingleton<T>(token: InjectionToken<T>, instance: T): void;
   registerSingleton<T>(token: InjectionToken<T>, factory: () => T): void;
-  registerSingleton<T>(token: InjectionToken<T>, factoryOrInstance: T | ((...args: unknown[]) => T)): void {
+  registerSingleton<T>(
+    token: InjectionToken<T>,
+    factoryOrInstance: T | ((...args: unknown[]) => T)
+  ): void {
     const isFactory = typeof factoryOrInstance === 'function';
     this.services.set(token.__token, {
       singleton: true,
@@ -138,7 +141,7 @@ export class DIContainer {
    * 获取所有已注册服务
    */
   getRegisteredTokens(): string[] {
-    return Array.from(this.services.keys()).map(k => k.description || 'anonymous');
+    return Array.from(this.services.keys()).map((k) => k.description || 'anonymous');
   }
 }
 
@@ -171,9 +174,12 @@ export function setupContainer(): void {
 
 const DIContext = createContext<DIContainer | null>(null);
 
-export const DIProvider: React.FC<{ container?: DIContainer; children: React.ReactNode }> = ({
+export const DIProvider = ({
   container: providedContainer,
   children,
+}: {
+  container?: DIContainer;
+  children: React.ReactNode;
 }) => {
   const activeContainer = providedContainer || globalContainer;
   return <DIContext.Provider value={activeContainer}>{children}</DIContext.Provider>;

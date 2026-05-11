@@ -6,7 +6,14 @@ import { AlertCircle, CheckCircle, Info, AlertTriangle } from 'lucide-react';
 import React, { useState, useCallback } from 'react';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 export type ConfirmType = 'info' | 'success' | 'warning' | 'error' | 'confirm';
 
@@ -39,7 +46,7 @@ const iconMap = {
   confirm: <AlertTriangle className="h-6 w-6 text-yellow-500" />,
 };
 
-export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
+export function ConfirmDialog({
   open = false,
   type = 'confirm',
   title = '确认操作',
@@ -51,7 +58,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   onCancel,
   loading = false,
   className,
-}) => {
+}: ConfirmDialogProps) {
   const [localLoading, setLocalLoading] = useState(false);
 
   const handleOk = useCallback(async () => {
@@ -76,16 +83,10 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
             {icon || iconMap[type]}
             <DialogTitle>{title}</DialogTitle>
           </div>
-          {content && (
-            <DialogDescription>{content}</DialogDescription>
-          )}
+          {content && <DialogDescription>{content}</DialogDescription>}
         </DialogHeader>
         <DialogFooter className="gap-2">
-          <Button
-            variant="outline"
-            onClick={onCancel}
-            disabled={loading || localLoading}
-          >
+          <Button variant="outline" onClick={onCancel} disabled={loading || localLoading}>
             {cancelText}
           </Button>
           <Button
@@ -99,7 +100,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       </DialogContent>
     </Dialog>
   );
-};
+}
 
 export interface UseConfirmOptions {
   title?: string;
@@ -111,7 +112,7 @@ export interface UseConfirmOptions {
 
 export interface UseConfirmReturn {
   confirm: (options?: UseConfirmOptions) => Promise<boolean>;
-  ConfirmDialog: React.FC<Omit<ConfirmDialogProps, 'open' | 'onOk' | 'onCancel'>>;
+  ConfirmDialog: (props: Omit<ConfirmDialogProps, 'open' | 'onOk' | 'onCancel'>) => JSX.Element;
 }
 
 export const useConfirm = (defaultOptions?: UseConfirmOptions): UseConfirmReturn => {
@@ -119,14 +120,17 @@ export const useConfirm = (defaultOptions?: UseConfirmOptions): UseConfirmReturn
   const [options, setOptions] = useState<UseConfirmOptions>(defaultOptions || {});
   const [resolveRef, setResolveRef] = useState<((value: boolean) => void) | null>(null);
 
-  const confirm = useCallback((opts: UseConfirmOptions = {}) => {
-    setOptions({ ...defaultOptions, ...opts });
-    setOpen(true);
+  const confirm = useCallback(
+    (opts: UseConfirmOptions = {}) => {
+      setOptions({ ...defaultOptions, ...opts });
+      setOpen(true);
 
-    return new Promise<boolean>((resolve) => {
-      setResolveRef(() => resolve);
-    });
-  }, [defaultOptions]);
+      return new Promise<boolean>((resolve) => {
+        setResolveRef(() => resolve);
+      });
+    },
+    [defaultOptions]
+  );
 
   const handleOk = useCallback(() => {
     resolveRef?.(true);
@@ -138,7 +142,9 @@ export const useConfirm = (defaultOptions?: UseConfirmOptions): UseConfirmReturn
     setOpen(false);
   }, [resolveRef]);
 
-  const ConfirmDialogComponent: React.FC<Omit<ConfirmDialogProps, 'open' | 'onOk' | 'onCancel'>> = (dialogProps) => (
+  const ConfirmDialogComponent = (
+    dialogProps: Omit<ConfirmDialogProps, 'open' | 'onOk' | 'onCancel'>
+  ) => (
     <ConfirmDialog
       open={open}
       onOk={handleOk}

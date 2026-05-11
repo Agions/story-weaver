@@ -13,15 +13,8 @@ export interface QualityGateAlertProps {
   onLocateIssue: (issue: QualityGateIssue) => void;
 }
 
-const QualityGateAlert: React.FC<QualityGateAlertProps> = ({
-  issues,
-  passed,
-  onLocateIssue,
-}) => (
-  <Alert
-    variant={passed ? 'default' : 'warning'}
-    className="quality-gate-alert"
-  >
+const QualityGateAlert = ({ issues, passed, onLocateIssue }: QualityGateAlertProps) => (
+  <Alert variant={passed ? 'default' : 'warning'} className="quality-gate-alert">
     <AlertDescription>
       {passed ? '质量闸门已通过，可执行导出' : '质量闸门未完全通过，建议先修复以下问题'}
       <ul style={{ margin: '8px 0 0 0', paddingLeft: 20 }}>
@@ -32,12 +25,7 @@ const QualityGateAlert: React.FC<QualityGateAlertProps> = ({
               {typeof issue.frameIndex === 'number' ? `（第 ${issue.frameIndex + 1} 镜）` : ''}
               {issue.field ? ` 字段: ${issue.field}` : ''}
               {issue.frameId ? (
-                <Button 
-                  type="link" 
-                  size="sm" 
-                  onClick={() => onLocateIssue(issue)}
-                  className="ml-2"
-                >
+                <Button type="link" size="sm" onClick={() => onLocateIssue(issue)} className="ml-2">
                   定位修复
                 </Button>
               ) : null}

@@ -6,7 +6,14 @@
 import React, { useState, useEffect, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
-export type TransitionType = 'fade' | 'slideUp' | 'slideDown' | 'slideLeft' | 'slideRight' | 'zoom' | 'none';
+export type TransitionType =
+  | 'fade'
+  | 'slideUp'
+  | 'slideDown'
+  | 'slideLeft'
+  | 'slideRight'
+  | 'zoom'
+  | 'none';
 
 export interface PageTransitionProps {
   /** 子元素 */
@@ -37,14 +44,14 @@ const transitionClassMap: Record<TransitionType, string> = {
 /**
  * 页面切换过渡组件
  */
-const PageTransition: React.FC<PageTransitionProps> = ({
+function PageTransition({
   children,
   type = 'slideUp',
   duration = 300,
   visible = true,
   mountOnShow = true,
   onExited,
-}) => {
+}: PageTransitionProps) {
   const [status, setStatus] = useState<'enter' | 'active' | 'leave'>('enter');
   const [show, setShow] = useState(visible);
 
@@ -55,7 +62,10 @@ const PageTransition: React.FC<PageTransitionProps> = ({
       const id = setTimeout(() => setShow(true), 0);
       // 短暂延迟后触发动画
       const id2 = setTimeout(() => setStatus('active'), 10);
-      return () => { clearTimeout(id); clearTimeout(id2); };
+      return () => {
+        clearTimeout(id);
+        clearTimeout(id2);
+      };
     } else {
       // Defer setState to avoid synchronous call in effect
       const id = setTimeout(() => setStatus('leave'), 0);
@@ -142,12 +152,8 @@ const PageTransition: React.FC<PageTransitionProps> = ({
     );
   }
 
-  return (
-    <div style={{ width: '100%', height: '100%', ...animationStyle }}>
-      {children}
-    </div>
-  );
-};
+  return <div style={{ width: '100%', height: '100%', ...animationStyle }}>{children}</div>;
+}
 
 /**
  * 带过渡效果的路由容器
@@ -166,12 +172,12 @@ export interface TransitionRouterProps {
 /**
  * 路由过渡容器组件
  */
-export const TransitionRouter: React.FC<TransitionRouterProps> = ({
+export function TransitionRouter({
   activeKey,
   children,
   type = 'slideUp',
   duration = 300,
-}) => {
+}: TransitionRouterProps) {
   const [currentKey, setCurrentKey] = useState(activeKey);
   const [prevKey, setPrevKey] = useState(activeKey);
   const [transitioning, setTransitioning] = useState(false);
@@ -185,7 +191,10 @@ export const TransitionRouter: React.FC<TransitionRouterProps> = ({
         setCurrentKey(activeKey);
         setTransitioning(false);
       }, 0);
-      return () => { clearTimeout(id); clearTimeout(id2); };
+      return () => {
+        clearTimeout(id);
+        clearTimeout(id2);
+      };
     }
   }, [activeKey, currentKey, duration]);
 
@@ -220,7 +229,7 @@ export const TransitionRouter: React.FC<TransitionRouterProps> = ({
       )}
     </div>
   );
-};
+}
 
 /**
  * 入场动画包装器
@@ -244,14 +253,14 @@ export interface AnimateInProps {
 /**
  * 入场动画包装器组件
  */
-export const AnimateIn: React.FC<AnimateInProps> = ({
+export function AnimateIn({
   children,
   type = 'slideUp',
   delay = 0,
   show = true,
   duration = 300,
   className,
-}) => {
+}: AnimateInProps) {
   const [visible, setVisible] = useState(!show);
 
   useEffect(() => {
@@ -303,6 +312,6 @@ export const AnimateIn: React.FC<AnimateInProps> = ({
       {children}
     </div>
   );
-};
+}
 
 export default PageTransition;

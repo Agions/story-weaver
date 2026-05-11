@@ -44,12 +44,9 @@ import { generatePrefixedId } from '@/shared/utils';
 import styles from './SceneRenderer.module.less';
 
 // AntD Typography shims
-const Paragraph: React.FC<React.HTMLAttributes<HTMLParagraphElement>> = ({
-  children,
-  ...props
-}) => (
+const Paragraph = (props: React.HTMLAttributes<HTMLParagraphElement>) => (
   <p className="text-sm" {...props}>
-    {children}
+    {props.children}
   </p>
 );
 
@@ -152,11 +149,7 @@ interface SceneRendererProps {
   onSceneSelect?: (scene: Scene | null) => void;
 }
 
-const SceneRenderer: React.FC<SceneRendererProps> = ({
-  initialScenes = [],
-  onChange,
-  onSceneSelect,
-}) => {
+function SceneRenderer({ initialScenes = [], onChange, onSceneSelect }: SceneRendererProps) {
   const [scenes, setScenes] = useState<Scene[]>(initialScenes);
   const [selectedScene, setSelectedScene] = useState<Scene | null>(
     initialScenes.length > 0 ? initialScenes[0] : null
@@ -822,6 +815,6 @@ const SceneRenderer: React.FC<SceneRendererProps> = ({
       </div>
     </div>
   );
-};
+}
 
 export default SceneRenderer;

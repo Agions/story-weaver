@@ -18,39 +18,35 @@ export interface StepContentScriptProps {
   onNext: () => void;
 }
 
-const StepContentScript: React.FC<StepContentScriptProps> = ({
-  onExport,
-  onPrev,
-  onNext,
-  onSave,
-}) => (
-  <Card className={styles.stepCard}>
-    <CardHeader>
-      <CardTitle className="flex items-center gap-2">
-        <Edit className="h-5 w-5" />
-        编辑剧本
-      </CardTitle>
-    </CardHeader>
-    <CardContent>
-      <p className="text-muted-foreground mb-4">
-        编辑和优化AI生成的剧本内容，可以添加、删除或修改片段。
-      </p>
+function StepContentScript({ onExport, onPrev, onNext, onSave }: StepContentScriptProps) {
+  return (
+    <Card className={styles.stepCard}>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Edit className="h-5 w-5" />
+          编辑剧本
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-muted-foreground mb-4">
+          编辑和优化AI生成的剧本内容，可以添加、删除或修改片段。
+        </p>
 
-      <ScriptEditor
-        videoPath=""
-        initialSegments={[]}
-        onSave={onSave}
-        onExport={onExport}
-      />
+        <ScriptEditor videoPath="" initialSegments={[]} onSave={onSave} onExport={onExport} />
 
-      <div className={styles.stepActions}>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={onPrev}>上一步</Button>
-          <Button variant="default" onClick={onNext}>下一步</Button>
+        <div className={styles.stepActions}>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={onPrev}>
+              上一步
+            </Button>
+            <Button variant="default" onClick={onNext}>
+              下一步
+            </Button>
+          </div>
         </div>
-      </div>
-    </CardContent>
-  </Card>
-);
+      </CardContent>
+    </Card>
+  );
+}
 
 export default StepContentScript;

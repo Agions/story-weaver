@@ -7,7 +7,13 @@ import React from 'react';
 import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import type { FrameComment, StoryboardVersion, VersionDiffSummary } from '@/core/services';
 import { collaborationService } from '@/core/services';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
@@ -33,7 +39,7 @@ export interface CollaborationPanelProps {
   onVersionLabelChange: (v: string) => void;
 }
 
-const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
+function CollaborationPanel({
   projectId,
   selectedFrame,
   commentDraft,
@@ -50,10 +56,8 @@ const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
   onLeftVersionChange,
   onRightVersionChange,
   onVersionLabelChange,
-}) => {
-  const comments = projectId
-    ? collaborationService.listComments(projectId, selectedFrame?.id)
-    : [];
+}: CollaborationPanelProps) {
+  const comments = projectId ? collaborationService.listComments(projectId, selectedFrame?.id) : [];
 
   return (
     <div className={styles.collaborationPanel}>
@@ -102,42 +106,50 @@ const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
             className="w-[220px]"
             onKeyDown={(e) => e.key === 'Enter' && onSaveVersion()}
           />
-          <Button variant="outline" onClick={onSaveVersion}>保存快照</Button>
+          <Button variant="outline" onClick={onSaveVersion}>
+            保存快照
+          </Button>
         </div>
         <div className="flex gap-2 mb-3 flex-wrap">
-          <Select
-            value={compareLeftVersionId}
-            onValueChange={(v) => onLeftVersionChange(v)}
-          >
+          <Select value={compareLeftVersionId} onValueChange={(v) => onLeftVersionChange(v)}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="选择版本A" />
             </SelectTrigger>
             <SelectContent>
-              {storyboardVersions.map(v => (
-                <SelectItem key={v.id} value={v.id}>{v.label}</SelectItem>
+              {storyboardVersions.map((v) => (
+                <SelectItem key={v.id} value={v.id}>
+                  {v.label}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
-          <Select
-            value={compareRightVersionId}
-            onValueChange={(v) => onRightVersionChange(v)}
-          >
+          <Select value={compareRightVersionId} onValueChange={(v) => onRightVersionChange(v)}>
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="选择版本B" />
             </SelectTrigger>
             <SelectContent>
-              {storyboardVersions.map(v => (
-                <SelectItem key={v.id} value={v.id}>{v.label}</SelectItem>
+              {storyboardVersions.map((v) => (
+                <SelectItem key={v.id} value={v.id}>
+                  {v.label}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
-          <Button variant="outline" onClick={onCompareVersions}>版本差异</Button>
-          <Button variant="destructive" onClick={onRollback}>回滚到版本A</Button>
+          <Button variant="outline" onClick={onCompareVersions}>
+            版本差异
+          </Button>
+          <Button variant="destructive" onClick={onRollback}>
+            回滚到版本A
+          </Button>
         </div>
         {versionDiff && (
           <Alert
             variant={versionDiff.changeCount > 0 ? 'default' : 'default'}
-            className={versionDiff.changeCount > 0 ? 'bg-blue-50 border-blue-200' : 'bg-green-50 border-green-200'}
+            className={
+              versionDiff.changeCount > 0
+                ? 'bg-blue-50 border-blue-200'
+                : 'bg-green-50 border-green-200'
+            }
           >
             <p className="font-medium">差异字段数: {versionDiff.changeCount}</p>
             <p className="text-sm">{versionDiff.changedKeys.slice(0, 6).join(', ') || '无差异'}</p>
@@ -146,6 +158,6 @@ const CollaborationPanel: React.FC<CollaborationPanelProps> = ({
       </div>
     </div>
   );
-};
+}
 
 export default CollaborationPanel;

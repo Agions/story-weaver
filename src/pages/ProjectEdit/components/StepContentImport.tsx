@@ -14,46 +14,47 @@ const NovelImporter = lazy(() => import('@/features/script/components/NovelImpor
 export interface StepContentImportProps {
   content: string;
   loading: boolean;
-  onContentLoad: (newContent: string, metadata: import('@/features/script/components/NovelImporter').NovelMetadata) => void;
+  onContentLoad: (
+    newContent: string,
+    metadata: import('@/features/script/components/NovelImporter').NovelMetadata
+  ) => void;
   onRemove: () => void;
   onNext: () => void;
 }
 
-const StepContentImport: React.FC<StepContentImportProps> = ({
+function StepContentImport({
   content,
   loading,
   onContentLoad,
   onRemove,
   onNext,
-}) => (
-  <Card className={styles.stepCard}>
-    <CardHeader>
-      <CardTitle className="flex items-center gap-2">
-        <FileText className="h-5 w-5" />
-        导入小说/剧本
-      </CardTitle>
-    </CardHeader>
-    <CardContent>
-      <p className="text-muted-foreground mb-4">
-        请导入小说或剧本文件，支持 TXT、MD、DOCX 格式。您也可以直接粘贴内容。
-      </p>
-      <NovelImporter
-        initialContent={content}
-        onContentLoad={onContentLoad}
-        onRemove={onRemove}
-        loading={loading}
-      />
-      <div className={styles.stepActions}>
-        <Button
-          variant="default"
-          onClick={onNext}
-          disabled={!content}
-        >
-          下一步
-        </Button>
-      </div>
-    </CardContent>
-  </Card>
-);
+}: StepContentImportProps) {
+  return (
+    <Card className={styles.stepCard}>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <FileText className="h-5 w-5" />
+          导入小说/剧本
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-muted-foreground mb-4">
+          请导入小说或剧本文件，支持 TXT、MD、DOCX 格式。您也可以直接粘贴内容。
+        </p>
+        <NovelImporter
+          initialContent={content}
+          onContentLoad={onContentLoad}
+          onRemove={onRemove}
+          loading={loading}
+        />
+        <div className={styles.stepActions}>
+          <Button variant="default" onClick={onNext} disabled={!content}>
+            下一步
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default StepContentImport;

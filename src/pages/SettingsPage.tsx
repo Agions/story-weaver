@@ -2,16 +2,16 @@
  * 专业设置页面
  */
 
-import { 
-  Settings as SettingsIcon, 
-  User, 
-  Bell, 
-  Zap, 
-  Key, 
-  CheckCircle, 
-  Info, 
-  Edit, 
-  Lightbulb
+import {
+  Settings as SettingsIcon,
+  User,
+  Bell,
+  Zap,
+  Key,
+  CheckCircle,
+  Info,
+  Edit,
+  Lightbulb,
 } from 'lucide-react';
 import React, { useState } from 'react';
 
@@ -23,7 +23,13 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -35,40 +41,40 @@ import styles from './Settings.module.less';
 
 // API 密钥配置
 const apiProviders = [
-  { 
-    key: 'openai', 
-    name: 'OpenAI', 
+  {
+    key: 'openai',
+    name: 'OpenAI',
     logo: '🤖',
     models: ['gpt-4', 'gpt-4-turbo', 'gpt-3.5-turbo'],
-    color: '#10a37f'
+    color: '#10a37f',
   },
-  { 
-    key: 'anthropic', 
-    name: 'Anthropic', 
+  {
+    key: 'anthropic',
+    name: 'Anthropic',
     logo: '🧠',
     models: ['claude-3-opus', 'claude-3-sonnet', 'claude-3-haiku'],
-    color: '#d4a373'
+    color: '#d4a373',
   },
-  { 
-    key: 'baidu', 
-    name: '百度', 
+  {
+    key: 'baidu',
+    name: '百度',
     logo: '🔍',
     models: ['ernie-4', 'ernie-3.5'],
-    color: '#2932e1'
+    color: '#2932e1',
   },
-  { 
-    key: 'alibaba', 
-    name: '阿里', 
+  {
+    key: 'alibaba',
+    name: '阿里',
     logo: '☁️',
     models: ['qwen-turbo', 'qwen-plus', 'qwen-max'],
-    color: '#ff6a00'
+    color: '#ff6a00',
   },
-  { 
-    key: 'zhipu', 
-    name: '智谱', 
+  {
+    key: 'zhipu',
+    name: '智谱',
     logo: '📊',
     models: ['glm-4', 'glm-3-turbo'],
-    color: '#5e72e4'
+    color: '#5e72e4',
   },
 ];
 
@@ -79,9 +85,9 @@ const Settings: React.FC = () => {
     anthropic: '',
     baidu: '',
     alibaba: '',
-    zhipu: ''
+    zhipu: '',
   });
-  
+
   const { isDarkMode, toggleTheme } = useTheme();
 
   const handleSaveApiKey = (provider: string) => {
@@ -118,7 +124,7 @@ const Settings: React.FC = () => {
               <p className="text-muted-foreground mb-4">
                 配置您使用的 AI 服务商 API 密钥，不同服务商支持不同的模型。
               </p>
-              
+
               <div className="space-y-4">
                 {apiProviders.map((provider) => (
                   <Card key={provider.key} className={styles.providerCard}>
@@ -127,13 +133,15 @@ const Settings: React.FC = () => {
                         <span className={styles.providerLogo}>{provider.logo}</span>
                         <span className={styles.providerName}>{provider.name}</span>
                         {apiKeys[provider.key] ? (
-                          <Badge variant="default" className="bg-green-500">已配置</Badge>
+                          <Badge variant="default" className="bg-green-500">
+                            已配置
+                          </Badge>
                         ) : (
                           <Badge variant="secondary">未配置</Badge>
                         )}
                       </div>
-                      <Button 
-                        variant="ghost" 
+                      <Button
+                        variant="ghost"
                         size="sm"
                         onClick={() => handleSaveApiKey(provider.key)}
                       >
@@ -141,7 +149,7 @@ const Settings: React.FC = () => {
                         {apiKeys[provider.key] ? '修改' : '添加'}
                       </Button>
                     </div>
-                    
+
                     <div className={styles.modelSelect}>
                       <Label>选择模型：</Label>
                       <Select defaultValue={provider.models[0]}>
@@ -149,8 +157,10 @@ const Settings: React.FC = () => {
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          {provider.models.map(m => (
-                            <SelectItem key={m} value={m}>{m}</SelectItem>
+                          {provider.models.map((m) => (
+                            <SelectItem key={m} value={m}>
+                              {m}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -167,7 +177,10 @@ const Settings: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Card className={styles.statCard}>
                   <div className="flex items-center gap-4">
-                    <div className={styles.statIcon} style={{ background: '#e0e7ff', color: '#6366f1' }}>
+                    <div
+                      className={styles.statIcon}
+                      style={{ background: '#e0e7ff', color: '#6366f1' }}
+                    >
                       <Zap className="h-5 w-5" />
                     </div>
                     <div>
@@ -178,7 +191,10 @@ const Settings: React.FC = () => {
                 </Card>
                 <Card className={styles.statCard}>
                   <div className="flex items-center gap-4">
-                    <div className={styles.statIcon} style={{ background: '#fef3c7', color: '#f59e0b' }}>
+                    <div
+                      className={styles.statIcon}
+                      style={{ background: '#fef3c7', color: '#f59e0b' }}
+                    >
                       <Key className="h-5 w-5" />
                     </div>
                     <div>
@@ -189,7 +205,10 @@ const Settings: React.FC = () => {
                 </Card>
                 <Card className={styles.statCard}>
                   <div className="flex items-center gap-4">
-                    <div className={styles.statIcon} style={{ background: '#d1fae5', color: '#10b981' }}>
+                    <div
+                      className={styles.statIcon}
+                      style={{ background: '#d1fae5', color: '#10b981' }}
+                    >
                       <CheckCircle className="h-5 w-5" />
                     </div>
                     <div>
@@ -209,8 +228,8 @@ const Settings: React.FC = () => {
               <p className="text-muted-foreground mb-4">
                 选择您喜欢的主题模式，主题更改将立即生效。
               </p>
-              
-              <RadioGroup 
+
+              <RadioGroup
                 value={isDarkMode ? 'dark' : 'light'}
                 onChange={(value: string) => {
                   if (value !== (isDarkMode ? 'dark' : 'light')) {
@@ -234,12 +253,12 @@ const Settings: React.FC = () => {
                   </Label>
                 </div>
               </RadioGroup>
-              
+
               <Alert className="mt-4">
                 <AlertDescription>
-                  {isDarkMode 
-                    ? "当前为暗黑模式，适合夜间使用，减少眼睛疲劳。" 
-                    : "当前为浅色模式，适合白天使用，界面更清晰。"}
+                  {isDarkMode
+                    ? '当前为暗黑模式，适合夜间使用，减少眼睛疲劳。'
+                    : '当前为浅色模式，适合白天使用，界面更清晰。'}
                 </AlertDescription>
               </Alert>
             </div>
@@ -248,16 +267,18 @@ const Settings: React.FC = () => {
 
             <div className={styles.section}>
               <h3 className="text-lg font-semibold mb-4">基本设置</h3>
-              
+
               <div className="space-y-4 max-w-md">
                 <div className="space-y-2">
                   <Label>项目保存路径</Label>
                   <div className="flex gap-2">
                     <Input placeholder="/Users/username/PanelFlow AI/projects" className="flex-1" />
-                    <Button variant="outline" size="sm">浏览</Button>
+                    <Button variant="outline" size="sm">
+                      浏览
+                    </Button>
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label>默认视频分辨率</Label>
                   <Select defaultValue="1080p">
@@ -272,7 +293,7 @@ const Settings: React.FC = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label>默认帧率</Label>
                   <Select defaultValue="24">
@@ -286,7 +307,7 @@ const Settings: React.FC = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label>自动保存间隔</Label>
                   <div className="flex items-center gap-2">
@@ -301,7 +322,7 @@ const Settings: React.FC = () => {
 
             <div className={styles.section}>
               <h3 className="text-lg font-semibold mb-4">开关设置</h3>
-              
+
               <div className="space-y-4">
                 <div className={styles.switchItem}>
                   <div className={styles.switchInfo}>
@@ -310,7 +331,7 @@ const Settings: React.FC = () => {
                   </div>
                   <Switch defaultChecked />
                 </div>
-                
+
                 <div className={styles.switchItem}>
                   <div className={styles.switchInfo}>
                     <Label>显示高级选项</Label>
@@ -318,7 +339,7 @@ const Settings: React.FC = () => {
                   </div>
                   <Switch />
                 </div>
-                
+
                 <div className={styles.switchItem}>
                   <div className={styles.switchInfo}>
                     <Label>启用快捷键</Label>
@@ -326,7 +347,7 @@ const Settings: React.FC = () => {
                   </div>
                   <Switch defaultChecked />
                 </div>
-                
+
                 <div className={styles.switchItem}>
                   <div className={styles.switchInfo}>
                     <Label>启动时检查更新</Label>
@@ -343,12 +364,16 @@ const Settings: React.FC = () => {
             <Card className={styles.accountCard}>
               <div className={styles.accountInfo}>
                 <Avatar className="h-20 w-20">
-                  <AvatarFallback><User className="h-8 w-8" /></AvatarFallback>
+                  <AvatarFallback>
+                    <User className="h-8 w-8" />
+                  </AvatarFallback>
                 </Avatar>
                 <div className={styles.accountDetail}>
                   <h3 className="text-lg font-semibold">用户账户</h3>
                   <p className="text-sm text-muted-foreground">创建时间：2026-02-15</p>
-                  <Badge variant="outline" className="mt-2">免费版</Badge>
+                  <Badge variant="outline" className="mt-2">
+                    免费版
+                  </Badge>
                 </div>
               </div>
             </Card>
@@ -357,18 +382,18 @@ const Settings: React.FC = () => {
 
             <div className={styles.section}>
               <h3 className="text-lg font-semibold mb-4">账户设置</h3>
-              
+
               <div className="space-y-4 max-w-md">
                 <div className="space-y-2">
                   <Label>显示名称</Label>
                   <Input placeholder="输入您的名称" />
                 </div>
-                
+
                 <div className="space-y-2">
                   <Label>邮箱</Label>
                   <Input placeholder="your@email.com" />
                 </div>
-                
+
                 <Button>保存更改</Button>
               </div>
             </div>
@@ -378,7 +403,7 @@ const Settings: React.FC = () => {
           <TabsContent value="notification" className="space-y-6">
             <div className={styles.section}>
               <h3 className="text-lg font-semibold mb-4">通知设置</h3>
-              
+
               <div className="space-y-4">
                 <div className={styles.switchItem}>
                   <div className={styles.switchInfo}>
@@ -387,7 +412,7 @@ const Settings: React.FC = () => {
                   </div>
                   <Switch defaultChecked />
                 </div>
-                
+
                 <div className={styles.switchItem}>
                   <div className={styles.switchInfo}>
                     <Label>错误提醒</Label>
@@ -395,7 +420,7 @@ const Settings: React.FC = () => {
                   </div>
                   <Switch defaultChecked />
                 </div>
-                
+
                 <div className={styles.switchItem}>
                   <div className={styles.switchInfo}>
                     <Label>API 配额提醒</Label>
@@ -403,7 +428,7 @@ const Settings: React.FC = () => {
                   </div>
                   <Switch defaultChecked />
                 </div>
-                
+
                 <div className={styles.switchItem}>
                   <div className={styles.switchInfo}>
                     <Label>更新推送</Label>
@@ -422,7 +447,7 @@ const Settings: React.FC = () => {
                 <h2 className="text-2xl font-bold">🎬 PanelFlow AI</h2>
                 <p className="text-muted-foreground">AI 视频脚本视频智能创作平台</p>
               </div>
-              
+
               <div className={styles.aboutInfo}>
                 <div className={styles.infoItem}>
                   <span className="text-muted-foreground">版本</span>
@@ -437,7 +462,7 @@ const Settings: React.FC = () => {
                   <span>MIT</span>
                 </div>
               </div>
-              
+
               <Alert className="mt-4">
                 <AlertDescription>
                   感谢使用 PanelFlow AI，如有问题或建议，请提交 Issue 或联系开发者。
@@ -454,6 +479,4 @@ const Settings: React.FC = () => {
 export default Settings;
 
 // Icon wrapper for Lucide
-const ApiIcon: React.FC<{ className?: string }> = ({ className }) => (
-  <Key className={className} />
-);
+const ApiIcon = ({ className }: { className?: string }) => <Key className={className} />;

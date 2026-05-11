@@ -20,39 +20,41 @@ export interface StepContentCharacterProps {
   onNext: () => void;
 }
 
-const StepContentCharacter: React.FC<StepContentCharacterProps> = ({
+function StepContentCharacter({
   characters,
   projectId,
   onChange,
   onPrev,
   onNext,
-}) => (
-  <Card className={styles.stepCard}>
-    <CardHeader>
-      <CardTitle className="flex items-center gap-2">
-        <User className="h-5 w-5" />
-        角色设计
-      </CardTitle>
-    </CardHeader>
-    <CardContent>
-      <p className="text-muted-foreground mb-4">
-        为故事中的角色创建和管理形象档案，确保视觉一致性。
-      </p>
-      <div className={styles.characterDesignerContainer}>
-        <CharacterDesigner
-          characters={characters}
-          onChange={onChange}
-          projectId={projectId}
-        />
-      </div>
-      <div className={styles.stepActions}>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={onPrev}>上一步</Button>
-          <Button variant="default" onClick={onNext}>下一步</Button>
+}: StepContentCharacterProps) {
+  return (
+    <Card className={styles.stepCard}>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <User className="h-5 w-5" />
+          角色设计
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-muted-foreground mb-4">
+          为故事中的角色创建和管理形象档案，确保视觉一致性。
+        </p>
+        <div className={styles.characterDesignerContainer}>
+          <CharacterDesigner characters={characters} onChange={onChange} projectId={projectId} />
         </div>
-      </div>
-    </CardContent>
-  </Card>
-);
+        <div className={styles.stepActions}>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={onPrev}>
+              上一步
+            </Button>
+            <Button variant="default" onClick={onNext}>
+              下一步
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default StepContentCharacter;
