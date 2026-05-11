@@ -1,5 +1,7 @@
 /** 工作流节点模板定义 */
 
+import { generatePrefixedId } from '@/shared/utils';
+
 export interface NodeTemplate {
   type: string;
   label: string;
@@ -78,11 +80,6 @@ const workflowTemplates: Record<string, { name: string; nodes: WorkflowData['nod
 /** 存储工作流数据 */
 const workflowStore: Map<string, WorkflowData> = new Map();
 
-let idCounter = 0;
-function generateId(): string {
-  return `wf_${Date.now()}_${++idCounter}`;
-}
-
 export function getNodesByCategory(category: string): NodeTemplate[] {
   return nodeTemplates.filter(node => node.category === category);
 }
@@ -102,7 +99,7 @@ export const workflowManager = {
   
   createWorkflow(name: string): WorkflowData {
     const workflow: WorkflowData = {
-      id: generateId(),
+      id: generatePrefixedId('wf'),
       name,
       nodes: [],
       connections: [],
@@ -131,7 +128,7 @@ export const workflowManager = {
       return null;
     }
     const workflow: WorkflowData = {
-      id: generateId(),
+      id: generatePrefixedId('wf'),
       name: template.name,
       nodes: template.nodes,
       connections: [],
