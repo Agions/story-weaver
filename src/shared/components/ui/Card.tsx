@@ -25,7 +25,7 @@ interface CardProps {
   [key: string]: unknown;
 }
 
-export const Card: React.FC<CardProps> = ({
+export const Card = ({
   children,
   hoverable = false,
   selected = false,
@@ -37,7 +37,7 @@ export const Card: React.FC<CardProps> = ({
   bodyStyle,
   borderless: _borderless,
   ...props
-}) => {
+}: CardProps) => {
   const cardClass = cn(
     styles.card,
     size === 'small' ? styles.small : size === 'large' ? styles.large : '',
@@ -46,21 +46,16 @@ export const Card: React.FC<CardProps> = ({
     selected ? styles.selected : '',
     className
   );
-  
+
   return (
-    <ShadcnCard
-      className={cardClass}
-      {...props}
-    >
+    <ShadcnCard className={cardClass} {...props}>
       {(title || extra) && (
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           {title && typeof title === 'string' ? <CardTitle>{title}</CardTitle> : title}
           {extra && <div>{extra}</div>}
         </CardHeader>
       )}
-      <CardContent style={bodyStyle}>
-        {children}
-      </CardContent>
+      <CardContent style={bodyStyle}>{children}</CardContent>
     </ShadcnCard>
   );
 };

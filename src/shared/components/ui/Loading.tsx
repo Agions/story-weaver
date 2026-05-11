@@ -14,21 +14,18 @@ interface LoadingProps {
   children?: React.ReactNode;
 }
 
-const Loading: React.FC<LoadingProps> = ({ 
-  tip = '加载中...', 
+const Loading = ({
+  tip = '加载中...',
   size = 'default',
   fullscreen = false,
-  children 
-}) => {
+  children,
+}: LoadingProps) => {
   const iconSize = size === 'large' ? 48 : size === 'small' ? 16 : 24;
 
   if (fullscreen) {
     return (
       <div className={styles.fullscreen}>
-        <Loader2 
-          className="animate-spin" 
-          style={{ width: iconSize, height: iconSize }} 
-        />
+        <Loader2 className="animate-spin" style={{ width: iconSize, height: iconSize }} />
         {tip && <p className="mt-4 text-muted-foreground">{tip}</p>}
       </div>
     );
@@ -37,10 +34,7 @@ const Loading: React.FC<LoadingProps> = ({
   return (
     <div className={styles.container}>
       <div className="flex flex-col items-center gap-2">
-        <Loader2 
-          className="animate-spin" 
-          style={{ width: iconSize, height: iconSize }} 
-        />
+        <Loader2 className="animate-spin" style={{ width: iconSize, height: iconSize }} />
         {tip && <p className="text-muted-foreground text-sm">{tip}</p>}
         {children}
       </div>
@@ -56,7 +50,7 @@ interface PageSkeletonProps {
   paragraph?: boolean | { rows?: number };
 }
 
-export const PageSkeleton: React.FC<PageSkeletonProps> = () => (
+export const PageSkeleton = (): JSX.Element => (
   <div className={styles.skeleton}>
     <div className={styles.skeletonHeader} />
     <div className={styles.skeletonContent}>

@@ -23,7 +23,7 @@ interface ButtonProps {
   [key: string]: unknown;
 }
 
-export const Button: React.FC<ButtonProps> = ({
+export const Button = ({
   variant = 'default',
   size = 'default',
   loading = false,
@@ -34,16 +34,13 @@ export const Button: React.FC<ButtonProps> = ({
   children,
   className,
   ...props
-}) => {
+}: ButtonProps) => {
   return (
     <ShadcnButton
       variant={variant}
       size={size}
       disabled={disabled || loading}
-      className={cn(
-        block ? 'w-full' : '',
-        className
-      )}
+      className={cn(block ? 'w-full' : '', className)}
       onClick={onClick}
       {...props}
     >

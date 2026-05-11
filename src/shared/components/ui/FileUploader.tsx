@@ -61,7 +61,7 @@ export interface FileUploaderProps {
   isDragger?: boolean;
 }
 
-export const FileUploader: React.FC<FileUploaderProps> = ({
+export const FileUploader = ({
   accept,
   maxCount = 1,
   maxSize = 100,
@@ -78,7 +78,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   className,
   showFileList = true,
   isDragger = true,
-}) => {
+}: FileUploaderProps) => {
   const [dragOver, setDragOver] = useState(false);
   const [internalFileList, setInternalFileList] = useState<UploadFile[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -291,21 +291,21 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
 /**
  * 图片上传组件
  */
-export const ImageUploader: React.FC<Omit<FileUploaderProps, 'accept'>> = (props) => (
+export const ImageUploader = (props: Omit<FileUploaderProps, 'accept'>) => (
   <FileUploader accept="image/*" {...props} />
 );
 
 /**
  * 视频上传组件
  */
-export const VideoUploader: React.FC<Omit<FileUploaderProps, 'accept'>> = (props) => (
+export const VideoUploader = (props: Omit<FileUploaderProps, 'accept'>) => (
   <FileUploader accept="video/*" maxSize={500} {...props} />
 );
 
 /**
  * 文档上传组件
  */
-export const DocumentUploader: React.FC<Omit<FileUploaderProps, 'accept'>> = (props) => (
+export const DocumentUploader = (props: Omit<FileUploaderProps, 'accept'>) => (
   <FileUploader accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt" {...props} />
 );
 

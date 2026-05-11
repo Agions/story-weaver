@@ -8,7 +8,14 @@ import React from 'react';
 import { Skeleton as BaseSkeleton } from '@/components/ui/skeleton';
 
 // Local Skeleton wrapper with antd-style variant support
-function Skeleton({ variant, width, height, className, style, ...props }: {
+function Skeleton({
+  variant,
+  width,
+  height,
+  className,
+  style,
+  ...props
+}: {
   variant?: 'text' | 'circular' | 'default';
   width?: string | number;
   height?: string | number;
@@ -39,17 +46,8 @@ export interface BasicSkeletonProps {
   className?: string;
 }
 
-export const BasicSkeleton: React.FC<BasicSkeletonProps> = ({
-  width,
-  height,
-  className,
-}) => {
-  return (
-    <Skeleton 
-      className={className}
-      style={{ width, height }}
-    />
-  );
+export const BasicSkeleton = ({ width, height, className }: BasicSkeletonProps) => {
+  return <Skeleton className={className} style={{ width, height }} />;
 };
 
 // ============================================
@@ -66,13 +64,13 @@ export interface CardSkeletonProps {
   [key: string]: unknown;
 }
 
-export const CardSkeleton: React.FC<CardSkeletonProps> = ({
+export const CardSkeleton = ({
   title = true,
   avatar = true,
   _cover = false,
   _active = true,
   className,
-}) => {
+}: CardSkeletonProps) => {
   return (
     <div className={`${styles.cardSkeleton} ${className || ''}`}>
       <div className="space-y-4">
@@ -99,12 +97,12 @@ export interface ListSkeletonProps {
   [key: string]: unknown;
 }
 
-export const ListSkeleton: React.FC<ListSkeletonProps> = ({
+export const ListSkeleton = ({
   count = 3,
   avatar = true,
   _active = true,
   className,
-}) => {
+}: ListSkeletonProps) => {
   return (
     <div className={`${styles.listSkeleton} ${className || ''}`}>
       {Array.from({ length: count }).map((_, index) => (
@@ -133,13 +131,13 @@ export interface FormSkeletonProps {
   [key: string]: unknown;
 }
 
-export const FormSkeleton: React.FC<FormSkeletonProps> = ({
+export const FormSkeleton = ({
   count = 4,
   labels = true,
   button = true,
   _active = true,
   className,
-}) => {
+}: FormSkeletonProps) => {
   return (
     <div className={`${styles.formSkeleton} ${className || ''}`}>
       {Array.from({ length: count }).map((_, index) => (
@@ -171,14 +169,14 @@ export interface StatisticSkeletonProps {
   [key: string]: unknown;
 }
 
-export const StatisticSkeleton: React.FC<StatisticSkeletonProps> = ({
+export const StatisticSkeleton = ({
   count = 4,
   icon = true,
   title = true,
   value = true,
   _active = true,
   className,
-}) => {
+}: StatisticSkeletonProps) => {
   return (
     <div className={`${styles.statisticSkeleton} ${className || ''}`}>
       {Array.from({ length: count }).map((_, index) => (
@@ -217,12 +215,12 @@ export interface UnifiedSkeletonProps {
   value?: boolean;
 }
 
-export const SkeletonComponent: React.FC<UnifiedSkeletonProps> = ({
+export const SkeletonComponent = ({
   type = 'basic',
   active = true,
   className,
   ...props
-}) => {
+}: UnifiedSkeletonProps) => {
   switch (type) {
     case 'card':
       return <CardSkeleton {...props} active={active} className={className} />;

@@ -19,12 +19,7 @@ interface EmptyStateProps {
   type?: 'default' | 'project' | 'file';
 }
 
-const EmptyState: React.FC<EmptyStateProps> = ({ 
-  title, 
-  description, 
-  action,
-  type = 'default' 
-}) => {
+const EmptyState = ({ title, description, action, type = 'default' }: EmptyStateProps) => {
   const getIcon = () => {
     switch (type) {
       case 'project':
@@ -44,10 +39,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
         {description && <div className={styles.desc}>{description}</div>}
       </div>
       {action && (
-        <Button 
-          onClick={action.onClick}
-          className={styles.actionBtn}
-        >
+        <Button onClick={action.onClick} className={styles.actionBtn}>
           <Plus className="h-4 w-4 mr-1" />
           {action.text}
         </Button>

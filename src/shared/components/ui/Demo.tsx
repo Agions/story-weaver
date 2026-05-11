@@ -12,15 +12,27 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Skeleton as ShadcnSkeleton } from '@/components/ui/skeleton';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import SubtitleEditor from '@/features/subtitle/components/SubtitleEditor';
-import { EmptyState, PageContainer, PageSection, GridStatistic, AnimateIn } from '@/shared/components/ui';
+import {
+  EmptyState,
+  PageContainer,
+  PageSection,
+  GridStatistic,
+  AnimateIn,
+} from '@/shared/components/ui';
 
-const Demo: React.FC = () => {
+function Demo() {
   const [activeTab, setActiveTab] = useState('buttons');
   const [subtitles, setSubtitles] = useState(mockSubtitles);
   const [currentTime, setCurrentTime] = useState(0);
@@ -36,7 +48,10 @@ const Demo: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const buttons: { variant: 'default' | 'secondary' | 'outline' | 'ghost' | 'link' | 'destructive'; text: string }[] = [
+  const buttons: {
+    variant: 'default' | 'secondary' | 'outline' | 'ghost' | 'link' | 'destructive';
+    text: string;
+  }[] = [
     { variant: 'default', text: '主要按钮' },
     { variant: 'secondary', text: '默认按钮' },
     { variant: 'outline', text: '虚线按钮' },
@@ -59,10 +74,24 @@ const Demo: React.FC = () => {
 
   // 统计卡片数据
   const stats = [
-    { title: '项目总数', value: '12', icon: <Video />, color: 'primary' as const, trend: 'up' as const, trendValue: '较上周' },
+    {
+      title: '项目总数',
+      value: '12',
+      icon: <Video />,
+      color: 'primary' as const,
+      trend: 'up' as const,
+      trendValue: '较上周',
+    },
     { title: '已完成', value: '8', icon: <Star />, color: 'success' as const },
     { title: '处理中', value: '3', icon: <Zap />, color: 'warning' as const },
-    { title: 'API调用', value: '1.2K', icon: <Cloud />, color: 'info' as const, trend: 'up' as const, trendValue: '+15%' },
+    {
+      title: 'API调用',
+      value: '1.2K',
+      icon: <Cloud />,
+      color: 'info' as const,
+      trend: 'up' as const,
+      trendValue: '+15%',
+    },
   ];
 
   return (
@@ -87,7 +116,11 @@ const Demo: React.FC = () => {
           <div style={{ height: '1px', background: '#d9d9d9', margin: '24px 0' }} />
 
           <AnimateIn type="slideUp" delay={100}>
-            <PageSection title="字幕编辑器" description="拖动下方滑块模拟播放进度，测试字幕高亮效果" card>
+            <PageSection
+              title="字幕编辑器"
+              description="拖动下方滑块模拟播放进度，测试字幕高亮效果"
+              card
+            >
               <SubtitleEditor
                 subtitles={subtitles as any}
                 onChange={(newSubtitles) => setSubtitles(newSubtitles as any)}
@@ -154,12 +187,22 @@ const Demo: React.FC = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 400 }}>
               <Input placeholder="基本输入框" />
               <div style={{ position: 'relative' }}>
-                <User style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', width: 16, height: 16, color: '#666' }} />
+                <User
+                  style={{
+                    position: 'absolute',
+                    left: 12,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    width: 16,
+                    height: 16,
+                    color: '#666',
+                  }}
+                />
                 <Input placeholder="带图标的输入框" style={{ paddingLeft: 36 }} />
               </div>
               <Input type="password" placeholder="密码输入框" />
-              <textarea 
-                placeholder="多行文本" 
+              <textarea
+                placeholder="多行文本"
                 rows={3}
                 style={{
                   width: '100%',
@@ -167,7 +210,7 @@ const Demo: React.FC = () => {
                   border: '1px solid #d9d9d9',
                   borderRadius: '6px',
                   fontSize: '14px',
-                  resize: 'vertical'
+                  resize: 'vertical',
                 }}
               />
             </div>
@@ -192,9 +235,19 @@ const Demo: React.FC = () => {
             <div style={{ height: '1px', background: '#d9d9d9', margin: '24px 0' }}>滑动条</div>
 
             <div style={{ maxWidth: 400 }}>
-              <Slider value={sliderValue} onValueChange={(v) => setSliderValue(Array.isArray(v) ? v : [v])} max={100} step={1} />
+              <Slider
+                value={sliderValue}
+                onValueChange={(v) => setSliderValue(Array.isArray(v) ? v : [v])}
+                max={100}
+                step={1}
+              />
               <div style={{ marginTop: 16 }}>
-                <Slider value={sliderRange} onValueChange={(v) => setSliderRange(Array.isArray(v) ? v : [v])} max={100} step={1} />
+                <Slider
+                  value={sliderRange}
+                  onValueChange={(v) => setSliderRange(Array.isArray(v) ? v : [v])}
+                  max={100}
+                  step={1}
+                />
               </div>
             </div>
           </Card>
@@ -214,41 +267,53 @@ const Demo: React.FC = () => {
 
             <div style={{ display: 'flex', gap: 24 }}>
               <Avatar style={{ width: 64, height: 64 }}>
-                <AvatarFallback><User style={{ width: 32, height: 32 }} /></AvatarFallback>
+                <AvatarFallback>
+                  <User style={{ width: 32, height: 32 }} />
+                </AvatarFallback>
               </Avatar>
               <div style={{ position: 'relative', display: 'inline-block' }}>
                 <Avatar style={{ width: 40, height: 40, borderRadius: 0 }}>
-                  <AvatarFallback><User /></AvatarFallback>
+                  <AvatarFallback>
+                    <User />
+                  </AvatarFallback>
                 </Avatar>
-                <div style={{
-                  position: 'absolute',
-                  top: -4,
-                  right: -4,
-                  background: '#ff4d4f',
-                  color: '#fff',
-                  borderRadius: '50%',
-                  width: 18,
-                  height: 18,
-                  fontSize: 11,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}>5</div>
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: -4,
+                    right: -4,
+                    background: '#ff4d4f',
+                    color: '#fff',
+                    borderRadius: '50%',
+                    width: 18,
+                    height: 18,
+                    fontSize: 11,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  5
+                </div>
               </div>
               <div style={{ position: 'relative', display: 'inline-block' }}>
                 <Avatar style={{ width: 40, height: 40 }}>
-                  <AvatarFallback><User /></AvatarFallback>
+                  <AvatarFallback>
+                    <User />
+                  </AvatarFallback>
                 </Avatar>
-                <div style={{
-                  position: 'absolute',
-                  top: 0,
-                  right: 0,
-                  width: 10,
-                  height: 10,
-                  background: '#52c41a',
-                  borderRadius: '50%',
-                  border: '2px solid #fff'
-                }} />
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    right: 0,
+                    width: 10,
+                    height: 10,
+                    background: '#52c41a',
+                    borderRadius: '50%',
+                    border: '2px solid #fff',
+                  }}
+                />
               </div>
             </div>
 
@@ -267,26 +332,39 @@ const Demo: React.FC = () => {
           <Card title="列表">
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {listData.map((item, index) => (
-                <div key={index} style={{ 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'space-between',
-                  padding: '12px 0',
-                  borderBottom: index < listData.length - 1 ? '1px solid #f0f0f0' : 'none'
-                }}>
+                <div
+                  key={index}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '12px 0',
+                    borderBottom: index < listData.length - 1 ? '1px solid #f0f0f0' : 'none',
+                  }}
+                >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <Avatar style={{ width: 40, height: 40 }}>
-                      <AvatarFallback><User /></AvatarFallback>
+                      <AvatarFallback>
+                        <User />
+                      </AvatarFallback>
                     </Avatar>
                     <div>
                       <div style={{ fontWeight: 500 }}>{item.title}</div>
-                      <div style={{ color: 'rgba(0,0,0,0.45)', fontSize: 12 }}>{item.description}</div>
+                      <div style={{ color: 'rgba(0,0,0,0.45)', fontSize: 12 }}>
+                        {item.description}
+                      </div>
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: 8 }}>
-                    <Button variant="ghost" size="sm"><Star style={{ width: 14, height: 14 }} /> 收藏</Button>
-                    <Button variant="ghost" size="sm"><Heart style={{ width: 14, height: 14 }} /> 点赞</Button>
-                    <Button variant="ghost" size="sm"><MessageCircle style={{ width: 14, height: 14 }} /> 评论</Button>
+                    <Button variant="ghost" size="sm">
+                      <Star style={{ width: 14, height: 14 }} /> 收藏
+                    </Button>
+                    <Button variant="ghost" size="sm">
+                      <Heart style={{ width: 14, height: 14 }} /> 点赞
+                    </Button>
+                    <Button variant="ghost" size="sm">
+                      <MessageCircle style={{ width: 14, height: 14 }} /> 评论
+                    </Button>
                   </div>
                 </div>
               ))}
@@ -298,13 +376,40 @@ const Demo: React.FC = () => {
           <Card title="加载状态">
             <div style={{ display: 'flex', gap: 24 }}>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <div className="animate-spin" style={{ width: 16, height: 16, border: '2px solid #f0f0f0', borderTopColor: '#1890ff', borderRadius: '50%' }} />
+                <div
+                  className="animate-spin"
+                  style={{
+                    width: 16,
+                    height: 16,
+                    border: '2px solid #f0f0f0',
+                    borderTopColor: '#1890ff',
+                    borderRadius: '50%',
+                  }}
+                />
               </div>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <div className="animate-spin" style={{ width: 24, height: 24, border: '2px solid #f0f0f0', borderTopColor: '#1890ff', borderRadius: '50%' }} />
+                <div
+                  className="animate-spin"
+                  style={{
+                    width: 24,
+                    height: 24,
+                    border: '2px solid #f0f0f0',
+                    borderTopColor: '#1890ff',
+                    borderRadius: '50%',
+                  }}
+                />
               </div>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                <div className="animate-spin" style={{ width: 32, height: 32, border: '2px solid #f0f0f0', borderTopColor: '#1890ff', borderRadius: '50%' }} />
+                <div
+                  className="animate-spin"
+                  style={{
+                    width: 32,
+                    height: 32,
+                    border: '2px solid #f0f0f0',
+                    borderTopColor: '#1890ff',
+                    borderRadius: '50%',
+                  }}
+                />
               </div>
             </div>
 
@@ -322,7 +427,7 @@ const Demo: React.FC = () => {
       </Tabs>
     </PageContainer>
   );
-};
+}
 
 // 模拟字幕数据
 const mockSubtitles = [

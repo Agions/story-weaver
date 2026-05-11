@@ -11,12 +11,7 @@ interface AnimateInProps {
   className?: string;
 }
 
-const AnimateIn: React.FC<AnimateInProps> = ({ 
-  children, 
-  delay = 0, 
-  className = '', 
-  type = 'fadeIn' 
-}) => {
+const AnimateIn = ({ children, delay = 0, className = '', type = 'fadeIn' }: AnimateInProps) => {
   const style: React.CSSProperties = {
     animationDelay: `${delay}ms`,
   };

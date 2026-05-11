@@ -16,14 +16,14 @@ interface PageSectionProps {
   className?: string;
 }
 
-const PageSection: React.FC<PageSectionProps> = ({
+const PageSection = ({
   title,
   description,
   extra,
   card = false,
   children,
   className = '',
-}) => {
+}: PageSectionProps) => {
   const content = (
     <div className={`${styles.section} ${className}`}>
       {(title || extra) && (

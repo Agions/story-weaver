@@ -104,7 +104,7 @@ export interface ActionCardProps {
 /**
  * 页面容器组件
  */
-export const PageContainer: React.FC<PageContainerProps> = ({
+export const PageContainer = ({
   title,
   description,
   extra,
@@ -115,7 +115,7 @@ export const PageContainer: React.FC<PageContainerProps> = ({
   footer,
   compact = false,
   padding,
-}) => {
+}: PageContainerProps) => {
   const containerStyle: React.CSSProperties = {};
   if (padding !== undefined && padding !== 'none') {
     containerStyle.padding = typeof padding === 'number' ? `${padding}px` : padding;
@@ -126,18 +126,13 @@ export const PageContainer: React.FC<PageContainerProps> = ({
       {(title || description || extra) && (
         <div className={styles.header}>
           <div className={styles.headerLeft}>
-            {title && (
-              typeof title === 'string' ? (
+            {title &&
+              (typeof title === 'string' ? (
                 <h3 className={styles.title}>{title}</h3>
               ) : (
                 <div className={styles.title}>{title}</div>
-              )
-            )}
-            {description && (
-              <p className={styles.description}>
-                {description}
-              </p>
-            )}
+              ))}
+            {description && <p className={styles.description}>{description}</p>}
           </div>
           {extra && <div className={styles.extra}>{extra}</div>}
         </div>
@@ -151,9 +146,7 @@ export const PageContainer: React.FC<PageContainerProps> = ({
 
   if (showCard) {
     return (
-      <Card
-        className={`${styles.container} ${compact ? styles.compact : ''} ${className ?? ''}`}
-      >
+      <Card className={`${styles.container} ${compact ? styles.compact : ''} ${className ?? ''}`}>
         {animated ? <div className={styles.animated}>{content}</div> : content}
       </Card>
     );
@@ -173,7 +166,7 @@ export const PageContainer: React.FC<PageContainerProps> = ({
 /**
  * 页面区块组件
  */
-export const PageSection: React.FC<PageSectionProps> = ({
+export const PageSection = ({
   title,
   description,
   extra,
@@ -182,24 +175,22 @@ export const PageSection: React.FC<PageSectionProps> = ({
   card = false,
   className,
   footer,
-}) => {
+}: PageSectionProps) => {
   if (card) {
     return (
       <Card
         className={`${styles.section} ${bordered ? '' : styles.noBorder} ${className ?? ''}`}
-        title={title && (
-          <div className={styles.sectionHeader}>
-            <span>{title}</span>
-            {extra && <span className={styles.sectionExtra}>{extra}</span>}
-          </div>
-        )}
+        title={
+          title && (
+            <div className={styles.sectionHeader}>
+              <span>{title}</span>
+              {extra && <span className={styles.sectionExtra}>{extra}</span>}
+            </div>
+          )
+        }
         extra={!title && extra ? extra : undefined}
       >
-        {description && (
-          <p className={styles.sectionDesc}>
-            {description}
-          </p>
-        )}
+        {description && <p className={styles.sectionDesc}>{description}</p>}
         {children}
         {footer && <div className={styles.sectionFooter}>{footer}</div>}
       </Card>
@@ -207,18 +198,14 @@ export const PageSection: React.FC<PageSectionProps> = ({
   }
 
   return (
-    <div        className={`${styles.sectionPlain} ${bordered ? styles.bordered : ''} ${className ?? ''}`}>
+    <div className={`${styles.sectionPlain} ${bordered ? styles.bordered : ''} ${className ?? ''}`}>
       {(title || extra) && (
         <div className={styles.sectionHeader}>
           {title && <span style={{ fontWeight: 600 }}>{title}</span>}
           {extra && <span className={styles.sectionExtra}>{extra}</span>}
         </div>
       )}
-      {description && (
-        <p className={styles.sectionDesc}>
-          {description}
-        </p>
-      )}
+      {description && <p className={styles.sectionDesc}>{description}</p>}
       {children}
       {footer && <div className={styles.sectionFooter}>{footer}</div>}
     </div>
@@ -232,7 +219,7 @@ export const PageSection: React.FC<PageSectionProps> = ({
 /**
  * 统计卡片组件
  */
-export const StatisticCard: React.FC<StatisticCardProps> = ({
+export const StatisticCard = ({
   title,
   value,
   icon,
@@ -242,7 +229,7 @@ export const StatisticCard: React.FC<StatisticCardProps> = ({
   loading = false,
   onClick,
   className,
-}) => {
+}: StatisticCardProps) => {
   const colorMap = {
     primary: '#1E88E5',
     success: '#26A69A',
@@ -255,7 +242,10 @@ export const StatisticCard: React.FC<StatisticCardProps> = ({
     return (
       <Card className={`${styles.statCard} ${className ?? ''}`}>
         <div className={styles.statContent}>
-          <div className={styles.skeletonBlock} style={{ width: 32, height: 32, borderRadius: '50%' }} />
+          <div
+            className={styles.skeletonBlock}
+            style={{ width: 32, height: 32, borderRadius: '50%' }}
+          />
           <div className={styles.statInfo}>
             <div className={styles.skeletonBlock} style={{ width: 60, height: 14 }} />
             <div className={styles.skeletonBlock} style={{ width: 80, height: 28, marginTop: 8 }} />
@@ -266,11 +256,11 @@ export const StatisticCard: React.FC<StatisticCardProps> = ({
   }
 
   return (
-      <Card
-        className={`${styles.statCard} ${onClick ? styles.clickable : ''} ${className ?? ''}`}
-        onClick={onClick}
-        hoverable={!!onClick}
-      >
+    <Card
+      className={`${styles.statCard} ${onClick ? styles.clickable : ''} ${className ?? ''}`}
+      onClick={onClick}
+      hoverable={!!onClick}
+    >
       <div className={styles.statContent}>
         {icon && (
           <div
@@ -301,7 +291,7 @@ export const StatisticCard: React.FC<StatisticCardProps> = ({
 /**
  * 操作卡片组件
  */
-export const ActionCard: React.FC<ActionCardProps> = ({
+export const ActionCard = ({
   title,
   description,
   icon,
@@ -311,7 +301,7 @@ export const ActionCard: React.FC<ActionCardProps> = ({
   onClick,
   className,
   footer,
-}) => {
+}: ActionCardProps) => {
   return (
     <Card
       className={`${styles.actionCard} ${clickable ? styles.clickable : ''} ${className ?? ''}`}
@@ -349,21 +339,21 @@ export interface GridStatisticProps {
 /**
  * 网格统计卡片组件
  */
-export const GridStatistic: React.FC<GridStatisticProps> = ({
+export const GridStatistic = ({
   items,
   columns = 4,
   gutter = [16, 16],
   className,
-}) => {
+}: GridStatisticProps) => {
   const _colSpan = Math.floor(24 / columns);
-  
+
   return (
-    <div 
+    <div
       className={className}
-      style={{ 
-        display: 'grid', 
+      style={{
+        display: 'grid',
         gridTemplateColumns: `repeat(${columns}, 1fr)`,
-        gap: `${gutter[1]}px`
+        gap: `${gutter[1]}px`,
       }}
     >
       {items.map((item, index) => (
