@@ -95,12 +95,9 @@ const DEFAULT_TRANSITION: TransitionConfig = {
   easing: 'ease-in-out',
 };
 
-// 生成唯一ID
-const generateId = () => generatePrefixedId('comp');
-
 const CompositionStudio = ({ frames, projectId, onCompositionChange }: CompositionStudioProps) => {
   const [composition, setComposition] = useState<CompositionProject>(() => ({
-    id: generateId(),
+    id: generatePrefixedId('comp'),
     projectId: projectId ?? '',
     frames: [],
     transitions: [],

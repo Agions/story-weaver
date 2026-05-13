@@ -156,13 +156,9 @@ function SceneRenderer({ initialScenes = [], onChange, onSceneSelect }: SceneRen
   );
   // editing key tracking removed as unused
 
-  // 生成唯一ID
-  const generateId = () => generatePrefixedId('scene');
-
-  // 添加场景
   const addScene = () => {
     const newScene: Scene = {
-      id: generateId(),
+      id: generatePrefixedId('scene'),
       name: `场景 ${scenes.length + 1}`,
       description: '',
       type: 'indoor',
@@ -213,7 +209,7 @@ function SceneRenderer({ initialScenes = [], onChange, onSceneSelect }: SceneRen
   const duplicateScene = (scene: Scene) => {
     const newScene: Scene = {
       ...scene,
-      id: generateId(),
+      id: generatePrefixedId('scene'),
       name: `${scene.name} (副本)`,
     };
 

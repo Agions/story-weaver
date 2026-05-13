@@ -3,14 +3,14 @@
  * Standalone project management with local storage (no n8n dependency)
  */
 
-import { v4 as uuidv4 } from 'uuid';
+import { generatePrefixedId } from '@/shared/utils';
 
 import { logger } from '@/core/utils/logger';
 
 import type { Project, Episode, ProjectSettings, WorkflowExecutionStatus } from './project.types';
 
 // Generate unique IDs
-const generateId = () => uuidv4();
+const generateId = () => generatePrefixedId('proj');
 
 class ProjectManagerService {
   private projects: Map<string, Project> = new Map();
