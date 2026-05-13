@@ -37,7 +37,6 @@ import type {
 } from './ai.service.types';
 
 class AIService {
-  private abortControllers: Map<string, AbortController> = new Map();
   private mockConfigs: Map<string, MockConfig> = new Map();
 
   // 设置 Mock 配置
@@ -759,17 +758,6 @@ ${text.slice(0, 500)}...
     }
 
     return keyframes;
-  }
-
-  /**
-   * 取消进行中的请求
-   */
-  cancelRequest(requestId: string): void {
-    const controller = this.abortControllers.get(requestId);
-    if (controller) {
-      controller.abort();
-      this.abortControllers.delete(requestId);
-    }
   }
 
   /**
