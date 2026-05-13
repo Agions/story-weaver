@@ -1,5 +1,5 @@
 /**
- * gapanel-flow Novel Types
+ * panel-flow Novel Types
  * Extracted from src/shared/types/index.ts
  * Novel/script analysis and processing types
  */

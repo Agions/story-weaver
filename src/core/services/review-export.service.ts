@@ -7,7 +7,7 @@ import type { FrameComment, StoryboardVersion } from './collaboration.service';
 import type { CostRecord, CostStats } from './cost.service';
 import type { EvaluationScores } from './evaluation.service';
 
-const REVIEW_EXPORT_ACTIVITY_KEY = 'gapanel-flow_review_export_activities';
+const REVIEW_EXPORT_ACTIVITY_KEY = 'panel-flow_review_export_activities';
 
 export interface ReviewExportProjectMeta {
   id: string;
@@ -58,7 +58,7 @@ class ReviewExportService {
     const generatedAt = input.generatedAt || new Date();
     const lines: string[] = [];
 
-    lines.push('# gapanel-flow AI 评审记录导出');
+    lines.push('# panel-flow AI 评审记录导出');
     lines.push('');
     lines.push(`- 项目ID: ${input.project.id}`);
     lines.push(`- 项目名称: ${input.project.name}`);

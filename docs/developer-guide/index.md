@@ -5,7 +5,7 @@ title: 开发指南
 
 # 开发指南
 
-gapanel-flow 技术架构与开发指南。
+panel-flow 技术架构与开发指南。
 
 ## 目录
 

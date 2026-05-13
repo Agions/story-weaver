@@ -23,7 +23,7 @@ class ProjectService {
   private saveToStorage(): void {
     try {
       const data = Array.from(this.projects.values());
-      localStorage.setItem('gapanel-flow-projects', JSON.stringify(data));
+      localStorage.setItem('panel-flow-projects', JSON.stringify(data));
     } catch (e) {
       logger.error('Failed to save projects:', e);
     }
@@ -31,7 +31,7 @@ class ProjectService {
 
   private loadFromStorage(): void {
     try {
-      const data = localStorage.getItem('gapanel-flow-projects');
+      const data = localStorage.getItem('panel-flow-projects');
       if (data) {
         const projects = JSON.parse(data) as Project[];
         projects.forEach((p) => this.projects.set(p.id, p));

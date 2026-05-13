@@ -25,7 +25,7 @@ const HeroSection: React.FC = () => {
     <div className={styles.hero}>
       <div className={styles.heroContent}>
         <h1 className={styles.title}>
-          gapanel-flow AI <span className={styles.highlight}>AI视频脚本创作</span>
+          panel-flow AI <span className={styles.highlight}>AI视频脚本创作</span>
         </h1>
         <p className={styles.subtitle}>AI赋能的短视频创作工具，让视频制作更简单、更高效</p>
         <div className={styles.heroButtons}>

@@ -5,7 +5,7 @@ title: 部署指南
 
 # 部署指南
 
-gapanel-flow 构建与部署指南。
+panel-flow 构建与部署指南。
 
 ## 部署方式
 

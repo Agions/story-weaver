@@ -1,6 +1,6 @@
 # 快速开始
 
-在 5 分钟内启动并运行 gapanel-flow。
+在 5 分钟内启动并运行 panel-flow。
 
 ## 前置要求
 
@@ -14,8 +14,8 @@
 ### 1. 克隆仓库
 
 ```bash
-git clone https://github.com/Agions/gapanel-flow.git
-cd gapanel-flow
+git clone https://github.com/Agions/panel-flow.git
+cd panel-flow
 ```
 
 ### 2. 安装依赖

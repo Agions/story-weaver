@@ -1,6 +1,6 @@
 # 配置
 
-gapanel-flow 的配置选项。
+panel-flow 的配置选项。
 
 ## 环境变量
 

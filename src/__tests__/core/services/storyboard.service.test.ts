@@ -665,7 +665,7 @@ describe('StoryboardService', () => {
 
     it('应该从 localStorage 加载数据', () => {
       const storedFrames = [createTestFrame({ id: 'stored-frame' })];
-      localStorageMock.data['gapanel-flow-storyboards'] = JSON.stringify(storedFrames);
+      localStorageMock.data['panel-flow-storyboards'] = JSON.stringify(storedFrames);
 
       const service = new StoryboardService();
 
@@ -675,7 +675,7 @@ describe('StoryboardService', () => {
 
     it('不同 projectId 使用不同的存储键', () => {
       const storedFrames = [createTestFrame({ id: 'project-frame' })];
-      localStorageMock.data['gapanel-flow-storyboards-project-1'] = JSON.stringify(storedFrames);
+      localStorageMock.data['panel-flow-storyboards-project-1'] = JSON.stringify(storedFrames);
 
       const service = new StoryboardService({ projectId: 'project-1' });
 
@@ -683,7 +683,7 @@ describe('StoryboardService', () => {
     });
 
     it('损坏的存储数据不应该抛出错误', () => {
-      localStorageMock.data['gapanel-flow-storyboards'] = 'invalid json';
+      localStorageMock.data['panel-flow-storyboards'] = 'invalid json';
 
       const service = new StoryboardService();
 

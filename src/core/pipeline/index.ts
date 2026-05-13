@@ -1,5 +1,5 @@
 /**
- * gapanel-flow Pipeline 统一入口
+ * panel-flow Pipeline 统一入口
  *
  * 提供流水线创建、执行、状态查询的统一接口
  */

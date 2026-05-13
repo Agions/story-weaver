@@ -1,7 +1,7 @@
 import { Variants, Easing } from 'framer-motion';
 
 /**
- * gapanel-flow AI 动效系统
+ * panel-flow AI 动效系统
  * 统一的页面过渡和组件动画配置
  */
 

@@ -286,27 +286,25 @@ export const LoggerMiddleware: PipelineMiddleware = {
 /**
  * Metrics Middleware - 指标中间件
  */
-interface GapanelFlowMetrics {
+interface PanelFlowMetrics {
   steps: Record<string, { completedAt: number; success: boolean }>;
   completedAt?: number;
 }
 
 declare global {
   interface Window {
-    __GAPANELFLOW_METRICS__?: GapanelFlowMetrics;
+    __PANELFLOW_METRICS__?: PanelFlowMetrics;
   }
 }
 
 export const MetricsMiddleware: PipelineMiddleware = {
   name: 'metrics',
   onStepComplete: (stepId, _output) => {
-    const metrics =
-      window.__GAPANELFLOW_METRICS__ || (window.__GAPANELFLOW_METRICS__ = { steps: {} });
+    const metrics = window.__PANELFLOW_METRICS__ || (window.__PANELFLOW_METRICS__ = { steps: {} });
     metrics.steps[stepId] = { completedAt: Date.now(), success: true };
   },
   onPipelineComplete: () => {
-    const metrics =
-      window.__GAPANELFLOW_METRICS__ || (window.__GAPANELFLOW_METRICS__ = { steps: {} });
+    const metrics = window.__PANELFLOW_METRICS__ || (window.__PANELFLOW_METRICS__ = { steps: {} });
     metrics.completedAt = Date.now();
   },
 };

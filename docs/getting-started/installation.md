@@ -1,6 +1,6 @@
 # 安装
 
-gapanel-flow 的详细安装说明。
+panel-flow 的详细安装说明。
 
 ## 系统要求
 
@@ -20,8 +20,8 @@ gapanel-flow 的详细安装说明。
 
 ```bash
 # 克隆
-git clone https://github.com/Agions/gapanel-flow.git
-cd gapanel-flow
+git clone https://github.com/Agions/panel-flow.git
+cd panel-flow
 
 # 安装依赖
 pnpm install

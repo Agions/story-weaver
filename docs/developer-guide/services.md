@@ -1,6 +1,6 @@
 # 服务
 
-gapanel-flow 的核心服务实现。
+panel-flow 的核心服务实现。
 
 ## 服务架构
 
@@ -74,7 +74,7 @@ const result = await imageGenerationService.generateImage({
 import { ttsService } from '@/core/services';
 
 const result = await ttsService.synthesize({
-  text: '欢迎使用 gapanel-flow',
+  text: '欢迎使用 panel-flow',
   provider: 'edge',
   voice: 'zh-CN-XiaoxiaoNeural',
 });

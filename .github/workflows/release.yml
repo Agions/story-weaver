@@ -54,14 +54,14 @@ jobs:
         with:
           tag_name: ${{ steps.version.outputs.tag }}
           body: |
-            ## Download gapanel-flow ${{ steps.version.outputs.version }}
+            ## Download panel-flow ${{ steps.version.outputs.version }}
 
             | Platform | Architecture | Download |
             |----------|-------------|----------|
-            | Windows | x64 | [.zip](gapanel-flow-${{ steps.version.outputs.version }}-windows-x64.zip) |
-            | Windows | ARM64 | [.zip](gapanel-flow-${{ steps.version.outputs.version }}-windows-arm64.zip) |
-            | macOS | Universal | [.tar.gz](gapanel-flow-${{ steps.version.outputs.version }}-macos-universal.tar.gz) |
-            | Linux | x64 | [.tar.gz](gapanel-flow-${{ steps.version.outputs.version }}-linux-x64.tar.gz) |
+            | Windows | x64 | [.zip](panel-flow-${{ steps.version.outputs.version }}-windows-x64.zip) |
+            | Windows | ARM64 | [.zip](panel-flow-${{ steps.version.outputs.version }}-windows-arm64.zip) |
+            | macOS | Universal | [.tar.gz](panel-flow-${{ steps.version.outputs.version }}-macos-universal.tar.gz) |
+            | Linux | x64 | [.tar.gz](panel-flow-${{ steps.version.outputs.version }}-linux-x64.tar.gz) |
 
             > Full release notes: [CHANGELOG.md](https://github.com/Agions/PanelFlow/blob/${{ steps.version.outputs.tag }}/CHANGELOG.md)
           draft: true
@@ -108,7 +108,7 @@ jobs:
         run: |
           $src = "src-tauri/target/x86_64-pc-windows-msvc/release"
           $exe = "manga-ai.exe"
-          $out = "gapanel-flow-${{ needs.prepare.outputs.version }}-windows-x64.zip"
+          $out = "panel-flow-${{ needs.prepare.outputs.version }}-windows-x64.zip"
           Compress-Archive -Path "$src/$exe", "$src/*.dll" -DestinationPath $out -Force
           echo "artifact_name=$out" >> $env:GITHUB_OUTPUT
 
@@ -117,7 +117,7 @@ jobs:
         with:
           tag_name: ${{ needs.prepare.outputs.tag }}
           draft: true
-          files: gapanel-flow-${{ needs.prepare.outputs.version }}-windows-x64.zip
+          files: panel-flow-${{ needs.prepare.outputs.version }}-windows-x64.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -162,7 +162,7 @@ jobs:
         run: |
           $src = "src-tauri/target/aarch64-pc-windows-msvc/release"
           $exe = "manga-ai.exe"
-          $out = "gapanel-flow-${{ needs.prepare.outputs.version }}-windows-arm64.zip"
+          $out = "panel-flow-${{ needs.prepare.outputs.version }}-windows-arm64.zip"
           Compress-Archive -Path "$src/$exe", "$src/*.dll" -DestinationPath $out -Force
           echo "artifact_name=$out" >> $env:GITHUB_OUTPUT
 
@@ -171,7 +171,7 @@ jobs:
         with:
           tag_name: ${{ needs.prepare.outputs.tag }}
           draft: true
-          files: gapanel-flow-${{ needs.prepare.outputs.version }}-windows-arm64.zip
+          files: panel-flow-${{ needs.prepare.outputs.version }}-windows-arm64.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -212,15 +212,15 @@ jobs:
         id: package
         run: |
           cd $GITHUB_WORKSPACE/src-tauri/target/release/bundle
-          tar -czf "$GITHUB_WORKSPACE/gapanel-flow-${{ needs.prepare.outputs.version }}-macos-universal.tar.gz" -C macos PanelFlow.app
-          echo "artifact_name=gapanel-flow-${{ needs.prepare.outputs.version }}-macos-universal.tar.gz" >> $GITHUB_OUTPUT
+          tar -czf "$GITHUB_WORKSPACE/panel-flow-${{ needs.prepare.outputs.version }}-macos-universal.tar.gz" -C macos PanelFlow.app
+          echo "artifact_name=panel-flow-${{ needs.prepare.outputs.version }}-macos-universal.tar.gz" >> $GITHUB_OUTPUT
 
       - name: Upload macOS tar.gz
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.prepare.outputs.tag }}
           draft: true
-          files: gapanel-flow-${{ needs.prepare.outputs.version }}-macos-universal.tar.gz
+          files: panel-flow-${{ needs.prepare.outputs.version }}-macos-universal.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -272,15 +272,15 @@ jobs:
         id: package
         run: |
           cd src-tauri/target/release
-          tar -czf "$GITHUB_WORKSPACE/gapanel-flow-${{ needs.prepare.outputs.version }}-linux-x64.tar.gz" manga-ai
-          echo "artifact_name=gapanel-flow-${{ needs.prepare.outputs.version }}-linux-x64.tar.gz" >> $GITHUB_OUTPUT
+          tar -czf "$GITHUB_WORKSPACE/panel-flow-${{ needs.prepare.outputs.version }}-linux-x64.tar.gz" manga-ai
+          echo "artifact_name=panel-flow-${{ needs.prepare.outputs.version }}-linux-x64.tar.gz" >> $GITHUB_OUTPUT
 
       - name: Upload Linux tar.gz
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.prepare.outputs.tag }}
           draft: true
-          files: gapanel-flow-${{ needs.prepare.outputs.version }}-linux-x64.tar.gz
+          files: panel-flow-${{ needs.prepare.outputs.version }}-linux-x64.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

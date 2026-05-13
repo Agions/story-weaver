@@ -1,6 +1,6 @@
 # 环境变量
 
-gapanel-flow 环境变量说明。
+panel-flow 环境变量说明。
 
 ## 变量命名
 
@@ -38,7 +38,7 @@ VITE_TTS_PROVIDER=edge  # edge | cosyvoice | kantts
 
 ```bash
 VITE_APP_MODE=web              # web | desktop
-VITE_APP_NAME=gapanel-flow
+VITE_APP_NAME=panel-flow
 VITE_API_BASE_URL=https://api.example.com
 ```
 

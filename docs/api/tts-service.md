@@ -28,7 +28,7 @@ async synthesize(config: TTSConfig): Promise<TTSResult>
 
 ```typescript
 const result = await ttsService.synthesize({
-  text: '欢迎使用 gapanel-flow',
+  text: '欢迎使用 panel-flow',
   provider: 'edge',
   voice: 'zh-CN-XiaoxiaoNeural',
   speed: 1.0,

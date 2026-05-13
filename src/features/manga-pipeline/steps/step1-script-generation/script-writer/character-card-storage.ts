@@ -1,6 +1,6 @@
 import { CharacterCard } from '../types/character';
 
-const STORAGE_KEY = 'gapanel-flow_character_cards';
+const STORAGE_KEY = 'panel-flow_character_cards';
 
 export interface CharacterCardStorage {
   save(cards: CharacterCard[]): Promise<void>;

@@ -97,7 +97,7 @@ class EvaluationService {
 
   toMarkdown(report: EvaluationReport): string {
     const lines: string[] = [];
-    lines.push('# gapanel-flow AI 评测回归报告');
+    lines.push('# panel-flow AI 评测回归报告');
     lines.push('');
     lines.push(`生成时间: ${report.generatedAt}`);
     lines.push('');

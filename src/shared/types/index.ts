@@ -1,5 +1,5 @@
 /**
- * gapanel-flow Shared Types
+ * panel-flow Shared Types
  * Consolidated type definitions from src/types and src/core/types
  */
 

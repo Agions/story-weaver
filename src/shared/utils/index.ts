@@ -1,5 +1,5 @@
 /**
- * gapanel-flow Shared Utils
+ * panel-flow Shared Utils
  * Consolidated utilities from src/utils and src/core/utils
  */
 
@@ -1006,7 +1006,7 @@ interface Translations {
 
 const translations: Translations = {
   zh: {
-    'app.name': 'gapanel-flow AI',
+    'app.name': 'panel-flow AI',
     'app.save': '保存',
     'app.cancel': '取消',
     'app.confirm': '确认',
@@ -1020,7 +1020,7 @@ const translations: Translations = {
     'settings.title': '设置',
   },
   en: {
-    'app.name': 'gapanel-flow AI',
+    'app.name': 'panel-flow AI',
     'app.save': 'Save',
     'app.cancel': 'Cancel',
     'app.confirm': 'Confirm',

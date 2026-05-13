@@ -436,7 +436,7 @@ class DesktopAppService {
    * 获取应用名称
    */
   getAppName(): string {
-    return 'gapanel-flow AI';
+    return 'panel-flow AI';
   }
 
   /**

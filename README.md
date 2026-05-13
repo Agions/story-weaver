@@ -1,4 +1,4 @@
-# gapanel-flow
+# panel-flow
 
 **AI 驱动的视频脚本创作平台** — 将小说、剧本或提示词转化为专业级视频内容
 
@@ -44,8 +44,8 @@
 ## 快速开始
 
 ```bash
-git clone https://github.com/Agions/gapanel-flow.git
-cd gapanel-flow
+git clone https://github.com/Agions/panel-flow.git
+cd panel-flow
 pnpm install
 pnpm dev
 ```
@@ -133,6 +133,6 @@ PanelFlow/
 
 ---
 
-如果你觉得 gapanel-flow 有帮助，请给我们一个 ⭐
+如果你觉得 panel-flow 有帮助，请给我们一个 ⭐
 
 MIT License · © 2026 Agions

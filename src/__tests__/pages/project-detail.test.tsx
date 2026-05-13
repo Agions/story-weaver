@@ -187,7 +187,7 @@ describe('ProjectDetail page collaboration regression', () => {
     const writeCall = mockInvoke.mock.calls.find((call) => call[0] === 'write_text_file');
     expect(String(writeCall?.[1]?.content ?? '')).toContain('- 综合: 80.0');
     const activities = JSON.parse(
-      localStorage.getItem('gapanel-flow_review_export_activities') ?? '[]'
+      localStorage.getItem('panel-flow_review_export_activities') ?? '[]'
     );
     expect(activities[0]).toMatchObject({
       projectId: 'p-detail-1',

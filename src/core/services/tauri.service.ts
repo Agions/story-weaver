@@ -300,7 +300,7 @@ class TauriService {
     options?: { title?: string; kind?: 'info' | 'warning' | 'error' }
   ): Promise<void> {
     await message(msg, {
-      title: options?.title ?? 'gapanel-flow AI',
+      title: options?.title ?? 'panel-flow AI',
       kind: options?.kind ?? 'info',
     });
   }

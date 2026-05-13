@@ -5,7 +5,7 @@ title: 入门指南
 
 # 入门指南
 
-欢迎使用 gapanel-flow！
+欢迎使用 panel-flow！
 
 ## 开始之前
 
