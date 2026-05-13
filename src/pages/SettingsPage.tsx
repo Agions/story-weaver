@@ -273,7 +273,7 @@ const Settings: React.FC = () => {
                   <Label>项目保存路径</Label>
                   <div className="flex gap-2">
                     <Input
-                      placeholder="/Users/username/gapanel-flow AI/projects"
+                      placeholder="/Users/username/panel-flow AI/projects"
                       className="flex-1"
                     />
                     <Button variant="outline" size="sm">
@@ -447,7 +447,7 @@ const Settings: React.FC = () => {
           <TabsContent value="about" className="space-y-6">
             <Card className={styles.aboutCard}>
               <div className={styles.aboutHeader}>
-                <h2 className="text-2xl font-bold">🎬 gapanel-flow AI</h2>
+                <h2 className="text-2xl font-bold">🎬 panel-flow AI</h2>
                 <p className="text-muted-foreground">AI 视频脚本视频智能创作平台</p>
               </div>
 
@@ -468,7 +468,7 @@ const Settings: React.FC = () => {
 
               <Alert className="mt-4">
                 <AlertDescription>
-                  感谢使用 gapanel-flow AI，如有问题或建议，请提交 Issue 或联系开发者。
+                  感谢使用 panel-flow AI，如有问题或建议，请提交 Issue 或联系开发者。
                 </AlertDescription>
               </Alert>
             </Card>

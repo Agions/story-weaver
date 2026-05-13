@@ -421,7 +421,7 @@ class CostService {
     const suggestions = this.getOptimizationSuggestions();
 
     return `
-# gapanel-flow AI 成本报告
+# panel-flow AI 成本报告
 
 生成时间: ${new Date().toLocaleString('zh-CN')}
 
@@ -456,7 +456,7 @@ ${Object.entries(stats.byModel)
 ${suggestions.join('\n\n')}
 
 ---
-*报告由 gapanel-flow AI 成本追踪服务生成*
+*报告由 panel-flow AI 成本追踪服务生成*
     `.trim();
   }
 

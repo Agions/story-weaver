@@ -13,11 +13,11 @@ import {
 
 describe('APP_CONFIG', () => {
   it('should have correct app name', () => {
-    expect(APP_CONFIG.name).toBe('gapanel-flow AI');
+    expect(APP_CONFIG.name).toBe('panel-flow AI');
   });
 
   it('should have correct Chinese name', () => {
-    expect(APP_CONFIG.nameZh).toBe('gapanel-flow AI');
+    expect(APP_CONFIG.nameZh).toBe('panel-flow AI');
   });
 
   it('should have valid version format', () => {
