@@ -18,13 +18,26 @@ import { v4 as uuid } from 'uuid';
 
 import CostDashboard from '@/components/business/CostDashboard';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-} from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useForm } from '@/components/ui/ui-components';
-import { aiService, tauriService , audioPipelineService, collaborationService, costService, qualityGateService, reviewExportService, storyAnalysisService } from '@/core/services';
-import type { EvaluationScores, FrameComment, QualityGateIssue, StoryboardVersion, VersionDiffSummary } from '@/core/services';
+import {
+  aiService,
+  tauriService,
+  audioPipelineService,
+  collaborationService,
+  costService,
+  qualityGateService,
+  reviewExportService,
+  storyAnalysisService,
+} from '@/core/services';
+import type {
+  EvaluationScores,
+  FrameComment,
+  QualityGateIssue,
+  StoryboardVersion,
+  VersionDiffSummary,
+} from '@/core/services';
 import type { ExportSettings, StoryAnalysis, Character, CompositionProject } from '@/core/types';
 import { runWhenIdle } from '@/core/utils/idle';
 import { logger } from '@/core/utils/logger';
@@ -45,7 +58,6 @@ import {
   StepContentExport,
 } from './ProjectEdit/components';
 import styles from './ProjectEdit.module.less';
-
 
 export interface ProjectData {
   id: string;
@@ -73,7 +85,7 @@ export interface ProjectData {
  * 项目编辑页面
  * 支持创建新项目或编辑现有项目
  */
-const ProjectEdit: React.FC = () => {
+const ProjectEdit = () => {
   const { projectId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
@@ -123,7 +135,8 @@ const ProjectEdit: React.FC = () => {
   const [initialLoading, setInitialLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const evaluationSummary: EvaluationScores | undefined = project?.evaluationReport?.summary ?? project?.evaluationSummary;
+  const evaluationSummary: EvaluationScores | undefined =
+    project?.evaluationReport?.summary ?? project?.evaluationSummary;
 
   const exportQualityGate = useMemo(
     () =>
@@ -134,22 +147,30 @@ const ProjectEdit: React.FC = () => {
     [storyboardFrames, evaluationSummary]
   );
 
-  const preloadByStep = useMemo<Record<number, Array<() => Promise<unknown>>>>(() => ({
-    0: [],
-    1: [],
-    2: [],
-    3: [],
-    4: [],
-    5: [],
-    6: [],
-    7: [],
-    8: [],
-  }), []);
+  const preloadByStep = useMemo<Record<number, Array<() => Promise<unknown>>>>(
+    () => ({
+      0: [],
+      1: [],
+      2: [],
+      3: [],
+      4: [],
+      5: [],
+      6: [],
+      7: [],
+      8: [],
+    }),
+    []
+  );
 
-  const preloadStepModules = useCallback((step: number) => {
-    const tasks = preloadByStep[step] ?? [];
-    tasks.forEach(task => { void task(); });
-  }, [preloadByStep]);
+  const preloadStepModules = useCallback(
+    (step: number) => {
+      const tasks = preloadByStep[step] ?? [];
+      tasks.forEach((task) => {
+        void task();
+      });
+    },
+    [preloadByStep]
+  );
 
   useEffect(() => {
     const tasks = preloadByStep[currentStep] ?? [];
@@ -165,12 +186,14 @@ const ProjectEdit: React.FC = () => {
       setInitialLoading(true);
       setIsNewProject(false);
 
-      tauriService.readText(projectId).then(projectText => {
+      tauriService
+        .readText(projectId)
+        .then((projectText) => {
           const projectData = JSON.parse(projectText) as ProjectData;
           setProject(projectData);
           form.setFieldsValue({
             name: projectData.name,
-            description: projectData.description
+            description: projectData.description,
           });
 
           if (projectData.content) setContent(projectData.content);
@@ -180,8 +203,12 @@ const ProjectEdit: React.FC = () => {
             setAnalysisDraft(JSON.stringify(projectData.storyAnalysis, null, 2));
             setAnalysisState('accepted');
           }
-          if (Array.isArray(projectData.storyboardFrames)) setStoryboardFrames(projectData.storyboardFrames);
-          if (Array.isArray(projectData.storyboardComments) || Array.isArray(projectData.storyboardVersions)) {
+          if (Array.isArray(projectData.storyboardFrames))
+            setStoryboardFrames(projectData.storyboardFrames);
+          if (
+            Array.isArray(projectData.storyboardComments) ||
+            Array.isArray(projectData.storyboardVersions)
+          ) {
             collaborationService.hydrate(
               projectData.id,
               projectData.storyboardComments ?? [],
@@ -220,7 +247,7 @@ const ProjectEdit: React.FC = () => {
 
           setError(null);
         })
-        .catch(err => {
+        .catch((err) => {
           logger.error('加载项目失败:', err);
           setError('加载项目失败，请确认项目文件是否存在');
           toast.error('加载项目失败');
@@ -280,20 +307,24 @@ const ProjectEdit: React.FC = () => {
       dialogue: chapter.keyEvents?.[0] ?? '',
       duration: 5,
     }));
-    return draft.length > 0 ? draft : [{
-      id: `frame_${Date.now()}_0`,
-      title: '分镜 1',
-      sceneDescription: analysis.summary ?? '',
-      composition: '三分法',
-      cameraType: 'medium',
-      dialogue: '',
-      duration: 5,
-    }];
+    return draft.length > 0
+      ? draft
+      : [
+          {
+            id: `frame_${Date.now()}_0`,
+            title: '分镜 1',
+            sceneDescription: analysis.summary ?? '',
+            composition: '三分法',
+            cameraType: 'medium',
+            dialogue: '',
+            duration: 5,
+          },
+        ];
   };
 
   const handleApplyRenderedFrame = (frameId: string, imageUrl: string) => {
-    setStoryboardFrames(prev =>
-      prev.map(frame => (frame.id === frameId ? { ...frame, imageUrl } : frame))
+    setStoryboardFrames((prev) =>
+      prev.map((frame) => (frame.id === frameId ? { ...frame, imageUrl } : frame))
     );
   };
 
@@ -359,13 +390,15 @@ const ProjectEdit: React.FC = () => {
         maxLines: 20,
         projectId: project?.id,
       });
-      setAudioConfig(prev => ({
+      setAudioConfig((prev) => ({
         ...prev,
         voiceTracks: result.voiceTracks as AudioTrackConfig['voiceTracks'],
       }));
       setAudioEditorKey(`audio-${Date.now()}`);
       if (result.failedLines.length > 0) {
-        toast.warning(`已生成 ${result.voiceTracks.length} 条配音，${result.failedLines.length} 条失败`);
+        toast.warning(
+          `已生成 ${result.voiceTracks.length} 条配音，${result.failedLines.length} 条失败`
+        );
       } else {
         toast.success(`已生成 ${result.voiceTracks.length} 条配音`);
       }
@@ -459,7 +492,7 @@ const ProjectEdit: React.FC = () => {
         audioConfig: audioConfig,
         exportPreset,
         exportSettings,
-        script: scriptText ?? undefined
+        script: scriptText ?? undefined,
       };
       await tauriService.writeText(projectData.id, JSON.stringify(projectData));
       toast.success('项目保存成功');
@@ -510,7 +543,7 @@ const ProjectEdit: React.FC = () => {
           projectId: project.id,
           projectName: form.getFieldValue('name') ?? project.name ?? '未命名项目',
           source: 'project_edit',
-        },
+        }
       );
       if (saved) toast.success('评审记录导出成功');
     } catch (error) {
@@ -691,7 +724,9 @@ const ProjectEdit: React.FC = () => {
         <AlertTriangle className="h-16 w-16 text-destructive" />
         <h2 className="text-xl font-semibold">加载失败</h2>
         <p className="text-muted-foreground">{error}</p>
-        <Button variant="outline" onClick={handleBack}>返回</Button>
+        <Button variant="outline" onClick={handleBack}>
+          返回
+        </Button>
       </div>
     );
   }
@@ -713,23 +748,13 @@ const ProjectEdit: React.FC = () => {
           <ArrowLeft className="h-4 w-4 mr-1" />
           返回
         </Button>
-        <h3 style={{ margin: 0 }}>
-          {isNewProject ? '创建新项目' : '编辑项目'}
-        </h3>
+        <h3 style={{ margin: 0 }}>{isNewProject ? '创建新项目' : '编辑项目'}</h3>
         <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={handleExportReviewNotes}
-            disabled={!project?.id}
-          >
+          <Button variant="outline" onClick={handleExportReviewNotes} disabled={!project?.id}>
             <FileText className="h-4 w-4 mr-1" />
             导出评审记录
           </Button>
-          <Button
-            variant="default"
-            onClick={handleSaveProject}
-            disabled={saving}
-          >
+          <Button variant="default" onClick={handleSaveProject} disabled={saving}>
             <Save className="h-4 w-4 mr-1" />
             {saving ? '保存中...' : '保存项目'}
           </Button>
@@ -761,59 +786,63 @@ const ProjectEdit: React.FC = () => {
       </Card>
 
       {/* 成本面板 */}
-      <Suspense fallback={
-        <div className="flex items-center justify-center p-8">
-          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-        </div>
-      }>
+      <Suspense
+        fallback={
+          <div className="flex items-center justify-center p-8">
+            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+          </div>
+        }
+      >
         <CostDashboard projectId={project?.id} />
       </Suspense>
 
-        {/* 步骤导航 */}
-        <div className={styles.stepsContainer}>
-          <div className="flex items-center gap-2 overflow-x-auto pb-2">
-            {[
-              { key: 'import', title: '导入', icon: FileText, desc: '小说/剧本' },
-              { key: 'analysis', title: 'AI解析', icon: Zap, desc: '智能分析' },
-              { key: 'script', title: '剧本', icon: Edit, desc: '生成剧本' },
-              { key: 'storyboard', title: '分镜', icon: Image, desc: '漫画分镜' },
-              { key: 'character', title: '角色', icon: User, desc: '角色形象' },
-              { key: 'render', title: '渲染', icon: CheckCircle, desc: '场景渲染' },
-              { key: 'composition', title: '合成', icon: PlayCircle, desc: '动态效果' },
-              { key: 'audio', title: '配音', icon: Volume2, desc: '配音配乐' },
-              { key: 'export', title: '导出', icon: Download, desc: '视频导出' },
-            ].map((step, index) => {
-              const Icon = step.icon;
-              return (
-                <div
-                  key={step.key}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-                    index === currentStep
-                      ? 'bg-primary text-primary-foreground'
-                      : index < currentStep
+      {/* 步骤导航 */}
+      <div className={styles.stepsContainer}>
+        <div className="flex items-center gap-2 overflow-x-auto pb-2">
+          {[
+            { key: 'import', title: '导入', icon: FileText, desc: '小说/剧本' },
+            { key: 'analysis', title: 'AI解析', icon: Zap, desc: '智能分析' },
+            { key: 'script', title: '剧本', icon: Edit, desc: '生成剧本' },
+            { key: 'storyboard', title: '分镜', icon: Image, desc: '漫画分镜' },
+            { key: 'character', title: '角色', icon: User, desc: '角色形象' },
+            { key: 'render', title: '渲染', icon: CheckCircle, desc: '场景渲染' },
+            { key: 'composition', title: '合成', icon: PlayCircle, desc: '动态效果' },
+            { key: 'audio', title: '配音', icon: Volume2, desc: '配音配乐' },
+            { key: 'export', title: '导出', icon: Download, desc: '视频导出' },
+          ].map((step, index) => {
+            const Icon = step.icon;
+            return (
+              <div
+                key={step.key}
+                className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
+                  index === currentStep
+                    ? 'bg-primary text-primary-foreground'
+                    : index < currentStep
                       ? 'bg-green-100 text-green-700'
                       : 'bg-muted text-muted-foreground'
-                  }`}
-                  onClick={() => setCurrentStep(index)}
-                >
-                  <Icon className="h-4 w-4" />
-                  <span className="text-sm font-medium">{step.title}</span>
-                </div>
-              );
-            })}
-          </div>
+                }`}
+                onClick={() => setCurrentStep(index)}
+              >
+                <Icon className="h-4 w-4" />
+                <span className="text-sm font-medium">{step.title}</span>
+              </div>
+            );
+          })}
         </div>
+      </div>
 
-        {/* 步骤内容 */}
-        <div className={styles.stepsContent}>
-          <Suspense fallback={
+      {/* 步骤内容 */}
+      <div className={styles.stepsContent}>
+        <Suspense
+          fallback={
             <div className="flex items-center justify-center p-8">
               <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
             </div>
-          }>
-            {renderStepContent()}
-          </Suspense>
-        </div>
+          }
+        >
+          {renderStepContent()}
+        </Suspense>
+      </div>
     </div>
   );
 };

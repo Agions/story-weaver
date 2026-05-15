@@ -25,7 +25,7 @@ const WORKFLOW_STEPS = [
   { key: 'export', title: '导出', description: '视频导出' },
 ];
 
-const WorkflowPage: React.FC = () => {
+const WorkflowPage = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('workflow');
   const [currentStep, _setCurrentStep] = useState(0);
@@ -57,8 +57,8 @@ const WorkflowPage: React.FC = () => {
       <Card className={styles.workflowCard}>
         <div className={styles.steps}>
           {WORKFLOW_STEPS.map((step, index) => (
-            <div 
-              key={step.key} 
+            <div
+              key={step.key}
               className={`${styles.step} ${index <= currentStep ? styles.stepActive : ''}`}
             >
               <div className={styles.stepNumber}>{index + 1}</div>

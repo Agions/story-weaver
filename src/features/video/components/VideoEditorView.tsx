@@ -16,7 +16,7 @@ import VideoUploader from './VideoUploader';
  * 视频编辑视图组件
  * 组合所有视频处理组件
  */
-const VideoEditorView: React.FC = () => {
+const VideoEditorView = () => {
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null);
   const [videoInfo, setVideoInfo] = useState<VideoAnalysis | null>(null);
 
@@ -38,7 +38,9 @@ const VideoEditorView: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <h2 style={{ margin: 0, fontSize: 24, fontWeight: 600 }}>视频处理</h2>
-        <span style={{ color: 'rgba(0,0,0,0.45)', fontSize: 14 }}>选择、上传、分析和处理视频素材</span>
+        <span style={{ color: 'rgba(0,0,0,0.45)', fontSize: 14 }}>
+          选择、上传、分析和处理视频素材
+        </span>
       </div>
 
       <div style={{ display: 'flex', gap: 16 }}>

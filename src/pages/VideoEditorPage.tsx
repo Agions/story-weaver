@@ -50,7 +50,7 @@ interface VideoSegment {
 const Layout = { Content: 'div', Header: 'header', Sider: 'aside' } as any;
 const { Content } = Layout;
 
-const VideoEditor: React.FC = () => {
+const VideoEditor = () => {
   const { projectId } = useParams<{ projectId: string }>();
 
   // 状态管理

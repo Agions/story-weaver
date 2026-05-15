@@ -6,7 +6,7 @@ import styles from './NotificationCenterView.module.less';
 /**
  * 通知中心视图组件
  */
-const NotificationCenterView: React.FC = () => {
+const NotificationCenterView = () => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>

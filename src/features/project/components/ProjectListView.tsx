@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from '@/components/ui/sonner';
 import { logger } from '@/core/utils/logger';
-import { EmptyState , Skeleton } from '@/shared/components/ui';
+import { EmptyState, Skeleton } from '@/shared/components/ui';
 import { useProjectStore } from '@/shared/stores/project.store';
 import type { ProjectData } from '@/shared/types';
 import { formatDate } from '@/shared/utils/format-ui';
@@ -17,7 +17,7 @@ import styles from './ProjectListView.module.less';
  * 项目列表视图组件
  * 展示所有项目的列表视图
  */
-const ProjectListView: React.FC = () => {
+const ProjectListView = () => {
   const navigate = useNavigate();
   const { projects, deleteProject } = useProjectStore();
   const [loading, setLoading] = useState(true);
@@ -57,13 +57,17 @@ const ProjectListView: React.FC = () => {
       <div className={styles.container}>
         <div className={styles.header}>
           <h2 className="text-2xl font-semibold">我的项目</h2>
-          <Button variant="default" icon={<Plus className="h-4 w-4" />} onClick={handleCreateProject}>
+          <Button
+            variant="default"
+            icon={<Plus className="h-4 w-4" />}
+            onClick={handleCreateProject}
+          >
             新建项目
           </Button>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map(i => (
+          {[1, 2, 3, 4].map((i) => (
             <Card key={i} className="p-4">
               <Skeleton className="h-32 w-full rounded-md mb-3" />
               <Skeleton className="h-5 w-3/4 mb-2" />
@@ -95,8 +99,8 @@ const ProjectListView: React.FC = () => {
             >
               {project.thumbnail ? (
                 <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
-                  <img 
-                    src={project.thumbnail} 
+                  <img
+                    src={project.thumbnail}
                     alt={project.name}
                     className="w-full h-full object-cover"
                   />
@@ -148,7 +152,7 @@ const ProjectListView: React.FC = () => {
           description="点击「新建项目」开始创作您的第一个漫剧项目"
           action={{
             text: '新建项目',
-            onClick: handleCreateProject
+            onClick: handleCreateProject,
           }}
         />
       )}

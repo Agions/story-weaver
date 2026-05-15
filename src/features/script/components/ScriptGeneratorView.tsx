@@ -13,7 +13,7 @@ import styles from './ScriptGeneratorView.module.less';
  * 脚本生成视图组件
  * 组合 NovelImporter 和 ScriptGenerator
  */
-const ScriptGeneratorView: React.FC = () => {
+const ScriptGeneratorView = () => {
   const [novelMetadata, setNovelMetadata] = useState<NovelMetadata | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -44,11 +44,7 @@ const ScriptGeneratorView: React.FC = () => {
         {novelMetadata && (
           <Card title="生成脚本">
             {isGenerating && <Alert>正在生成脚本...</Alert>}
-            <ScriptGenerator
-              projectId={undefined}
-              onGenerate={undefined}
-              onSave={undefined}
-            />
+            <ScriptGenerator projectId={undefined} onGenerate={undefined} onSave={undefined} />
           </Card>
         )}
       </Space>

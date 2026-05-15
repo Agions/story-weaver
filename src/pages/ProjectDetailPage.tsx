@@ -69,7 +69,7 @@ const CompositionStudio = lazy(importCompositionStudio);
 const AudioEditor = lazy(importAudioEditor);
 const CostDashboard = lazy(importCostDashboard);
 
-const ProjectDetail: React.FC = () => {
+const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { projects, updateProject, deleteProject } = useProjectStore();

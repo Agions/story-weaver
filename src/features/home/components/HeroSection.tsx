@@ -10,7 +10,7 @@ import styles from './HeroSection.module.less';
  * 首页英雄区域组件
  * 展示应用名称、主要功能和快捷操作
  */
-const HeroSection: React.FC = () => {
+const HeroSection = () => {
   const navigate = useNavigate();
 
   const handleCreateProject = () => {

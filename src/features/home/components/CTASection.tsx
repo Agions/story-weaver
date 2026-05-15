@@ -12,7 +12,7 @@ import styles from './CTASection.module.less';
  * CTA (Call to Action) 组件
  * 引导用户创建项目
  */
-const CTASection: React.FC = () => {
+const CTASection = () => {
   const navigate = useNavigate();
   const { isDarkMode } = useTheme();
 

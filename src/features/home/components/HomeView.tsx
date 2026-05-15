@@ -11,7 +11,7 @@ import { HeroSection, StatsCards, ProjectGrid, Features, WorkflowSteps, CTASecti
  * 首页视图组件
  * 使用真实项目数据
  */
-const HomeView: React.FC = () => {
+const HomeView = () => {
   const { recentProjects } = useProjectStore();
 
   // 处理项目删除后的刷新

@@ -18,7 +18,7 @@ const SettingsPage = lazy(importers.settings);
 const UIDemo = lazy(importers.demo);
 
 // 加载时的占位组件
-const PageLoader: React.FC = () => (
+const PageLoader = () => (
   <div className="flex items-center justify-center h-screen w-full">
     <div className="flex flex-col items-center gap-4">
       <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
@@ -109,10 +109,10 @@ const router = createBrowserRouter([
   },
 ]);
 
-const App: React.FC = () => {
+const App = () => {
   const [ffmpegReady, setFFmpegReady] = useState<boolean>(false);
   const [checking, setChecking] = useState<boolean>(true);
-  
+
   // 应用初始化
   useEffect(() => {
     const initializeApp = async () => {
@@ -121,10 +121,13 @@ const App: React.FC = () => {
         logger.info('应用数据目录检查完成');
       } catch (error) {
         logger.error('应用初始化失败:', error);
-        notify.error({ message: '初始化失败', description: '应用初始化失败，部分功能可能无法正常使用' });
+        notify.error({
+          message: '初始化失败',
+          description: '应用初始化失败，部分功能可能无法正常使用',
+        });
       }
     };
-    
+
     initializeApp();
   }, []);
 
@@ -133,30 +136,33 @@ const App: React.FC = () => {
     const checkFFmpeg = async () => {
       setChecking(true);
       try {
-        logger.info("FFmpeg检查：假设已经安装");
+        logger.info('FFmpeg检查：假设已经安装');
         setTimeout(() => {
           setFFmpegReady(true);
           setChecking(false);
         }, 1000);
       } catch (error) {
-        logger.error("FFmpeg检查失败:", error);
+        logger.error('FFmpeg检查失败:', error);
         setFFmpegReady(false);
         setChecking(false);
-        notify.error({ message: '依赖检查失败', description: '无法检测到FFmpeg，某些功能可能无法正常工作' });
+        notify.error({
+          message: '依赖检查失败',
+          description: '无法检测到FFmpeg，某些功能可能无法正常工作',
+        });
       }
     };
-    
+
     checkFFmpeg();
   }, []);
-  
+
   // 日志消息
   useEffect(() => {
-    const logMessage = ffmpegReady 
-      ? "应用初始化完成，所有功能正常可用。"
-      : "应用初始化完成，但某些功能可能受限。";
-    
+    const logMessage = ffmpegReady
+      ? '应用初始化完成，所有功能正常可用。'
+      : '应用初始化完成，但某些功能可能受限。';
+
     logger.info(logMessage);
-    
+
     if (!checking) {
       toast.info(logMessage);
     }

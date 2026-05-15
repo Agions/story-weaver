@@ -78,7 +78,7 @@ const apiProviders = [
   },
 ];
 
-const Settings: React.FC = () => {
+const Settings = () => {
   const [activeTab, setActiveTab] = useState('general');
   const [apiKeys] = useState<Record<string, string>>({
     openai: '',

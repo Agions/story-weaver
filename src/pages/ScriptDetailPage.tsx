@@ -17,7 +17,7 @@ import type { Script, ScriptSegment } from '@/shared/types/script';
 
 import styles from './ScriptDetail.module.less';
 
-const ScriptDetail: React.FC = () => {
+const ScriptDetail = () => {
   const { projectId, scriptId } = useParams<{ projectId: string; scriptId: string }>();
   const navigate = useNavigate();
   const { projects, updateProject } = useProjectStore();
@@ -34,7 +34,7 @@ const ScriptDetail: React.FC = () => {
       return;
     }
 
-    const currentProject = projects.find(p => p.id === projectId);
+    const currentProject = projects.find((p) => p.id === projectId);
     if (!currentProject) {
       toast.error('找不到项目');
       navigate('/projects');
@@ -50,7 +50,7 @@ const ScriptDetail: React.FC = () => {
 
     setProject(currentProject as any);
     setScript(currentScript as any);
-    setSegments(Array.isArray(currentScript.content) ? currentScript.content : [] as any);
+    setSegments(Array.isArray(currentScript.content) ? currentScript.content : ([] as any));
     setLoading(false);
   }, [projectId, scriptId, projects, navigate]);
 
@@ -67,7 +67,7 @@ const ScriptDetail: React.FC = () => {
       const updatedScript = {
         ...script,
         content: segments,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
 
       const updatedScripts = (project.scripts ?? []).map((s: Script) =>
@@ -77,7 +77,7 @@ const ScriptDetail: React.FC = () => {
       const updatedProject = {
         ...project,
         scripts: updatedScripts,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
 
       setProject(updatedProject as any);
@@ -98,11 +98,12 @@ const ScriptDetail: React.FC = () => {
     if (!project || !script) return;
 
     try {
-      const scriptContent = segments
-        ?.map((segment: ScriptSegment, index: number) => {
-          return `【第${index + 1}幕】\n${segment.content || ''}\n`;
-        })
-        .join('\n') || '';
+      const scriptContent =
+        segments
+          ?.map((segment: ScriptSegment, index: number) => {
+            return `【第${index + 1}幕】\n${segment.content || ''}\n`;
+          })
+          .join('\n') || '';
 
       await tauriService.writeText(
         `${project.name}_脚本_${new Date().toISOString().slice(0, 10)}.txt`,
@@ -124,7 +125,7 @@ const ScriptDetail: React.FC = () => {
       const updatedProject = {
         ...project,
         scripts: updatedScripts,
-        updatedAt: new Date().toISOString()
+        updatedAt: new Date().toISOString(),
       };
 
       updateProject(updatedProject.id, updatedProject);
@@ -157,20 +158,12 @@ const ScriptDetail: React.FC = () => {
     <div className={styles.container}>
       <div className={styles.header}>
         <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate(`/projects/${project.id}`)}
-          >
+          <Button variant="ghost" size="sm" onClick={() => navigate(`/projects/${project.id}`)}>
             <ArrowLeft className="h-4 w-4 mr-1" />
             返回项目
           </Button>
 
-          <Button
-            variant="default"
-            size="sm"
-            onClick={handleSave}
-          >
+          <Button variant="default" size="sm" onClick={handleSave}>
             <Save className="h-4 w-4 mr-1" />
             保存
           </Button>
@@ -185,11 +178,7 @@ const ScriptDetail: React.FC = () => {
             导出
           </Button>
 
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => setShowDeleteConfirm(true)}
-          >
+          <Button variant="destructive" size="sm" onClick={() => setShowDeleteConfirm(true)}>
             <Trash2 className="h-4 w-4 mr-1" />
             删除
           </Button>
@@ -199,26 +188,31 @@ const ScriptDetail: React.FC = () => {
       <Card className={styles.infoCard}>
         <h2 className="text-xl font-semibold mb-2">{project.name} - 脚本编辑</h2>
         <div className={styles.scriptInfo}>
-          <p className="text-sm text-muted-foreground">创建于 {new Date(script.createdAt).toLocaleString()}</p>
+          <p className="text-sm text-muted-foreground">
+            创建于 {new Date(script.createdAt).toLocaleString()}
+          </p>
           {script.modelUsed && (
             <Badge variant="secondary" className="mt-2">
-              <Bot className="h-3 w-3 mr-1" />
-              由 {script.modelUsed} 生成
+              <Bot className="h-3 w-3 mr-1" />由 {script.modelUsed} 生成
             </Badge>
           )}
         </div>
         <Separator className="my-4" />
         <div className={styles.stats}>
           <p className="text-sm">片段数量: {segments.length}</p>
-          <p className="text-sm">总时长: {segments.reduce((total, seg) => total + ((seg.endTime || 0) - (seg.startTime || 0)), 0)} 秒</p>
+          <p className="text-sm">
+            总时长:{' '}
+            {segments.reduce(
+              (total, seg) => total + ((seg.endTime || 0) - (seg.startTime || 0)),
+              0
+            )}{' '}
+            秒
+          </p>
         </div>
       </Card>
 
       <div className={styles.editorContainer}>
-        <ScriptEditor
-          segments={segments as any}
-          onSegmentsChange={handleSegmentsChange}
-        />
+        <ScriptEditor segments={segments as any} onSegmentsChange={handleSegmentsChange} />
       </div>
 
       <ConfirmDialog
