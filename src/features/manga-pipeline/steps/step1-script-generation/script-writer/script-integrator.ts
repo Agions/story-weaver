@@ -1,10 +1,9 @@
-import { ClassifiedParagraph } from '../parser/paragraph-classifier';
+import { ClassifiedParagraph } from '../parser/classifier';
 import { CharacterCard } from '../types/character';
 import { Scene } from '../types/scene';
 import { Script, ScriptScene } from '../types/script';
 
 import { generateDialogue } from './dialogue-generator';
-
 
 export interface ScriptIntegrationOptions {
   title?: string;
@@ -25,7 +24,7 @@ export function integrateScript(
   // 将场景转换为带对话的 ScriptScene
   const scriptScenes: ScriptScene[] = scenes.map((scene, sceneIdx) => {
     const dialogue = generateDialogue(scene, paragraphs);
-    
+
     return {
       ...scene,
       sceneNumber: sceneIdx + 1,
@@ -41,7 +40,7 @@ export function integrateScript(
   return {
     id: generateScriptId(),
     title,
-    sourceText: '',  // 原始文本可选填充
+    sourceText: '', // 原始文本可选填充
     estimatedDuration,
     scenes: scriptScenes,
     characters,
@@ -55,23 +54,23 @@ export function integrateScript(
 
 function generateVideoNote(scene: Scene): string {
   const cameraInstructions: Record<string, string> = {
-    '远景': '建立镜头，定场使用',
-    '全景': '展示全部人物和场景',
-    '中景': '人物半身，标准对话镜头',
-    '近景': '人物面部特写，强调情绪',
-    '特写': '细节镜头，突出关键物品或表情',
+    远景: '建立镜头，定场使用',
+    全景: '展示全部人物和场景',
+    中景: '人物半身，标准对话镜头',
+    近景: '人物面部特写，强调情绪',
+    特写: '细节镜头，突出关键物品或表情',
   };
 
   const hint = scene.cameraHint;
   const base = cameraInstructions[hint] || '标准中景';
-  
+
   if (scene.emotion === 'tense') {
     return `${hint}，${base}，手持轻微晃动增加紧张感`;
   }
   if (scene.emotion === 'sad') {
     return `${hint}，${base}，慢速推进增加悲伤氛围`;
   }
-  
+
   return `${hint}，${base}`;
 }
 

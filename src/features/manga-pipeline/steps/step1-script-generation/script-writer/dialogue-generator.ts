@@ -1,9 +1,9 @@
-import { ClassifiedParagraph } from '../parser/paragraph-classifier';
+import { ClassifiedParagraph } from '../parser/classifier';
 import { Scene } from '../types/scene';
 import { DialogueLine } from '../types/script';
 
 export interface DialogueGenerationOptions {
-  includeInnerMonologue?: boolean;  // 默认 true
+  includeInnerMonologue?: boolean; // 默认 true
 }
 
 /**
@@ -20,7 +20,7 @@ export function generateDialogue(
   // 找到该场景相关的段落
   const sceneParagraphs = filterParagraphsForScene(scene, paragraphs);
 
-  sceneParagraphs.forEach(p => {
+  sceneParagraphs.forEach((p) => {
     if (p.type === 'dialogue' && p.speaker) {
       lines.push({
         character: p.speaker,
@@ -47,7 +47,9 @@ export function generateDialogue(
 
   // 如果没有原始对话，基于场景和角色生成
   // 但如果用户明确排除 inner_monologue 且结果为空，则不生成 fallback
-  const hasDialogueOrAction = sceneParagraphs.some(p => p.type === 'dialogue' || p.type === 'action');
+  const hasDialogueOrAction = sceneParagraphs.some(
+    (p) => p.type === 'dialogue' || p.type === 'action'
+  );
   if (lines.length === 0 && (includeInnerMonologue || hasDialogueOrAction)) {
     lines.push(...generateFallbackDialogue(scene));
   }
@@ -60,13 +62,15 @@ function filterParagraphsForScene(
   paragraphs: ClassifiedParagraph[]
 ): ClassifiedParagraph[] {
   // 对话按角色过滤，动作/独白则全部保留
-  return paragraphs.filter(p => {
-    if (p.type === 'dialogue') {
-      return p.speaker && scene.characters.includes(p.speaker);
-    }
-    // action 和 inner_monologue 不做角色过滤
-    return p.type === 'action' || p.type === 'inner_monologue';
-  }).slice(0, 10);
+  return paragraphs
+    .filter((p) => {
+      if (p.type === 'dialogue') {
+        return p.speaker && scene.characters.includes(p.speaker);
+      }
+      // action 和 inner_monologue 不做角色过滤
+      return p.type === 'action' || p.type === 'inner_monologue';
+    })
+    .slice(0, 10);
 }
 
 function cleanDialogueContent(content: string, speaker: string): string {
@@ -80,7 +84,7 @@ function cleanDialogueContent(content: string, speaker: string): string {
 
 function generateFallbackDialogue(scene: Scene): DialogueLine[] {
   const lines: DialogueLine[] = [];
-  
+
   if (scene.type === '对峙' || scene.emotion === 'angry') {
     lines.push({
       character: scene.characters[0] || '角色A',

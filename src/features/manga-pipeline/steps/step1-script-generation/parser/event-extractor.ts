@@ -1,5 +1,5 @@
 import { Chapter } from './chapter-splitter';
-import { ClassifiedParagraph } from './paragraph-classifier';
+import { ClassifiedParagraph } from './classifier';
 
 export interface StoryEvent {
   id: string;
@@ -22,7 +22,7 @@ export function extractEvents(
 
   // 收集说话人
   const speakers = new Set<string>();
-  paragraphs.forEach(p => {
+  paragraphs.forEach((p) => {
     if (p.speaker) speakers.add(p.speaker);
   });
 
@@ -30,7 +30,7 @@ export function extractEvents(
   let currentScene = '';
   let currentEmotion: StoryEvent['emotionalTone'] = 'neutral';
 
-  paragraphs.forEach(p => {
+  paragraphs.forEach((p) => {
     if (p.type === 'action') {
       // 新场景检测："走进"、"来到"、"进入" 等后面跟着地名
       const locationMatch = p.content.match(/(?:走进?|来到?|进入?|来到)(.+?)(?:[，。]|$)/);
@@ -52,14 +52,13 @@ export function extractEvents(
       }
 
       // 创建事件（动作描述作为事件）
-      const charactersInEvent = Array.from(speakers).filter(s =>
-        p.content.includes(s)
-      );
+      const charactersInEvent = Array.from(speakers).filter((s) => p.content.includes(s));
 
       events.push({
         id: `event_${eventId++}`,
         description: p.content,
-        involvedCharacters: charactersInEvent.length > 0 ? charactersInEvent : Array.from(speakers).slice(0, 1),
+        involvedCharacters:
+          charactersInEvent.length > 0 ? charactersInEvent : Array.from(speakers).slice(0, 1),
         emotionalTone: currentEmotion,
         sceneLocation: currentScene || undefined,
       });

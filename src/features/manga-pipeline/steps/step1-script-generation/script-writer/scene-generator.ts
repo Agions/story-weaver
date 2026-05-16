@@ -1,4 +1,4 @@
-import { NarrativeStructure } from '../analyzer/narrative-structure';
+import { NarrativeStructure } from '../analyzer/narrative';
 import { StoryEvent } from '../parser/event-extractor';
 import { CharacterCard } from '../types/character';
 import { Scene } from '../types/scene';
@@ -7,7 +7,7 @@ const MAX_SCENES_DEFAULT = 20;
 const MAX_EVENTS_PER_SCENE = 5;
 
 export interface SceneGenerationOptions {
-  maxScenes?: number;  // 默认 20
+  maxScenes?: number; // 默认 20
 }
 
 /**
@@ -34,16 +34,16 @@ export function generateScenes(
     if (scenes.length >= maxScenes) break;
 
     const locationEvents = eventsByLocation[location];
-    
+
     // 进一步按情感分组
     const emotionGroups = groupByEmotion(locationEvents);
-    
+
     for (const [emotion, groupEvents] of Object.entries(emotionGroups)) {
       if (scenes.length >= maxScenes) break;
 
       const dominantEmotion = emotion as StoryEvent['emotionalTone'];
       const involvedChars = getInvolvedCharacters(groupEvents);
-      
+
       // 估算时间（基于情感）
       const timeOfDay = estimateTimeOfDay(groupEvents);
 
@@ -55,7 +55,7 @@ export function generateScenes(
 
       // 合并事件描述为场景内容
       const content = groupEvents
-        .map(e => e.description)
+        .map((e) => e.description)
         .slice(0, MAX_EVENTS_PER_SCENE)
         .join('\n');
 
@@ -76,12 +76,10 @@ export function generateScenes(
   return scenes;
 }
 
-function groupEventsByLocation(
-  events: StoryEvent[]
-): Record<string, StoryEvent[]> {
+function groupEventsByLocation(events: StoryEvent[]): Record<string, StoryEvent[]> {
   const groups: Record<string, StoryEvent[]> = {};
 
-  events.forEach(event => {
+  events.forEach((event) => {
     const location = event.sceneLocation || '未知场景';
     if (!groups[location]) {
       groups[location] = [];
@@ -95,7 +93,7 @@ function groupEventsByLocation(
 function groupByEmotion(events: StoryEvent[]): Record<string, StoryEvent[]> {
   const groups: Record<string, StoryEvent[]> = {};
 
-  events.forEach(event => {
+  events.forEach((event) => {
     const emotion = event.emotionalTone;
     if (!groups[emotion]) {
       groups[emotion] = [];
@@ -108,33 +106,31 @@ function groupByEmotion(events: StoryEvent[]): Record<string, StoryEvent[]> {
 
 function getInvolvedCharacters(events: StoryEvent[]): string[] {
   const chars = new Set<string>();
-  events.forEach(e => e.involvedCharacters.forEach(c => chars.add(c)));
+  events.forEach((e) => e.involvedCharacters.forEach((c) => chars.add(c)));
   return Array.from(chars);
 }
 
 function estimateTimeOfDay(events: StoryEvent[]): Scene['timeOfDay'] {
-  const allText = events.map(e => e.description).join('');
-  
+  const allText = events.map((e) => e.description).join('');
+
   if (/(早晨|早上|日出|黎明)/.test(allText)) return '早晨';
   if (/(上午|中午|午饭)/.test(allText)) return '上午';
   if (/(下午|傍晚|黄昏)/.test(allText)) return '下午';
   if (/(夜晚|晚上|深夜|午夜)/.test(allText)) return '夜晚';
-  
-  return '下午';  // 默认下午
+
+  return '下午'; // 默认下午
 }
 
 function selectCameraHint(events: StoryEvent[], charCount: number): Scene['cameraHint'] {
   // 紧张/冲突场景 → 特写或近景
-  const hasTension = events.some(e => 
-    e.emotionalTone === 'tense' || e.emotionalTone === 'angry'
-  );
+  const hasTension = events.some((e) => e.emotionalTone === 'tense' || e.emotionalTone === 'angry');
   if (hasTension) return '近景';
 
   // 多人场景 → 全景或远景
   if (charCount >= 3) return '全景';
   if (charCount === 2) return '中景';
-  
-  return '中景';  // 默认中景
+
+  return '中景'; // 默认中景
 }
 
 function selectTransition(
@@ -142,12 +138,12 @@ function selectTransition(
   emotion: StoryEvent['emotionalTone']
 ): Scene['transition'] {
   if (sceneIndex === 0) return '淡入';
-  
+
   if (emotion === 'tense' || emotion === 'angry') return '切换';
   if (emotion === 'surprising') return '溶解';
   if (emotion === 'sad') return '淡出';
-  
-  return '切换';  // 默认切换
+
+  return '切换'; // 默认切换
 }
 
 function mapEmotionToSceneType(emotion: StoryEvent['emotionalTone']): Scene['type'] {
