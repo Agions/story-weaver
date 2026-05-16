@@ -274,7 +274,7 @@ export function generateSceneDescription(
     sceneType: scene.type,
     emotion: getEmotionKeyword(scene.emotion),
     camera: scene.cameraHint ? `${scene.cameraHint} shot` : undefined,
-    style: ctxStyle as any,
+    style: ctxStyle,
     extraDescription: scene.content.slice(0, 80),
   });
 
@@ -283,7 +283,7 @@ export function generateSceneDescription(
     description: prompt,
     characterRefs: charRefs,
     cameraMovement: scene.cameraHint,
-    style: ctxStyle as any,
+    style: ctxStyle,
   });
 
   return {
