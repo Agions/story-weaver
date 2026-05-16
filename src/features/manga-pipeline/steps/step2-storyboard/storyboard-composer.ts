@@ -5,8 +5,6 @@ import {
   buildCharacterConstraints,
   type CharacterIllustration,
   type EnhancedCharacterConstraint,
-} from './description/character-illustration-generator';
-import {
   generateSceneDescription,
   type SceneDescription,
 } from './description/character-illustration-generator';
@@ -14,7 +12,7 @@ import {
 export interface Storyboard {
   scriptId: string;
   title: string;
-  totalDuration: number;  // 秒
+  totalDuration: number; // 秒
   scenes: StoryboardScene[];
   characters: CharacterIllustration[];
   metadata: {
@@ -28,13 +26,13 @@ export interface StoryboardScene {
   sceneId: string;
   sceneNumber: number;
   description: SceneDescription;
-  imageUrl?: string;  // 生成后填充
+  imageUrl?: string; // 生成后填充
   status: 'pending' | 'generating' | 'done' | 'failed';
 }
 
 export interface StoryboardOptions {
-  style?: string;       // 'anime' | 'comic' | 'sketch'
-  includeCharacters?: boolean;  // 是否生成角色立绘
+  style?: string; // 'anime' | 'comic' | 'sketch'
+  includeCharacters?: boolean; // 是否生成角色立绘
   aspectRatio?: SceneDescription['aspectRatio'];
   /** 启用增强角色一致性系统（三视图） */
   enhancedCharacterConsistency?: boolean;
@@ -42,16 +40,13 @@ export interface StoryboardOptions {
 
 /**
  * 构建故事板（增强版）
- * 
+ *
  * 增强点：
  * 1. 生成角色三视图 reference sheet
  * 2. 构建角色特征 token 供视频生成使用
  * 3. 为每个场景生成 videoPrompt（视频生成专用）
  */
-export function composeStoryboard(
-  script: Script,
-  options: StoryboardOptions = {}
-): Storyboard {
+export function composeStoryboard(script: Script, options: StoryboardOptions = {}): Storyboard {
   const {
     style = 'anime',
     includeCharacters = true,
@@ -60,7 +55,7 @@ export function composeStoryboard(
 
   // Step 1: 生成角色立绘（含三视图）
   const characterIllustrations: CharacterIllustration[] = includeCharacters
-    ? script.characters.map(char =>
+    ? script.characters.map((char) =>
         generateCharacterIllustration({
           character: char,
           style,
@@ -70,23 +65,22 @@ export function composeStoryboard(
     : [];
 
   // Step 2: 构建增强角色约束（包含 referencePrompt）
-  const characterConstraints: EnhancedCharacterConstraint[] = buildCharacterConstraints(
-    characterIllustrations
-  );
+  const characterConstraints: EnhancedCharacterConstraint[] =
+    buildCharacterConstraints(characterIllustrations);
 
   // Step 3: 生成场景描述（注入角色一致性约束 + 视频 prompt）
-  const storyboardScenes: StoryboardScene[] = script.scenes.map(scene => {
+  const storyboardScenes: StoryboardScene[] = script.scenes.map((scene) => {
     const description = generateSceneDescription(
       {
         id: scene.id,
         sceneNumber: scene.sceneNumber,
-        location: (scene as any).location,
-        timeOfDay: (scene as any).timeOfDay || '白天',
-        weather: (scene as any).weather,
+        location: scene.location,
+        timeOfDay: scene.timeOfDay || '白天',
+        weather: scene.weather,
         characters: scene.characters,
-        type: (scene as any).type || '对话',
-        emotion: (scene as any).emotion,
-        cameraHint: (scene as any).cameraHint,
+        type: scene.type || '对话',
+        emotion: scene.emotion,
+        cameraHint: scene.cameraHint,
         content: scene.content,
       },
       style,
@@ -106,10 +100,7 @@ export function composeStoryboard(
   });
 
   // 计算总时长
-  const totalDuration = storyboardScenes.reduce(
-    (sum, s) => sum + s.description.duration,
-    0
-  );
+  const totalDuration = storyboardScenes.reduce((sum, s) => sum + s.description.duration, 0);
 
   return {
     scriptId: script.id,
