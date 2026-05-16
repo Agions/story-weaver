@@ -10,7 +10,12 @@
  *   - getCheckpoint/restore ← 检查点
  */
 
-import { CheckpointState, PipelineStep, StepInput, StepOutput } from '@/core/pipeline/step.interface';
+import {
+  CheckpointState,
+  PipelineStep,
+  StepInput,
+  StepOutput,
+} from '@/core/pipeline/step.interface';
 
 export enum StepState {
   IDLE = 'idle',
@@ -52,37 +57,36 @@ export abstract class BasePipelineController implements PipelineStep<unknown> {
   protected subSteps: string[] = [];
   protected currentSubStep: number = 0;
 
-  get state() { return this._state; }
-  get progress() { return this._progress; }
-  get error() { return this._error; }
+  get state() {
+    return this._state;
+  }
+  get progress() {
+    return this._progress;
+  }
+  get error() {
+    return this._error;
+  }
   /** Used by PipelineEngine to detect pause requests */
-  get isPaused() { return this._isPaused; }
+  get isPaused() {
+    return this._isPaused;
+  }
 
   // ========== PipelineStep Interface ==========
 
   /**
-   * process() — 引擎驱动入口
-   * 子类实现 _doProcess() 提供实际逻辑
+   * execute() — PipelineStep interface entry point (called by PipelineEngine)
+   * Subclasses implement _doProcess() for actual logic.
+   */
+  async execute(input: StepInput): Promise<StepOutput> {
+    return this.process(input);
+  }
+
+  /**
+   * process() — alias for _doProcess() to avoid name collision with execute().
+   * Subclasses implement _doProcess() method.
    */
   async process(input: StepInput): Promise<StepOutput> {
-    this._state = StepState.RUNNING;
-    this._progress = 0;
-    this._error = null;
-
-    try {
-      const output = await this._doProcess(input);
-      this._state = StepState.COMPLETED;
-      this._progress = 100;
-      if (this._checkpoint) {
-        this._checkpoint.completed = true;
-      }
-      return output;
-    } catch (err) {
-      this._state = StepState.FAILED;
-      this._error = err instanceof Error ? err : new Error(String(err));
-      this.checkpointOnError(this._checkpoint?.data);
-      throw this._error;
-    }
+    return this._doProcess(input);
   }
 
   getCheckpoint(): CheckpointState<unknown> | null {
@@ -100,7 +104,7 @@ export abstract class BasePipelineController implements PipelineStep<unknown> {
     if (this._state === StepState.RUNNING) {
       this._isPaused = true;
       this._state = StepState.PAUSED;
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         this._pauseResolver = resolve;
       });
     }
@@ -150,7 +154,7 @@ export abstract class BasePipelineController implements PipelineStep<unknown> {
    */
   protected async pauseCheck(): Promise<void> {
     if (this._isPaused) {
-      await new Promise<void>(resolve => {
+      await new Promise<void>((resolve) => {
         this._pauseResolver = resolve;
       });
     }
@@ -195,7 +199,7 @@ export abstract class BasePipelineController implements PipelineStep<unknown> {
 
   // Progress callback for UI binding
   onProgressCallback?: (event: { stepId: string; progress: number; message: string }) => void;
-  onProgress(handler: NonNullable<typeof this.onProgressCallback>) {
+  setProgressHandler(handler: NonNullable<typeof this.onProgressCallback>) {
     this.onProgressCallback = handler;
     return this;
   }

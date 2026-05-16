@@ -1,8 +1,17 @@
-import { PipelineStep, StepInput, StepOutput, CheckpointState } from '../../../../core/pipeline/step.interface';
+import {
+  PipelineStep,
+  StepInput,
+  StepOutput,
+  CheckpointState,
+} from '../../../../core/pipeline/step.interface';
 import { Script } from '../step1-script-generation/types/script';
 
 import { selectBGM, BGMSelection } from './services/bgm-selector';
-import { generateDialogueTTS, DialogueSegment, synthesizeAllDialogueAudio } from './services/dialogue-tts-generator';
+import {
+  generateDialogueTTS,
+  DialogueSegment,
+  synthesizeAllDialogueAudio,
+} from './services/dialogue-tts-generator';
 import { assignVoices, VoiceAssignment } from './services/voice-assigner';
 
 export interface VoiceSynthesisResult {
@@ -10,7 +19,7 @@ export interface VoiceSynthesisResult {
   voiceAssignments: VoiceAssignment[];
   dialogueSegments: DialogueSegment[];
   bgmSelections: BGMSelection[];
-  totalDuration: number;  // 总时长（秒）
+  totalDuration: number; // 总时长（秒）
   metadata: {
     generatedAt: number;
     ttsEngine: string;
@@ -26,6 +35,10 @@ export class VoiceSynthesisPipeline implements PipelineStep<VoiceSynthesisResult
 
   private _checkpoint: CheckpointState<VoiceSynthesisResult> | null = null;
 
+  async execute(input: StepInput): Promise<StepOutput> {
+    return this.process(input);
+  }
+
   async process(input: StepInput): Promise<StepOutput> {
     const { script } = input as StepInput & { script: Script };
 
@@ -37,14 +50,14 @@ export class VoiceSynthesisPipeline implements PipelineStep<VoiceSynthesisResult
 
     // Step 3: 使用 Edge-TTS 合成真实音频
     const synthesizedSegments = await synthesizeAllDialogueAudio(segments);
-    
+
     // 统计合成结果
-    const synthesizedCount = synthesizedSegments.filter(s => s.status === 'done').length;
-    const failedCount = synthesizedSegments.filter(s => s.status === 'failed').length;
-    
+    const synthesizedCount = synthesizedSegments.filter((s) => s.status === 'done').length;
+    const failedCount = synthesizedSegments.filter((s) => s.status === 'failed').length;
+
     // 计算实际总时长（使用实际生成的音频时长）
     const actualTotalDuration = synthesizedSegments.reduce((sum, seg) => {
-      return sum + (seg.duration || (seg.endTime - seg.startTime));
+      return sum + (seg.duration || seg.endTime - seg.startTime);
     }, 0);
 
     // Step 4: 选择 BGM

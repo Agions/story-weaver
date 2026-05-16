@@ -49,7 +49,7 @@ export function ScriptGenerationView({ onPipelineComplete }: Props) {
         setSubStepName(event.subStepName);
       });
 
-      pipeline.onProgress((event) => {
+      pipeline.setProgressHandler((event) => {
         setProgress(event.progress);
         setSubStepName(event.message);
       });

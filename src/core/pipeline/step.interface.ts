@@ -1,5 +1,5 @@
-export type StepInput = Record<string, unknown>
-export type StepOutput = Record<string, unknown>
+export type StepInput = Record<string, unknown>;
+export type StepOutput = Record<string, unknown>;
 
 export interface CheckpointState<S = unknown> {
   stepId: string;
@@ -13,10 +13,12 @@ import { PipelineExecutionMode } from './pipeline.types';
 export interface PipelineStep<S = unknown> {
   id: string;
   name: string;
+  stepId?: string;
   mode?: PipelineExecutionMode;
-  process(input: StepInput): Promise<StepOutput>;
-  getCheckpoint(): CheckpointState<S> | null;
-  restore(state: CheckpointState<S>): void;
+  execute(input: StepInput): Promise<StepOutput>;
+  getCheckpoint?(): CheckpointState<S> | null;
+  restore?(state: CheckpointState<S>): void;
+  onProgress?: (event: { stepId: string; progress: number; message: string }) => void;
 }
 
 export interface PipelineOptions {

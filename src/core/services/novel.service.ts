@@ -77,6 +77,46 @@ export interface Storyboard {
   prompt: string; // AI 生成提示词
 }
 
+/**
+ * 并发控制辅助函数
+ * 使用 Promise.allSettled 并发执行任务，支持限制并发数
+ */
+async function concurrentLimit<T, R>(
+  items: T[],
+  concurrency: number,
+  processor: (item: T, index: number) => Promise<R>
+): Promise<{ results: R[]; errors: Array<{ item: T; error: unknown; index: number }> }> {
+  const results: R[] = new Array(items.length);
+  const errors: Array<{ item: T; error: unknown; index: number }> = [];
+
+  for (let i = 0; i < items.length; i += concurrency) {
+    const batch = items.slice(i, i + concurrency);
+    const batchPromises = batch.map((item, batchIndex) => {
+      const globalIndex = i + batchIndex;
+      return processor(item, globalIndex)
+        .then((result) => ({
+          success: true as const,
+          result,
+          index: globalIndex,
+          item: undefined as unknown as T,
+        }))
+        .catch((error) => ({ success: false as const, error, item, index: globalIndex }));
+    });
+
+    const batchResults = await Promise.all(batchPromises);
+
+    for (const batchResult of batchResults) {
+      if ('error' in batchResult && batchResult.success === false) {
+        errors.push({ item: batchResult.item, error: batchResult.error, index: batchResult.index });
+      } else if ('result' in batchResult) {
+        results[batchResult.index] = batchResult.result;
+      }
+    }
+  }
+
+  return { results, errors };
+}
+
 class NovelService {
   /**
    * 解析小说
@@ -197,7 +237,7 @@ ${chapter.content.slice(0, 5000)}${chapter.content.length > 5000 ? '...' : ''}
           return {
             id: `scene_${chapter.id}_${index}`,
             chapterId: chapter.id,
-            ...(scene as Record<string, unknown>)
+            ...(scene as Record<string, unknown>),
           } as ScriptScene;
         }
         return {
@@ -210,7 +250,7 @@ ${chapter.content.slice(0, 5000)}${chapter.content.length > 5000 ? '...' : ''}
           action: '',
           dialogue: [],
           description: '',
-          duration: 0
+          duration: 0,
         } as ScriptScene;
       });
     } catch {
@@ -234,22 +274,33 @@ ${chapter.content.slice(0, 5000)}${chapter.content.length > 5000 ? '...' : ''}
       chaptersToUse = 5,
       scenesPerChapter = 3,
       provider = 'alibaba',
-      model = 'qwen-3.5'
+      model = 'qwen-3.5',
     } = options;
 
-    const characterNames = novelResult.characters.map(c => c.name);
+    const characterNames = novelResult.characters.map((c) => c.name);
     const selectedChapters = novelResult.chapters.slice(0, chaptersToUse);
 
-    const allScenes: ScriptScene[] = [];
+    const MAX_CONCURRENCY = 3; // 限制同时处理的章节数
 
-    for (const chapter of selectedChapters) {
-      const scenes = await this.convertToScenes(chapter, characterNames, {
+    const processChapter = async (chapter: NovelChapter): Promise<ScriptScene[]> => {
+      return this.convertToScenes(chapter, characterNames, {
         scenesPerChapter,
         provider,
-        model
+        model,
       });
-      allScenes.push(...scenes);
+    };
+
+    const { results: allScenesArrays, errors } = await concurrentLimit(
+      selectedChapters,
+      MAX_CONCURRENCY,
+      processChapter
+    );
+
+    if (errors.length > 0) {
+      console.warn(`[NovelService] ${errors.length} 个章节转换失败`);
     }
+
+    const allScenes: ScriptScene[] = allScenesArrays.flat();
 
     const totalDuration = allScenes.reduce((sum, s) => sum + s.duration, 0);
 
@@ -262,17 +313,14 @@ ${chapter.content.slice(0, 5000)}${chapter.content.length > 5000 ? '...' : ''}
       totalDuration,
       characters: characterNames,
       scenes: allScenes,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
     };
 
     // 记录成本
-    costService.recordLLMCost(
-      provider,
-      model,
-      2000 * chaptersToUse,
-      1000 * chaptersToUse,
-      { operation: 'novel_to_script', chapters: chaptersToUse }
-    );
+    costService.recordLLMCost(provider, model, 2000 * chaptersToUse, 1000 * chaptersToUse, {
+      operation: 'novel_to_script',
+      chapters: chaptersToUse,
+    });
 
     return script;
   }
@@ -298,7 +346,7 @@ ${chapter.content.slice(0, 5000)}${chapter.content.length > 5000 ? '...' : ''}
 - 时间：${scene.time}
 - 角色：${scene.characters.join('、')}
 - 动作：${scene.action}
-- 对话：${scene.dialogue.map(d => `${d.character}: ${d.text}`).join('\n')}
+- 对话：${scene.dialogue.map((d) => `${d.character}: ${d.text}`).join('\n')}
 - 描述：${scene.description}
 
 请返回以下格式的 JSON 数组：
@@ -329,12 +377,13 @@ ${chapter.content.slice(0, 5000)}${chapter.content.length > 5000 ? '...' : ''}
     try {
       const panels = JSON.parse(aiResponse);
       return panels.map((panel: unknown, index: number) => {
-        const panelObj = typeof panel === 'object' && panel !== null ? panel as Record<string, unknown> : {};
+        const panelObj =
+          typeof panel === 'object' && panel !== null ? (panel as Record<string, unknown>) : {};
         return {
           id: `storyboard_${scene.id}_${index}`,
           sceneId: scene.id,
           ...panelObj,
-          prompt: this.generatePanelPrompt(panel, scene)
+          prompt: this.generatePanelPrompt(panel, scene),
         } as Storyboard;
       });
     } catch {
@@ -351,17 +400,18 @@ ${chapter.content.slice(0, 5000)}${chapter.content.length > 5000 ? '...' : ''}
       medium: '中景',
       close: '近景',
       extreme_close: '特写',
-      over_shoulder: '过肩镜头'
+      over_shoulder: '过肩镜头',
     };
 
     const angleMap: Record<string, string> = {
       eye_level: '平视',
       high: '俯视',
       low: '仰视',
-      dutch: '倾斜'
+      dutch: '倾斜',
     };
 
-    const panelObj = typeof panel === 'object' && panel !== null ? panel as Record<string, unknown> : {};
+    const panelObj =
+      typeof panel === 'object' && panel !== null ? (panel as Record<string, unknown>) : {};
     const shotType = String(panelObj.shotType ?? '');
     const angle = String(panelObj.angle ?? '');
     const description = String(panelObj.description ?? '');
@@ -422,7 +472,7 @@ ${shotTypeMap[shotType] || shotType}，${angleMap[angle] || angle}，
     }
 
     // 检查主角
-    const hasMainCharacter = novelResult.characters.some(c => c.importance === 'main');
+    const hasMainCharacter = novelResult.characters.some((c) => c.importance === 'main');
     if (!hasMainCharacter) {
       score -= 25;
       reasons.push('缺少明确的主角');
@@ -432,7 +482,7 @@ ${shotTypeMap[shotType] || shotType}，${angleMap[angle] || angle}，
     return {
       score: Math.max(0, score),
       reasons,
-      suggestions
+      suggestions,
     };
   }
 
@@ -466,7 +516,7 @@ ${shotTypeMap[shotType] || shotType}，${angleMap[angle] || angle}，
       `角色: ${script.characters.join('、')}`,
       '',
       '=== 场景列表 ===',
-      ''
+      '',
     ];
 
     for (const scene of script.scenes) {
@@ -485,14 +535,7 @@ ${shotTypeMap[shotType] || shotType}，${angleMap[angle] || angle}，
         lines.push(`  ${dialogue.character} (${dialogue.emotion}): ${dialogue.text}`);
       }
 
-      lines.push(
-        '',
-        `描述: ${scene.description}`,
-        `预估时长: ${scene.duration}秒`,
-        '',
-        '---',
-        ''
-      );
+      lines.push('', `描述: ${scene.description}`, `预估时长: ${scene.duration}秒`, '', '---', '');
     }
 
     return lines.join('\n');

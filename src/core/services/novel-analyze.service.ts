@@ -28,6 +28,46 @@ import {
 } from './novel-helpers';
 
 /**
+ * 并发控制辅助函数
+ * 使用 Promise.allSettled 并发执行任务，支持限制并发数
+ */
+async function concurrentLimit<T, R>(
+  items: T[],
+  concurrency: number,
+  processor: (item: T, index: number) => Promise<R>
+): Promise<{ results: R[]; errors: Array<{ item: T; error: unknown; index: number }> }> {
+  const results: R[] = new Array(items.length);
+  const errors: Array<{ item: T; error: unknown; index: number }> = [];
+
+  for (let i = 0; i < items.length; i += concurrency) {
+    const batch = items.slice(i, i + concurrency);
+    const batchPromises = batch.map((item, batchIndex) => {
+      const globalIndex = i + batchIndex;
+      return processor(item, globalIndex)
+        .then((result) => ({
+          success: true as const,
+          result,
+          index: globalIndex,
+          item: undefined as unknown as T,
+        }))
+        .catch((error) => ({ success: false as const, error, item, index: globalIndex }));
+    });
+
+    const batchResults = await Promise.all(batchPromises);
+
+    for (const batchResult of batchResults) {
+      if ('error' in batchResult && batchResult.success === false) {
+        errors.push({ item: batchResult.item, error: batchResult.error, index: batchResult.index });
+      } else if ('result' in batchResult) {
+        results[batchResult.index] = batchResult.result;
+      }
+    }
+  }
+
+  return { results, errors };
+}
+
+/**
  * 小说分析器
  * 用于解析小说内容并生成结构化数据
  */
@@ -229,11 +269,9 @@ ${content.slice(0, 2000)}
    * 分割场景
    */
   async segmentScenes(chapters: Chapter[]): Promise<NovelScene[]> {
-    const scenes: NovelScene[] = [];
-    // const _scenePattern = /([，。！？])\s*(?=[A-Z]{1,2}[^\u4e00-\u9fa5]|[「『])/g;
+    const MAX_CONCURRENCY = 3; // 限制同时处理的章节数
 
-    for (const chapter of chapters) {
-      // 使用 AI 智能分割场景
+    const processChapter = async (chapter: Chapter): Promise<NovelScene[]> => {
       const prompt = `
 请将以下小说章节分割为场景。每个场景应该有完整的情节发展。
 
@@ -263,6 +301,7 @@ ${chapter.content.slice(0, 3000)}${chapter.content.length > 3000 ? '...' : ''}
         });
 
         const aiScenes = JSON.parse(response);
+        const scenes: NovelScene[] = [];
 
         for (let i = 0; i < aiScenes.length; i++) {
           const sceneData = aiScenes[i];
@@ -284,14 +323,26 @@ ${chapter.content.slice(0, 3000)}${chapter.content.length > 3000 ? '...' : ''}
             tags: [],
           });
         }
+        return scenes;
       } catch {
         // AI 解析失败，使用规则分割
-        const fallbackScenes = ruleBasedSegmentation(chapter, this.config.sceneMinLength);
-        scenes.push(...fallbackScenes);
+        return ruleBasedSegmentation(chapter, this.config.sceneMinLength);
       }
+    };
+
+    const { results: allScenesArrays, errors } = await concurrentLimit(
+      chapters,
+      MAX_CONCURRENCY,
+      processChapter
+    );
+
+    // 记录错误（可选：可以在调试模式输出）
+    if (errors.length > 0) {
+      console.warn(`[NovelAnalyzer] ${errors.length} 个章节处理失败，将使用规则分割`);
     }
 
-    return scenes;
+    // 合并所有场景
+    return allScenesArrays.flat();
   }
 
   /**
@@ -545,9 +596,9 @@ ${content.slice(0, 5000)}
    * 生成场景描述
    */
   async generateSceneDescriptions(scenes: NovelScene[]): Promise<SceneDescription[]> {
-    const results: SceneDescription[] = [];
+    const MAX_CONCURRENCY = 5; // 限制同时处理的场景数
 
-    for (const scene of scenes) {
+    const processScene = async (scene: NovelScene): Promise<SceneDescription> => {
       const prompt = `
 请为以下小说场景生成详细的图像生成描述。
 
@@ -590,7 +641,7 @@ ${content.slice(0, 5000)}
 
         const data = JSON.parse(response);
 
-        results.push({
+        return {
           sceneId: scene.id,
           description: data.description ?? '',
           visualElements: data.visualElements ?? [],
@@ -600,18 +651,24 @@ ${content.slice(0, 5000)}
           cameraAngle: data.cameraAngle,
           imagePrompt: data.imagePrompt ?? this.generateDefaultPrompt(scene),
           negativePrompt: data.negativePrompt ?? 'low quality, blurry, distorted',
-        });
+        };
       } catch {
         // 使用默认提示词
-        results.push({
+        return {
           sceneId: scene.id,
           description: scene.content.slice(0, 100),
           visualElements: [],
           mood: '',
           imagePrompt: this.generateDefaultPrompt(scene),
           negativePrompt: 'low quality, blurry, distorted',
-        });
+        };
       }
+    };
+
+    const { results, errors } = await concurrentLimit(scenes, MAX_CONCURRENCY, processScene);
+
+    if (errors.length > 0) {
+      console.warn(`[NovelAnalyzer] ${errors.length} 个场景描述生成失败`);
     }
 
     return results;

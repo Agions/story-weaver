@@ -111,7 +111,7 @@ export class MangaPipelineController extends BasePipelineController {
     super();
 
     // Wire up progress callbacks from sub-pipelines
-    this.scriptPipeline.onProgress((event) => {
+    this.scriptPipeline.setProgressHandler((event) => {
       this.emitProgress(MangaPipelineStep.SCRIPT, event.progress, event.message);
     });
   }

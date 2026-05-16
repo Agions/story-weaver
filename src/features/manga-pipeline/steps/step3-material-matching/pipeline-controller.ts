@@ -1,6 +1,11 @@
 import type { Storyboard } from '@/features/manga-pipeline/steps/step2-storyboard/storyboard-composer';
 
-import { PipelineStep, StepInput, StepOutput, CheckpointState } from '../../../../core/pipeline/step.interface';
+import {
+  PipelineStep,
+  StepInput,
+  StepOutput,
+  CheckpointState,
+} from '../../../../core/pipeline/step.interface';
 
 import { BatchGenerationPlan, createAIGenerationPlan } from './services/ai-material-generator';
 import { MaterialMatch, batchSearch } from './services/material-searcher';
@@ -11,7 +16,7 @@ export interface MaterialMatchingResult {
   matches: MaterialMatch[];
   groups: MaterialGroup[];
   aiGenerationPlan: BatchGenerationPlan | null;
-  coverage: number;  // 0-1，有素材覆盖的场景比例
+  coverage: number; // 0-1，有素材覆盖的场景比例
 }
 
 export class MaterialMatchingPipeline implements PipelineStep<MaterialMatchingResult> {
@@ -19,6 +24,10 @@ export class MaterialMatchingPipeline implements PipelineStep<MaterialMatchingRe
   name = 'Material Matching';
 
   private _checkpoint: CheckpointState<MaterialMatchingResult> | null = null;
+
+  async execute(input: StepInput): Promise<StepOutput> {
+    return this.process(input);
+  }
 
   async process(input: StepInput): Promise<StepOutput> {
     const { storyboard } = input as StepInput & { storyboard: Storyboard };
@@ -31,16 +40,15 @@ export class MaterialMatchingPipeline implements PipelineStep<MaterialMatchingRe
 
     // Step 3: 为未匹配场景生成 AI 方案
     const scenesNeedingAI = matches
-      .filter(m => m.matches.length === 0)
-      .map(m => storyboard.scenes.find(s => s.sceneId === m.sceneId)!)
+      .filter((m) => m.matches.length === 0)
+      .map((m) => storyboard.scenes.find((s) => s.sceneId === m.sceneId)!)
       .filter(Boolean);
-    
-    const aiGenerationPlan = scenesNeedingAI.length > 0
-      ? createAIGenerationPlan(scenesNeedingAI)
-      : null;
+
+    const aiGenerationPlan =
+      scenesNeedingAI.length > 0 ? createAIGenerationPlan(scenesNeedingAI) : null;
 
     // Step 4: 计算覆盖率
-    const coveredScenes = matches.filter(m => m.matches.length > 0).length;
+    const coveredScenes = matches.filter((m) => m.matches.length > 0).length;
     const coverage = coveredScenes / matches.length;
 
     const result: MaterialMatchingResult = {

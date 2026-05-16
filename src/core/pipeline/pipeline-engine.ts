@@ -176,7 +176,7 @@ export class PipelineEngine {
           this.eventHandler?.onStepStart?.(step.id);
           this.options.onProgress?.(step.id, 0);
 
-          const result = await step.process(context);
+          const result = await step.execute(context);
           context = { ...context, ...result };
 
           // Save checkpoint

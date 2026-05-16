@@ -1,7 +1,7 @@
 /**
  * SecureStorageService - 安全存储服务
  * 使用 Tauri Store API 替代 localStorage，敏感数据加密存储
- * 
+ *
  * 在非 Tauri 环境（如测试）中自动回退到 localStorage
  */
 
@@ -35,7 +35,10 @@ class SecureStorageService {
         const { Store } = await import('@tauri-apps/plugin-store');
         this.store = await Store.load('secure-data.json');
       } catch (error) {
-        logger.warn('[SecureStorage] Tauri store not available, using localStorage fallback:', error);
+        logger.warn(
+          '[SecureStorage] Tauri store not available, using localStorage fallback:',
+          error
+        );
         this.useFallback = true;
       }
     })();
@@ -59,7 +62,10 @@ class SecureStorageService {
     }
 
     try {
-      const store = this.store as { set: (key: string, value: unknown) => Promise<void>; save: () => Promise<void> };
+      const store = this.store as {
+        set: (key: string, value: unknown) => Promise<void>;
+        save: () => Promise<void>;
+      };
       await store.set(`${CHECKPOINT_PREFIX}${stepId}`, state);
       await store.save();
     } catch {
@@ -104,7 +110,10 @@ class SecureStorageService {
     }
 
     try {
-      const store = this.store as { delete: (key: string) => Promise<void>; save: () => Promise<void> };
+      const store = this.store as {
+        delete: (key: string) => Promise<void>;
+        save: () => Promise<void>;
+      };
       await store.delete(`${CHECKPOINT_PREFIX}${stepId}`);
       await store.save();
     } catch {
@@ -116,13 +125,17 @@ class SecureStorageService {
     await this.init();
 
     if (this.useFallback || !this.store) {
-      const keys = Object.keys(localStorage).filter(k => k.startsWith(CHECKPOINT_PREFIX));
-      keys.forEach(k => localStorage.removeItem(k));
+      const keys = Object.keys(localStorage).filter((k) => k.startsWith(CHECKPOINT_PREFIX));
+      keys.forEach((k) => localStorage.removeItem(k));
       return;
     }
 
     try {
-      const store = this.store as { keys: () => Promise<string[]>; delete: (key: string) => Promise<void>; save: () => Promise<void> };
+      const store = this.store as {
+        keys: () => Promise<string[]>;
+        delete: (key: string) => Promise<void>;
+        save: () => Promise<void>;
+      };
       const keys = await store.keys();
       for (const key of keys) {
         if (key.startsWith(CHECKPOINT_PREFIX)) {
@@ -131,8 +144,8 @@ class SecureStorageService {
       }
       await store.save();
     } catch {
-      const keys = Object.keys(localStorage).filter(k => k.startsWith(CHECKPOINT_PREFIX));
-      keys.forEach(k => localStorage.removeItem(k));
+      const keys = Object.keys(localStorage).filter((k) => k.startsWith(CHECKPOINT_PREFIX));
+      keys.forEach((k) => localStorage.removeItem(k));
     }
   }
 
@@ -145,7 +158,10 @@ class SecureStorageService {
     }
 
     try {
-      const store = this.store as { set: (key: string, value: string) => Promise<void>; save: () => Promise<void> };
+      const store = this.store as {
+        set: (key: string, value: string) => Promise<void>;
+        save: () => Promise<void>;
+      };
       await store.set(`secure_${key}`, value);
       await store.save();
     } catch {
@@ -178,7 +194,10 @@ class SecureStorageService {
     }
 
     try {
-      const store = this.store as { delete: (key: string) => Promise<void>; save: () => Promise<void> };
+      const store = this.store as {
+        delete: (key: string) => Promise<void>;
+        save: () => Promise<void>;
+      };
       await store.delete(`secure_${key}`);
       await store.save();
     } catch {
@@ -195,7 +214,10 @@ class SecureStorageService {
     }
 
     try {
-      const store = this.store as { set: (key: string, value: unknown) => Promise<void>; save: () => Promise<void> };
+      const store = this.store as {
+        set: (key: string, value: unknown) => Promise<void>;
+        save: () => Promise<void>;
+      };
       await store.set(`project_${projectId}`, { data, updatedAt: Date.now() });
       await store.save();
     } catch {
@@ -225,6 +247,54 @@ class SecureStorageService {
       if (!raw) return null;
       try {
         return JSON.parse(raw).data as T;
+      } catch {
+        return null;
+      }
+    }
+  }
+
+  async saveCostData(key: string, data: unknown): Promise<void> {
+    await this.init();
+
+    if (this.useFallback || !this.store) {
+      localStorage.setItem(`cost_${key}`, JSON.stringify(data));
+      return;
+    }
+
+    try {
+      const store = this.store as {
+        set: (key: string, value: unknown) => Promise<void>;
+        save: () => Promise<void>;
+      };
+      await store.set(`cost_${key}`, data);
+      await store.save();
+    } catch {
+      localStorage.setItem(`cost_${key}`, JSON.stringify(data));
+    }
+  }
+
+  async loadCostData<T>(key: string): Promise<T | null> {
+    await this.init();
+
+    if (this.useFallback || !this.store) {
+      const raw = localStorage.getItem(`cost_${key}`);
+      if (!raw) return null;
+      try {
+        return JSON.parse(raw) as T;
+      } catch {
+        return null;
+      }
+    }
+
+    try {
+      const store = this.store as { get: <T>(key: string) => Promise<T | null> };
+      const result = await store.get<T>(`cost_${key}`);
+      return result ?? null;
+    } catch {
+      const raw = localStorage.getItem(`cost_${key}`);
+      if (!raw) return null;
+      try {
+        return JSON.parse(raw) as T;
       } catch {
         return null;
       }

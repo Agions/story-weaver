@@ -5,6 +5,8 @@
 
 import { logger } from '@/core/utils/logger';
 
+import { secureStorage } from './secure-storage.service';
+
 // 成本记录
 export interface CostRecord {
   id: string;
@@ -114,6 +116,7 @@ class CostService {
   };
 
   constructor() {
+    // 异步加载数据，不阻塞构造函数
     this.loadFromStorage();
   }
 
@@ -504,10 +507,10 @@ ${suggestions.join('\n\n')}
   /**
    * 持久化到本地存储
    */
-  saveToStorage(): void {
+  async saveToStorage(): Promise<void> {
     try {
-      localStorage.setItem('reelforge_cost_records', JSON.stringify(this.records));
-      localStorage.setItem('reelforge_cost_budget', JSON.stringify(this.budget));
+      await secureStorage.saveCostData('records', this.records);
+      await secureStorage.saveCostData('budget', this.budget);
     } catch (error) {
       logger.error('保存成本记录失败:', error);
     }
@@ -516,16 +519,16 @@ ${suggestions.join('\n\n')}
   /**
    * 从本地存储加载
    */
-  loadFromStorage(): boolean {
+  async loadFromStorage(): Promise<boolean> {
     try {
-      const records = localStorage.getItem('reelforge_cost_records');
-      const budget = localStorage.getItem('reelforge_cost_budget');
+      const records = await secureStorage.loadCostData<CostRecord[]>('records');
+      const budget = await secureStorage.loadCostData<CostBudget>('budget');
 
       if (records) {
-        this.records = JSON.parse(records);
+        this.records = records;
       }
       if (budget) {
-        this.budget = JSON.parse(budget);
+        this.budget = budget;
       }
 
       return true;
