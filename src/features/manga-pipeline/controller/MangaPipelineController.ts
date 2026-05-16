@@ -59,6 +59,8 @@ export interface MangaPipelineResult {
   materialResult?: MaterialMatchingResult;
   voiceResult?: VoiceSynthesisResult;
   keyframeResult?: import('../steps/step5-keyframe/pipeline-controller').KeyframePipelineResult;
+  /** 角色约束（从 StoryboardPipeline 流出，供视频生成使用） */
+  characterConstraints?: import('../steps/step2-storyboard/StoryboardPipeline').StoryboardGenerationResult['characterConstraints'];
 }
 
 /**
@@ -181,9 +183,8 @@ export class MangaPipelineController extends BasePipelineController {
       const storyboardResult = (storyboardOutput as StepOutput)
         .storyboardGeneration as StoryboardGenerationResult;
       this.result.storyboard = storyboardResult.storyboard;
+      this.result.characterConstraints = storyboardResult.characterConstraints;
       // Pass character constraints to keyframe step (for character consistency in video generation)
-      const characterConstraints = storyboardResult.characterConstraints;
-      void characterConstraints; // TODO: wire into keyframePipeline input
       this.emitProgress(MangaPipelineStep.STORYBOARD, 100, '生成分镜');
       await this.pauseCheck();
 
@@ -223,6 +224,18 @@ export class MangaPipelineController extends BasePipelineController {
         style: style as any,
         aspectRatio: '16:9' as any,
         dialogueSegments: voiceResult.dialogueSegments,
+        characterReferences: (this.result.characterConstraints ?? []).map((c) => ({
+          characterId: c.characterId,
+          name: c.name,
+          referencePrompt: c.referencePrompt,
+          referenceImageUrls: c.referenceImageUrls
+            ? {
+                front: c.referenceImageUrls.front,
+                side: c.referenceImageUrls.side,
+                fullBody: c.referenceImageUrls.fullBody,
+              }
+            : undefined,
+        })),
       });
       this.result.keyframeResult = (keyframeOutput as any).keyframePipeline;
 
