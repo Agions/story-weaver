@@ -55,7 +55,7 @@ export function ScriptGenerationView({ onPipelineComplete }: Props) {
       });
 
       const output = await pipeline.process({ text, title: title || '未命名剧本', style });
-      const mangaResult = (output as any).mangaPipeline as MangaPipelineResult;
+      const mangaResult = output as unknown as MangaPipelineResult;
       setResult(mangaResult);
       setProgress(100);
       setSubStepName('生成完成');
