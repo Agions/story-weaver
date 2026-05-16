@@ -63,8 +63,6 @@
     "file-saver": "^2.0.5",
     "framer-motion": "^12.10.3",
     "i18next": "^25.0.1",
-    "jspdf": "^4.2.1",
-    "jspdf-autotable": "^5.0.7",
     "jszip": "^3.10.1",
     "lodash": "^4.17.21",
     "lucide-react": "^1.11.0",

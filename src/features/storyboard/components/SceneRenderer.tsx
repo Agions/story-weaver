@@ -21,24 +21,21 @@ import {
 } from 'lucide-react';
 import React, { useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+import { Collapse } from '@/components/ui/collapse';
 import { Popconfirm } from '@/components/ui/confirm-dialog';
+import { Divider } from '@/components/ui/divider';
 import { Empty } from '@/components/ui/empty';
+import { Col, Row } from '@/components/ui/grid';
 import { Input } from '@/components/ui/input';
 import { List } from '@/components/ui/list';
+import { AntDSelect } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
+import { Space } from '@/components/ui/space';
 import { Tag } from '@/components/ui/tag';
+import { TextArea } from '@/components/ui/textarea';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Text, Title } from '@/components/ui/typography';
-import {
-  Button,
-  Select as AntDSelect,
-  Collapse,
-  Space,
-  Row,
-  Col,
-  Divider,
-  TextArea,
-} from '@/components/ui/ui-components';
 import { generatePrefixedId } from '@/shared/utils';
 
 import styles from './SceneRenderer.module.less';

@@ -74,12 +74,18 @@ const QUALITY_SCALE: Record<ExportQuality, number> = {
  */
 export function getFileExtension(format: ExportFormat): string {
   switch (format) {
-    case ExportFormat.PDF: return 'pdf';
-    case ExportFormat.ZIP: return 'zip';
-    case ExportFormat.MP4: return 'mp4';
-    case ExportFormat.GIF: return 'gif';
-    case ExportFormat.ASS: return 'ass';
-    default: return 'bin';
+    case ExportFormat.PDF:
+      return 'pdf';
+    case ExportFormat.ZIP:
+      return 'zip';
+    case ExportFormat.MP4:
+      return 'mp4';
+    case ExportFormat.GIF:
+      return 'gif';
+    case ExportFormat.ASS:
+      return 'ass';
+    default:
+      return 'bin';
   }
 }
 
@@ -266,16 +272,17 @@ export async function exportProject(
       return assBlob;
     }
     case ExportFormat.PDF:
-      // PDF 导出需要 jsPDF
-      return await exportAsPDF(storyboard, options, onProgress);
+      // PDF 导出已禁用 (jsPDF 依赖已移除)
+      throw new Error('PDF export is not supported');
 
     case ExportFormat.MP4: {
       // MP4 需要视频合成服务 (FFmpeg.wasm)
-      const { videoCompositorService, initializeVideoCompositor } = await import('./video-compositor.service');
-      
+      const { videoCompositorService, initializeVideoCompositor } =
+        await import('./video-compositor.service');
+
       // 初始化视频合成器
       await initializeVideoCompositor();
-      
+
       // 将 storyboard 转换为场景
       const scenes = storyboard.scenes.map((scene, index) => ({
         id: scene.id || `scene_${index}`,
@@ -287,20 +294,26 @@ export async function exportProject(
       }));
 
       // FFmpeg.wasm 进度回调转换
-      const ffmpegProgressCallback = onProgress ? ((p: { progress: number; status: string; message?: string }) => {
-        onProgress({
-          current: Math.round(p.progress * storyboard.scenes.length),
-          total: storyboard.scenes.length,
-          stage: p.status,
-          message: p.message || '导出视频中...',
-        });
-      }) : undefined;
+      const ffmpegProgressCallback = onProgress
+        ? (p: { progress: number; status: string; message?: string }) => {
+            onProgress({
+              current: Math.round(p.progress * storyboard.scenes.length),
+              total: storyboard.scenes.length,
+              stage: p.status,
+              message: p.message || '导出视频中...',
+            });
+          }
+        : undefined;
 
-      const result = await videoCompositorService.compose(scenes, {
-        format: 'mp4',
-        fps: 30,
-        resolution: { width: 1920, height: 1080 },
-      }, ffmpegProgressCallback);
+      const result = await videoCompositorService.compose(
+        scenes,
+        {
+          format: 'mp4',
+          fps: 30,
+          resolution: { width: 1920, height: 1080 },
+        },
+        ffmpegProgressCallback
+      );
 
       if (result.outputBlob) {
         saveAs(result.outputBlob, fileName);
@@ -311,10 +324,11 @@ export async function exportProject(
 
     case ExportFormat.GIF: {
       // GIF 导出使用 FFmpeg.wasm
-      const { videoCompositorService, initializeVideoCompositor } = await import('./video-compositor.service');
-      
+      const { videoCompositorService, initializeVideoCompositor } =
+        await import('./video-compositor.service');
+
       await initializeVideoCompositor();
-      
+
       const scenes = storyboard.scenes.map((scene, index) => ({
         id: scene.id || `scene_${index}`,
         mediaPath: scene.imageUrl,
@@ -325,21 +339,27 @@ export async function exportProject(
       }));
 
       // FFmpeg.wasm 进度回调转换
-      const ffmpegProgressCallback = onProgress ? ((p: { progress: number; status: string; message?: string }) => {
-        onProgress({
-          current: Math.round(p.progress * storyboard.scenes.length),
-          total: storyboard.scenes.length,
-          stage: p.status,
-          message: p.message || '导出 GIF 中...',
-        });
-      }) : undefined;
+      const ffmpegProgressCallback = onProgress
+        ? (p: { progress: number; status: string; message?: string }) => {
+            onProgress({
+              current: Math.round(p.progress * storyboard.scenes.length),
+              total: storyboard.scenes.length,
+              stage: p.status,
+              message: p.message || '导出 GIF 中...',
+            });
+          }
+        : undefined;
 
       // GIF 导出：先用 FFmpeg.wasm 生成 MP4，再转换为 GIF
-      const mp4Result = await videoCompositorService.compose(scenes, {
-        format: 'mp4',
-        fps: 15,
-        resolution: { width: 480, height: 270 }, // GIF 分辨率通常较低
-      }, ffmpegProgressCallback);
+      const mp4Result = await videoCompositorService.compose(
+        scenes,
+        {
+          format: 'mp4',
+          fps: 15,
+          resolution: { width: 480, height: 270 }, // GIF 分辨率通常较低
+        },
+        ffmpegProgressCallback
+      );
 
       if (mp4Result.outputBlob) {
         // 转换 MP4 为 GIF (简化处理，实际应使用 gifski 等工具)
@@ -416,12 +436,9 @@ async function exportAsPDF(
   // 页脚
   doc.setFontSize(8);
   doc.setTextColor(150, 150, 150);
-  doc.text(
-    `导出于 ${new Date().toLocaleDateString()}`,
-    pageWidth / 2,
-    pageHeight - 5,
-    { align: 'center' }
-  );
+  doc.text(`导出于 ${new Date().toLocaleDateString()}`, pageWidth / 2, pageHeight - 5, {
+    align: 'center',
+  });
 
   const blob = doc.output('blob');
   saveAs(blob, options.fileName || generateFileName(storyboard.title, ExportFormat.PDF));
@@ -431,7 +448,11 @@ async function exportAsPDF(
 /**
  * 获取支持的导出格式
  */
-export function getSupportedFormats(): Array<{ format: ExportFormat; label: string; description: string }> {
+export function getSupportedFormats(): Array<{
+  format: ExportFormat;
+  label: string;
+  description: string;
+}> {
   return [
     {
       format: ExportFormat.PDF,

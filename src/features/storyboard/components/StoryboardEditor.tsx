@@ -14,9 +14,19 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { message } from '@/components/ui/message';
+import {
+  Select as SelectRoot,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
+import { Tag } from '@/components/ui/tag';
+import { TextArea } from '@/components/ui/textarea';
 import { Tooltip } from '@/components/ui/tooltip';
-import { message, Tag, TextArea, Text, Title, Option, Select } from '@/components/ui/ui-components';
+import { Text, Title } from '@/components/ui/typography';
 import { generateFrameId } from '@/shared/utils';
 
 import styles from './StoryboardEditor.module.less';
@@ -335,23 +345,27 @@ function StoryboardEditor({
             <label className={styles.formLabel} htmlFor="frame-composition">
               构图方式
             </label>
-            <Select
+            <SelectRoot
               value={selectedFrame.composition}
-              onChange={(value) =>
+              onValueChange={(value) =>
                 updateFrame(
                   selectedFrame.id,
                   'composition',
                   Array.isArray(value) ? value[0] : value
                 )
               }
-              style={{ width: '100%' }}
             >
-              {COMPOSITION_TYPES.map((type) => (
-                <Option key={type} value={type}>
-                  {type}
-                </Option>
-              ))}
-            </Select>
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {COMPOSITION_TYPES.map((type) => (
+                  <SelectItem key={type} value={type}>
+                    {type}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </SelectRoot>
           </div>
           <div className={styles.formRow}>
             <span className={styles.formLabel} aria-label="镜头类型">
