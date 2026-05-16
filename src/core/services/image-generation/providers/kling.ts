@@ -59,9 +59,24 @@ export async function generateVideoWithKling(
   prompt: string,
   options: VideoGenerationOptions = {}
 ): Promise<VideoGenerationResult> {
-  const { duration = 5, referenceImage, negativePrompt, aspectRatio = '16:9', signal } = options;
+  const {
+    duration = 5,
+    referenceImage,
+    negativePrompt,
+    aspectRatio = '16:9',
+    characterReferences,
+    signal,
+  } = options;
 
   const apiKey = await getAPIKey('kling');
+
+  // 构建角色一致性引用（Kling API: subject_reference）
+  const subjectRef = characterReferences
+    ?.map((ref) => ({
+      id: ref.characterId,
+      image_url: ref.referenceImageUrls?.front || ref.referenceImageUrls?.fullBody || '',
+    }))
+    .filter((r) => r.image_url);
 
   const response = await axios({
     method: 'post',
@@ -77,6 +92,7 @@ export async function generateVideoWithKling(
       duration,
       image_url: referenceImage,
       aspect_ratio: aspectRatio,
+      ...(subjectRef && subjectRef.length > 0 ? { subject_reference: subjectRef } : {}),
     },
     signal,
   });
