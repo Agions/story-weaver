@@ -21,6 +21,10 @@ import { toast } from 'sonner';
 import {
   LegacyAvatar as AntDAvatar,
   type LegacyAvatarProps as AntDAvatarProps,
+  Avatar as AvatarDirect,
+  type LegacyAvatarProps as AvatarProps,
+  AvatarImage,
+  AvatarFallback,
 } from '@/components/ui/avatar';
 import {
   Card as AntdCard,
@@ -1090,7 +1094,7 @@ export {
   message,
   ColorPicker,
   Upload,
-  Avatar,
+  AvatarDirect as Avatar,
   AvatarImage,
   AvatarFallback,
   ShadcnText as Text,
@@ -1128,7 +1132,7 @@ export {
   type TextAreaProps,
   type ColorPickerProps,
   type UploadProps,
-  type LegacyAvatarProps,
+  type AvatarProps,
   type ButtonProps,
   type LegacyInputProps,
   type ListWrapperProps,
