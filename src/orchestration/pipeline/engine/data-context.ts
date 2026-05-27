@@ -127,7 +127,12 @@ export class DataContext {
 
   private getLatestSnapshot(): DataSnapshot {
     if (this.snapshots.length === 0) {
-      this.pushSnapshot();
+      // Return empty snapshot without recursing into pushSnapshot
+      return {
+        version: 0,
+        data: new Map(),
+        committedAt: Date.now(),
+      };
     }
     return this.snapshots[this.snapshots.length - 1];
   }
