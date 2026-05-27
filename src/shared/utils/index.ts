@@ -46,13 +46,27 @@ export function throttle<T extends GenericFunction>(
 }
 
 /**
- * 深拷贝
+ * 深拷贝 - 使用 structuredClone 原生方法
+ * 支持 Set、Map、RegExp、Error、Symbol 等复杂对象
  */
 export function deepClone<T>(obj: T): T {
+  // 处理原始类型和 null
   if (obj === null || typeof obj !== 'object') return obj;
+
+  // 处理 Date
   if (obj instanceof Date) return new Date(obj.getTime()) as unknown as T;
+
+  // 使用原生 structuredClone（支持更多类型，性能更好）
+  try {
+    return structuredClone(obj);
+  } catch {
+    // fallback: 手动处理不支持的类型
+  }
+
+  // 手动处理数组
   if (Array.isArray(obj)) return obj.map((item) => deepClone(item)) as unknown as T;
 
+  // 手动处理普通对象
   const cloned = {} as T;
   for (const key in obj) {
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
