@@ -38,21 +38,15 @@
 - `createStaggerChildren`/`createPageTransition` 统一为单一来源
 - TypeScript 0 errors，1571 tests passed ✅
 
-### Demo 页面组件 ✅
-- 删除 `Demo.tsx`（441行）+ 8 个专用组件（共 -2343 行）
-- 移除 `/demo` 路由、UIDemo import 和 page-preload 配置
-- 组件包括 PageContainer, PageHeader, PageSection, GridStatistic, AnimateIn, PageTransition, FileUploader
+### Demo 页面组件（待清理）
+- `Demo.tsx`（441行）+ 8 个专用组件共 ~2343 行
+- 这些组件（PageContainer, PageHeader, PageSection, GridStatistic, AnimateIn, PageTransition, FileUploader）仅被 Demo.tsx 引用
+- 如果 `/demo` 路由不需要，可整体删除
 
-### 硬编码延时常量 ✅
-- `PROCESSING_DELAY_MS`（11个命名常量）在 `general.ts` 中定义
-- `step-video-editing.ts`: 6处 delay() → PROCESSING_DELAY_MS.*
-- `video.service.ts`: 4处 delay() → PROCESSING_DELAY_MS.*
-- `useSelfReviewLoop.ts`: delay(1000) → REVIEW_RECHECK
-- 统一从 `@panel-flow/common/utils` 迁移到 `@/shared/utils`
-
-### utils/index.ts 拆分 ✅
-- 1148行 → 10个模块化文件（+ barrel index.ts）
-- general.ts (405行), format.ts, request.ts, idle-callback.ts, motion.ts, platform.ts, i18n.ts, hooks.ts, format-ui.ts, async.ts
+### 硬编码延时（待清理）
+- `step-video-editing.ts`: `delay(800/1200/1000/600/500)` 可提取为命名常量
+- `video.service.ts`: `delay(2000/1000/1500)` 同样待提取
+- 建议：统一在 `shared/utils/constants.ts` 定义 `PROCESSING_DELAY_MS`
 
 ### 代码审核问题修复（P0/P2 已完成）
 - ✅ P0: 录音 chunks 无限增长 → `RecordingController.MAX_CHUNKS=100`
