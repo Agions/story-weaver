@@ -32,10 +32,21 @@
 - 添加 `'^@panel-flow/common/(.*)$': '<rootDir>/packages/common/src/$1'` 映射
 - E2E 测试目录加入 `testPathIgnorePatterns`
 
-### 死代码清理
-- 删除 `src/presentation/`（0外部引用，2468行）
-- 删除 `src/core/pipeline/step-video-edit.ts`（孤立文件，已被 step-video-editing 替代，251行）
-- 删除后编译和测试均通过
+### 动效工具统一（代码去重）
+- `core/utils/motion.ts`（138行）→ 改为从 `shared/utils` 重新导出
+- 消除 `transitions/easings/pageVariants` 等在两处重复定义
+- `createStaggerChildren`/`createPageTransition` 统一为单一来源
+- TypeScript 0 errors，1571 tests passed ✅
+
+### Demo 页面组件（待清理）
+- `Demo.tsx`（441行）+ 8 个专用组件共 ~2343 行
+- 这些组件（PageContainer, PageHeader, PageSection, GridStatistic, AnimateIn, PageTransition, FileUploader）仅被 Demo.tsx 引用
+- 如果 `/demo` 路由不需要，可整体删除
+
+### 硬编码延时（待清理）
+- `step-video-editing.ts`: `delay(800/1200/1000/600/500)` 可提取为命名常量
+- `video.service.ts`: `delay(2000/1000/1500)` 同样待提取
+- 建议：统一在 `shared/utils/constants.ts` 定义 `PROCESSING_DELAY_MS`
 
 ### 代码审核问题修复（P0/P2 已完成）
 - ✅ P0: 录音 chunks 无限增长 → `RecordingController.MAX_CHUNKS=100`

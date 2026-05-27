@@ -2,9 +2,8 @@
  * panel-flow Shared Utils - Async Error Handling Utilities
  */
 
-// Note: These imports may need adjustment based on actual module locations
-// import { toast } from '@/shared/components/ui/Toast';
-// import { logger } from '@/core/utils/logger';
+import { toast } from '@/shared/components/ui';
+import { logger } from '@/core/utils/logger';
 
 /**
  * Wraps an async operation with standardized try-catch-toast-logger pattern.
@@ -31,7 +30,8 @@ export function toastAsync<T>(
       if (options.onSuccess) options.onSuccess(result);
       return result;
     } catch (error) {
-      console.error(options.errorMessage, error);
+      logger.error(options.errorMessage, error);
+      toast.error(options.errorMessage);
     } finally {
       if (options.onFinally) options.onFinally();
     }
@@ -53,4 +53,5 @@ export function handleAsyncError(
   options?: { toastMessage?: string }
 ): void {
   console.error(context, error);
+  toast.error(options?.toastMessage ?? context);
 }
