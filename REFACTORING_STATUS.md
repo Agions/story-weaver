@@ -51,8 +51,9 @@
 - ✅ P2: `window.__PANELFLOW_METRICS__` 全局污染 → 模块级 singleton + `getMetrics()/resetMetrics()`
 - ✅ P2: `onConfigChange` 频繁创建新对象 → `useMemo` 优化避免不必要重渲染
 - ✅ P2: 缺少 Brotli 压缩 → `vite.config.ts` 添加 `.br` 文件生成
-- ⏳ P3: 表格列工厂函数 → 建议改进，复杂度高暂不实施
-- ⏳ P3: 提高测试覆盖率 → 阈值已调整 (branches 60%, functions 65%, lines 70%, statements 70%)
+- ✅ P3: DomainEvent 版本控制 → 添加 version 字段支持事件演进
+- ✅ P3: 提高测试覆盖率 → 阈值已调整 (branches 60%, functions 65%, lines 70%, statements 70%)
+- ⏳ P3: 表格列工厂函数 → 建议改进，复杂度高暂不实施（voice/music/sfx 三处列定义相似）
 
 ### 新增工具类
 - `src/shared/utils/audio.ts` (298行)
@@ -90,5 +91,5 @@
 |------|------|
 | TypeScript 编译 | ✅ 0 errors |
 | ESLint | ✅ 0 errors, 0 warnings |
-| Jest 测试 | ✅ 1553 passed, 0 failed, 5 skipped |
-| Git 提交 | `89b70f5` fix: 修复 3 个 ESLint errors + 测试全部通过 |
+| Jest 测试 | ✅ 1571 passed, 0 failed, 4 skipped |
+| Git 提交 | `e526dfa` feat: DomainEvent 添加 version 字段支持事件演进 |
