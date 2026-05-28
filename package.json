@@ -13,6 +13,7 @@
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "prepare": "husky install",
+    "check": "pnpm run lint --quiet && pnpm exec tsc --noEmit && pnpm test --runInBand",
     "preview": "vite preview",
     "tauri": "tauri",
     "docs": "npm run docs:api && ts-node scripts/generate-docs.ts",

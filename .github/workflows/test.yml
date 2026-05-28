@@ -12,8 +12,60 @@ env:
 
 jobs:
   # ============================================================
-  # Unit + Integration Tests
+  # Parallel Quality Gates — run simultaneously
   # ============================================================
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '10'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: ESLint
+        run: pnpm run lint -- --quiet
+
+  type-check:
+    name: TypeScript
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '10'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: TypeScript check
+        run: pnpm exec tsc --noEmit
+
   unit-test:
     name: Unit Tests
     runs-on: ubuntu-latest
@@ -37,12 +89,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
-      - name: TypeScript check
-        run: pnpm exec tsc --noEmit
-
-      - name: ESLint
-        run: pnpm run lint -- --quiet
-
       - name: Run unit tests
         run: pnpm test -- --runInBand --coverage
         env:
@@ -56,14 +102,39 @@ jobs:
           path: coverage/
           retention-days: 7
 
+  build-check:
+    name: Build Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '10'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Build (no emit)
+        run: pnpm run build:check
+
   # ============================================================
-  # E2E Tests (Playwright)
+  # E2E Tests (runs in parallel with unit-test)
   # ============================================================
   e2e-test:
     name: E2E Tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs: unit-test
 
     steps:
       - name: Checkout
@@ -105,42 +176,13 @@ jobs:
           retention-days: 14
 
   # ============================================================
-  # Build check (Tauri)
-  # ============================================================
-  build-check:
-    name: Build Check
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: '10'
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
-
-      - name: Build (no emit)
-        run: pnpm run build:check
-
-  # ============================================================
-  # All tests must pass before merge
+  # All checks must pass before merge
   # ============================================================
   check:
     name: Final Check
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    needs: [unit-test, e2e-test, build-check]
+    needs: [lint, type-check, unit-test, build-check, e2e-test]
 
     steps:
       - name: All checks passed
