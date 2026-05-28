@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 env:
-  NODE_VERSION: '20'
+  NODE_VERSION: '22'
   CI: true
 
 jobs:
@@ -23,23 +23,28 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '10'
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --prefer-offline
+        run: pnpm install --no-frozen-lockfile
 
       - name: TypeScript check
-        run: npx tsc --noEmit
+        run: pnpm exec tsc --noEmit
 
       - name: ESLint
-        run: npx eslint src --ext .ts,.tsx --max-warnings=0
+        run: pnpm run lint -- --quiet
 
       - name: Run unit tests
-        run: npm test -- --runInBand --coverage
+        run: pnpm test -- --runInBand --coverage
         env:
           NODE_ENV: test
 
@@ -64,25 +69,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '10'
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --prefer-offline
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build application
-        run: npm run build
+        run: pnpm run build
         env:
           NODE_ENV: production
 
       - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: Run Playwright E2E tests
-        run: npx playwright test
+        run: pnpm exec playwright test
         env:
           PLAYWRIGHT_BASE_URL: http://localhost:4173
 
@@ -106,17 +116,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '10'
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci --prefer-offline
+        run: pnpm install --no-frozen-lockfile
 
       - name: Build (no emit)
-        run: npm run build:check
+        run: pnpm run build:check
 
   # ============================================================
   # All tests must pass before merge
