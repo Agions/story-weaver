@@ -10,7 +10,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:check": "tsc && vite build",
-    "lint": "eslint src --ext .ts,.tsx",
+    "lint": "eslint --quiet src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "prepare": "husky install",
     "check": "pnpm run lint --quiet && pnpm exec tsc --noEmit && pnpm test --runInBand",
