@@ -47,6 +47,10 @@ import { formatTime, generateId } from '@/shared/utils';
 
 import styles from './AudioEditor.module.less';
 
+import VoiceTab from './VoiceTab';
+import MusicTab from './MusicTab';
+import SfxTab from './SfxTab';
+
 // ========== 类型定义 ==========
 
 // 配音轨道类型
@@ -820,37 +824,20 @@ function AudioEditor({
               </Space>
             ),
             children: (
-              <div className={styles.tabContent}>
-                <div className={styles.toolbar}>
-                  <Space>
-                    <Button
-                      type="primary"
-                      icon={<MicOff />}
-                      onClick={isRecording ? handleStopRecording : handleStartRecording}
-                      danger={isRecording}
-                      disabled={disabled}
-                    >
-                      {isRecording ? `停止录音 (${formatTime(recordingTime)})` : '开始录音'}
-                    </Button>
-                    <Button icon={<Upload />} onClick={handleVoiceImport} disabled={disabled}>
-                      导入配音
-                    </Button>
-                  </Space>
-                </div>
-
-                {voiceTracks.length > 0 ? (
-                  <Table
-                    dataSource={voiceTracks as any}
-                    columns={voiceColumns as any}
-                    rowKey="id"
-                    size="small"
-                    pagination={false}
-                    className={styles.trackTable}
-                  />
-                ) : (
-                  <Empty image={undefined} description="暂无配音，点击上方按钮添加" />
-                )}
-              </div>
+              <VoiceTab
+                voiceTracks={voiceTracks}
+                playingVoiceId={playingVoiceId}
+                videoDuration={videoDuration}
+                disabled={disabled}
+                isRecording={isRecording}
+                recordingTime={recordingTime}
+                onVoicePlay={handleVoicePlay}
+                onVoiceRemove={handleVoiceRemove}
+                onVoiceVolumeChange={handleVoiceVolumeChange}
+                onVoiceImport={handleVoiceImport}
+                onStartRecording={handleStartRecording}
+                onStopRecording={handleStopRecording}
+              />
             ),
           },
           {
@@ -863,123 +850,22 @@ function AudioEditor({
               </Space>
             ),
             children: (
-              <div className={styles.tabContent}>
-                <div className={styles.musicSection}>
-                  {backgroundMusic ? (
-                    <Card className={styles.musicCard} size="small">
-                      <div className={styles.musicInfo}>
-                        <div className={styles.musicName}>{backgroundMusic.name}</div>
-                        <div className={styles.musicMeta}>
-                          <span>时长: {formatTime(backgroundMusic.duration)}</span>
-                          <span>
-                            循环:{' '}
-                            <Switch
-                              size="small"
-                              checked={backgroundMusic.loop}
-                              onChange={handleMusicLoopChange}
-                              disabled={disabled}
-                            />
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className={styles.musicControls}>
-                        <Button
-                          type="primary"
-                          icon={playingMusic ? <PauseCircle /> : <PlayCircle />}
-                          onClick={handleMusicPlay}
-                          disabled={disabled}
-                        >
-                          {playingMusic ? '暂停' : '播放'}
-                        </Button>
-                        <Popconfirm
-                          title="确认移除背景音乐?"
-                          onConfirm={handleMusicRemove}
-                          okText="确认"
-                          cancelText="取消"
-                        >
-                          <Button danger icon={<Trash2 />} disabled={disabled}>
-                            移除
-                          </Button>
-                        </Popconfirm>
-                      </div>
-
-                      <div className={styles.volumeControl}>
-                        <span>音量:</span>
-                        <Slider
-                          min={0}
-                          max={100}
-                          value={backgroundMusic.volume}
-                          onChange={handleMusicVolumeChange}
-                          disabled={disabled}
-                        />
-                        <span>{backgroundMusic.volume}%</span>
-                      </div>
-
-                      <div className={styles.fadeControl}>
-                        <div className={styles.fadeItem}>
-                          <span>淡入:</span>
-                          <Slider
-                            min={0}
-                            max={10}
-                            step={0.5}
-                            value={backgroundMusic.fadeIn}
-                            onChange={(value) =>
-                              setBackgroundMusic({ ...backgroundMusic, fadeIn: value })
-                            }
-                            disabled={disabled}
-                          />
-                          <span>{backgroundMusic.fadeIn}s</span>
-                        </div>
-                        <div className={styles.fadeItem}>
-                          <span>淡出:</span>
-                          <Slider
-                            min={0}
-                            max={10}
-                            step={0.5}
-                            value={backgroundMusic.fadeOut}
-                            onChange={(value) =>
-                              setBackgroundMusic({ ...backgroundMusic, fadeOut: value })
-                            }
-                            disabled={disabled}
-                          />
-                          <span>{backgroundMusic.fadeOut}s</span>
-                        </div>
-                      </div>
-                    </Card>
-                  ) : (
-                    <div className={styles.musicSelectArea}>
-                      <div className={styles.selectButtons}>
-                        <Button
-                          type="primary"
-                          icon={<Folder />}
-                          onClick={handleMusicSelect}
-                          disabled={disabled}
-                          size="large"
-                        >
-                          选择本地音乐
-                        </Button>
-                      </div>
-
-                      <div className={styles.presetSection}>
-                        <div className={styles.presetTitle}>推荐背景音乐</div>
-                        <div className={styles.presetList}>
-                          {PRESET_BGM_LIST.map((bgm) => (
-                            <Tag
-                              key={bgm.id}
-                              className={styles.presetTag}
-                              onClick={() => message.info(`将使用预设音乐: ${bgm.name}`)}
-                            >
-                              {bgm.name}
-                              <span className={styles.presetMeta}>- {bgm.category}</span>
-                            </Tag>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <MusicTab
+                backgroundMusic={backgroundMusic}
+                playingMusic={playingMusic}
+                disabled={disabled}
+                onMusicSelect={handleMusicSelect}
+                onMusicPlay={handleMusicPlay}
+                onMusicRemove={handleMusicRemove}
+                onMusicVolumeChange={handleMusicVolumeChange}
+                onMusicLoopChange={handleMusicLoopChange}
+                onFadeInChange={(value) =>
+                  setBackgroundMusic({ ...backgroundMusic!, fadeIn: value })
+                }
+                onFadeOutChange={(value) =>
+                  setBackgroundMusic({ ...backgroundMusic!, fadeOut: value })
+                }
+              />
             ),
           },
           {
@@ -992,44 +878,15 @@ function AudioEditor({
               </Space>
             ),
             children: (
-              <div className={styles.tabContent}>
-                <div className={styles.toolbar}>
-                  <Space>
-                    <Button icon={<Upload />} onClick={handleSfxImport} disabled={disabled}>
-                      导入音效
-                    </Button>
-                  </Space>
-                </div>
-
-                {soundEffects.length > 0 ? (
-                  <Table
-                    dataSource={soundEffects as any}
-                    columns={sfxColumns as any}
-                    rowKey="id"
-                    size="small"
-                    pagination={false}
-                    className={styles.trackTable}
-                  />
-                ) : (
-                  <Empty image={undefined} description="暂无音效，点击上方按钮添加">
-                    <div className={styles.presetSfxSection}>
-                      <div className={styles.presetTitle}>预设音效分类</div>
-                      <div className={styles.presetList}>
-                        {PRESET_SFX_LIST.map((sfx) => (
-                          <Tag
-                            key={sfx.id}
-                            className={styles.presetTag}
-                            color="blue"
-                            onClick={() => message.info(`将使用预设音效: ${sfx.name}`)}
-                          >
-                            {sfx.name}
-                          </Tag>
-                        ))}
-                      </div>
-                    </div>
-                  </Empty>
-                )}
-              </div>
+              <SfxTab
+                soundEffects={soundEffects}
+                playingSfxId={playingSfxId}
+                disabled={disabled}
+                onSfxImport={handleSfxImport}
+                onSfxPlay={handleSfxPlay}
+                onSfxRemove={handleSfxRemove}
+                onSfxVolumeChange={handleSfxVolumeChange}
+              />
             ),
           },
           {
