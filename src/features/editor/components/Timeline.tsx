@@ -304,6 +304,7 @@ function Timeline({ currentTime, duration, tracks, onTimeUpdate }: TimelineProps
             {renderTimeRuler()}
           </div>
 
+          {/* eslint-disable jsx-a11y/no-noninteractive-tabindex, jsx-a11y/no-noninteractive-element-interactions */}
           <div
             className={styles.tracksArea}
             ref={timelineRef}
