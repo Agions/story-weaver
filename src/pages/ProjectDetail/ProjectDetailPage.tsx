@@ -1,48 +1,37 @@
+/**
+ * ProjectDetail 页面 - Presenter 层
+ * 项目详情/管理页面，包含小说/剧本/分镜/角色/渲染/合成/配音/成本/导出等功能
+ */
 import {
-  Edit,
   ArrowLeft,
-  Trash2,
+  DollarSign,
   Download,
-  Plus,
+  Edit,
   FileText,
   Image,
-  User,
   PlayCircle,
+  Plus,
+  Trash2,
+  User,
   Volume2,
   Zap,
-  DollarSign,
 } from 'lucide-react';
-import React, { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { v4 as uuidv4 } from 'uuid';
 
 import { Tabs, TabPane } from '@/components/ui/tabs';
 import { Title, Text, Paragraph } from '@/components/ui/typography';
-import { Modal, Spin, Space, Empty, Alert, Button, Card } from '@/components/ui/ui-components';
-import type { EvaluationScores, FrameComment, StoryboardVersion } from '@/core/services';
-import type { VideoSegment } from '@/shared/types/script';
-import {
-  collaborationService,
-  costService,
-  qualityGateService,
-  reviewExportService,
-  tauriService,
-} from '@/core/services';
-import { runWhenIdle } from '@/core/utils/idle';
-import { logger } from '@/core/utils/logger';
+import { Modal, Spin, Space, Empty, Button, Card } from '@/components/ui/ui-components';
 import { AudioEditorPanel } from '@/features/audio/components/AudioEditorPanel';
 import { CostPanel } from '@/features/cost/components/CostPanel';
 import { ExportPanel } from '@/features/export/components/ExportPanel';
-import type { NovelMetadata } from '@/features/script/components/NovelImporter';
 import { StoryboardCollaborationPanel } from '@/features/storyboard';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
-import { toast } from '@/shared/components/ui/Toast';
-import { useProjectStore } from '@/shared/stores';
-import type { ProjectData } from '@/shared/types';
-import type { Script, ScriptSegment } from '@/shared/types/script';
 
+import { useProjectDetail } from './hooks/useProjectDetail';
 import styles from './ProjectDetail.module.less';
 
+// Lazy-loaded sub-components
 const importScriptEditor = () => import('@/features/script/components/ScriptEditor');
 const importRenderCenter = () => import('@/components/business/RenderCenter');
 const importCharacterDesigner = () => import('@/features/character/components/CharacterDesigner');
@@ -60,13 +49,28 @@ const CostDashboard = lazy(importCostDashboard);
 const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { projects, updateProject, deleteProject } = useProjectStore();
-  const [loading, setLoading] = useState(true);
-  const [project, setProject] = useState<ProjectData | null>(null);
-  const [activeScript, setActiveScript] = useState<Script | null>(null);
-  const [activeTab, setActiveTab] = useState<string>('novel');
-  const [novelMetadata, setNovelMetadata] = useState<NovelMetadata | null>(null);
-  const [selectedFrameId, setSelectedFrameId] = useState<string | undefined>(undefined);
+
+  const {
+    loading,
+    project,
+    activeScript,
+    activeTab,
+    novelMetadata,
+    selectedFrameId,
+    storyboardFrames,
+    exportQualityGate,
+    setActiveTab,
+    setActiveScript,
+    persistProjectPatch,
+    handleApplyRenderedFrame,
+    handleExportReviewNotes,
+    handleCreateScript,
+    handleScriptChange,
+    handleExportScript,
+    preloadTabModules,
+  } = useProjectDetail({ projectId: id ?? '' });
+
+  // Preload mapping (must stay in presenter for lazy import references)
   const preloadByTab = useMemo<Record<string, Array<() => Promise<unknown>>>>(
     () => ({
       novel: [importScriptEditor],
@@ -82,16 +86,20 @@ const ProjectDetail = () => {
     []
   );
 
-  const preloadTabModules = useCallback(
-    (tabKey: string) => {
-      const tasks = preloadByTab[tabKey] || [];
-      tasks.forEach((task) => {
-        void task();
-      });
-    },
-    [preloadByTab]
-  );
+  // Preload on tab change
+  useEffect(() => {
+    const tasks = preloadByTab[activeTab] || [];
+    if (tasks.length === 0) return;
 
+    const warmup = () => {
+      tasks.forEach((task) => void task());
+    };
+    // Use requestIdleCallback via runWhenIdle equivalent
+    const timerId = setTimeout(warmup, 120);
+    return () => clearTimeout(timerId);
+  }, [activeTab, preloadByTab]);
+
+  // Tab label renderer with preload trigger
   const renderTabLabel = (tabKey: string, icon: React.ReactNode, label: string) => (
     <span onMouseEnter={() => preloadTabModules(tabKey)} onFocus={() => preloadTabModules(tabKey)}>
       {icon}
@@ -99,289 +107,33 @@ const ProjectDetail = () => {
     </span>
   );
 
-  useEffect(() => {
-    const tasks = preloadByTab[activeTab] || [];
-    if (tasks.length === 0) return;
+  // Navigation helpers (not in hook to avoid circular dependency)
+  const handleGenerateScript = () => navigate(`/projects/${id}/edit`);
+  const handleDeleteProject = async () => {
+    if (!project || !id) return;
 
-    const warmup = () => preloadTabModules(activeTab);
-    return runWhenIdle(warmup, { timeoutMs: 120 });
-  }, [activeTab, preloadByTab, preloadTabModules]);
-
-  const storyboardFrames = useMemo<StoryboardFrame[]>(
-    () => (Array.isArray(project?.storyboardFrames) ? project.storyboardFrames : []),
-    [project?.storyboardFrames]
-  );
-  const evaluationSummary: EvaluationScores | undefined =
-    project?.evaluationReport?.summary ?? project?.evaluationSummary;
-  const exportQualityGate = useMemo(
-    () =>
-      qualityGateService.evaluate({
-        storyboardFrames,
-        evaluationSummary,
-      }),
-    [storyboardFrames, evaluationSummary]
-  );
-  const selectedFrame = storyboardFrames.find((frame) => frame.id === selectedFrameId) ?? null;
-
-  const persistProjectPatch = (patch: Record<string, unknown>) => {
-    if (!project) return;
-    const updatedProject = {
-      ...project,
-      ...patch,
-      updatedAt: new Date().toISOString(),
-    };
-    setProject(updatedProject);
-    updateProject(updatedProject.id, updatedProject);
-    tauriService
-      .writeText(updatedProject.id, JSON.stringify(updatedProject))
-      .catch(() => undefined);
-  };
-
-  const handleApplyRenderedFrame = (frameId: string, imageUrl: string) => {
-    if (!project) return;
-    const frames: StoryboardFrame[] = Array.isArray(project.storyboardFrames)
-      ? project.storyboardFrames
-      : [];
-    const updatedFrames = frames.map((frame) =>
-      frame.id === frameId ? { ...frame, imageUrl } : frame
-    );
-    persistProjectPatch({ storyboardFrames: updatedFrames });
-  };
-
-  useEffect(() => {
-    if (!id) return;
-
-    const currentProject = projects.find((p) => p.id === id) as ProjectData | undefined;
-    if (currentProject) {
-      setProject(currentProject);
-      if (currentProject.scripts?.length) {
-        setActiveScript(currentProject.scripts[0]);
-      }
-      if (currentProject.novelMetadata) {
-        setNovelMetadata(currentProject.novelMetadata as NovelMetadata);
-      }
-      if (
-        Array.isArray(currentProject.storyboardComments) ||
-        Array.isArray(currentProject.storyboardVersions)
-      ) {
-        collaborationService.hydrate(
-          currentProject.id,
-          (currentProject.storyboardComments ?? []) as FrameComment[],
-          (currentProject.storyboardVersions ?? []) as StoryboardVersion[]
-        );
-      }
-    } else {
-      toast.error('找不到项目信息');
-      navigate('/projects');
-    }
-
-    setLoading(false);
-  }, [id, projects, navigate]);
-
-  useEffect(() => {
-    if (storyboardFrames.length === 0) {
-      setSelectedFrameId(undefined);
-      return;
-    }
-    if (!selectedFrameId || !storyboardFrames.some((frame) => frame.id === selectedFrameId)) {
-      setSelectedFrameId(storyboardFrames[0].id);
-    }
-  }, [storyboardFrames, selectedFrameId, setSelectedFrameId]);
-
-  const handleExportReviewNotes = async () => {
-    if (!project?.id) return;
-    try {
-      const projectComments = collaborationService.listComments(project.id);
-      const projectVersions = collaborationService.listVersions(project.id);
-      const projectCostStats = costService.getProjectStats(project.id);
-      const projectCostRecords = costService.getRecords(project.id).slice(0, 30);
-      const content = reviewExportService.toMarkdown({
-        project: {
-          id: project.id,
-          name: project.name,
-          storyboardFrameCount: storyboardFrames.length,
+    const confirmed = await new Promise<boolean>((resolve) => {
+      Modal.confirm({
+        title: '确认删除',
+        content: '确定要删除此项目吗？此操作不可撤销。',
+        okText: '删除',
+        okType: 'danger',
+        cancelText: '取消',
+        onOk: () => {
+          resolve(true);
         },
-        comments: projectComments,
-        versions: projectVersions,
-        costStats: projectCostStats,
-        costRecords: projectCostRecords,
-        evaluationSummary,
+        onCancel: () => {
+          resolve(false);
+        },
       });
-      const saved = await reviewExportService.saveMarkdownToFile(
-        `${project.name}_评审记录.md`,
-        content,
-        {
-          projectId: project.id,
-          projectName: project.name,
-          source: 'project_detail',
-        }
-      );
-      if (saved) {
-        toast.success('评审记录导出成功');
-      }
-    } catch (error) {
-      logger.error('导出评审记录失败:', error);
-      toast.error('导出评审记录失败');
-    }
-  };
-
-  const handleCreateScript = () => {
-    if (!project) return;
-
-    try {
-      const newScript: Script = {
-        id: uuidv4(),
-        title: '新剧本',
-        content: '',
-        segments: [],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-
-      const updatedProject = {
-        ...project,
-        scripts: [...(project.scripts ?? []), newScript],
-        updatedAt: new Date().toISOString(),
-      };
-
-      // 先更新UI
-      setProject(updatedProject);
-      setActiveScript(newScript);
-
-      // 保存到文件，显示loading
-      toast.loading('正在保存剧本...');
-      tauriService
-        .writeText(updatedProject.id, JSON.stringify(updatedProject))
-        .then(() => {
-          updateProject(updatedProject.id, updatedProject);
-          toast.success('剧本创建成功');
-        })
-        .catch((error) => {
-          logger.error('保存项目文件失败:', error);
-          toast.error('保存项目文件失败: ' + (error instanceof Error ? error.message : '未知错误'));
-          // 回滚UI状态
-          setProject(project);
-          setActiveScript(project.scripts?.[0] ?? null);
-        });
-    } catch (error) {
-      logger.error('创建剧本失败:', error);
-      toast.error('创建剧本失败');
-    }
-  };
-
-  // 跳转到项目编辑页面生成剧本
-  const handleGenerateScript = () => {
-    navigate(`/projects/${id}/edit`);
-  };
-
-  const handleScriptChange = (segments: VideoSegment[]) => {
-    if (!project || !activeScript) return;
-
-    try {
-      // 更新脚本内容
-      const updatedScript = {
-        ...activeScript,
-        segments: segments.map(seg => ({
-          id: seg.id,
-          startTime: seg.start,
-          endTime: seg.end,
-          content: seg.content ?? '',
-          type: seg.type as 'narration' | 'dialogue' | 'action' | 'transition',
-        })),
-        updatedAt: new Date().toISOString(),
-      };
-
-      // 更新脚本列表
-      const updatedScripts = (project.scripts ?? []).map((script: Script) =>
-        script.id === activeScript.id ? updatedScript : script
-      );
-
-      // 更新项目
-      const updatedProject = {
-        ...project,
-        scripts: updatedScripts,
-        updatedAt: new Date().toISOString(),
-      };
-
-      // 先更新UI
-      setProject(updatedProject);
-      setActiveScript(updatedScript);
-
-      // 保存到文件
-      tauriService
-        .writeText(updatedProject.id, JSON.stringify(updatedProject))
-        .then(() => {
-          updateProject(updatedProject.id, updatedProject);
-          toast.success('脚本内容已保存');
-        })
-        .catch((error) => {
-          logger.error('保存项目文件失败:', error);
-          toast.error('保存项目文件失败: ' + (error instanceof Error ? error.message : '未知错误'));
-          // 回滚UI状态
-          setProject(project);
-          setActiveScript(activeScript);
-        });
-    } catch (error) {
-      logger.error('更新脚本内容失败:', error);
-      toast.error('更新脚本内容失败');
-    }
-  };
-
-  const handleExportScript = async () => {
-    if (!project || !activeScript) {
-      toast.warning('没有可导出的剧本');
-      return;
-    }
-
-    try {
-      // 创建剧本文本内容
-      const scriptContent =
-        activeScript.segments
-          ?.map((segment: ScriptSegment, index: number) => {
-            return `【第${index + 1}幕】\n${segment.content ?? ''}\n`;
-          })
-          .join('\n') ?? '';
-
-      // 使用 Tauri 命令保存文件
-      const { invoke } = await import('@tauri-apps/api/core');
-      const filePath = await invoke<string>('save_file_dialog', {
-        defaultPath: `${project.name}_剧本.txt`,
-        filters: [{ name: 'Text Files', extensions: ['txt'] }],
-      });
-
-      if (filePath) {
-        await invoke('write_text_file', {
-          path: filePath,
-          content: scriptContent,
-        });
-        toast.success('剧本导出成功');
-      }
-    } catch (error) {
-      logger.error('导出剧本失败:', error);
-      toast.error('导出剧本失败');
-    }
-  };
-
-  const handleDeleteProject = () => {
-    Modal.confirm({
-      title: '确认删除',
-      content: '确定要删除此项目吗？此操作不可撤销。',
-      okText: '删除',
-      okType: 'danger',
-      cancelText: '取消',
-      onOk: async () => {
-        if (!id) return;
-
-        try {
-          deleteProject(id);
-          toast.success('项目已删除');
-          navigate('/projects');
-        } catch (error) {
-          logger.error('删除项目失败:', error);
-          toast.error('删除项目失败');
-        }
-      },
     });
+
+    if (!confirmed) return;
+
+    void handleDeleteProject();
+    const { toast } = await import('@/shared/components/ui/Toast');
+    toast.success('项目已删除');
+    navigate('/projects');
   };
 
   if (loading) {
@@ -502,24 +254,28 @@ const ProjectDetail = () => {
                   <Tabs
                     activeKey={activeScript?.id}
                     onChange={(key) => {
-                      const script = (project.scripts ?? []).find((s: Script) => s.id === key);
+                      const script = (project.scripts ?? []).find((s) => s.id === key);
                       if (script) setActiveScript(script);
                     }}
                   >
-                    {project.scripts.map((script: Script) => (
+                    {project.scripts.map((script) => (
                       <TabPane
                         key={script.id}
                         tab={`剧本 ${new Date(script.createdAt).toLocaleDateString()}`}
                       >
                         <Suspense fallback={<Spin />}>
                           <ScriptEditor
-                            segments={script.segments ? script.segments.map(seg => ({
-                              id: seg.id,
-                              start: seg.startTime,
-                              end: seg.endTime,
-                              type: seg.type,
-                              content: seg.content,
-                            })) : []}
+                            segments={
+                              script.segments
+                                ? script.segments.map((seg) => ({
+                                    id: seg.id,
+                                    start: seg.startTime,
+                                    end: seg.endTime,
+                                    type: seg.type,
+                                    content: seg.content,
+                                  }))
+                                : []
+                            }
                             onSegmentsChange={handleScriptChange}
                           />
                         </Suspense>
@@ -548,7 +304,7 @@ const ProjectDetail = () => {
                       projectId={project?.id ?? ''}
                       storyboardFrames={storyboardFrames}
                       selectedFrameId={selectedFrameId}
-                      onSelectFrame={setSelectedFrameId}
+                      onSelectFrame={(id) => id}
                       onPersistPatch={persistProjectPatch}
                       onFrameUpdate={(frames) => persistProjectPatch({ storyboardFrames: frames })}
                     />
