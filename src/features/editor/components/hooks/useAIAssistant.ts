@@ -1,0 +1,190 @@
+/**
+ * useAIAssistant — AIAssistant Container Hook
+ *
+ * 职责：
+ * - 所有 useState 状态管理（16个状态）
+ * - 业务逻辑函数（sendMessage/generateSubtitles/smartCut）
+ * - 渲染逻辑（renderMessages）
+ * - 无任何 JSX 直接渲染
+ */
+
+import { useState, useCallback } from 'react';
+
+import type {
+  AIAssistantState,
+  AIAssistantActions,
+  ChatMessage,
+  AIAssistantTab,
+  UseAIAssistantReturn,
+} from '../../types/ai-assistant.entities';
+import { AI_MODELS, LANGUAGES } from '../../types/ai-assistant.entities';
+
+type SubtitleFormat = 'srt' | 'vtt' | 'ass';
+type SmartCutMode = 'content' | 'pace' | 'compact' | 'highlight';
+type TargetDuration = 'auto' | '30' | '60' | '120' | 'custom';
+
+export function useAIAssistant(): UseAIAssistantReturn {
+  // ── Tab state ─────────────────────────────────────────────
+  const [activeTab, setActiveTab] = useState<AIAssistantTab>('chat');
+
+  // ── Chat state ─────────────────────────────────────────────
+  const [prompt, setPrompt] = useState('');
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      role: 'ai',
+      content:
+        '您好!我是您的AI视频助手。我可以帮助您生成字幕、智能剪辑片段、提供内容建议以及增强视频效果。请告诉我您需要什么帮助?',
+      time: new Date(),
+    },
+  ]);
+  const [selectedModel, setSelectedModel] = useState('gpt-4o');
+  const [processing, setProcessing] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  // ── Subtitle state ────────────────────────────────────────
+  const [selectedLang, setSelectedLang] = useState('zh');
+  const [subtitleFormat, setSubtitleFormat] = useState<SubtitleFormat>('srt');
+  const [autoSegment, setAutoSegment] = useState(true);
+  const [filterFiller, setFilterFiller] = useState(true);
+  const [precision, setPrecision] = useState(80);
+  const [translateLang, setTranslateLang] = useState('');
+
+  // ── SmartCut state ────────────────────────────────────────
+  const [smartCutMode, setSmartCutMode] = useState<SmartCutMode>('content');
+  const [targetDuration, setTargetDuration] = useState<TargetDuration>('auto');
+  const [removeSilence, setRemoveSilence] = useState(true);
+  const [optimizeTransition, setOptimizeTransition] = useState(true);
+  const [keyContentPriority, setKeyContentPriority] = useState(70);
+  const [sceneSensitivity, setSceneSensitivity] = useState(50);
+
+  // ── Business logic ────────────────────────────────────────
+
+  /** 发送消息 */
+  const sendMessage = useCallback(() => {
+    if (!prompt.trim()) return;
+
+    const userMessage: ChatMessage = {
+      role: 'user',
+      content: prompt,
+      time: new Date(),
+    };
+    setMessages((prev) => [...prev, userMessage]);
+    setPrompt('');
+
+    setProcessing(true);
+    setTimeout(() => {
+      const aiResponse: ChatMessage = {
+        role: 'ai',
+        content: `我将帮您完成"${prompt.substring(0, 30)}${prompt.length > 30 ? '...' : ''}"。正在处理您的请求...`,
+        time: new Date(),
+      };
+      setMessages((prev) => [...prev, aiResponse]);
+      setProcessing(false);
+    }, 1500);
+  }, [prompt]);
+
+  /** 键盘事件处理 */
+  const handleKeyPress = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    },
+    [sendMessage]
+  );
+
+  /** 生成字幕 */
+  const generateSubtitles = useCallback(() => {
+    setProcessing(true);
+
+    let currentProgress = 0;
+    const interval = setInterval(() => {
+      currentProgress += 5;
+      setProgress(currentProgress);
+
+      if (currentProgress >= 100) {
+        clearInterval(interval);
+        setProcessing(false);
+
+        const resultMessage: ChatMessage = {
+          role: 'ai',
+          content: '已成功生成字幕!字幕已经添加到时间轴上,您可以在编辑器中查看和修改。',
+          time: new Date(),
+        };
+        setMessages((prev) => [...prev, resultMessage]);
+      }
+    }, 300);
+  }, []);
+
+  /** 智能剪辑 */
+  const smartCut = useCallback(() => {
+    setProcessing(true);
+
+    let currentProgress = 0;
+    const interval = setInterval(() => {
+      currentProgress += 3;
+      setProgress(currentProgress);
+
+      if (currentProgress >= 100) {
+        clearInterval(interval);
+        setProcessing(false);
+
+        const resultMessage: ChatMessage = {
+          role: 'ai',
+          content: '智能剪辑完成!已为您移除了沉默部分并优化了节奏。可以在时间轴上查看剪辑结果。',
+          time: new Date(),
+        };
+        setMessages((prev) => [...prev, resultMessage]);
+      }
+    }, 200);
+  }, []);
+
+  // ── Derived data (not state) ──────────────────────────────
+
+  const models = AI_MODELS;
+  const languages = LANGUAGES;
+
+  // ── Return full state + actions ────────────────────────────
+  return {
+    // State
+    activeTab,
+    prompt,
+    messages,
+    selectedModel,
+    selectedLang,
+    subtitleFormat,
+    autoSegment,
+    filterFiller,
+    precision,
+    translateLang,
+    smartCutMode,
+    targetDuration,
+    removeSilence,
+    optimizeTransition,
+    keyContentPriority,
+    sceneSensitivity,
+    processing,
+    progress,
+    // Actions
+    setActiveTab,
+    setPrompt,
+    sendMessage,
+    handleKeyPress,
+    setSelectedModel,
+    generateSubtitles,
+    setSelectedLang,
+    setSubtitleFormat,
+    setAutoSegment,
+    setFilterFiller,
+    setPrecision,
+    setTranslateLang,
+    smartCut,
+    setSmartCutMode,
+    setTargetDuration,
+    setRemoveSilence,
+    setOptimizeTransition,
+    setKeyContentPriority,
+    setSceneSensitivity,
+  };
+}

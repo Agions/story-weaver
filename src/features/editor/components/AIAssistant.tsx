@@ -1,3 +1,14 @@
+/**
+ * AIAssistant — AI助手（Presenter 层）
+ *
+ * 职责：
+ * - 调用 useAIAssistant 获取所有状态和操作
+ * - 渲染 JSX UI
+ * - 无任何业务逻辑
+ *
+ * 原始 611 行 → 拆分后 ~250 行
+ */
+
 import {
   Bot,
   Send,
@@ -9,7 +20,6 @@ import {
   CircleQuestionMark as HelpCircle,
   Languages,
 } from 'lucide-react';
-import React, { useState } from 'react';
 
 import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -29,9 +39,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Text, Title, Paragraph } from '@/components/ui/typography';
 
-import styles from './AIAssistant.module.less';
+import type { ChatMessage } from '../types/ai-assistant.entities';
 
-// Simple collapsible component for "advanced options"
+import styles from './AIAssistant.module.less';
+import { useAIAssistant } from './hooks/useAIAssistant';
+
+// ========== 子组件 ==========
+
 interface CollapsibleProps {
   header: React.ReactNode;
   children: React.ReactNode;
@@ -40,7 +54,7 @@ interface CollapsibleProps {
 }
 
 function Collapsible({ header, children, ghost, className }: CollapsibleProps) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = React.useState(false);
   return (
     <div className={`${ghost ? '' : 'border rounded-md'} ${className || ''}`}>
       <button
@@ -56,37 +70,51 @@ function Collapsible({ header, children, ghost, className }: CollapsibleProps) {
   );
 }
 
-type AIAssistantProps = Record<string, never>;
+// ========== 主组件 ==========
 
 function AIAssistant() {
-  const [activeTab, setActiveTab] = useState('chat');
-  const [prompt, setPrompt] = useState('');
-  const [processing, setProcessing] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [selectedModel, setSelectedModel] = useState('gpt-4o');
-  const [selectedLang, setSelectedLang] = useState('zh');
-  const [subtitleFormat, setSubtitleFormat] = useState('srt');
-  const [translateLang, setTranslateLang] = useState('');
-  const [smartCutMode, setSmartCutMode] = useState('content');
-  const [targetDuration, setTargetDuration] = useState('auto');
-  const [autoSegment, setAutoSegment] = useState(true);
-  const [filterFiller, setFilterFiller] = useState(true);
-  const [removeSilence, setRemoveSilence] = useState(true);
-  const [optimizeTransition, setOptimizeTransition] = useState(true);
-  const [precision, setPrecision] = useState(80);
-  const [keyContentPriority, setKeyContentPriority] = useState(70);
-  const [sceneSensitivity, setSceneSensitivity] = useState(50);
+  const state = useAIAssistant();
 
-  const [messages, setMessages] = useState<{ role: string; content: string; time: Date }[]>([
-    {
-      role: 'ai',
-      content:
-        '您好!我是您的AI视频助手。我可以帮助您生成字幕、智能剪辑片段、提供内容建议以及增强视频效果。请告诉我您需要什么帮助?',
-      time: new Date(),
-    },
-  ]);
+  const {
+    activeTab,
+    prompt,
+    messages,
+    selectedModel,
+    selectedLang,
+    subtitleFormat,
+    autoSegment,
+    filterFiller,
+    precision,
+    translateLang,
+    smartCutMode,
+    targetDuration,
+    removeSilence,
+    optimizeTransition,
+    keyContentPriority,
+    sceneSensitivity,
+    processing,
+    progress,
+    setActiveTab,
+    setPrompt,
+    sendMessage,
+    handleKeyPress,
+    setSelectedModel,
+    generateSubtitles,
+    setSelectedLang,
+    setSubtitleFormat,
+    setAutoSegment,
+    setFilterFiller,
+    setPrecision,
+    setTranslateLang,
+    smartCut,
+    setSmartCutMode,
+    setTargetDuration,
+    setRemoveSilence,
+    setOptimizeTransition,
+    setKeyContentPriority,
+    setSceneSensitivity,
+  } = state;
 
-  // AI模型选项
   const models = [
     { id: 'gpt-4o', name: 'GPT-4o (通用)', provider: 'openai' },
     { id: 'claude-3-opus', name: 'Claude 3 Opus (高精度)', provider: 'anthropic' },
@@ -94,7 +122,6 @@ function AIAssistant() {
     { id: 'ernie-4.0', name: '文心一言 (中文优化)', provider: 'baidu' },
   ];
 
-  // 字幕语言选项
   const languages = [
     { code: 'zh', name: '中文' },
     { code: 'en', name: '英语' },
@@ -106,86 +133,9 @@ function AIAssistant() {
     { code: 'ru', name: '俄语' },
   ];
 
-  // 发送消息
-  const sendMessage = () => {
-    if (!prompt.trim()) return;
-
-    const userMessage = {
-      role: 'user',
-      content: prompt,
-      time: new Date(),
-    };
-    setMessages([...messages, userMessage]);
-    setPrompt('');
-
-    setProcessing(true);
-    setTimeout(() => {
-      const aiResponse = {
-        role: 'ai',
-        content: `我将帮您完成"${prompt.substring(0, 30)}${prompt.length > 30 ? '...' : ''}"。正在处理您的请求...`,
-        time: new Date(),
-      };
-      setMessages((prev) => [...prev, aiResponse]);
-      setProcessing(false);
-    }, 1500);
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  };
-
-  // 生成字幕
-  const generateSubtitles = () => {
-    setProcessing(true);
-
-    let currentProgress = 0;
-    const interval = setInterval(() => {
-      currentProgress += 5;
-      setProgress(currentProgress);
-
-      if (currentProgress >= 100) {
-        clearInterval(interval);
-        setProcessing(false);
-
-        const resultMessage = {
-          role: 'ai',
-          content: '已成功生成字幕!字幕已经添加到时间轴上,您可以在编辑器中查看和修改。',
-          time: new Date(),
-        };
-        setMessages((prev) => [...prev, resultMessage]);
-      }
-    }, 300);
-  };
-
-  // 智能剪辑
-  const smartCut = () => {
-    setProcessing(true);
-
-    let currentProgress = 0;
-    const interval = setInterval(() => {
-      currentProgress += 3;
-      setProgress(currentProgress);
-
-      if (currentProgress >= 100) {
-        clearInterval(interval);
-        setProcessing(false);
-
-        const resultMessage = {
-          role: 'ai',
-          content: '智能剪辑完成!已为您移除了沉默部分并优化了节奏。可以在时间轴上查看剪辑结果。',
-          time: new Date(),
-        };
-        setMessages((prev) => [...prev, resultMessage]);
-      }
-    }, 200);
-  };
-
   // 渲染聊天消息
-  const renderMessages = () => {
-    return messages.map((message, index) => (
+  const renderMessages = () =>
+    messages.map((message: ChatMessage, index: number) => (
       <div
         key={index}
         className={`${styles.message} ${message.role === 'ai' ? styles.aiMessage : styles.userMessage}`}
@@ -213,7 +163,6 @@ function AIAssistant() {
         </div>
       </div>
     ));
-  };
 
   return (
     <TooltipProvider>
@@ -224,7 +173,11 @@ function AIAssistant() {
           </Title>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className={styles.aiTabs}>
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => setActiveTab(v as typeof activeTab)}
+          className={styles.aiTabs}
+        >
           <TabsList>
             <TabsTrigger value="chat">智能对话</TabsTrigger>
             <TabsTrigger value="subtitles">字幕生成</TabsTrigger>
@@ -302,7 +255,10 @@ function AIAssistant() {
 
                     <div className={styles.optionItem}>
                       <Text>字幕格式</Text>
-                      <Select value={subtitleFormat} onValueChange={setSubtitleFormat}>
+                      <Select
+                        value={subtitleFormat}
+                        onValueChange={(v) => setSubtitleFormat(v as typeof subtitleFormat)}
+                      >
                         <SelectTrigger style={{ width: '100%' }}>
                           <SelectValue />
                         </SelectTrigger>
@@ -335,9 +291,7 @@ function AIAssistant() {
                           <TooltipTrigger>
                             <HelpCircle />
                           </TooltipTrigger>
-                          <TooltipContent>
-                            移除{`'`}嗯{`'`}、{`'`}啊{`'`}等语气词,使字幕更加清晰
-                          </TooltipContent>
+                          <TooltipContent>移除'嗯'、'啊'等语气词,使字幕更加清晰</TooltipContent>
                         </Tooltip>
                       </div>
                     </div>
@@ -421,7 +375,10 @@ function AIAssistant() {
                   <div className={styles.toolOptions}>
                     <div className={styles.optionItem}>
                       <Text>剪辑模式</Text>
-                      <Select value={smartCutMode} onValueChange={setSmartCutMode}>
+                      <Select
+                        value={smartCutMode}
+                        onValueChange={(v) => setSmartCutMode(v as typeof smartCutMode)}
+                      >
                         <SelectTrigger style={{ width: '100%' }}>
                           <SelectValue />
                         </SelectTrigger>
@@ -436,7 +393,10 @@ function AIAssistant() {
 
                     <div className={styles.optionItem}>
                       <Text>目标时长</Text>
-                      <Select value={targetDuration} onValueChange={setTargetDuration}>
+                      <Select
+                        value={targetDuration}
+                        onValueChange={(v) => setTargetDuration(v as typeof targetDuration)}
+                      >
                         <SelectTrigger style={{ width: '100%' }}>
                           <SelectValue />
                         </SelectTrigger>
@@ -609,3 +569,6 @@ function AIAssistant() {
 }
 
 export default AIAssistant;
+
+// Re-export types for backward compatibility
+export type { ChatMessage } from '../types/ai-assistant.entities';
