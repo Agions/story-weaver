@@ -1,19 +1,9 @@
 /**
- * 字幕编辑器组件
+ * 字幕编辑器组件 - Presenter 层
  * 提供字幕文本编辑、样式配置、预览等功能
  */
-
-import {
-  Type,
-  Palette,
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  Plus,
-  Trash2,
-  Copy,
-} from 'lucide-react';
-import React, { useState } from 'react';
+import { AlignLeft, AlignCenter, AlignRight, Copy, Plus, Trash2 } from 'lucide-react';
+import React from 'react';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -33,9 +23,17 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Text } from '@/components/ui/typography';
 import { formatTime } from '@/shared/utils';
 
+import { useSubtitleEditor } from './hooks/useSubtitleEditor';
 import styles from './SubtitleEditor.module.less';
+import type { SubtitleItem, SubtitleStyle } from './types/subtitle.entities';
+import {
+  ALIGNMENT_OPTIONS,
+  DEFAULT_SUBTITLE_STYLE,
+  FONT_FAMILY_OPTIONS,
+  POSITION_OPTIONS,
+} from './types/subtitle.entities';
 
-// Simple ColorPicker using HTML color input
+// ColorPicker - uses HTML color input
 interface ColorPickerProps {
   value?: string;
   onChange?: (color: { toHexString: () => string }) => void;
@@ -60,90 +58,17 @@ function ColorPicker({ value = '#ffffff', onChange, disabled }: ColorPickerProps
   );
 }
 
-// ============================================
-// 类型定义
-// ============================================
-
-export interface SubtitleItem {
-  id: string;
-  startTime: number;
-  endTime: number;
-  text: string;
-  style?: SubtitleStyle;
-}
-
-export interface SubtitleStyle {
-  fontFamily: string;
-  fontSize: number;
-  color: string;
-  backgroundColor: string;
-  outline: boolean;
-  outlineColor: string;
-  position: 'top' | 'middle' | 'bottom';
-  alignment: 'left' | 'center' | 'right';
-}
-
-export interface SubtitleEditorProps {
-  /** 字幕列表 */
+interface SubtitleEditorProps {
   subtitles: SubtitleItem[];
-  /** 字幕变化回调 */
   onChange: (subtitles: SubtitleItem[]) => void;
-  /** 当前播放时间（用于高亮当前字幕） */
   currentTime?: number;
-  /** 视频宽度（用于预览） */
   videoWidth?: number;
-  /** 视频高度（用于预览） */
   videoHeight?: number;
-  /** 是否显示预览 */
   showPreview?: boolean;
-  /** 只读模式 */
   readonly?: boolean;
-  /** 自定义类名 */
   className?: string;
 }
 
-// 默认字幕样式
-const defaultStyle: SubtitleStyle = {
-  fontFamily: 'Microsoft YaHei',
-  fontSize: 24,
-  color: '#ffffff',
-  backgroundColor: 'transparent',
-  outline: true,
-  outlineColor: '#000000',
-  position: 'bottom',
-  alignment: 'center',
-};
-
-// 字体选项
-const fontFamilyOptions = [
-  { label: '微软雅黑', value: 'Microsoft YaHei' },
-  { label: '黑体', value: 'SimHei' },
-  { label: '楷体', value: 'KaiTi' },
-  { label: '苹方', value: 'PingFang SC' },
-  { label: '思源黑体', value: 'Source Han Sans SC' },
-];
-
-// 位置选项
-const positionOptions = [
-  { label: '顶部', value: 'top' },
-  { label: '中间', value: 'middle' },
-  { label: '底部', value: 'bottom' },
-];
-
-// 对齐选项
-const alignmentOptions = [
-  { label: <AlignLeft />, value: 'left' },
-  { label: <AlignCenter />, value: 'center' },
-  { label: <AlignRight />, value: 'right' },
-];
-
-// ============================================
-// 字幕编辑器组件
-// ============================================
-
-/**
- * 字幕编辑器组件
- */
 export function SubtitleEditor({
   subtitles,
   onChange,
@@ -154,86 +79,21 @@ export function SubtitleEditor({
   readonly = false,
   className,
 }: SubtitleEditorProps) {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [editingText, setEditingText] = useState<string>('');
-  const [previewStyle, setPreviewStyle] = useState<SubtitleStyle>(defaultStyle);
+  const {
+    selectedId,
+    editingText,
+    previewStyle,
+    selectedSubtitle,
+    activeSubtitle,
+    updateSubtitle,
+    updateStyle,
+    addSubtitle,
+    deleteSubtitle,
+    duplicateSubtitle,
+    selectSubtitle,
+  } = useSubtitleEditor({ subtitles, onChange, currentTime, videoWidth, videoHeight });
 
-  // 选中的字幕
-  const selectedSubtitle = subtitles.find((s) => s.id === selectedId);
-
-  // 当前高亮的字幕（根据播放时间）
-  const activeSubtitle = subtitles.find(
-    (s) => currentTime >= s.startTime && currentTime <= s.endTime
-  );
-
-  // 更新字幕列表
-  const updateSubtitle = (id: string, updates: Partial<SubtitleItem>) => {
-    const newSubtitles = subtitles.map((s) => (s.id === id ? { ...s, ...updates } : s));
-    onChange(newSubtitles);
-  };
-
-  // 更新字幕样式
-  const updateStyle = (updates: Partial<SubtitleStyle>) => {
-    if (!selectedId) return;
-    const newStyle = { ...previewStyle, ...updates };
-    setPreviewStyle(newStyle);
-
-    const newSubtitles = subtitles.map((s) =>
-      s.id === selectedId ? { ...s, style: newStyle } : s
-    );
-    onChange(newSubtitles);
-  };
-
-  // 添加新字幕
-  const addSubtitle = () => {
-    const newSubtitle: SubtitleItem = {
-      id: `subtitle-${Date.now()}`,
-      startTime: currentTime,
-      endTime: currentTime + 3,
-      text: '新字幕',
-      style: { ...defaultStyle },
-    };
-    onChange([...subtitles, newSubtitle]);
-    setSelectedId(newSubtitle.id);
-    setEditingText(newSubtitle.text);
-    setPreviewStyle(newSubtitle.style || defaultStyle);
-  };
-
-  // 删除字幕
-  const deleteSubtitle = (id: string) => {
-    const newSubtitles = subtitles.filter((s) => s.id !== id);
-    onChange(newSubtitles);
-    if (selectedId === id) {
-      setSelectedId(null);
-    }
-  };
-
-  // 复制字幕
-  const duplicateSubtitle = (subtitle: SubtitleItem) => {
-    const newSubtitle: SubtitleItem = {
-      ...subtitle,
-      id: `subtitle-${Date.now()}`,
-      startTime: subtitle.endTime,
-      endTime: subtitle.endTime + (subtitle.endTime - subtitle.startTime),
-    };
-    const index = subtitles.findIndex((s) => s.id === subtitle.id);
-    const newSubtitles = [
-      ...subtitles.slice(0, index + 1),
-      newSubtitle,
-      ...subtitles.slice(index + 1),
-    ];
-    onChange(newSubtitles);
-    setSelectedId(newSubtitle.id);
-  };
-
-  // 选择字幕
-  const handleSelect = (subtitle: SubtitleItem) => {
-    setSelectedId(subtitle.id);
-    setEditingText(subtitle.text);
-    setPreviewStyle(subtitle.style || defaultStyle);
-  };
-
-  // 字幕预览渲染
+  // 预览字幕渲染
   const renderPreview = () => {
     const active = activeSubtitle || selectedSubtitle;
     if (!active) return null;
@@ -241,7 +101,6 @@ export function SubtitleEditor({
     const style = active.style || previewStyle;
     const positionY =
       style.position === 'top' ? '10%' : style.position === 'middle' ? '50%' : '90%';
-    const textAlign = style.alignment;
 
     return (
       <div
@@ -251,11 +110,11 @@ export function SubtitleEditor({
           fontSize: `${style.fontSize}px`,
           color: style.color,
           backgroundColor: style.backgroundColor,
-          textAlign: textAlign as 'left' | 'center' | 'right',
+          textAlign: style.alignment,
           top: positionY,
           WebkitTextStroke: style.outline ? `1px ${style.outlineColor}` : undefined,
           textShadow: style.outline
-            ? `-1px -1px 0 ${style.outlineColor}, 1px -1px 0 ${style.outlineColor}, -1px 1px 0 ${style.outlineColor}, 1px 1px 0 ${style.outlineColor}`
+            ? `-1px -1px 0 ${style.outlineColor},1px -1px 0 ${style.outlineColor},-1px 1px 0 ${style.outlineColor},1px 1px 0 ${style.outlineColor}`
             : undefined,
         }}
       >
@@ -279,11 +138,9 @@ export function SubtitleEditor({
                 maxHeight: 300,
               }}
             >
-              {/* 预览背景 */}
               <div className={styles.previewBg}>
                 <Text type="secondary">视频预览区域</Text>
               </div>
-              {/* 字幕渲染 */}
               {renderPreview()}
             </div>
           </div>
@@ -322,16 +179,12 @@ export function SubtitleEditor({
                           ? 'bg-primary/10'
                           : ''
                       }`}
-                      onClick={() => handleSelect(subtitle)}
+                      onClick={() => selectSubtitle(subtitle)}
                     >
                       <div className={styles.subtitleInfo}>
-                        <Badge variant="outline">
-                          {formatTime(subtitle.startTime, { ms: 2 })}
-                        </Badge>
+                        <Badge variant="outline">{formatTime(subtitle.startTime, { ms: 2 })}</Badge>
                         <span className={styles.subtitleText}>{subtitle.text}</span>
-                        <Badge variant="outline">
-                          {formatTime(subtitle.endTime, { ms: 2 })}
-                        </Badge>
+                        <Badge variant="outline">{formatTime(subtitle.endTime, { ms: 2 })}</Badge>
                       </div>
                       {!readonly && (
                         <div className="flex items-center gap-1">
@@ -408,12 +261,7 @@ export function SubtitleEditor({
                     disabled={readonly}
                   />
                   <Text type="secondary" style={{ marginLeft: 8 }}>
-                    (
-                    {formatTime(
-                      selectedSubtitle.endTime - selectedSubtitle.startTime,
-                      { ms: 2 }
-                    )}
-                    )
+                    ({formatTime(selectedSubtitle.endTime - selectedSubtitle.startTime, { ms: 2 })})
                   </Text>
                 </div>
 
@@ -427,134 +275,131 @@ export function SubtitleEditor({
                       updateSubtitle(selectedSubtitle.id, { text: e.target.value });
                     }}
                     rows={2}
-                    placeholder="输入字幕文本"
                     disabled={readonly}
                   />
                 </div>
 
-                <Separator />
+                {/* 样式设置 */}
+                <div className={styles.styleSection}>
+                  <Text type="secondary">样式:</Text>
+                  <div className={styles.styleGrid}>
+                    {/* 字体 */}
+                    <div className={styles.styleItem}>
+                      <Text type="secondary" className="text-xs">
+                        字体
+                      </Text>
+                      <Select
+                        value={previewStyle.fontFamily}
+                        onValueChange={(v) => updateStyle({ fontFamily: v })}
+                        disabled={readonly}
+                      >
+                        <SelectTrigger className="h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {FONT_FAMILY_OPTIONS.map((opt) => (
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                {/* 字体设置 */}
-                <div className={styles.styleRow}>
-                  <Text type="secondary">
-                    <Type /> 字体:
-                  </Text>
-                  <Select
-                    value={previewStyle.fontFamily}
-                    onValueChange={(value) => updateStyle({ fontFamily: value })}
-                  >
-                    <SelectTrigger style={{ width: 150 }}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {fontFamilyOptions.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Text type="secondary">大小:</Text>
-                  <Slider
-                    min={12}
-                    max={72}
-                    value={previewStyle.fontSize}
-                    onValueChange={(value) =>
-                      updateStyle({ fontSize: Array.isArray(value) ? value[0] : value })
-                    }
-                    style={{ width: 100 }}
-                    disabled={readonly}
-                  />
-                  <Text>{previewStyle.fontSize}px</Text>
-                </div>
+                    {/* 字号 */}
+                    <div className={styles.styleItem}>
+                      <Text type="secondary" className="text-xs">
+                        字号
+                      </Text>
+                      <div className="flex items-center gap-2">
+                        <Slider
+                          value={[previewStyle.fontSize]}
+                          onValueChange={([v]) => updateStyle({ fontSize: v })}
+                          min={12}
+                          max={72}
+                          step={2}
+                          disabled={readonly}
+                          className="w-24"
+                        />
+                        <span className="text-xs w-8">{previewStyle.fontSize}px</span>
+                      </div>
+                    </div>
 
-                {/* 颜色设置 */}
-                <div className={styles.styleRow}>
-                  <Text type="secondary">
-                    <Palette /> 颜色:
-                  </Text>
-                  <ColorPicker
-                    value={previewStyle.color}
-                    onChange={(color) => updateStyle({ color: color.toHexString() })}
-                    disabled={readonly}
-                  />
-                  <Text type="secondary" style={{ marginLeft: 16 }}>
-                    背景:
-                  </Text>
-                  <ColorPicker
-                    value={previewStyle.backgroundColor}
-                    onChange={(color) => updateStyle({ backgroundColor: color.toHexString() })}
-                    disabled={readonly}
-                  />
-                </div>
-
-                {/* 描边设置 */}
-                <div className={styles.styleRow}>
-                  <Text type="secondary">描边:</Text>
-                  <Select
-                    value={previewStyle.outline ? 'outline' : 'none'}
-                    onValueChange={(value) => updateStyle({ outline: value === 'outline' })}
-                  >
-                    <SelectTrigger style={{ width: 80 }}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="none">无</SelectItem>
-                      <SelectItem value="outline">描边</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {previewStyle.outline && (
-                    <>
-                      <Text type="secondary">描边颜色:</Text>
+                    {/* 颜色 */}
+                    <div className={styles.styleItem}>
+                      <Text type="secondary" className="text-xs">
+                        颜色
+                      </Text>
                       <ColorPicker
-                        value={previewStyle.outlineColor}
-                        onChange={(color) => updateStyle({ outlineColor: color.toHexString() })}
+                        value={previewStyle.color}
+                        onChange={(c) => updateStyle({ color: c.toHexString() })}
                         disabled={readonly}
                       />
-                    </>
-                  )}
-                </div>
+                    </div>
 
-                {/* 位置和对齐 */}
-                <div className={styles.styleRow}>
-                  <Text type="secondary">位置:</Text>
-                  <Select
-                    value={previewStyle.position}
-                    onValueChange={(value) =>
-                      updateStyle({ position: value as 'bottom' | 'top' | 'middle' })
-                    }
-                  >
-                    <SelectTrigger style={{ width: 80 }}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {positionOptions.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Text type="secondary" style={{ marginLeft: 16 }}>
-                    对齐:
-                  </Text>
-                  <Select
-                    value={previewStyle.alignment}
-                    onValueChange={(value) =>
-                      updateStyle({ alignment: value as 'center' | 'left' | 'right' })
-                    }
-                  >
-                    <SelectTrigger style={{ width: 80 }}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {alignmentOptions.map((opt) => (
-                        <SelectItem key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                    {/* 描边颜色 */}
+                    <div className={styles.styleItem}>
+                      <Text type="secondary" className="text-xs">
+                        描边
+                      </Text>
+                      <ColorPicker
+                        value={previewStyle.outlineColor}
+                        onChange={(c) => updateStyle({ outlineColor: c.toHexString() })}
+                        disabled={readonly}
+                      />
+                    </div>
+
+                    {/* 位置 */}
+                    <div className={styles.styleItem}>
+                      <Text type="secondary" className="text-xs">
+                        位置
+                      </Text>
+                      <Select
+                        value={previewStyle.position}
+                        onValueChange={(v: 'top' | 'middle' | 'bottom') =>
+                          updateStyle({ position: v })
+                        }
+                        disabled={readonly}
+                      >
+                        <SelectTrigger className="h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {POSITION_OPTIONS.map((opt) => (
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* 对齐 */}
+                    <div className={styles.styleItem}>
+                      <Text type="secondary" className="text-xs">
+                        对齐
+                      </Text>
+                      <div className="flex gap-1">
+                        {ALIGNMENT_OPTIONS.map((opt, i) => {
+                          const Icon = [AlignLeft, AlignCenter, AlignRight][i];
+                          return (
+                            <Button
+                              key={opt.value}
+                              size="sm"
+                              variant={previewStyle.alignment === opt.value ? 'default' : 'outline'}
+                              onClick={() =>
+                                updateStyle({ alignment: opt.value as 'left' | 'center' | 'right' })
+                              }
+                              disabled={readonly}
+                              className="px-2"
+                            >
+                              <Icon size={14} />
+                            </Button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -565,67 +410,5 @@ export function SubtitleEditor({
   );
 }
 
-// ============================================
-// 字幕样式预设
-// ============================================
-
-export const subtitlePresets = [
-  {
-    name: '经典白字',
-    style: {
-      fontFamily: 'Microsoft YaHei',
-      fontSize: 24,
-      color: '#ffffff',
-      backgroundColor: 'transparent',
-      outline: true,
-      outlineColor: '#000000',
-      position: 'bottom' as const,
-      alignment: 'center' as const,
-    },
-  },
-  {
-    name: '黑色半透明背景',
-    style: {
-      fontFamily: 'Microsoft YaHei',
-      fontSize: 22,
-      color: '#ffffff',
-      backgroundColor: 'rgba(0,0,0,0.6)',
-      outline: false,
-      outlineColor: '#000000',
-      position: 'bottom' as const,
-      alignment: 'center' as const,
-    },
-  },
-  {
-    name: '黄色高亮',
-    style: {
-      fontFamily: 'Microsoft YaHei',
-      fontSize: 26,
-      color: '#ffff00',
-      backgroundColor: 'transparent',
-      outline: true,
-      outlineColor: '#000000',
-      position: 'bottom' as const,
-      alignment: 'center' as const,
-    },
-  },
-  {
-    name: '顶部标题',
-    style: {
-      fontFamily: 'Microsoft YaHei',
-      fontSize: 32,
-      color: '#ffffff',
-      backgroundColor: 'rgba(0,0,0,0.7)',
-      outline: false,
-      outlineColor: '#000000',
-      position: 'top' as const,
-      alignment: 'center' as const,
-    },
-  },
-];
-
-// ============================================
-// 导出
-// ============================================
-
-export default SubtitleEditor;
+// Re-export types for backward compatibility
+export type { SubtitleItem, SubtitleStyle, SubtitleEditorProps } from './types/subtitle.entities';
