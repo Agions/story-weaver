@@ -1,6 +1,6 @@
 # Docker 部署
 
-panel-flow 的 Docker 容器化部署。
+panel-deck 的 Docker 容器化部署。
 
 ## 快速开始
 
@@ -20,7 +20,7 @@ services:
       - '8080:80'
     environment:
       - VITE_APP_MODE=web
-      - VITE_APP_NAME=panel-flow
+      - VITE_APP_NAME=panel-deck
       - VITE_API_BASE_URL=https://api.example.com
       - VITE_MINIMAX_API_KEY=your_key
     restart: unless-stopped

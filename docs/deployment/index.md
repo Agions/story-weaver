@@ -60,14 +60,14 @@
 
 ### 1.2 组件说明
 
-| 组件 | 说明 | 数量 | 资源需求 |
-|------|------|------|----------|
-| React Frontend | 前端 UI | 2-3 个副本 | 1 CPU, 1GB RAM |
-| API Gateway | API 网关 | 2-3 个副本 | 2 CPU, 2GB RAM |
-| Core API | 核心业务服务 | 3-5 个副本 | 4 CPU, 8GB RAM |
-| Redis | 缓存与会话 | 3 节点集群 | 2 CPU, 4GB RAM |
-| PostgreSQL | 元数据存储 | 主从架构 | 4 CPU, 16GB RAM |
-| MinIO/S3 | 文件存储 | 4 节点 | 4 CPU, 8GB RAM |
+| 组件           | 说明         | 数量       | 资源需求        |
+| -------------- | ------------ | ---------- | --------------- |
+| React Frontend | 前端 UI      | 2-3 个副本 | 1 CPU, 1GB RAM  |
+| API Gateway    | API 网关     | 2-3 个副本 | 2 CPU, 2GB RAM  |
+| Core API       | 核心业务服务 | 3-5 个副本 | 4 CPU, 8GB RAM  |
+| Redis          | 缓存与会话   | 3 节点集群 | 2 CPU, 4GB RAM  |
+| PostgreSQL     | 元数据存储   | 主从架构   | 4 CPU, 16GB RAM |
+| MinIO/S3       | 文件存储     | 4 节点     | 4 CPU, 8GB RAM  |
 
 ---
 
@@ -77,42 +77,42 @@
 
 **开发/测试环境**:
 
-| 组件 | CPU | 内存 | 存储 |
-|------|-----|------|------|
+| 组件     | CPU  | 内存 | 存储  |
+| -------- | ---- | ---- | ----- |
 | 应用服务 | 2 核 | 4 GB | 20 GB |
-| 数据库 | 2 核 | 4 GB | 50 GB |
+| 数据库   | 2 核 | 4 GB | 50 GB |
 
 **生产环境（单副本基准）**:
 
-| 组件 | CPU | 内存 | 存储 |
-|------|-----|------|------|
-| Web UI | 2 核 | 2 GB | 10 GB |
-| API Gateway | 2 核 | 2 GB | 10 GB |
-| Core API | 4 核 | 8 GB | 20 GB |
-| Redis | 2 核 | 4 GB | 10 GB |
-| PostgreSQL | 4 核 | 16 GB | 100 GB |
-| MinIO | 4 核 | 8 GB | 500 GB+ |
+| 组件        | CPU  | 内存  | 存储    |
+| ----------- | ---- | ----- | ------- |
+| Web UI      | 2 核 | 2 GB  | 10 GB   |
+| API Gateway | 2 核 | 2 GB  | 10 GB   |
+| Core API    | 4 核 | 8 GB  | 20 GB   |
+| Redis       | 2 核 | 4 GB  | 10 GB   |
+| PostgreSQL  | 4 核 | 16 GB | 100 GB  |
+| MinIO       | 4 核 | 8 GB  | 500 GB+ |
 
 ### 2.2 软件要求
 
-| 软件 | 版本 | 说明 |
-|------|------|------|
-| Node.js | ≥ 20.x | 后端运行环境 |
-| PostgreSQL | ≥ 15.x | 元数据存储 |
-| Redis | ≥ 7.x | 缓存与会话存储 |
-| FFmpeg | ≥ 6.x | 视频处理 |
-| Docker | ≥ 24.x | 容器化部署 |
-| Kubernetes | ≥ 1.28 | 容器编排（可选） |
-| MinIO | ≥ RELEASE.2024 | 对象存储 |
+| 软件       | 版本           | 说明             |
+| ---------- | -------------- | ---------------- |
+| Node.js    | ≥ 20.x         | 后端运行环境     |
+| PostgreSQL | ≥ 15.x         | 元数据存储       |
+| Redis      | ≥ 7.x          | 缓存与会话存储   |
+| FFmpeg     | ≥ 6.x          | 视频处理         |
+| Docker     | ≥ 24.x         | 容器化部署       |
+| Kubernetes | ≥ 1.28         | 容器编排（可选） |
+| MinIO      | ≥ RELEASE.2024 | 对象存储         |
 
 ### 2.3 浏览器支持
 
-| 浏览器 | 最低版本 |
-|--------|----------|
-| Chrome | 90+ |
-| Firefox | 88+ |
-| Safari | 14+ |
-| Edge | 90+ |
+| 浏览器  | 最低版本 |
+| ------- | -------- |
+| Chrome  | 90+      |
+| Firefox | 88+      |
+| Safari  | 14+      |
+| Edge    | 90+      |
 
 ---
 
@@ -123,7 +123,7 @@
 #### 目录结构
 
 ```
-panel-flow/
+panel-deck/
 ├── docker-compose.yml
 ├── .env
 ├── services/
@@ -147,7 +147,7 @@ services:
       context: ./services/app
       dockerfile: Dockerfile.frontend
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - REACT_APP_API_URL=http://localhost:4000/api
     depends_on:
@@ -161,7 +161,7 @@ services:
       context: ./services/app
       dockerfile: Dockerfile.api
     ports:
-      - "4000:4000"
+      - '4000:4000'
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://paneluser:panelpass@postgres:5432/panelflow
@@ -188,7 +188,7 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - '5432:5432'
     networks:
       - panel-network
 
@@ -196,7 +196,7 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - '6379:6379'
     volumes:
       - redis-data:/data
     networks:
@@ -206,8 +206,8 @@ services:
   minio:
     image: minio/minio:latest
     ports:
-      - "9000:9000"
-      - "9001:9001"
+      - '9000:9000'
+      - '9001:9001'
     environment:
       - MINIO_ROOT_USER=minioadmin
       - MINIO_ROOT_PASSWORD=minioadmin
@@ -231,8 +231,8 @@ networks:
 
 ```bash
 # 克隆项目
-git clone https://github.com/agions/panel-flow.git
-cd panel-flow
+git clone https://github.com/Agions/panel-deck.git
+cd panel-deck
 
 # 创建环境配置文件
 cp .env.example .env
@@ -550,14 +550,14 @@ panelflow-output/
 
 #### 关键指标
 
-| 指标 | 说明 | 告警阈值 |
-|------|------|----------|
-| API 响应时间 P99 | API 端到端延迟 | > 2s |
-| 错误率 | 5xx 错误占比 | > 1% |
-| CPU 使用率 | 容器 CPU | > 80% |
-| 内存使用率 | 容器内存 | > 85% |
-| 任务队列长度 | 待处理任务 | > 100 |
-| 存储使用率 | 磁盘空间 | > 80% |
+| 指标             | 说明           | 告警阈值 |
+| ---------------- | -------------- | -------- |
+| API 响应时间 P99 | API 端到端延迟 | > 2s     |
+| 错误率           | 5xx 错误占比   | > 1%     |
+| CPU 使用率       | 容器 CPU       | > 80%    |
+| 内存使用率       | 容器内存       | > 85%    |
+| 任务队列长度     | 待处理任务     | > 100    |
+| 存储使用率       | 磁盘空间       | > 80%    |
 
 #### Prometheus 指标
 
@@ -575,21 +575,21 @@ scrape_configs:
 ```yaml
 # fluentd-config.yaml
 <source>
-  @type tail
-  path /var/log/panelflow/*.log
-  pos_file /var/log/panelflow/log.pos
-  tag panelflow.app
-  <parse>
-    @type json
-  </parse>
+@type tail
+path /var/log/panelflow/*.log
+pos_file /var/log/panelflow/log.pos
+tag panelflow.app
+<parse>
+@type json
+</parse>
 </source>
 
 <match panelflow.app>
-  @type elasticsearch
-  host elasticsearch.example.com
-  port 9200
-  logstash_format true
-  logstash_prefix panelflow
+@type elasticsearch
+host elasticsearch.example.com
+port 9200
+logstash_format true
+logstash_prefix panelflow
 </match>
 ```
 
@@ -611,11 +611,11 @@ redis-cli BGSAVE
 
 **备份频率**:
 
-| 数据类型 | 频率 | 保留时间 |
-|----------|------|----------|
-| 数据库全量 | 每日 | 30 天 |
-| 增量备份 | 每小时 | 7 天 |
-| 文件存储 | 每日 | 14 天 |
+| 数据类型   | 频率   | 保留时间 |
+| ---------- | ------ | -------- |
+| 数据库全量 | 每日   | 30 天    |
+| 增量备份   | 每小时 | 7 天     |
+| 文件存储   | 每日   | 14 天    |
 
 ### 6.4 灾难恢复
 
@@ -658,13 +658,13 @@ kubectl autoscale deployment panelflow-api \
 server {
     listen 443 ssl http2;
     server_name panelflow.example.com;
-    
+
     ssl_certificate /etc/ssl/certs/panelflow.crt;
     ssl_certificate_key /etc/ssl/private/panelflow.key;
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256;
     ssl_prefer_server_ciphers on;
-    
+
     # HSTS
     add_header Strict-Transport-Security "max-age=31536000" always;
 }
@@ -745,7 +745,7 @@ save 60 10000
 video:
   hardwareAcceleration:
     enabled: true
-    encoder: h264_nvenc  # NVIDIA GPU
+    encoder: h264_nvenc # NVIDIA GPU
     # 或 h264_qsv (Intel QuickSync)
     # 或 h264_videotoolbox (Apple Silicon)
 ```
@@ -756,12 +756,12 @@ video:
 
 ### 9.1 常见问题
 
-| 问题 | 可能原因 | 解决方案 |
-|------|----------|----------|
-| API 响应慢 | 数据库连接池满、CPU 过高 | 增加实例数、优化查询 |
-| 任务卡死 | Redis 连接断开 | 检查网络、重启服务 |
-| 视频渲染失败 | FFmpeg 配置错误、内存不足 | 检查 FFmpeg、日志 |
-| 存储访问失败 | MinIO 服务异常 | 检查 MinIO 状态、网络 |
+| 问题         | 可能原因                  | 解决方案              |
+| ------------ | ------------------------- | --------------------- |
+| API 响应慢   | 数据库连接池满、CPU 过高  | 增加实例数、优化查询  |
+| 任务卡死     | Redis 连接断开            | 检查网络、重启服务    |
+| 视频渲染失败 | FFmpeg 配置错误、内存不足 | 检查 FFmpeg、日志     |
+| 存储访问失败 | MinIO 服务异常            | 检查 MinIO 状态、网络 |
 
 ### 9.2 健康检查
 

@@ -23,12 +23,12 @@ Panel Flow 提供了强大的渲染引擎，支持将面板配置渲染为多种
 
 Panel Flow 支持多种导出格式：
 
-| 格式 | 说明 | 适用场景 |
-|------|------|----------|
-| JSON | 结构化数据格式 | 程序间数据交换 |
-| YAML | 易读配置文件 | 人工编辑和版本控制 |
-| HTML | 网页展示格式 | 文档和预览 |
-| PDF | 矢量文档格式 | 打印和归档 |
+| 格式 | 说明           | 适用场景           |
+| ---- | -------------- | ------------------ |
+| JSON | 结构化数据格式 | 程序间数据交换     |
+| YAML | 易读配置文件   | 人工编辑和版本控制 |
+| HTML | 网页展示格式   | 文档和预览         |
+| PDF  | 矢量文档格式   | 打印和归档         |
 
 ## 渲染配置
 
@@ -36,7 +36,7 @@ Panel Flow 支持多种导出格式：
 
 ```yaml
 rendering:
-  engine: "default"
+  engine: 'default'
   options:
     pretty_print: true
     validate_schema: true
@@ -48,7 +48,7 @@ rendering:
 支持批量导出多个面板配置：
 
 ```bash
-panel-flow export --input ./panels --output ./dist --format json
+panel-deck export --input ./panels --output ./dist --format json
 ```
 
 ## 进阶用法

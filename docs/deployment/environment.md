@@ -1,6 +1,6 @@
 # 环境变量
 
-panel-flow 环境变量配置说明。
+panel-deck 环境变量配置说明。
 
 ## 变量命名规范
 
@@ -38,7 +38,7 @@ VITE_TTS_PROVIDER=edge  # edge | cosyvoice | kantts
 
 ```bash
 VITE_APP_MODE=web              # web | desktop
-VITE_APP_NAME=panel-flow
+VITE_APP_NAME=panel-deck
 VITE_API_BASE_URL=https://api.example.com
 ```
 
@@ -58,7 +58,7 @@ VITE_API_BASE_URL=https://api.example.com
 
 ```bash
 VITE_APP_MODE=web
-VITE_APP_NAME=panel-flow-dev
+VITE_APP_NAME=panel-deck-dev
 VITE_API_BASE_URL=http://localhost:3000
 VITE_MINIMAX_API_KEY=your_dev_key
 ```

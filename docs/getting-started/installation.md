@@ -8,21 +8,21 @@
 
 ### 硬件要求
 
-| 组件 | 最低要求 | 推荐配置 |
-|------|---------|---------|
-| 内存 | 8 GB | 16 GB 或以上 |
-| 存储 | 10 GB 可用空间 | 50 GB SSD |
-| 网络 | 稳定的外网连接 | 宽带 |
+| 组件 | 最低要求       | 推荐配置     |
+| ---- | -------------- | ------------ |
+| 内存 | 8 GB           | 16 GB 或以上 |
+| 存储 | 10 GB 可用空间 | 50 GB SSD    |
+| 网络 | 稳定的外网连接 | 宽带         |
 
 ### 软件要求
 
-| 软件 | 版本要求 | 说明 |
-|------|---------|------|
-| Node.js | ≥ 18.0 | 推荐使用 LTS 版本 |
-| npm | ≥ 9.0 | 或使用 pnpm/yarn |
-| Git | 最新稳定版 | 用于代码克隆 |
-| Docker | ≥ 20.10 | 仅 Docker 部署需要 |
-| Docker Compose | ≥ 2.0 | 仅 Docker 部署需要 |
+| 软件           | 版本要求   | 说明               |
+| -------------- | ---------- | ------------------ |
+| Node.js        | ≥ 18.0     | 推荐使用 LTS 版本  |
+| npm            | ≥ 9.0      | 或使用 pnpm/yarn   |
+| Git            | 最新稳定版 | 用于代码克隆       |
+| Docker         | ≥ 20.10    | 仅 Docker 部署需要 |
+| Docker Compose | ≥ 2.0      | 仅 Docker 部署需要 |
 
 ### 浏览器要求
 
@@ -38,20 +38,13 @@
 ### 步骤 1：克隆代码仓库
 
 ```bash
-git clone https://github.com/Agions/panel-flow.git
-cd panel-flow-refactor
+git clone https://github.com/Agions/panel-deck.git
+cd panel-deck
 ```
 
 ### 步骤 2：安装依赖
 
 ```bash
-npm install
-```
-
-或使用 pnpm（更快）：
-
-```bash
-npm install -g pnpm
 pnpm install
 ```
 
@@ -119,7 +112,7 @@ docker compose up -d
 
 ```bash
 docker compose ps
-docker compose logs -f panel-flow
+docker compose logs -f panel-deck
 ```
 
 服务启动后，访问 `http://localhost:3000`。
@@ -186,12 +179,12 @@ server {
 
 ```yaml
 services:
-  panel-flow:
+  panel-deck:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - NODE_ENV=production
     env_file:
@@ -209,7 +202,7 @@ services:
 
 ```yaml
 ports:
-  - "8080:3000"  # 改为 8080
+  - '8080:3000' # 改为 8080
 ```
 
 #### 数据持久化
@@ -218,10 +211,10 @@ ports:
 
 ```yaml
 volumes:
-  - panel-flow-data:/app/data
+  - panel-deck-data:/app/data
 
 volumes:
-  panel-flow-data:
+  panel-deck-data:
     driver: local
 ```
 
@@ -239,7 +232,7 @@ PORT=3000
 #### 1. 创建 Nginx 配置
 
 ```nginx
-# /etc/nginx/conf.d/panel-flow.conf
+# /etc/nginx/conf.d/panel-deck.conf
 upstream panel_flow {
     server 127.0.0.1:3000;
 }
@@ -318,5 +311,5 @@ npm install
 安装完成后，建议您：
 
 1. [配置 AI API Key](./configuration.md) - 配置您要使用的 AI 服务
-2. [快速开始](../user-guide/quick-start.md) - 了解基本使用流程
+2. [快速开始](../user-guide/workflow-overview.md) - 了解基本使用流程
 3. [自主模式指南](../user-guide/auto-mode.md) - 体验全自动制作流程

@@ -7,7 +7,7 @@
 ## 一、整体目录结构
 
 ```
-panel-flow-refactor/
+panel-deck/
 ├── docs/                          # 项目文档
 │   ├── index.md                   # 文档首页
 │   ├── getting-started/           # 入门指南
@@ -99,35 +99,35 @@ panel-flow-refactor/
 
 **新增模块**，是重构的核心，使 Pipeline 具备"自主决策 + 循环返工"能力：
 
-| 文件 | 功能 |
-|------|------|
-| `auto-pipeline-engine.ts` | 全自动流水线引擎，核心入口 |
-| `self-review-loop.ts` | AI 自审循环，不合格自动修复 |
-| `quality-gate.ts` | 质量门禁，自动判定输出质量 |
-| `autonomous.types.ts` | 自主模式类型定义 |
-| `index.ts` | 模块导出 |
+| 文件                      | 功能                        |
+| ------------------------- | --------------------------- |
+| `auto-pipeline-engine.ts` | 全自动流水线引擎，核心入口  |
+| `self-review-loop.ts`     | AI 自审循环，不合格自动修复 |
+| `quality-gate.ts`         | 质量门禁，自动判定输出质量  |
+| `autonomous.types.ts`     | 自主模式类型定义            |
+| `index.ts`                | 模块导出                    |
 
 ### 2.2 `src/core/pipeline/` — 流水线步骤
 
 **流水线引擎**负责协调各步骤的执行：
 
-| 现有步骤 | 功能 |
-|----------|------|
-| `step-import.ts` | 解析原材料（小说/剧本/需求） |
-| `step-analysis.ts` | AI 分析故事结构、人物、场景 |
-| `step-script.ts` | 生成结构化视频剧本 |
-| `step-character.ts` | 创建角色设定卡，保证一致性 |
-| `step-storyboard.ts` | 生成分镜脚本 + 参考图 |
-| `step-render.ts` | 批量渲染关键帧 |
-| `step-audio.ts` | 配音 + 音效 + 唇形同步 |
-| `step-subtitle.ts` | 字幕生成 + 嵌入 |
-| `step-export.ts` | 最终合成输出 |
+| 现有步骤             | 功能                         |
+| -------------------- | ---------------------------- |
+| `step-import.ts`     | 解析原材料（小说/剧本/需求） |
+| `step-analysis.ts`   | AI 分析故事结构、人物、场景  |
+| `step-script.ts`     | 生成结构化视频剧本           |
+| `step-character.ts`  | 创建角色设定卡，保证一致性   |
+| `step-storyboard.ts` | 生成分镜脚本 + 参考图        |
+| `step-render.ts`     | 批量渲染关键帧               |
+| `step-audio.ts`      | 配音 + 音效 + 唇形同步       |
+| `step-subtitle.ts`   | 字幕生成 + 嵌入              |
+| `step-export.ts`     | 最终合成输出                 |
 
-| 新增步骤 | 功能 |
-|----------|------|
-| `step-scene.ts` | 场景规划，整合场景描述与视觉风格 |
-| `step-video-edit.ts` | 视频剪辑，处理转场、特效合成 |
-| `step-review.ts` | 自审步骤，封装通用自审逻辑 |
+| 新增步骤             | 功能                             |
+| -------------------- | -------------------------------- |
+| `step-scene.ts`      | 场景规划，整合场景描述与视觉风格 |
+| `step-video-edit.ts` | 视频剪辑，处理转场、特效合成     |
+| `step-review.ts`     | 自审步骤，封装通用自审逻辑       |
 
 ### 2.3 `src/features/auto-pipeline/` — 全自动流水线 UI
 
@@ -196,11 +196,11 @@ docs/
 
 ### 3.2 待完成文档
 
-| 文档 | 状态 | 说明 |
-|------|------|------|
-| `services.md` | 待完成 | 各服务模块 API 说明 |
-| `autonomous-api.md` | 待完成 | Autonomous Pipeline 引擎 API 文档 |
-| `deployment/index.md` | 待完成 | 生产环境部署指南 |
+| 文档                  | 状态   | 说明                              |
+| --------------------- | ------ | --------------------------------- |
+| `services.md`         | 待完成 | 各服务模块 API 说明               |
+| `autonomous-api.md`   | 待完成 | Autonomous Pipeline 引擎 API 文档 |
+| `deployment/index.md` | 待完成 | 生产环境部署指南                  |
 
 ---
 
@@ -252,11 +252,11 @@ import { SomeType } from '@/shared/types';
 
 ### 6.1 Zustand Stores
 
-| Store | 路径 | 用途 |
-|-------|------|------|
-| `autoPipelineStore` | `features/auto-pipeline/stores/` | 自主流水线状态 |
+| Store                | 路径                              | 用途           |
+| -------------------- | --------------------------------- | -------------- |
+| `autoPipelineStore`  | `features/auto-pipeline/stores/`  | 自主流水线状态 |
 | `mangaPipelineStore` | `features/manga-pipeline/stores/` | 漫画流水线状态 |
-| `projectStore` | `shared/stores/` | 项目全局状态 |
+| `projectStore`       | `shared/stores/`                  | 项目全局状态   |
 
 ### 6.2 状态结构（AutoPipelineStore）
 

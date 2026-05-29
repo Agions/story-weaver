@@ -14,17 +14,17 @@
 ### 基本语法
 
 ```bash
-panel-flow-refactor auto --input <输入路径> --output <输出路径>
+panel-deck auto --input <输入路径> --output <输出路径>
 ```
 
 ### 参数说明
 
-| 参数 | 必填 | 说明 |
-|------|------|------|
-| --input | 是 | 输入面板配置文件路径 |
-| --output | 是 | 输出重构结果路径 |
-| --config | 否 | 自定义配置文件路径 |
-| --verbose | 否 | 显示详细日志 |
+| 参数      | 必填 | 说明                 |
+| --------- | ---- | -------------------- |
+| --input   | 是   | 输入面板配置文件路径 |
+| --output  | 是   | 输出重构结果路径     |
+| --config  | 否   | 自定义配置文件路径   |
+| --verbose | 否   | 显示详细日志         |
 
 ## 工作原理
 
@@ -39,13 +39,13 @@ panel-flow-refactor auto --input <输入路径> --output <输出路径>
 
 ```bash
 # 基本用法
-panel-flow-refactor auto --input ./panels.json --output ./output/
+panel-deck auto --input ./panels.json --output ./output/
 
 # 详细日志模式
-panel-flow-refactor auto --input ./panels.json --output ./output/ --verbose
+panel-deck auto --input ./panels.json --output ./output/ --verbose
 
 # 自定义配置
-panel-flow-refactor auto --input ./panels.json --output ./output/ --config ./custom.yaml
+panel-deck auto --input ./panels.json --output ./output/ --config ./custom.yaml
 ```
 
 ## 注意事项
