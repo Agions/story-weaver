@@ -2,24 +2,18 @@
  * 配音轨道 Tab 组件
  */
 
+import { Upload, Trash2, PlayCircle, PauseCircle, MicOff } from 'lucide-react';
 import React from 'react';
-import {
-  Upload,
-  Trash2,
-  PlayCircle,
-  PauseCircle,
-  MicOff,
-} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Empty } from '@/components/ui/empty';
+import { message } from '@/components/ui/message';
 import { Slider } from '@/components/ui/slider';
 import { Space } from '@/components/ui/space';
 import { Tag } from '@/components/ui/tag';
-import { message } from '@/components/ui/message';
-
 import { formatTime } from '@/shared/utils';
-import type { VoiceTrack } from './AudioEditor';
+
+import type { VoiceTrack } from '../types/audio.entities';
 
 interface VoiceTabProps {
   voiceTracks: VoiceTrack[];

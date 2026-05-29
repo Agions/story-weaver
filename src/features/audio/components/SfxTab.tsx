@@ -2,18 +2,18 @@
  * 音效 Tab 组件
  */
 
-import React from 'react';
 import { Upload, Trash2, PlayCircle, PauseCircle } from 'lucide-react';
+import React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Empty } from '@/components/ui/empty';
+import { message } from '@/components/ui/message';
 import { Slider } from '@/components/ui/slider';
 import { Space } from '@/components/ui/space';
 import { Tag } from '@/components/ui/tag';
-import { message } from '@/components/ui/message';
-
 import { PRESET_SFX_LIST } from '@panel-deck/common/constants';
-import type { SoundEffect } from './AudioEditor';
+
+import type { SoundEffect } from '../types/audio.entities';
 
 interface SfxTabProps {
   soundEffects: SoundEffect[];

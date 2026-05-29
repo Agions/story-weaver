@@ -2,25 +2,20 @@
  * 背景音乐 Tab 组件
  */
 
+import { Folder, PlayCircle, PauseCircle, Trash2 } from 'lucide-react';
 import React from 'react';
-import {
-  Folder,
-  PlayCircle,
-  PauseCircle,
-  Trash2,
-} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { message } from '@/components/ui/message';
 import { Popconfirm } from '@/components/ui/popconfirm';
 import { Slider } from '@/components/ui/slider';
 import { Space } from '@/components/ui/space';
 import { Tag } from '@/components/ui/tag';
-import { message } from '@/components/ui/message';
-
-import { PRESET_BGM_LIST } from '@panel-deck/common/constants';
 import { formatTime } from '@/shared/utils';
-import type { BackgroundMusic } from './AudioEditor';
+import { PRESET_BGM_LIST } from '@panel-deck/common/constants';
+
+import type { BackgroundMusic } from '../types/audio.entities';
 
 interface MusicTabProps {
   backgroundMusic: BackgroundMusic | null;
