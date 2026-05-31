@@ -576,8 +576,8 @@ const ProjectEdit = () => {
     }
   };
 
-  // --- 渲染步骤内容 ---
-  const renderStepContent = () => {
+  // --- Step Content Switcher Component ---
+  const StepContentSwitcher = () => {
     switch (currentStep) {
       case 0:
         return (
@@ -719,6 +719,43 @@ const ProjectEdit = () => {
     }
   };
 
+  // --- Step Navigation Renderer ---
+  const renderStepNavigation = () => (
+    <div className={styles.stepsContainer}>
+      <div className="flex items-center gap-2 overflow-x-auto pb-2">
+        {[
+          { key: 'import', title: '导入', icon: FileText, desc: '小说/剧本' },
+          { key: 'analysis', title: 'AI解析', icon: Zap, desc: '智能分析' },
+          { key: 'script', title: '剧本', icon: Edit, desc: '生成剧本' },
+          { key: 'storyboard', title: '分镜', icon: Image, desc: '漫画分镜' },
+          { key: 'character', title: '角色', icon: User, desc: '角色形象' },
+          { key: 'render', title: '渲染', icon: CheckCircle, desc: '场景渲染' },
+          { key: 'composition', title: '合成', icon: PlayCircle, desc: '动态效果' },
+          { key: 'audio', title: '配音', icon: Volume2, desc: '配音配乐' },
+          { key: 'export', title: '导出', icon: Download, desc: '视频导出' },
+        ].map((step, index) => {
+          const Icon = step.icon;
+          return (
+            <div
+              key={step.key}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
+                index === currentStep
+                  ? 'bg-primary text-primary-foreground'
+                  : index < currentStep
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-muted text-muted-foreground'
+              }`}
+              onClick={() => setCurrentStep(index)}
+            >
+              <Icon className="h-4 w-4" />
+              <span className="text-sm font-medium">{step.title}</span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+
   // --- 渲染 ---
   if (error) {
     return (
@@ -799,39 +836,7 @@ const ProjectEdit = () => {
       </Suspense>
 
       {/* 步骤导航 */}
-      <div className={styles.stepsContainer}>
-        <div className="flex items-center gap-2 overflow-x-auto pb-2">
-          {[
-            { key: 'import', title: '导入', icon: FileText, desc: '小说/剧本' },
-            { key: 'analysis', title: 'AI解析', icon: Zap, desc: '智能分析' },
-            { key: 'script', title: '剧本', icon: Edit, desc: '生成剧本' },
-            { key: 'storyboard', title: '分镜', icon: Image, desc: '漫画分镜' },
-            { key: 'character', title: '角色', icon: User, desc: '角色形象' },
-            { key: 'render', title: '渲染', icon: CheckCircle, desc: '场景渲染' },
-            { key: 'composition', title: '合成', icon: PlayCircle, desc: '动态效果' },
-            { key: 'audio', title: '配音', icon: Volume2, desc: '配音配乐' },
-            { key: 'export', title: '导出', icon: Download, desc: '视频导出' },
-          ].map((step, index) => {
-            const Icon = step.icon;
-            return (
-              <div
-                key={step.key}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-                  index === currentStep
-                    ? 'bg-primary text-primary-foreground'
-                    : index < currentStep
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-muted text-muted-foreground'
-                }`}
-                onClick={() => setCurrentStep(index)}
-              >
-                <Icon className="h-4 w-4" />
-                <span className="text-sm font-medium">{step.title}</span>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      {renderStepNavigation()}
 
       {/* 步骤内容 */}
       <div className={styles.stepsContent}>
@@ -842,7 +847,7 @@ const ProjectEdit = () => {
             </div>
           }
         >
-          {renderStepContent()}
+          <StepContentSwitcher />
         </Suspense>
       </div>
     </div>
