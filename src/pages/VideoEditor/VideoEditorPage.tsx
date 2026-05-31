@@ -50,16 +50,22 @@ function SettingDropdown({
   label: string;
   value: string;
   items: { key: string; label: string }[];
-  onKey: (e: { key: string }) => void;
+  onKey: (key: { key: string }) => void;
 }) {
+  const menu = {
+    items: items.map((item) => ({
+      key: item.key,
+      label: item.label,
+    })),
+    onClick: onKey,
+  };
+
   return (
     <div className={styles.settingItem}>
-      <Text strong>{label}</Text>
-      <Dropdown
-        menu={{ items, onClick: onKey }}
-      >
-        <Button>
-          {value} <Download />
+      <Text className={styles.settingLabel}>{label}</Text>
+      <Dropdown menu={menu} trigger={['click']}>
+        <Button variant="outline" size="small">
+          {value} <span style={{ marginLeft: 4 }}>▼</span>
         </Button>
       </Dropdown>
     </div>
@@ -270,16 +276,62 @@ function renderPlayerControls(state: ReturnType<typeof useVideoEditor>) {
   );
 }
 
+function SegmentCard({
+  segment,
+  index,
+  isSelected,
+  onSelect,
+  onDelete,
+  formatTime,
+}: {
+  segment: { start: number; end: number; content?: string };
+  index: number;
+  isSelected: boolean;
+  onSelect: () => void;
+  onDelete: () => void;
+  formatTime: (s: number, opts?: object) => string;
+}) {
+  return (
+    <Card
+      className={`${styles.segmentCard} ${isSelected ? styles.selected : ''}`}
+      onClick={onSelect}
+    >
+      <div className={styles.segmentHeader}>
+        <Text strong>片段 {index + 1}</Text>
+        <Space>
+          <Tooltip title="删除">
+            <Button
+              type="text"
+              size="small"
+              danger
+              icon={<Trash2 />}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete();
+              }}
+            />
+          </Tooltip>
+        </Space>
+      </div>
+
+      <div className={styles.segmentTime}>
+        <Tag color="blue">
+          {formatTime(segment.start, { hours: 'always' })} - {formatTime(segment.end, { hours: 'always' })}
+        </Tag>
+        <Text type="secondary">时长: {formatTime(segment.end - segment.start, { hours: 'always' })}</Text>
+      </div>
+
+      {segment.content && (
+        <div className={styles.segmentContent}>
+          <Text ellipsis>{segment.content}</Text>
+        </div>
+      )}
+    </Card>
+  );
+}
+
 function renderSegmentList(state: ReturnType<typeof useVideoEditor>) {
-  const {
-    segments,
-    selectedSegmentIndex,
-    videoSrc,
-    handleSelectSegment,
-    handleDeleteSegment,
-    handleAddSegment,
-    formatTime,
-  } = state;
+  const { segments, selectedSegmentIndex, videoSrc, handleSelectSegment, handleDeleteSegment, handleAddSegment, formatTime } = state;
 
   return (
     <div className={styles.segmentList}>
@@ -291,45 +343,15 @@ function renderSegmentList(state: ReturnType<typeof useVideoEditor>) {
         <Empty description="暂无片段" image={undefined} />
       ) : (
         segments.map((segment, index) => (
-          <Card
+          <SegmentCard
             key={index}
-            className={`${styles.segmentCard} ${selectedSegmentIndex === index ? styles.selected : ''}`}
-            onClick={() => handleSelectSegment(index)}
-          >
-            <div className={styles.segmentHeader}>
-              <Text strong>片段 {index + 1}</Text>
-              <Space>
-                <Tooltip title="删除">
-                  <Button
-                    type="text"
-                    size="small"
-                    danger
-                    icon={<Trash2 />}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteSegment(index);
-                    }}
-                  />
-                </Tooltip>
-              </Space>
-            </div>
-
-            <div className={styles.segmentTime}>
-              <Tag color="blue">
-                {formatTime(segment.start, { hours: 'always' })} -{' '}
-                {formatTime(segment.end, { hours: 'always' })}
-              </Tag>
-              <Text type="secondary">
-                时长: {formatTime(segment.end - segment.start, { hours: 'always' })}
-              </Text>
-            </div>
-
-            {segment.content && (
-              <div className={styles.segmentContent}>
-                <Text ellipsis>{segment.content}</Text>
-              </div>
-            )}
-          </Card>
+            segment={segment}
+            index={index}
+            isSelected={selectedSegmentIndex === index}
+            onSelect={() => handleSelectSegment(index)}
+            onDelete={() => handleDeleteSegment(index)}
+            formatTime={formatTime}
+          />
         ))
       )}
 
@@ -343,6 +365,21 @@ function renderSegmentList(state: ReturnType<typeof useVideoEditor>) {
       >
         添加片段
       </Button>
+    </div>
+  );
+}
+
+function renderKeyframeList(keyframes: string[]) {
+  if (keyframes.length === 0) {
+    return <Empty description="暂无关键帧" image={undefined} />;
+  }
+  return (
+    <div className={styles.keyframeList}>
+      {keyframes.map((frame, index) => (
+        <div key={index} className={styles.keyframeItem}>
+          <img src={frame} alt={`关键帧 ${index + 1}`} className={styles.keyframeImage} />
+        </div>
+      ))}
     </div>
   );
 }
@@ -373,30 +410,15 @@ const VideoEditor = () => {
     togglePlayPause,
     handleTimeUpdate,
     handleVideoLoaded,
-    handleSelectSegment,
     setOutputFormat,
     setVideoQuality,
     handleAddSegment,
     formatTime,
   } = state;
 
-  const keyframesEl =
-    keyframes.length === 0 ? (
-      <Empty description="暂无关键帧" image={undefined} />
-    ) : (
-      <div className={styles.keyframeList}>
-        {keyframes.map((frame, index) => (
-          <div key={index} className={styles.keyframeItem}>
-            <img src={frame} alt={`关键帧 ${index + 1}`} className={styles.keyframeImage} />
-          </div>
-        ))}
-      </div>
-    );
-
   return (
     <div className={styles.editorLayout}>
       <div className={styles.editorContent}>
-        {/* 导出进度弹窗 */}
         <ExportProgressModal
           isExporting={isExporting}
           exportProgress={exportProgress}
@@ -448,9 +470,9 @@ const VideoEditor = () => {
                       left: `${(segment.start / Math.max(duration, 1)) * 100}%`,
                       width: `${((segment.end - segment.start) / Math.max(duration, 1)) * 100}%`,
                     }}
-                    onClick={() => handleSelectSegment(index)}
+                    onClick={() => state.handleSelectSegment(index)}
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') handleSelectSegment(index);
+                      if (e.key === 'Enter' || e.key === ' ') state.handleSelectSegment(index);
                     }}
                     role="button"
                     tabIndex={0}
@@ -460,13 +482,9 @@ const VideoEditor = () => {
                     <div className={styles.segmentHandle} />
                   </div>
                 ))}
-
-                {/* 播放头 */}
                 <div
                   className={styles.playhead}
-                  style={{
-                    left: `${(currentTime / Math.max(duration, 1)) * 100}%`,
-                  }}
+                  style={{ left: `${(currentTime / Math.max(duration, 1)) * 100}%` }}
                 />
               </div>
             </div>
@@ -484,7 +502,7 @@ const VideoEditor = () => {
                   <Title level={5} className={styles.sectionTitle}>
                     关键帧
                   </Title>
-                  {keyframesEl}
+                  {renderKeyframeList(keyframes)}
                 </div>
               </TabPane>
 
