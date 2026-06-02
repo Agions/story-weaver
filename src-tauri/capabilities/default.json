@@ -1,10 +1,8 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "PanelFlow AI 默认权限配置",
-  "windows": [
-    "main"
-  ],
+  "description": "FrameForge AI 默认权限配置",
+  "windows": ["main"],
   "permissions": [
     "core:default",
     "core:window:default",

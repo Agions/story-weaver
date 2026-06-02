@@ -1,6 +1,6 @@
 /**
- * panel-flow Shared Utils - Format UI Utilities
- * 
+ * frame-forge Shared Utils - Format UI Utilities
+ *
  * Provides UI-specific formatting utilities including status config,
  * relative time formatting, and date formatting.
  */
@@ -14,7 +14,19 @@ export type ProjectStatus = 'draft' | 'processing' | 'completed' | 'failed';
  * Status configuration for project display
  */
 export interface StatusConfig {
-  variant: 'secondary' | 'default' | 'success' | 'destructive' | 'outline' | 'warning' | 'info' | 'gold' | 'error' | 'processing' | null | undefined;
+  variant:
+    | 'secondary'
+    | 'default'
+    | 'success'
+    | 'destructive'
+    | 'outline'
+    | 'warning'
+    | 'info'
+    | 'gold'
+    | 'error'
+    | 'processing'
+    | null
+    | undefined;
   text: string;
 }
 
@@ -50,7 +62,10 @@ export function getStatusConfig(status: ProjectStatus): StatusConfig {
 /**
  * Format date for display
  */
-export function formatDate(date: Date | string | number, options?: { format?: 'date' | 'datetime' | 'time' }): string {
+export function formatDate(
+  date: Date | string | number,
+  options?: { format?: 'date' | 'datetime' | 'time' }
+): string {
   const d = new Date(date);
   const year = d.getFullYear();
   const month = (d.getMonth() + 1).toString().padStart(2, '0');

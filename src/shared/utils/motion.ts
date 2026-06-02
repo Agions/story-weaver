@@ -1,5 +1,5 @@
 /**
- * panel-flow Shared Utils - Motion/Animation Utilities
+ * frame-forge Shared Utils - Motion/Animation Utilities
  */
 
 import { Variants, Easing, Transition } from 'framer-motion';

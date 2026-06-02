@@ -1,12 +1,12 @@
 # 自主引擎 API 文档
 
-本文档详细描述 PanelFlow 全自主流水线的 API 接口设计与使用方法。
+本文档详细描述 FrameForge 全自主流水线的 API 接口设计与使用方法。
 
 ---
 
 ## 一、概述
 
-Autonomous API 是 PanelFlow 全自动漫剧制作系统的核心 API，允许开发者通过编程方式启动、管理和监控全自动流水线任务。
+Autonomous API 是 FrameForge 全自动漫剧制作系统的核心 API，允许开发者通过编程方式启动、管理和监控全自动流水线任务。
 
 **基础 URL**: `/api/v1/autonomous`
 
@@ -32,30 +32,30 @@ type QualityLevel = 'fast' | 'balanced' | 'premium';
 interface AutoPipelineInput {
   /** 原材料内容（小说/剧本/需求描述） */
   content: string;
-  
+
   /** 输入模式 */
   mode: InputMode;
-  
+
   /** 项目标题（可选） */
   title?: string;
-  
+
   /** 输出风格（默认 anime） */
   style?: OutputStyle;
-  
+
   /** 质量级别（默认 balanced） */
   qualityLevel?: QualityLevel;
-  
+
   /** 高级选项 */
   options?: {
     /** 自审循环次数（默认 3） */
     maxReviewLoops?: number;
-    
+
     /** 最大并行渲染数（默认 4） */
     maxConcurrentRenders?: number;
-    
+
     /** 配音语言（默认 zh-CN） */
     language?: string;
-    
+
     /** 字幕选项 */
     subtitle?: {
       enabled: boolean;
@@ -114,19 +114,19 @@ interface AutoPipelineResult {
 ```typescript
 // 审核维度
 interface ReviewCriteria {
-  completeness?: boolean;      // 完整性
-  consistency?: boolean;       // 一致性
-  visualQuality?: boolean;     // 画面感
-  timing?: boolean;             // 时长匹配
-  climaxDetection?: boolean;   // 爆点检测
+  completeness?: boolean; // 完整性
+  consistency?: boolean; // 一致性
+  visualQuality?: boolean; // 画面感
+  timing?: boolean; // 时长匹配
+  climaxDetection?: boolean; // 爆点检测
 }
 
 // 审核结果
 interface ReviewResult {
   passed: boolean;
   scores: Record<string, number>; // 各维度得分 0-100
-  reasons: string[];             // 不合格原因
-  suggestions: string[];        // 修复建议
+  reasons: string[]; // 不合格原因
+  suggestions: string[]; // 修复建议
 }
 ```
 
@@ -175,13 +175,13 @@ interface ReviewResult {
 
 **错误响应**:
 
-| 状态码 | 错误码 | 说明 |
-|--------|--------|------|
-| 400 | INVALID_INPUT | 输入内容无效或格式错误 |
-| 400 | CONTENT_TOO_SHORT | 内容过短（少于 100 字） |
-| 401 | UNAUTHORIZED | 未提供或无效的认证令牌 |
-| 429 | RATE_LIMITED | 请求过于频繁 |
-| 500 | INTERNAL_ERROR | 服务器内部错误 |
+| 状态码 | 错误码            | 说明                    |
+| ------ | ----------------- | ----------------------- |
+| 400    | INVALID_INPUT     | 输入内容无效或格式错误  |
+| 400    | CONTENT_TOO_SHORT | 内容过短（少于 100 字） |
+| 401    | UNAUTHORIZED      | 未提供或无效的认证令牌  |
+| 429    | RATE_LIMITED      | 请求过于频繁            |
+| 500    | INTERNAL_ERROR    | 服务器内部错误          |
 
 ### 3.2 获取任务状态
 
@@ -191,8 +191,8 @@ interface ReviewResult {
 
 **路径参数**:
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
+| 参数   | 类型   | 说明    |
+| ------ | ------ | ------- |
 | taskId | string | 任务 ID |
 
 **响应** (200 OK):
@@ -247,9 +247,9 @@ interface ReviewResult {
 
 **错误响应**:
 
-| 状态码 | 错误码 | 说明 |
-|--------|--------|------|
-| 404 | TASK_NOT_FOUND | 任务不存在 |
+| 状态码 | 错误码         | 说明       |
+| ------ | -------------- | ---------- |
+| 404    | TASK_NOT_FOUND | 任务不存在 |
 
 ### 3.3 获取任务进度（WebSocket 推荐）
 
@@ -300,10 +300,10 @@ interface ReviewResult {
 
 **错误响应**:
 
-| 状态码 | 错误码 | 说明 |
-|--------|--------|------|
-| 400 | INVALID_STATE | 任务无法暂停（如已完成） |
-| 404 | TASK_NOT_FOUND | 任务不存在 |
+| 状态码 | 错误码         | 说明                     |
+| ------ | -------------- | ------------------------ |
+| 400    | INVALID_STATE  | 任务无法暂停（如已完成） |
+| 404    | TASK_NOT_FOUND | 任务不存在               |
 
 ### 3.5 恢复任务
 
@@ -323,10 +323,10 @@ interface ReviewResult {
 
 **错误响应**:
 
-| 状态码 | 错误码 | 说明 |
-|--------|--------|------|
-| 400 | INVALID_STATE | 任务无法恢复（如未暂停） |
-| 404 | TASK_NOT_FOUND | 任务不存在 |
+| 状态码 | 错误码         | 说明                     |
+| ------ | -------------- | ------------------------ |
+| 400    | INVALID_STATE  | 任务无法恢复（如未暂停） |
+| 404    | TASK_NOT_FOUND | 任务不存在               |
 
 ### 3.6 取消任务
 
@@ -370,10 +370,10 @@ interface ReviewResult {
 
 **错误响应**:
 
-| 状态码 | 错误码 | 说明 |
-|--------|--------|------|
-| 404 | TASK_NOT_FOUND | 任务不存在 |
-| 400 | OUTPUT_NOT_READY | 输出尚未生成 |
+| 状态码 | 错误码           | 说明         |
+| ------ | ---------------- | ------------ |
+| 404    | TASK_NOT_FOUND   | 任务不存在   |
+| 400    | OUTPUT_NOT_READY | 输出尚未生成 |
 
 ### 3.8 下载输出文件
 
@@ -383,8 +383,8 @@ interface ReviewResult {
 
 **查询参数**:
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
+| 参数 | 类型   | 说明                                               |
+| ---- | ------ | -------------------------------------------------- |
 | type | string | 下载类型：`video`（默认）、`thumbnail`、`subtitle` |
 
 **响应**: 文件流
@@ -397,13 +397,13 @@ interface ReviewResult {
 
 **查询参数**:
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| page | number | 1 | 页码 |
-| limit | number | 20 | 每页数量 |
-| status | string | - | 按状态筛选 |
-| sortBy | string | createdAt | 排序字段 |
-| sortOrder | string | desc | 排序方向 |
+| 参数      | 类型   | 默认值    | 说明       |
+| --------- | ------ | --------- | ---------- |
+| page      | number | 1         | 页码       |
+| limit     | number | 20        | 每页数量   |
+| status    | string | -         | 按状态筛选 |
+| sortBy    | string | createdAt | 排序字段   |
+| sortOrder | string | desc      | 排序方向   |
 
 **响应** (200 OK):
 
@@ -474,16 +474,16 @@ interface ReviewResult {
 
 **消息类型**:
 
-| 类型 | 说明 |
-|------|------|
-| `progress` | 进度更新 |
-| `step_start` | 步骤开始 |
-| `step_complete` | 步骤完成 |
-| `step_error` | 步骤错误 |
-| `review_loop` | 自审循环触发 |
-| `quality_gate` | 质量门禁判定 |
-| `completed` | 任务完成 |
-| `error` | 任务错误 |
+| 类型            | 说明         |
+| --------------- | ------------ |
+| `progress`      | 进度更新     |
+| `step_start`    | 步骤开始     |
+| `step_complete` | 步骤完成     |
+| `step_error`    | 步骤错误     |
+| `review_loop`   | 自审循环触发 |
+| `quality_gate`  | 质量门禁判定 |
+| `completed`     | 任务完成     |
+| `error`         | 任务错误     |
 
 ---
 
@@ -492,33 +492,33 @@ interface ReviewResult {
 ### 5.1 安装
 
 ```bash
-npm install @panelflow/autonomous-sdk
+npm install @frameforge/autonomous-sdk
 ```
 
 ### 5.2 初始化
 
 ```typescript
-import { AutonomousClient } from '@panelflow/autonomous-sdk';
+import { AutonomousClient } from '@frameforge/autonomous-sdk';
 
 const client = new AutonomousClient({
-  baseUrl: 'https://api.panelflow.com',
+  baseUrl: 'https://api.frameforge.com',
   token: 'your_api_token',
   // 可选：WebSocket 连接选项
   wsOptions: {
     reconnect: true,
-    maxRetries: 5
-  }
+    maxRetries: 5,
+  },
 });
 ```
 
 ### 5.3 创建并启动任务
 
 ```typescript
-import { AutonomousClient, InputMode, OutputStyle, QualityLevel } from '@panelflow/autonomous-sdk';
+import { AutonomousClient, InputMode, OutputStyle, QualityLevel } from '@frameforge/autonomous-sdk';
 
 const client = new AutonomousClient({
-  baseUrl: 'https://api.panelflow.com',
-  token: 'your_api_token'
+  baseUrl: 'https://api.frameforge.com',
+  token: 'your_api_token',
 });
 
 // 创建任务
@@ -533,9 +533,9 @@ const task = await client.tasks.create({
     maxConcurrentRenders: 4,
     subtitle: {
       enabled: true,
-      position: 'bottom'
-    }
-  }
+      position: 'bottom',
+    },
+  },
 });
 
 console.log(`任务已创建: ${task.taskId}`);
@@ -549,21 +549,21 @@ console.log(`任务已创建: ${task.taskId}`);
 async function monitorTask(taskId: string) {
   while (true) {
     const status = await client.tasks.getStatus(taskId);
-    
+
     console.log(`进度: ${status.progress}%`);
     console.log(`当前步骤: ${status.currentStep}`);
-    
+
     if (status.status === 'completed') {
       console.log('任务完成!');
       console.log('输出文件:', status.output.videoPath);
       break;
     }
-    
+
     if (status.status === 'failed') {
       console.error('任务失败:', status.error);
       break;
     }
-    
+
     await sleep(5000); // 每 5 秒查询一次
   }
 }
@@ -638,11 +638,11 @@ const downloadUrl = await client.tasks.getDownloadUrl(taskId, { type: 'video' })
 const result = await client.tasks.list({
   page: 1,
   limit: 20,
-  status: 'completed'
+  status: 'completed',
 });
 
 console.log(`共 ${result.pagination.total} 个任务`);
-result.tasks.forEach(task => {
+result.tasks.forEach((task) => {
   console.log(`- ${task.title} [${task.status}]`);
 });
 ```
@@ -655,30 +655,30 @@ result.tasks.forEach(task => {
 
 ```typescript
 interface APIError {
-  code: string;      // 错误码
-  message: string;   // 错误消息
-  details?: any;     // 详细信息
+  code: string; // 错误码
+  message: string; // 错误消息
+  details?: any; // 详细信息
   requestId: string; // 请求 ID（用于排查）
 }
 ```
 
 ### 6.2 常见错误码
 
-| 错误码 | HTTP 状态 | 说明 |
-|--------|-----------|------|
-| INVALID_INPUT | 400 | 输入参数无效 |
-| CONTENT_TOO_SHORT | 400 | 内容过短 |
-| TASK_NOT_FOUND | 404 | 任务不存在 |
-| INVALID_STATE | 400 | 任务状态不允许此操作 |
-| RATE_LIMITED | 429 | 请求频率超限 |
-| UNAUTHORIZED | 401 | 未授权 |
-| INTERNAL_ERROR | 500 | 服务器内部错误 |
-| SERVICE_UNAVAILABLE | 503 | 服务不可用（降级中） |
+| 错误码              | HTTP 状态 | 说明                 |
+| ------------------- | --------- | -------------------- |
+| INVALID_INPUT       | 400       | 输入参数无效         |
+| CONTENT_TOO_SHORT   | 400       | 内容过短             |
+| TASK_NOT_FOUND      | 404       | 任务不存在           |
+| INVALID_STATE       | 400       | 任务状态不允许此操作 |
+| RATE_LIMITED        | 429       | 请求频率超限         |
+| UNAUTHORIZED        | 401       | 未授权               |
+| INTERNAL_ERROR      | 500       | 服务器内部错误       |
+| SERVICE_UNAVAILABLE | 503       | 服务不可用（降级中） |
 
 ### 6.3 SDK 错误处理示例
 
 ```typescript
-import { AutonomousClient, APIError, RateLimitError, TaskNotFoundError } from '@panelflow/autonomous-sdk';
+import { AutonomousClient, APIError, RateLimitError, TaskNotFoundError } from '@frameforge/autonomous-sdk';
 
 const client = new AutonomousClient({ ... });
 
@@ -704,11 +704,11 @@ try {
 
 ## 七、速率限制
 
-| 端点 | 限制 |
-|------|------|
-| POST /tasks | 10 次/分钟 |
-| GET /tasks/{id} | 60 次/分钟 |
-| WebSocket 连接 | 5 个并发连接 |
+| 端点            | 限制         |
+| --------------- | ------------ |
+| POST /tasks     | 10 次/分钟   |
+| GET /tasks/{id} | 60 次/分钟   |
+| WebSocket 连接  | 5 个并发连接 |
 
 ---
 
@@ -720,9 +720,9 @@ try {
 
 ```typescript
 await client.webhooks.configure({
-  url: 'https://your-server.com/webhooks/panelflow',
+  url: 'https://your-server.com/webhooks/frameforge',
   events: ['task.completed', 'task.failed', 'step.completed'],
-  secret: 'your_webhook_secret'
+  secret: 'your_webhook_secret',
 });
 ```
 

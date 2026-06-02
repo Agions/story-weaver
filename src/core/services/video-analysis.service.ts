@@ -5,3 +5,4 @@
  * top-level path. New code should import from `./video/video-analysis.service` directly.
  */
 export * from './video/video-analysis.service';
+export { default } from './video/video-analysis.service';

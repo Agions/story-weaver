@@ -2,7 +2,14 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 // 工作流步骤类型
-export type WorkflowStep = 'import' | 'generate' | 'storyboard' | 'character' | 'render' | 'compose' | 'export';
+export type WorkflowStep =
+  | 'import'
+  | 'generate'
+  | 'storyboard'
+  | 'character'
+  | 'render'
+  | 'compose'
+  | 'export';
 
 // 工作流状态类型
 export type WorkflowStatus = 'idle' | 'running' | 'paused' | 'completed' | 'error';
@@ -75,20 +82,23 @@ const STEP_ORDER: WorkflowStep[] = [
   'character',
   'render',
   'compose',
-  'export'
+  'export',
 ];
 
 // 初始化步骤状态
 const createInitialSteps = (): Record<WorkflowStep, StepState> => {
-  return STEP_ORDER.reduce((acc, step) => ({
-    ...acc,
-    [step]: {
-      step,
-      status: 'idle',
-      progress: 0,
-      data: {}
-    }
-  }), {} as Record<WorkflowStep, StepState>);
+  return STEP_ORDER.reduce(
+    (acc, step) => ({
+      ...acc,
+      [step]: {
+        step,
+        status: 'idle',
+        progress: 0,
+        data: {},
+      },
+    }),
+    {} as Record<WorkflowStep, StepState>
+  );
 };
 
 // 获取下一步
@@ -125,9 +135,9 @@ export const useWorkflowStore = create<WorkflowState>()(
             [targetStep]: {
               ...state.steps[targetStep],
               status: 'running',
-              startedAt: new Date().toISOString()
-            }
-          }
+              startedAt: new Date().toISOString(),
+            },
+          },
         }));
       },
 
@@ -137,13 +147,14 @@ export const useWorkflowStore = create<WorkflowState>()(
             ...state.steps,
             [step]: {
               ...state.steps[step],
-              progress: Math.min(100, Math.max(0, progress))
-            }
+              progress: Math.min(100, Math.max(0, progress)),
+            },
           },
           // 计算总体进度
-          progress: state.currentStep === step
-            ? (STEP_ORDER.indexOf(step) * 100 + progress) / STEP_ORDER.length
-            : state.progress
+          progress:
+            state.currentStep === step
+              ? (STEP_ORDER.indexOf(step) * 100 + progress) / STEP_ORDER.length
+              : state.progress,
         }));
       },
 
@@ -156,7 +167,7 @@ export const useWorkflowStore = create<WorkflowState>()(
           newHistory.push({
             step,
             timestamp: new Date().toISOString(),
-            data: state.steps[step].data
+            data: state.steps[step].data,
           });
 
           return {
@@ -167,16 +178,14 @@ export const useWorkflowStore = create<WorkflowState>()(
                 status: 'completed',
                 progress: 100,
                 completedAt: new Date().toISOString(),
-                ...(data ? { data: { ...state.steps[step].data, ...data } } : {})
-              }
+                ...(data ? { data: { ...state.steps[step].data, ...data } } : {}),
+              },
             },
             currentStep: nextStep || step,
-            progress: nextStep
-              ? ((stepIndex + 1) / STEP_ORDER.length) * 100
-              : 100,
+            progress: nextStep ? ((stepIndex + 1) / STEP_ORDER.length) * 100 : 100,
             status: nextStep ? 'running' : 'completed',
             history: newHistory,
-            historyIndex: newHistory.length - 1
+            historyIndex: newHistory.length - 1,
           };
         });
       },
@@ -185,7 +194,7 @@ export const useWorkflowStore = create<WorkflowState>()(
         set((state) => ({
           currentStep: step,
           status: state.steps[step].status === 'completed' ? 'completed' : 'running',
-          progress: (STEP_ORDER.indexOf(step) / STEP_ORDER.length) * 100
+          progress: (STEP_ORDER.indexOf(step) / STEP_ORDER.length) * 100,
         }));
       },
 
@@ -204,9 +213,9 @@ export const useWorkflowStore = create<WorkflowState>()(
             [nextStep]: {
               ...state.steps[nextStep],
               status: status === 'completed' ? 'completed' : 'running',
-              startedAt: state.steps[nextStep].startedAt || new Date().toISOString()
-            }
-          }
+              startedAt: state.steps[nextStep].startedAt || new Date().toISOString(),
+            },
+          },
         }));
       },
 
@@ -219,7 +228,7 @@ export const useWorkflowStore = create<WorkflowState>()(
         set(() => ({
           currentStep: prevStep,
           status: 'running',
-          progress: (STEP_ORDER.indexOf(prevStep) / STEP_ORDER.length) * 100
+          progress: (STEP_ORDER.indexOf(prevStep) / STEP_ORDER.length) * 100,
         }));
       },
 
@@ -227,22 +236,24 @@ export const useWorkflowStore = create<WorkflowState>()(
 
       resumeWorkflow: () => set({ status: 'running' }),
 
-      cancelWorkflow: () => set({
-        status: 'idle',
-        progress: 0,
-        steps: createInitialSteps(),
-        history: [],
-        historyIndex: -1
-      }),
+      cancelWorkflow: () =>
+        set({
+          status: 'idle',
+          progress: 0,
+          steps: createInitialSteps(),
+          history: [],
+          historyIndex: -1,
+        }),
 
-      resetWorkflow: () => set({
-        currentStep: 'import',
-        status: 'idle',
-        progress: 0,
-        steps: createInitialSteps(),
-        history: [],
-        historyIndex: -1
-      }),
+      resetWorkflow: () =>
+        set({
+          currentStep: 'import',
+          status: 'idle',
+          progress: 0,
+          steps: createInitialSteps(),
+          history: [],
+          historyIndex: -1,
+        }),
 
       undo: () => {
         const { historyIndex } = get();
@@ -253,7 +264,7 @@ export const useWorkflowStore = create<WorkflowState>()(
         set((state) => ({
           currentStep: historyItem.step,
           progress: (STEP_ORDER.indexOf(historyItem.step) / STEP_ORDER.length) * 100,
-          historyIndex: state.historyIndex - 1
+          historyIndex: state.historyIndex - 1,
         }));
       },
 
@@ -266,7 +277,7 @@ export const useWorkflowStore = create<WorkflowState>()(
         set((state) => ({
           currentStep: nextHistoryItem.step,
           progress: ((STEP_ORDER.indexOf(nextHistoryItem.step) + 1) / STEP_ORDER.length) * 100,
-          historyIndex: state.historyIndex + 1
+          historyIndex: state.historyIndex + 1,
         }));
       },
 
@@ -285,9 +296,9 @@ export const useWorkflowStore = create<WorkflowState>()(
             ...state.steps,
             [step]: {
               ...state.steps[step],
-              data: { ...state.steps[step].data, ...data }
-            }
-          }
+              data: { ...state.steps[step].data, ...data },
+            },
+          },
         }));
       },
 
@@ -303,9 +314,9 @@ export const useWorkflowStore = create<WorkflowState>()(
             ...state.steps,
             [currentStep]: {
               ...state.steps[currentStep],
-              data: { ...state.steps[currentStep].data, ...data }
-            }
-          }
+              data: { ...state.steps[currentStep].data, ...data },
+            },
+          },
         }));
       },
 
@@ -355,16 +366,16 @@ export const useWorkflowStore = create<WorkflowState>()(
 
         return {
           valid: errors.length === 0,
-          errors
+          errors,
         };
-      }
+      },
     }),
     {
-      name: 'mangaai-workflow-storage',
+      name: 'frameforge-workflow-storage',
       partialize: (state) => ({
         currentStep: state.currentStep,
-        steps: state.steps
-      })
+        steps: state.steps,
+      }),
     }
   )
 );

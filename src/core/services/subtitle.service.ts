@@ -5,3 +5,4 @@
  * top-level path. New code should import from `./video/subtitle.service` directly.
  */
 export * from './video/subtitle.service';
+export { default } from './video/subtitle.service';

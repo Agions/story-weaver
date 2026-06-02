@@ -1,5 +1,5 @@
 name: Feature Request
-description: Suggest a new feature for PanelFlow
+description: Suggest a new feature for FrameForge
 labels: ["enhancement", "needs-triage"]
 body:
   - type: markdown

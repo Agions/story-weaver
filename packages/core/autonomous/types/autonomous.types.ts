@@ -1,5 +1,5 @@
 /**
- * PanelFlow Autonomous Mode — Core Types
+ * FrameForge Autonomous Mode — Core Types
  * 全自动 AI 漫剧制作系统的核心类型定义
  */
 

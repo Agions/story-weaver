@@ -1,16 +1,16 @@
 # 服务文档
 
-本文档介绍 PanelFlow 核心服务的架构与使用方法。
+本文档介绍 FrameForge 核心服务的架构与使用方法。
 
 ---
 
 ## 一、服务架构概览
 
-PanelFlow 采用微服务化的模块设计，核心服务分为以下几类：
+FrameForge 采用微服务化的模块设计，核心服务分为以下几类：
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                      PanelFlow Services                       │
+│                      FrameForge Services                       │
 ├─────────────────────────────────────────────────────────────┤
 │  AI 服务层                                                     │
 │  ├── LLM Service (大语言模型服务)                              │
@@ -44,13 +44,13 @@ PanelFlow 采用微服务化的模块设计，核心服务分为以下几类：
 
 **支持的模型**:
 
-| 模型 | 用途 | 优先级 |
-|------|------|--------|
-| GLM-5 | 剧本解析、脚本生成 | ⭐⭐⭐ |
-| Doubao 2.0 | 故事分析 | ⭐⭐⭐ |
-| ERNIE 4.0 | 故事分析 | ⭐⭐ |
-| M2.5 | 剧本解析 | ⭐⭐ |
-| Kimi K2.5 | 剧本解析 | ⭐⭐ |
+| 模型       | 用途               | 优先级 |
+| ---------- | ------------------ | ------ |
+| GLM-5      | 剧本解析、脚本生成 | ⭐⭐⭐ |
+| Doubao 2.0 | 故事分析           | ⭐⭐⭐ |
+| ERNIE 4.0  | 故事分析           | ⭐⭐   |
+| M2.5       | 剧本解析           | ⭐⭐   |
+| Kimi K2.5  | 剧本解析           | ⭐⭐   |
 
 **降级策略**:
 
@@ -64,14 +64,10 @@ LLM 降级链路: GLM-5 → Doubao 2.0 → ERNIE 4.0 → M2.5
 interface LLMService {
   // 文本补全
   complete(prompt: string, options?: LLMOptions): Promise<string>;
-  
+
   // 结构化输出（JSON）
-  structuredOutput<T>(
-    prompt: string, 
-    schema: Schema, 
-    options?: LLMOptions
-  ): Promise<T>;
-  
+  structuredOutput<T>(prompt: string, schema: Schema, options?: LLMOptions): Promise<T>;
+
   // 批量处理
   batchComplete(prompts: string[], options?: LLMOptions): Promise<string[]>;
 }
@@ -83,15 +79,10 @@ interface LLMService {
 import { llmService } from '@/core/ai/llm-service';
 
 // 简单文本补全
-const storyAnalysis = await llmService.complete(
-  `请分析以下故事的人物和场景：\n${storyText}`
-);
+const storyAnalysis = await llmService.complete(`请分析以下故事的人物和场景：\n${storyText}`);
 
 // 结构化输出
-const script = await llmService.structuredOutput<ScriptOutput>(
-  '请生成视频剧本',
-  ScriptSchema
-);
+const script = await llmService.structuredOutput<ScriptOutput>('请生成视频剧本', ScriptSchema);
 ```
 
 ### 2.2 Image Generation Service（图像生成服务）
@@ -102,12 +93,12 @@ const script = await llmService.structuredOutput<ScriptOutput>(
 
 **支持的模型**:
 
-| 模型 | 用途 | 优先级 |
-|------|------|--------|
-| Seedream 5.0 | 角色设计、分镜生成 | ⭐⭐⭐ |
-| Kling 1.6 | 分镜生成、图像渲染 | ⭐⭐ |
-| Vidu 2.0 | 备选渲染 | ⭐ |
-| Stable Diffusion | 降级渲染 | ⭐ |
+| 模型             | 用途               | 优先级 |
+| ---------------- | ------------------ | ------ |
+| Seedream 5.0     | 角色设计、分镜生成 | ⭐⭐⭐ |
+| Kling 1.6        | 分镜生成、图像渲染 | ⭐⭐   |
+| Vidu 2.0         | 备选渲染           | ⭐     |
+| Stable Diffusion | 降级渲染           | ⭐     |
 
 **降级链路**:
 
@@ -120,17 +111,11 @@ Seedream 5.0 → Kling 1.6 → Vidu 2.0 → Stable Diffusion API
 ```typescript
 interface ImageGenerationService {
   // 生成单张图片
-  generate(
-    prompt: string, 
-    options?: ImageOptions
-  ): Promise<ImageResult>;
-  
+  generate(prompt: string, options?: ImageOptions): Promise<ImageResult>;
+
   // 批量生成
-  batchGenerate(
-    prompts: string[], 
-    options?: ImageOptions
-  ): Promise<ImageResult[]>;
-  
+  batchGenerate(prompts: string[], options?: ImageOptions): Promise<ImageResult[]>;
+
   // 角色一致性生成
   generateWithCharacter(
     characterId: string,
@@ -153,10 +138,10 @@ const characterImage = await imageService.generateWithCharacter(
 );
 
 // 批量生成分镜图
-const storyboardImages = await imageService.batchGenerate(
-  storyboardPrompts,
-  { size: '1280x720', style: 'anime' }
-);
+const storyboardImages = await imageService.batchGenerate(storyboardPrompts, {
+  size: '1280x720',
+  style: 'anime',
+});
 ```
 
 ### 2.3 TTS Service（语音合成服务）
@@ -167,11 +152,11 @@ const storyboardImages = await imageService.batchGenerate(
 
 **支持的引擎**:
 
-| 引擎 | 特点 | 优先级 |
-|------|------|--------|
-| Edge TTS | 免费、低延迟 | ⭐⭐⭐ |
-| CosyVoice 2.0 | 高质量音色 | ⭐⭐ |
-| 百度 TTS | 降级方案 | ⭐ |
+| 引擎          | 特点         | 优先级 |
+| ------------- | ------------ | ------ |
+| Edge TTS      | 免费、低延迟 | ⭐⭐⭐ |
+| CosyVoice 2.0 | 高质量音色   | ⭐⭐   |
+| 百度 TTS      | 降级方案     | ⭐     |
 
 **降级链路**:
 
@@ -184,18 +169,13 @@ Edge TTS → CosyVoice 2.0 → 百度 TTS
 ```typescript
 interface TTSService {
   // 文本转语音
-  synthesize(
-    text: string, 
-    options?: TTSOptions
-  ): Promise<AudioResult>;
-  
+  synthesize(text: string, options?: TTSOptions): Promise<AudioResult>;
+
   // 唇形同步数据生成
   lipSync(audioPath: string): Promise<LipSyncData>;
-  
+
   // 多角色配音
-  multiCharacterDub(
-    dialogues: Dialogue[]
-  ): Promise<DubbingResult>;
+  multiCharacterDub(dialogues: Dialogue[]): Promise<DubbingResult>;
 }
 ```
 
@@ -210,23 +190,14 @@ interface TTSService {
 ```typescript
 interface VideoCompositionService {
   // 合成视频
-  compose(
-    scenes: Scene[],
-    options?: VideoOptions
-  ): Promise<VideoResult>;
-  
+  compose(scenes: Scene[], options?: VideoOptions): Promise<VideoResult>;
+
   // 添加转场效果
-  addTransitions(
-    videoPath: string,
-    transitions: Transition[]
-  ): Promise<string>;
-  
+  addTransitions(videoPath: string, transitions: Transition[]): Promise<string>;
+
   // 嵌入字幕
-  burnSubtitles(
-    videoPath: string,
-    subtitles: Subtitle[]
-  ): Promise<string>;
-  
+  burnSubtitles(videoPath: string, subtitles: Subtitle[]): Promise<string>;
+
   // 导出最终格式
   export(
     videoPath: string,
@@ -261,7 +232,7 @@ interface PipelineStep {
 **执行流程**:
 
 ```
-ImportStep → AnalysisStep → ScriptStep → CharacterStep 
+ImportStep → AnalysisStep → ScriptStep → CharacterStep
           → StoryboardStep → RenderStep → CompositionStep → ExportStep
 ```
 
@@ -274,7 +245,7 @@ const result = await pipelineEngine.run({
   input: storyText,
   mode: 'manual',
   onStepComplete: (step) => console.log(`完成: ${step.name}`),
-  onStepError: (step, error) => console.error(`失败: ${step.name}`, error)
+  onStepError: (step, error) => console.error(`失败: ${step.name}`, error),
 });
 ```
 
@@ -288,17 +259,17 @@ const result = await pipelineEngine.run({
 
 ```typescript
 const AUTONOMOUS_STEPS = [
-  'ImportStep',      // 解析原材料
-  'AnalysisStep',    // 分析故事结构
-  'ScriptStep',      // 生成视频剧本
-  'CharacterStep',   // 角色设定与一致化
-  'SceneStep',       // 场景规划
-  'StoryboardStep',  // 分镜脚本 + 参考图
-  'RenderStep',      // 批量渲染帧
-  'VideoEditStep',   // 视频剪辑 + 转场
-  'AudioStep',       // 配音 + 音效 + 唇形同步
-  'SubtitleStep',    // 字幕生成与嵌入
-  'ExportStep',      // 最终合成输出
+  'ImportStep', // 解析原材料
+  'AnalysisStep', // 分析故事结构
+  'ScriptStep', // 生成视频剧本
+  'CharacterStep', // 角色设定与一致化
+  'SceneStep', // 场景规划
+  'StoryboardStep', // 分镜脚本 + 参考图
+  'RenderStep', // 批量渲染帧
+  'VideoEditStep', // 视频剪辑 + 转场
+  'AudioStep', // 配音 + 音效 + 唇形同步
+  'SubtitleStep', // 字幕生成与嵌入
+  'ExportStep', // 最终合成输出
 ];
 ```
 
@@ -308,16 +279,16 @@ const AUTONOMOUS_STEPS = [
 interface AutoPipelineEngine {
   // 启动全自动流水线
   run(input: AutoPipelineInput): Promise<AutoPipelineResult>;
-  
+
   // 暂停流水线
   pause(): void;
-  
+
   // 恢复流水线
   resume(): void;
-  
+
   // 取消流水线
   cancel(): void;
-  
+
   // 获取当前状态
   getStatus(): AutoPipelineStatus;
 }
@@ -333,7 +304,7 @@ const result = await autoPipelineEngine.run({
   mode: 'novel',
   title: '我的漫剧',
   style: 'anime',
-  qualityLevel: 'balanced'
+  qualityLevel: 'balanced',
 });
 ```
 
@@ -345,24 +316,21 @@ const result = await autoPipelineEngine.run({
 
 **审核维度**:
 
-| 维度 | 判定标准 |
-|------|---------|
-| 完整性 | 输出是否包含所有必要字段/元素 |
-| 一致性 | 人物描写、场景描述前后是否矛盾 |
-| 画面感 | 描述是否具备足够的视觉细节供 AI 生图 |
-| 时长匹配 | 对话/场景时长是否与内容体量匹配 |
-| 爆点检测 | 是否包含情绪爆点、转折、高潮 |
+| 维度     | 判定标准                             |
+| -------- | ------------------------------------ |
+| 完整性   | 输出是否包含所有必要字段/元素        |
+| 一致性   | 人物描写、场景描述前后是否矛盾       |
+| 画面感   | 描述是否具备足够的视觉细节供 AI 生图 |
+| 时长匹配 | 对话/场景时长是否与内容体量匹配      |
+| 爆点检测 | 是否包含情绪爆点、转折、高潮         |
 
 **核心接口**:
 
 ```typescript
 interface SelfReviewLoop {
   // 执行自审
-  review(
-    stepOutput: StepOutput,
-    criteria: ReviewCriteria
-  ): Promise<ReviewResult>;
-  
+  review(stepOutput: StepOutput, criteria: ReviewCriteria): Promise<ReviewResult>;
+
   // 执行修复
   repair(
     originalOutput: StepOutput,
@@ -382,17 +350,17 @@ interface SelfReviewLoop {
 
 **各步骤门禁标准**:
 
-| Step | 通过条件 | 不通过处理 |
-|------|---------|-----------|
-| Import | 章节数 ≥ 1，字数 > 100 | 提示用户检查输入 |
-| Analysis | 人物 ≥ 1，场景 ≥ 1 | 自动补充默认值 |
-| Script | 场景数 ≥ 3，时长 5-30min | 自审循环重做 |
-| Character | 角色图 ≥ 1张/角色，一致性 > 70% | 自审循环重做 |
-| Storyboard | 分镜数 ≥ 脚本场景数 | 自审循环重做 |
-| Render | 成功率 > 80% | 自动重抽失败的帧 |
-| VideoEdit | 片段数 = 分镜数 | 自动补间 |
-| Audio | 时长偏差 < 5% | 自动重新生成 |
-| Export | 文件存在且可播放 | 重新导出 |
+| Step       | 通过条件                        | 不通过处理       |
+| ---------- | ------------------------------- | ---------------- |
+| Import     | 章节数 ≥ 1，字数 > 100          | 提示用户检查输入 |
+| Analysis   | 人物 ≥ 1，场景 ≥ 1              | 自动补充默认值   |
+| Script     | 场景数 ≥ 3，时长 5-30min        | 自审循环重做     |
+| Character  | 角色图 ≥ 1张/角色，一致性 > 70% | 自审循环重做     |
+| Storyboard | 分镜数 ≥ 脚本场景数             | 自审循环重做     |
+| Render     | 成功率 > 80%                    | 自动重抽失败的帧 |
+| VideoEdit  | 片段数 = 分镜数                 | 自动补间         |
+| Audio      | 时长偏差 < 5%                   | 自动重新生成     |
+| Export     | 文件存在且可播放                | 重新导出         |
 
 ---
 
@@ -410,16 +378,16 @@ interface SelfReviewLoop {
 interface AutoPipelineService {
   // 创建新任务
   createTask(input: CreateTaskInput): Promise<Task>;
-  
+
   // 获取任务状态
   getTaskStatus(taskId: string): Promise<TaskStatus>;
-  
+
   // 获取任务进度
   getTaskProgress(taskId: string): Promise<TaskProgress>;
-  
+
   // 取消任务
   cancelTask(taskId: string): Promise<void>;
-  
+
   // 下载结果
   downloadResult(taskId: string): Promise<string>;
 }
@@ -433,13 +401,13 @@ interface AutoPipelineService {
 
 **支持格式**:
 
-| 格式 | 解析方式 |
-|------|---------|
-| TXT | 纯文本按章节分割 |
-| Markdown | 按 # 标题分割章节 |
-| PDF | 文本提取 + 章节分析 |
-| Word | 文档解析 |
-| URL | 网页内容抓取 |
+| 格式     | 解析方式            |
+| -------- | ------------------- |
+| TXT      | 纯文本按章节分割    |
+| Markdown | 按 # 标题分割章节   |
+| PDF      | 文本提取 + 章节分析 |
+| Word     | 文档解析            |
+| URL      | 网页内容抓取        |
 
 ### 4.3 Analysis Service
 
@@ -468,19 +436,19 @@ interface StoryAnalysis {
 
 **支持格式**:
 
-| 格式 | 用途 |
-|------|------|
+| 格式        | 用途       |
+| ----------- | ---------- |
 | MP4 (H.264) | 通用兼容性 |
-| WebM (VP9) | web 嵌入 |
-| MOV | 苹果生态 |
+| WebM (VP9)  | web 嵌入   |
+| MOV         | 苹果生态   |
 
 **质量选项**:
 
-| 质量 | 分辨率 | 码率 |
-|------|--------|------|
-| low | 720p | 2 Mbps |
-| medium | 1080p | 5 Mbps |
-| high | 1080p+ | 10 Mbps |
+| 质量   | 分辨率 | 码率    |
+| ------ | ------ | ------- |
+| low    | 720p   | 2 Mbps  |
+| medium | 1080p  | 5 Mbps  |
+| high   | 1080p+ | 10 Mbps |
 
 ---
 
@@ -556,16 +524,16 @@ enum ServiceErrorType {
   IMAGE_GENERATION_ERROR = 'IMAGE_GENERATION_ERROR',
   TTS_ERROR = 'TTS_ERROR',
   VIDEO_COMPOSITION_ERROR = 'VIDEO_COMPOSITION_ERROR',
-  
+
   // Pipeline 错误
   STEP_EXECUTION_ERROR = 'STEP_EXECUTION_ERROR',
   QUALITY_GATE_FAILED = 'QUALITY_GATE_FAILED',
   REVIEW_LOOP_EXCEEDED = 'REVIEW_LOOP_EXCEEDED',
-  
+
   // 存储错误
   STORAGE_ERROR = 'STORAGE_ERROR',
   CHECKPOINT_ERROR = 'CHECKPOINT_ERROR',
-  
+
   // 配置错误
   CONFIG_ERROR = 'CONFIG_ERROR',
 }
@@ -580,13 +548,13 @@ interface ErrorHandler {
     maxAttempts: number;
     backoffMs: number;
   };
-  
+
   // 降级策略
   fallback?: {
     service: string;
     action: 'skip' | 'use-default' | 'notify-user';
   };
-  
+
   // 日志策略
   logging?: {
     level: 'error' | 'warn' | 'info';
@@ -616,6 +584,7 @@ interface ErrorHandler {
 ### 7.3 监控与告警
 
 建议监控以下指标：
+
 - API 响应时间 (P50, P95, P99)
 - 错误率 (按服务、按错误类型)
 - 降级触发次数

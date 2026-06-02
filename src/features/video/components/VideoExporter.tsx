@@ -1,5 +1,6 @@
 import { Download, Video, Settings, CheckCircle } from 'lucide-react';
 import React, { useState, useCallback } from 'react';
+import { toast } from 'sonner';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
@@ -16,9 +17,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { toast } from 'sonner';
 import { logger } from '@/core/utils/logger';
-
 import {
   EXPORT_FORMATS,
   RESOLUTIONS,
@@ -29,7 +28,7 @@ import {
   type Resolution,
   type FrameRate,
   type QualityPreset,
-} from '@panel-flow/common/constants';
+} from '@frame-forge/common/constants';
 
 export type { ExportFormat, Resolution, FrameRate, QualityPreset };
 
@@ -180,10 +179,7 @@ function VideoExporter({
         {/* 分辨率选择 */}
         <div className="space-y-3">
           <Label>分辨率</Label>
-          <Select
-            value={resolution}
-            onValueChange={(v) => setResolution(v as Resolution)}
-          >
+          <Select value={resolution} onValueChange={(v) => setResolution(v as Resolution)}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
@@ -220,11 +216,7 @@ function VideoExporter({
         {/* 质量选择 */}
         <div className="space-y-3">
           <Label>质量</Label>
-          <RadioGroup
-            value={quality}
-            onChange={setQuality}
-            className="flex gap-4"
-          >
+          <RadioGroup value={quality} onChange={setQuality} className="flex gap-4">
             {Object.entries(QUALITY_PRESETS).map(([key, preset]) => (
               <div key={key} className="flex items-center space-x-2">
                 <RadioGroupItem value={key} id={`quality-${key}`} />
@@ -273,9 +265,7 @@ function VideoExporter({
         {exportComplete && (
           <Alert>
             <CheckCircle className="h-4 w-4" />
-            <AlertDescription>
-              导出完成！文件已保存为: {exportedFilePath}
-            </AlertDescription>
+            <AlertDescription>导出完成！文件已保存为: {exportedFilePath}</AlertDescription>
           </Alert>
         )}
 

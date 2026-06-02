@@ -21,6 +21,8 @@ export default [
       'src/__tests__/__mocks__/**',
       'src/__mocks__/**',
       'packages/**',
+      'vite.config.ts',
+      'jest.config.js',
     ],
   },
 

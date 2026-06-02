@@ -5,3 +5,4 @@
  * top-level path. New code should import from `./pipeline/review-export.service` directly.
  */
 export * from './pipeline/review-export.service';
+export { default } from './pipeline/review-export.service';

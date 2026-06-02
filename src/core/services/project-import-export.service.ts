@@ -5,3 +5,4 @@
  * top-level path. New code should import from `./project/project-import-export.service` directly.
  */
 export * from './project/project-import-export.service';
+export { default } from './project/project-import-export.service';

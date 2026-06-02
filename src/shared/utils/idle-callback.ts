@@ -1,5 +1,5 @@
 /**
- * panel-flow Shared Utils - Idle Callback
+ * frame-forge Shared Utils - Idle Callback
  */
 
 export interface IdleRunOptions {

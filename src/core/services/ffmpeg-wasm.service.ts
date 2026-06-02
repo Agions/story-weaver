@@ -5,3 +5,4 @@
  * top-level path. New code should import from `./video/ffmpeg-wasm.service` directly.
  */
 export * from './video/ffmpeg-wasm.service';
+export { default } from './video/ffmpeg-wasm.service';

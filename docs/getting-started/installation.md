@@ -1,6 +1,6 @@
 # 安装指南
 
-本文档详细介绍 PanelFlow 的安装和部署过程，包括本地开发和 Docker 部署两种方式。
+本文档详细介绍 FrameForge 的安装和部署过程，包括本地开发和 Docker 部署两种方式。
 
 ---
 
@@ -38,8 +38,8 @@
 ### 步骤 1：克隆代码仓库
 
 ```bash
-git clone https://github.com/Agions/panel-flow.git
-cd panel-flow
+git clone https://github.com/Agions/frame-forge.git
+cd frame-forge
 ```
 
 ### 步骤 2：安装依赖
@@ -112,7 +112,7 @@ docker compose up -d
 
 ```bash
 docker compose ps
-docker compose logs -f panel-flow
+docker compose logs -f frame-forge
 ```
 
 服务启动后，访问 `http://localhost:3000`。
@@ -179,7 +179,7 @@ server {
 
 ```yaml
 services:
-  panel-flow:
+  frame-forge:
     build:
       context: .
       dockerfile: Dockerfile
@@ -211,10 +211,10 @@ ports:
 
 ```yaml
 volumes:
-  - panel-flow-data:/app/data
+  - frame-forge-data:/app/data
 
 volumes:
-  panel-flow-data:
+  frame-forge-data:
     driver: local
 ```
 
@@ -232,7 +232,7 @@ PORT=3000
 #### 1. 创建 Nginx 配置
 
 ```nginx
-# /etc/nginx/conf.d/panel-flow.conf
+# /etc/nginx/conf.d/frame-forge.conf
 upstream panel_flow {
     server 127.0.0.1:3000;
 }

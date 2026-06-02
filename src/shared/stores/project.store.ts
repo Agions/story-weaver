@@ -136,7 +136,7 @@ export const useProjectStore = create<ProjectState>()(
       };
     },
     {
-      name: 'mangaai-project-storage',
+      name: 'frameforge-project-storage',
       storage: createJSONStorage(() => createDebouncedStorage(localStorage, 1500)),
       partialize: (state) => ({
         projects: state.projects,

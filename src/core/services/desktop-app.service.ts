@@ -436,7 +436,7 @@ class DesktopAppService {
    * 获取应用名称
    */
   getAppName(): string {
-    return 'panel-flow AI';
+    return 'frame-forge AI';
   }
 
   /**

@@ -5,3 +5,4 @@
  * top-level path. New code should import from `./ai/text/script-import.service` directly.
  */
 export * from './ai/text/script-import.service';
+export { default } from './ai/text/script-import.service';

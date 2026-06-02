@@ -433,7 +433,7 @@ export const useVideoEditorStore = create<VideoEditorState>()(
       },
     }),
     {
-      name: 'mangaai-video-editor-storage',
+      name: 'frameforge-video-editor-storage',
       partialize: (state) => ({
         zoom: state.zoom,
         volume: state.volume,

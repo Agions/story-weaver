@@ -14,7 +14,7 @@
 ### 基本语法
 
 ```bash
-panel-flow auto --input <输入路径> --output <输出路径>
+frame-forge auto --input <输入路径> --output <输出路径>
 ```
 
 ### 参数说明
@@ -39,13 +39,13 @@ panel-flow auto --input <输入路径> --output <输出路径>
 
 ```bash
 # 基本用法
-panel-flow auto --input ./panels.json --output ./output/
+frame-forge auto --input ./panels.json --output ./output/
 
 # 详细日志模式
-panel-flow auto --input ./panels.json --output ./output/ --verbose
+frame-forge auto --input ./panels.json --output ./output/ --verbose
 
 # 自定义配置
-panel-flow auto --input ./panels.json --output ./output/ --config ./custom.yaml
+frame-forge auto --input ./panels.json --output ./output/ --config ./custom.yaml
 ```
 
 ## 注意事项

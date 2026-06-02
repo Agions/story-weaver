@@ -1,9 +1,9 @@
 /**
- * panel-flow Shared Utils - Async Error Handling Utilities
+ * frame-forge Shared Utils - Async Error Handling Utilities
  */
 
-import { toast } from '@/shared/components/ui';
 import { logger } from '@/core/utils/logger';
+import { toast } from '@/shared/components/ui';
 
 /**
  * Wraps an async operation with standardized try-catch-toast-logger pattern.

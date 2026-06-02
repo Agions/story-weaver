@@ -8,12 +8,12 @@ import type { AppState } from '@/shared/stores/app.store';
 
 // 存储键名
 const STORAGE_KEYS = {
-  PROJECTS: 'mangaai_projects',
-  APP_STATE: 'mangaai_app_state',
-  USER_PREFERENCES: 'mangaai_preferences',
-  RECENT_FILES: 'mangaai_recent_files',
-  MODEL_SETTINGS: 'mangaai_model_settings',
-  EXPORT_HISTORY: 'mangaai_export_history'
+  PROJECTS: 'frameforge_projects',
+  APP_STATE: 'frameforge_app_state',
+  USER_PREFERENCES: 'frameforge_preferences',
+  RECENT_FILES: 'frameforge_recent_files',
+  MODEL_SETTINGS: 'frameforge_model_settings',
+  EXPORT_HISTORY: 'frameforge_export_history',
 };
 
 class StorageService {
@@ -28,12 +28,12 @@ class StorageService {
 
     getById: (id: string): ProjectData | null => {
       const projects = this.projects.getAll();
-      return projects.find(p => p.id === id) || null;
+      return projects.find((p) => p.id === id) || null;
     },
 
     save: (project: ProjectData): void => {
       const projects = this.projects.getAll();
-      const index = projects.findIndex(p => p.id === project.id);
+      const index = projects.findIndex((p) => p.id === project.id);
 
       if (index >= 0) {
         projects[index] = { ...project, updatedAt: new Date().toISOString() };
@@ -45,21 +45,23 @@ class StorageService {
     },
 
     delete: (id: string): void => {
-      const projects = this.projects.getAll().filter(p => p.id !== id);
+      const projects = this.projects.getAll().filter((p) => p.id !== id);
       localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
     },
 
     search: (query: string): ProjectData[] => {
       const projects = this.projects.getAll();
       const lowerQuery = query.toLowerCase();
-      return projects.filter(p =>
-        p.name.toLowerCase().includes(lowerQuery) ||
-        p.description?.toLowerCase().includes(lowerQuery)
+      return projects.filter(
+        (p) =>
+          p.name.toLowerCase().includes(lowerQuery) ||
+          p.description?.toLowerCase().includes(lowerQuery)
       );
     },
 
     getRecent: (count: number = 10): ProjectData[] => {
-      return this.projects.getAll()
+      return this.projects
+        .getAll()
         .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
         .slice(0, count);
     },
@@ -80,7 +82,7 @@ class StorageService {
       } catch {
         return null;
       }
-    }
+    },
   };
 
   /**
@@ -99,7 +101,7 @@ class StorageService {
 
     clear: (): void => {
       localStorage.removeItem(STORAGE_KEYS.APP_STATE);
-    }
+    },
   };
 
   /**
@@ -116,7 +118,7 @@ class StorageService {
         enablePreview: true,
         previewQuality: 'medium',
         notifications: true,
-        soundEffects: true
+        soundEffects: true,
       };
       return data ? { ...defaults, ...JSON.parse(data) } : defaults;
     },
@@ -128,7 +130,7 @@ class StorageService {
 
     reset: (): void => {
       localStorage.removeItem(STORAGE_KEYS.USER_PREFERENCES);
-    }
+    },
   };
 
   /**
@@ -142,18 +144,18 @@ class StorageService {
 
     add: (path: string): void => {
       const files = this.recentFiles.get();
-      const updated = [path, ...files.filter(f => f !== path)].slice(0, 20);
+      const updated = [path, ...files.filter((f) => f !== path)].slice(0, 20);
       localStorage.setItem(STORAGE_KEYS.RECENT_FILES, JSON.stringify(updated));
     },
 
     remove: (path: string): void => {
-      const files = this.recentFiles.get().filter(f => f !== path);
+      const files = this.recentFiles.get().filter((f) => f !== path);
       localStorage.setItem(STORAGE_KEYS.RECENT_FILES, JSON.stringify(files));
     },
 
     clear: (): void => {
       localStorage.removeItem(STORAGE_KEYS.RECENT_FILES);
-    }
+    },
   };
 
   /**
@@ -183,7 +185,7 @@ class StorageService {
         }
       }
       return settings;
-    }
+    },
   };
 
   /**
@@ -197,49 +199,50 @@ class StorageService {
 
     add: (record: unknown): void => {
       const history = this.exportHistory.get();
-      const recordObj = typeof record === 'object' && record !== null ? record as Record<string, unknown> : {};
+      const recordObj =
+        typeof record === 'object' && record !== null ? (record as Record<string, unknown>) : {};
       history.unshift({ ...recordObj, timestamp: new Date().toISOString() });
       localStorage.setItem(STORAGE_KEYS.EXPORT_HISTORY, JSON.stringify(history.slice(0, 100)));
     },
 
     clear: (): void => {
       localStorage.removeItem(STORAGE_KEYS.EXPORT_HISTORY);
-    }
+    },
   };
 
   /**
    * 通用存储
    */
   set<T>(key: string, value: T): void {
-    localStorage.setItem(`mangaai_${key}`, JSON.stringify(value));
+    localStorage.setItem(`frameforge_${key}`, JSON.stringify(value));
   }
 
   get<T>(key: string, defaultValue?: T): T | undefined {
-    const data = localStorage.getItem(`mangaai_${key}`);
+    const data = localStorage.getItem(`frameforge_${key}`);
     return data ? JSON.parse(data) : defaultValue;
   }
 
   remove(key: string): void {
-    localStorage.removeItem(`mangaai_${key}`);
+    localStorage.removeItem(`frameforge_${key}`);
   }
 
   /**
    * 清空所有数据
    */
   clearAll(): void {
-    Object.values(STORAGE_KEYS).forEach(key => {
+    Object.values(STORAGE_KEYS).forEach((key) => {
       localStorage.removeItem(key);
     });
 
-    // 清理所有 mangaai_ 前缀的数据
+    // 清理所有 frameforge_ 前缀的数据
     const keysToRemove: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key?.startsWith('mangaai_')) {
+      if (key?.startsWith('frameforge_')) {
         keysToRemove.push(key);
       }
     }
-    keysToRemove.forEach(key => localStorage.removeItem(key));
+    keysToRemove.forEach((key) => localStorage.removeItem(key));
   }
 
   /**
@@ -250,7 +253,7 @@ class StorageService {
 
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key?.startsWith('mangaai_')) {
+      if (key?.startsWith('frameforge_')) {
         const value = localStorage.getItem(key);
         data[key] = value ? JSON.parse(value) : null;
       }
@@ -281,7 +284,7 @@ class StorageService {
     let used = 0;
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key?.startsWith('mangaai_')) {
+      if (key?.startsWith('frameforge_')) {
         const value = localStorage.getItem(key);
         if (value) {
           used += key.length + value.length;

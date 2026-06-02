@@ -1,5 +1,5 @@
 /**
- * panel-flow Shared Utils - Formatting Utilities
+ * frame-forge Shared Utils - Formatting Utilities
  */
 
 /**

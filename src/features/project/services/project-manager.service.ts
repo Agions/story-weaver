@@ -19,7 +19,7 @@ class ProjectManagerService {
   private saveToStorage(): void {
     try {
       const data = Array.from(this.projects.values());
-      localStorage.setItem('panel-flow-project-manager', JSON.stringify(data));
+      localStorage.setItem('frame-forge-project-manager', JSON.stringify(data));
     } catch (e) {
       logger.error('Failed to save project manager data:', e);
     }
@@ -27,7 +27,7 @@ class ProjectManagerService {
 
   private loadFromStorage(): void {
     try {
-      const data = localStorage.getItem('panel-flow-project-manager');
+      const data = localStorage.getItem('frame-forge-project-manager');
       if (data) {
         const projects = JSON.parse(data) as Project[];
         projects.forEach((p) => this.projects.set(p.id, p));

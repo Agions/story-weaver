@@ -3,7 +3,7 @@
  * 所有音频相关类型定义，供 AudioEditor 及子组件共享
  */
 
-import { DEFAULT_VOLUME } from '@panel-flow/common/constants';
+import { DEFAULT_VOLUME } from '@frame-forge/common/constants';
 
 // ========== 配音轨道类型 ==========
 

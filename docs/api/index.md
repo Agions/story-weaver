@@ -1,12 +1,12 @@
 # API 文档
 
-本文档提供 PanelFlow 完整的 REST API 接口参考。
+本文档提供 FrameForge 完整的 REST API 接口参考。
 
 ---
 
 ## 一、概述
 
-**基础 URL**: `https://api.panelflow.com/api/v1`
+**基础 URL**: `https://api.frameforge.com/api/v1`
 
 **认证方式**: 所有 API 请求需要在 Header 中携带 Bearer Token：
 
@@ -78,19 +78,19 @@ Authorization: Bearer <your_api_token>
 interface CreateTaskRequest {
   /** 任务标题 */
   title?: string;
-  
+
   /** 输入模式: novel | script | prompt */
   mode: 'novel' | 'script' | 'prompt';
-  
+
   /** 原材料内容 */
   content: string;
-  
+
   /** 输出风格: anime | 2d | 3d | realistic */
   style?: 'anime' | '2d' | '3d' | 'realistic';
-  
+
   /** 质量级别: fast | balanced | premium */
   qualityLevel?: 'fast' | 'balanced' | 'premium';
-  
+
   /** 运行模式: manual | autonomous */
   runMode?: 'manual' | 'autonomous';
 }
@@ -99,7 +99,7 @@ interface CreateTaskRequest {
 **示例**:
 
 ```bash
-curl -X POST https://api.panelflow.com/api/v1/tasks \
+curl -X POST https://api.frameforge.com/api/v1/tasks \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -135,14 +135,14 @@ curl -X POST https://api.panelflow.com/api/v1/tasks \
 
 **查询参数**:
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| page | number | 1 | 页码 |
-| limit | number | 20 | 每页数量（最大 100） |
-| status | string | - | 按状态筛选 |
-| mode | string | - | 按模式筛选 |
-| sortBy | string | createdAt | 排序字段 |
-| sortOrder | string | desc | 升序/降序 |
+| 参数      | 类型   | 默认值    | 说明                 |
+| --------- | ------ | --------- | -------------------- |
+| page      | number | 1         | 页码                 |
+| limit     | number | 20        | 每页数量（最大 100） |
+| status    | string | -         | 按状态筛选           |
+| mode      | string | -         | 按模式筛选           |
+| sortBy    | string | createdAt | 排序字段             |
+| sortOrder | string | desc      | 升序/降序            |
 
 **响应** (200 OK):
 
@@ -177,8 +177,8 @@ curl -X POST https://api.panelflow.com/api/v1/tasks \
 
 **路径参数**:
 
-| 参数 | 类型 | 说明 |
-|------|------|------|
+| 参数   | 类型   | 说明    |
+| ------ | ------ | ------- |
 | taskId | string | 任务 ID |
 
 **响应** (200 OK):
@@ -433,9 +433,7 @@ curl -X POST https://api.panelflow.com/api/v1/tasks \
         "eyes": "棕色",
         "build": "中等身材"
       },
-      "images": [
-        "/output/task_abc123xyz/characters/char_001_1.png"
-      ],
+      "images": ["/output/task_abc123xyz/characters/char_001_1.png"],
       "consistency": 95
     }
   ]
@@ -654,11 +652,11 @@ curl -X POST https://api.panelflow.com/api/v1/tasks \
 
 **查询参数**:
 
-| 参数 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| type | string | video | 文件类型：`video`、`thumbnail`、`subtitle`、`audio` |
-| format | string | mp4 | 视频格式（仅视频）：`mp4`、`webm`、`mov` |
-| quality | string | original | 视频质量：`original`、`high`、`medium`、`low` |
+| 参数    | 类型   | 默认值   | 说明                                                |
+| ------- | ------ | -------- | --------------------------------------------------- |
+| type    | string | video    | 文件类型：`video`、`thumbnail`、`subtitle`、`audio` |
+| format  | string | mp4      | 视频格式（仅视频）：`mp4`、`webm`、`mov`            |
+| quality | string | original | 视频质量：`original`、`high`、`medium`、`low`       |
 
 **响应**: 文件流
 
@@ -666,13 +664,13 @@ curl -X POST https://api.panelflow.com/api/v1/tasks \
 
 ```bash
 # 下载原视频
-curl -O https://api.panelflow.com/api/v1/tasks/task_abc123xyz/download?type=video
+curl -O https://api.frameforge.com/api/v1/tasks/task_abc123xyz/download?type=video
 
 # 下载缩略图
-curl -O https://api.panelflow.com/api/v1/tasks/task_abc123xyz/download?type=thumbnail
+curl -O https://api.frameforge.com/api/v1/tasks/task_abc123xyz/download?type=thumbnail
 
 # 下载特定格式
-curl -O "https://api.panelflow.com/api/v1/tasks/task_abc123xyz/download?type=video&format=webm"
+curl -O "https://api.frameforge.com/api/v1/tasks/task_abc123xyz/download?type=video&format=webm"
 ```
 
 ### 8.3 获取预览链接
@@ -685,7 +683,7 @@ curl -O "https://api.panelflow.com/api/v1/tasks/task_abc123xyz/download?type=vid
 
 ```json
 {
-  "previewUrl": "https://cdn.panelflow.com/preview/xyz?token=abc",
+  "previewUrl": "https://cdn.frameforge.com/preview/xyz?token=abc",
   "expiresAt": 1747987500000
 }
 ```
@@ -735,20 +733,20 @@ curl -O "https://api.panelflow.com/api/v1/tasks/task_abc123xyz/download?type=vid
 
 ### 9.5 Webhook 事件类型
 
-| 事件 | 说明 |
-|------|------|
-| `task.created` | 任务创建 |
-| `task.started` | 任务开始执行 |
-| `task.paused` | 任务暂停 |
-| `task.resumed` | 任务恢复 |
-| `task.completed` | 任务完成 |
-| `task.failed` | 任务失败 |
-| `task.cancelled` | 任务取消 |
-| `step.started` | 步骤开始 |
-| `step.completed` | 步骤完成 |
-| `step.failed` | 步骤失败 |
-| `render.progress` | 渲染进度更新 |
-| `render.completed` | 渲染完成 |
+| 事件               | 说明         |
+| ------------------ | ------------ |
+| `task.created`     | 任务创建     |
+| `task.started`     | 任务开始执行 |
+| `task.paused`      | 任务暂停     |
+| `task.resumed`     | 任务恢复     |
+| `task.completed`   | 任务完成     |
+| `task.failed`      | 任务失败     |
+| `task.cancelled`   | 任务取消     |
+| `step.started`     | 步骤开始     |
+| `step.completed`   | 步骤完成     |
+| `step.failed`      | 步骤失败     |
+| `render.progress`  | 渲染进度更新 |
+| `render.completed` | 渲染完成     |
 
 ### 9.6 Webhook Payload 示例
 
@@ -780,10 +778,10 @@ curl -O "https://api.panelflow.com/api/v1/tasks/task_abc123xyz/download?type=vid
 
 **请求**: `multipart/form-data`
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| file | File | 要上传的文件 |
-| taskId | string | 关联的任务 ID |
+| 字段     | 类型   | 说明                                     |
+| -------- | ------ | ---------------------------------------- |
+| file     | File   | 要上传的文件                             |
+| taskId   | string | 关联的任务 ID                            |
 | category | string | 文件类别：`input`、`reference`、`output` |
 
 **响应** (200 OK):
@@ -849,22 +847,22 @@ curl -O "https://api.panelflow.com/api/v1/tasks/task_abc123xyz/download?type=vid
 
 ### 11.2 错误码列表
 
-| 错误码 | HTTP 状态 | 说明 |
-|--------|-----------|------|
-| `INVALID_INPUT` | 400 | 输入参数无效 |
-| `CONTENT_TOO_SHORT` | 400 | 内容过短 |
-| `INVALID_MODE` | 400 | 无效的运行模式 |
-| `UNAUTHORIZED` | 401 | 未授权 |
-| `TOKEN_EXPIRED` | 401 | Token 已过期 |
-| `FORBIDDEN` | 403 | 无权限访问 |
-| `TASK_NOT_FOUND` | 404 | 任务不存在 |
-| `STEP_NOT_FOUND` | 404 | 步骤不存在 |
-| `CHARACTER_NOT_FOUND` | 404 | 角色不存在 |
-| `INVALID_STATE` | 400 | 任务状态不允许此操作 |
-| `STEP_NOT_COMPLETED` | 400 | 前置步骤未完成 |
-| `RATE_LIMITED` | 429 | 请求频率超限 |
-| `INTERNAL_ERROR` | 500 | 服务器内部错误 |
-| `SERVICE_UNAVAILABLE` | 503 | 服务不可用 |
+| 错误码                | HTTP 状态 | 说明                 |
+| --------------------- | --------- | -------------------- |
+| `INVALID_INPUT`       | 400       | 输入参数无效         |
+| `CONTENT_TOO_SHORT`   | 400       | 内容过短             |
+| `INVALID_MODE`        | 400       | 无效的运行模式       |
+| `UNAUTHORIZED`        | 401       | 未授权               |
+| `TOKEN_EXPIRED`       | 401       | Token 已过期         |
+| `FORBIDDEN`           | 403       | 无权限访问           |
+| `TASK_NOT_FOUND`      | 404       | 任务不存在           |
+| `STEP_NOT_FOUND`      | 404       | 步骤不存在           |
+| `CHARACTER_NOT_FOUND` | 404       | 角色不存在           |
+| `INVALID_STATE`       | 400       | 任务状态不允许此操作 |
+| `STEP_NOT_COMPLETED`  | 400       | 前置步骤未完成       |
+| `RATE_LIMITED`        | 429       | 请求频率超限         |
+| `INTERNAL_ERROR`      | 500       | 服务器内部错误       |
+| `SERVICE_UNAVAILABLE` | 503       | 服务不可用           |
 
 ---
 
@@ -873,15 +871,15 @@ curl -O "https://api.panelflow.com/api/v1/tasks/task_abc123xyz/download?type=vid
 ### 12.1 JavaScript/TypeScript SDK
 
 ```bash
-npm install @panelflow/api-sdk
+npm install @frameforge/api-sdk
 ```
 
 ```typescript
-import { PanelFlowAPI } from '@panelflow/api-sdk';
+import { FrameForgeAPI } from '@frameforge/api-sdk';
 
-const api = new PanelFlowAPI({
-  baseUrl: 'https://api.panelflow.com/api/v1',
-  token: 'your_access_token'
+const api = new FrameForgeAPI({
+  baseUrl: 'https://api.frameforge.com/api/v1',
+  token: 'your_access_token',
 });
 
 // 创建任务
@@ -889,7 +887,7 @@ const task = await api.tasks.create({
   title: '我的漫剧',
   mode: 'novel',
   content: novelText,
-  style: 'anime'
+  style: 'anime',
 });
 
 // 获取任务状态
@@ -907,14 +905,14 @@ api.tasks.subscribe('task_abc123xyz', (event) => {
 ### 12.2 Python SDK
 
 ```bash
-pip install panelflow-api
+pip install frameforge-api
 ```
 
 ```python
-from panelflow import PanelFlowAPI
+from frameforge import FrameForgeAPI
 
-api = PanelFlowAPI(
-    base_url='https://api.panelflow.com/api/v1',
+api = FrameForgeAPI(
+    base_url='https://api.frameforge.com/api/v1',
     token='your_access_token'
 )
 
@@ -940,13 +938,13 @@ api.tasks.download(
 
 ## 十三、速率限制
 
-| 端点 | 限制 | 窗口 |
-|------|------|------|
-| POST /tasks | 10 | 每分钟 |
-| GET /tasks | 60 | 每分钟 |
-| POST /tasks/{id}/start | 20 | 每分钟 |
-| POST /storage/upload | 30 | 每分钟 |
-| 其他端点 | 100 | 每分钟 |
+| 端点                   | 限制 | 窗口   |
+| ---------------------- | ---- | ------ |
+| POST /tasks            | 10   | 每分钟 |
+| GET /tasks             | 60   | 每分钟 |
+| POST /tasks/{id}/start | 20   | 每分钟 |
+| POST /storage/upload   | 30   | 每分钟 |
+| 其他端点               | 100  | 每分钟 |
 
 速率限制响应会包含以下 Header：
 

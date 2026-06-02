@@ -5,3 +5,4 @@
  * top-level path. New code should import from `./video/visual-consistency-scorer.service` directly.
  */
 export * from './video/visual-consistency-scorer.service';
+export { default } from './video/visual-consistency-scorer.service';

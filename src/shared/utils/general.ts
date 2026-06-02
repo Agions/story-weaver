@@ -1,5 +1,5 @@
 /**
- * panel-flow Shared Utils - General Utilities
+ * frame-forge Shared Utils - General Utilities
  */
 
 import { useState, useEffect, useCallback } from 'react';

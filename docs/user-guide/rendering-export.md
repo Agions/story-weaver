@@ -48,7 +48,7 @@ rendering:
 支持批量导出多个面板配置：
 
 ```bash
-panel-flow export --input ./panels --output ./dist --format json
+frame-forge export --input ./panels --output ./dist --format json
 ```
 
 ## 进阶用法

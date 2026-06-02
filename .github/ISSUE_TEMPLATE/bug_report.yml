@@ -1,5 +1,5 @@
 name: Bug Report
-description: Report a bug in PanelFlow
+description: Report a bug in FrameForge
 labels: ["bug", "needs-triage"]
 body:
   - type: markdown
@@ -43,7 +43,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: PanelFlow Version
+      label: FrameForge Version
       placeholder: e.g., 3.0.0
 
   - type: dropdown

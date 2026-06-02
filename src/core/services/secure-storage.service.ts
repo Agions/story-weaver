@@ -5,3 +5,4 @@
  * top-level path. New code should import from `./project/secure-storage.service` directly.
  */
 export * from './project/secure-storage.service';
+export { default } from './project/secure-storage.service';

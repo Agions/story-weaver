@@ -1,8 +1,9 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 
-import ProjectDetail from '@/pages/ProjectDetailPage';
 import { useProjectStore } from '@/shared/stores';
+
+import ProjectDetail from '@/pages/ProjectDetailPage';
 
 const mockNavigate = jest.fn();
 const mockUpdateProject = jest.fn();
@@ -187,7 +188,7 @@ describe('ProjectDetail page collaboration regression', () => {
     const writeCall = mockInvoke.mock.calls.find((call) => call[0] === 'write_text_file');
     expect(String(writeCall?.[1]?.content ?? '')).toContain('- 综合: 80.0');
     const activities = JSON.parse(
-      localStorage.getItem('panel-flow_review_export_activities') ?? '[]'
+      localStorage.getItem('frame-forge_review_export_activities') ?? '[]'
     );
     expect(activities[0]).toMatchObject({
       projectId: 'p-detail-1',

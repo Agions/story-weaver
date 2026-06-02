@@ -830,7 +830,7 @@ describe('CompositionService', () => {
           updatedAt: new Date().toISOString(),
         },
       ];
-      localStorageMock.data['panel-flow-compositions'] = JSON.stringify(storedData);
+      localStorageMock.data['frame-forge-compositions'] = JSON.stringify(storedData);
 
       const service = new CompositionService();
       const composition = service.getById('stored-id');
@@ -840,7 +840,7 @@ describe('CompositionService', () => {
     });
 
     it('应该处理 localStorage 解析错误', () => {
-      localStorageMock.data['panel-flow-compositions'] = 'invalid json';
+      localStorageMock.data['frame-forge-compositions'] = 'invalid json';
 
       const service = new CompositionService();
 

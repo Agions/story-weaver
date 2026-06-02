@@ -1,5 +1,5 @@
 /**
- * panel-flow Novel Types
+ * frame-forge Novel Types
  * Extracted from src/shared/types/index.ts
  * Novel/script analysis and processing types
  */

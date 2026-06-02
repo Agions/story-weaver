@@ -1,5 +1,5 @@
 /**
- * panel-flow Shared Utils - React Hooks Re-exports
+ * frame-forge Shared Utils - React Hooks Re-exports
  */
 
 export {

@@ -5,3 +5,4 @@
  * top-level path. New code should import from `./project/render-queue.service` directly.
  */
 export * from './project/render-queue.service';
+export { default } from './project/render-queue.service';

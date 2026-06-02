@@ -5,22 +5,22 @@
 
 // 应用信息
 export const APP_CONFIG = Object.freeze({
-  name: 'panel-flow AI',
-  nameZh: 'panel-flow AI',
-  version: '1.0.0',
+  name: 'FrameForge',
+  nameZh: 'FrameForge',
+  version: '2.1.0',
   description: 'AI-Powered Comic Drama Video Creation Platform',
-  repository: 'https://github.com/Agions/panel-flow',
+  repository: 'https://github.com/Agions/frame-forge',
   license: 'MIT',
 } as const);
 
 // 存储配置
 export const STORAGE_CONFIG = Object.freeze({
-  prefix: 'panel-flow_',
+  prefix: 'frameforge_',
   keys: Object.freeze({
-    store: 'panel-flow_store',
-    settings: 'panel-flow_settings',
-    projects: 'panel-flow_projects',
-    cache: 'panel-flow_cache',
+    store: 'frameforge_store',
+    settings: 'frameforge_settings',
+    projects: 'frameforge_projects',
+    cache: 'frameforge_cache',
   }),
 } as const);
 

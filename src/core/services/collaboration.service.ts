@@ -5,3 +5,4 @@
  * top-level path. New code should import from `./domain/collaboration.service` directly.
  */
 export * from './domain/collaboration.service';
+export { default } from './domain/collaboration.service';

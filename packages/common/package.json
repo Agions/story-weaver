@@ -1,7 +1,7 @@
 {
-  "name": "panel-flow-common",
+  "name": "frame-forge-common",
   "version": "1.0.0",
-  "description": "Shared utilities, UI components, hooks, and domain models for panel-flow",
+  "description": "Shared utilities, UI components, hooks, and domain models for frame-forge",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

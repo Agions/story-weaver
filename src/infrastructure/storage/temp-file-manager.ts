@@ -4,10 +4,12 @@
  * 所有临时文件必须通过此管理器注册，函数退出时自动清理
  */
 
-import { logger } from '@/core/utils/logger';
-import { glob } from 'glob';
 import { unlink } from 'node:fs/promises';
 import { join } from 'node:path';
+
+import { glob } from 'glob';
+
+import { logger } from '@/core/utils/logger';
 
 interface TrackedFile {
   path: string;
@@ -28,7 +30,7 @@ class TemporaryFileManager {
   private maxAge: number = 5 * 60 * 1000;
   private cleanupTimer: ReturnType<typeof setInterval> | null = null;
 
-  private constructor(tempDir: string = '/tmp/panel-flow') {
+  private constructor(tempDir: string = '/tmp/frame-forge') {
     this.tempDir = tempDir;
     this.startAutoCleanup();
   }
@@ -110,7 +112,11 @@ class TemporaryFileManager {
     await Promise.allSettled(
       entries.map(async ([path]) => {
         const ok = await this.cleanup(path);
-        if (ok) { cleaned++; } else { failed++; }
+        if (ok) {
+          cleaned++;
+        } else {
+          failed++;
+        }
       })
     );
 

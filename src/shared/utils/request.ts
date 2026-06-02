@@ -1,5 +1,5 @@
 /**
- * panel-flow Shared Utils - Request Utilities & Request Cache
+ * frame-forge Shared Utils - Request Utilities & Request Cache
  */
 
 export interface RetryOptions {

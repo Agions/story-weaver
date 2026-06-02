@@ -1,5 +1,5 @@
 /**
- * panel-flow Shared Utils - Platform Utilities
+ * frame-forge Shared Utils - Platform Utilities
  */
 
 export type Platform = 'web' | 'desktop';

@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🏗️ 全面架构重构 (FrameForge Refactoring v3)
 
-> 项目代号从 ManGa AI / PanelFlow 演进为 **FrameForge** (AI 驱动的视频创作工作室)
+> 项目代号从 FrameForge / FrameForge 演进为 **FrameForge** (AI 驱动的视频创作工作室)
 > 此版本完成了 §1.1 目标架构的 8 个 Phase 重构。
 
 #### Phase 1: Rust 后端模块化拆分
@@ -88,10 +88,10 @@ All notable changes to this project will be documented in this file.
 
 ### 🎉 Project Renamed
 
-- **Project Name**: Nova → ManGaAI → **PanelFlow**
+- **Project Name**: Nova → FrameForge → **FrameForge**
 - New ASCII art logo
 - Updated all documentation references
-- GitHub: https://github.com/Agions/PanelFlow
+- GitHub: https://github.com/Agions/FrameForge
 
 ### 🗑️ UI 组件库迁移
 
@@ -108,10 +108,10 @@ All notable changes to this project will be documented in this file.
 
 ### 🔧 Configuration Updates
 
-- Package name: `manga-ai` → `PanelFlow`
-- Tauri identifier: `com.mangaai.app` → `com.PanelFlow.app`
-- Window title updated to PanelFlow branding
-- Storage key prefix updated to `PanelFlow_`
+- Package name: `manga-ai` → `FrameForge`
+- Tauri identifier: `com.frameforge.app` → `com.FrameForge.app`
+- Window title updated to FrameForge branding
+- Storage key prefix updated to `FrameForge_`
 
 ### ✨ Added
 

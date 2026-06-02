@@ -5,3 +5,4 @@
  * top-level path. New code should import from `./domain/manga-pipeline.service` directly.
  */
 export * from './domain/manga-pipeline.service';
+export { default } from './domain/manga-pipeline.service';

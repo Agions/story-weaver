@@ -12,15 +12,9 @@
  * - 受控/非受控模式
  */
 
-import React, {
-  useState,
-  useCallback,
-  useRef,
-  type ChangeEvent,
-  type DragEvent,
-} from 'react';
+import React, { useState, useCallback, useRef, type ChangeEvent, type DragEvent } from 'react';
 import { Upload } from 'lucide-react';
-import { generateId, detectFileType } from '@panel-flow/common/utils';
+import { generateId, detectFileType } from '@frame-forge/common/utils';
 import styles from './FileUploader.module.css';
 
 export interface UploadFile {
@@ -37,7 +31,7 @@ export interface UploadFile {
 export interface FileUploaderProps {
   accept?: string;
   maxCount?: number;
-  maxSize?: number;        // MB
+  maxSize?: number; // MB
   multiple?: boolean;
   disabled?: boolean;
   placeholder?: string;
@@ -49,11 +43,14 @@ export interface FileUploaderProps {
   onChange?: (files: UploadFile[]) => void;
   onError?: (message: string) => void;
   beforeUpload?: (file: File) => boolean | Promise<boolean>;
-  customRequest?: (file: File, options: {
-    onProgress: (pct: number) => void;
-    onSuccess: (url: string) => void;
-    onError: (err: string) => void;
-  }) => void;
+  customRequest?: (
+    file: File,
+    options: {
+      onProgress: (pct: number) => void;
+      onSuccess: (url: string) => void;
+      onError: (err: string) => void;
+    }
+  ) => void;
 }
 
 export function FileUploader({
@@ -83,127 +80,148 @@ export function FileUploader({
   // 校验
   // ============================================
 
-  const validateFile = useCallback((file: File): string | null => {
-    if (maxSize && file.size > maxSize * 1024 * 1024) {
-      return `文件 ${file.name} 超过最大限制 ${maxSize}MB`;
-    }
-    if (accept && !new RegExp(accept.replace(/\*/g, '.*')).test(file.name)) {
-      return `文件类型不支持，仅接受 ${accept}`;
-    }
-    return null;
-  }, [maxSize, accept]);
+  const validateFile = useCallback(
+    (file: File): string | null => {
+      if (maxSize && file.size > maxSize * 1024 * 1024) {
+        return `文件 ${file.name} 超过最大限制 ${maxSize}MB`;
+      }
+      if (accept && !new RegExp(accept.replace(/\*/g, '.*')).test(file.name)) {
+        return `文件类型不支持，仅接受 ${accept}`;
+      }
+      return null;
+    },
+    [maxSize, accept]
+  );
 
-  const updateFiles = useCallback((updater: (prev: UploadFile[]) => UploadFile[]) => {
-    const next = updater(fileList);
-    setInternalFiles(next);
-    onChange?.(next);
-  }, [fileList, onChange]);
+  const updateFiles = useCallback(
+    (updater: (prev: UploadFile[]) => UploadFile[]) => {
+      const next = updater(fileList);
+      setInternalFiles(next);
+      onChange?.(next);
+    },
+    [fileList, onChange]
+  );
 
   // ============================================
   // 上传核心
   // ============================================
 
-  const uploadFile = useCallback(async (file: File, uid: string) => {
-    const doUpload = (opts: {
-      onProgress: (pct: number) => void;
-      onSuccess: (url: string) => void;
-      onError: (err: string) => void;
-    }) => {
-      if (customRequest) {
-        customRequest(file, opts);
-      } else {
-        // 默认：模拟进度上传（实际项目替换为真实上传）
-        let pct = 0;
-        const interval = setInterval(() => {
-          pct += 20;
-          if (pct >= 100) {
-            clearInterval(interval);
-            opts.onSuccess(URL.createObjectURL(file));
-          } else {
-            opts.onProgress(pct);
-          }
-        }, 200);
-      }
-    };
+  const uploadFile = useCallback(
+    async (file: File, uid: string) => {
+      const doUpload = (opts: {
+        onProgress: (pct: number) => void;
+        onSuccess: (url: string) => void;
+        onError: (err: string) => void;
+      }) => {
+        if (customRequest) {
+          customRequest(file, opts);
+        } else {
+          // 默认：模拟进度上传（实际项目替换为真实上传）
+          let pct = 0;
+          const interval = setInterval(() => {
+            pct += 20;
+            if (pct >= 100) {
+              clearInterval(interval);
+              opts.onSuccess(URL.createObjectURL(file));
+            } else {
+              opts.onProgress(pct);
+            }
+          }, 200);
+        }
+      };
 
-    updateFiles((prev) =>
-      prev.map((f) => (f.uid === uid ? { ...f, status: 'uploading' as const } : f))
-    );
+      updateFiles((prev) =>
+        prev.map((f) => (f.uid === uid ? { ...f, status: 'uploading' as const } : f))
+      );
 
-    doUpload({
-      onProgress: (pct) => {
-        updateFiles((prev) =>
-          prev.map((f) => (f.uid === uid ? { ...f, progress: pct } : f))
-        );
-      },
-      onSuccess: (url) => {
-        updateFiles((prev) =>
-          prev.map((f) => (f.uid === uid ? { ...f, status: 'done', url } : f))
-        );
-      },
-      onError: (err) => {
-        updateFiles((prev) =>
-          prev.map((f) => (f.uid === uid ? { ...f, status: 'error', error: err } : f))
-        );
-        onError?.(err);
-      },
-    });
-  }, [customRequest, updateFiles, onError]);
+      doUpload({
+        onProgress: (pct) => {
+          updateFiles((prev) => prev.map((f) => (f.uid === uid ? { ...f, progress: pct } : f)));
+        },
+        onSuccess: (url) => {
+          updateFiles((prev) =>
+            prev.map((f) => (f.uid === uid ? { ...f, status: 'done', url } : f))
+          );
+        },
+        onError: (err) => {
+          updateFiles((prev) =>
+            prev.map((f) => (f.uid === uid ? { ...f, status: 'error', error: err } : f))
+          );
+          onError?.(err);
+        },
+      });
+    },
+    [customRequest, updateFiles, onError]
+  );
 
   // ============================================
   // 文件选择
   // ============================================
 
-  const addFiles = useCallback(async (files: File[]) => {
-    if (maxCount && fileList.length + files.length > maxCount) {
-      onError?.(`最多只能上传 ${maxCount} 个文件`);
-      return;
-    }
-
-    const newFiles: UploadFile[] = files.map((file) => ({
-      uid: generateId(),
-      name: file.name,
-      size: file.size,
-      type: detectFileType(file.name),
-      status: 'pending',
-      progress: 0,
-    }));
-
-    updateFiles((prev) => [...prev, ...newFiles]);
-
-    // 校验 + 上传
-    for (const file of files) {
-      const error = validateFile(file);
-      if (error) {
-        onError?.(error);
-        updateFiles((prev) => prev.filter((f) => f.uid !== newFiles.find((n) => n.name === file.name)?.uid));
-        continue;
+  const addFiles = useCallback(
+    async (files: File[]) => {
+      if (maxCount && fileList.length + files.length > maxCount) {
+        onError?.(`最多只能上传 ${maxCount} 个文件`);
+        return;
       }
-      if (beforeUpload) {
-        const canContinue = await beforeUpload(file);
-        if (!canContinue) continue;
+
+      const newFiles: UploadFile[] = files.map((file) => ({
+        uid: generateId(),
+        name: file.name,
+        size: file.size,
+        type: detectFileType(file.name),
+        status: 'pending',
+        progress: 0,
+      }));
+
+      updateFiles((prev) => [...prev, ...newFiles]);
+
+      // 校验 + 上传
+      for (const file of files) {
+        const error = validateFile(file);
+        if (error) {
+          onError?.(error);
+          updateFiles((prev) =>
+            prev.filter((f) => f.uid !== newFiles.find((n) => n.name === file.name)?.uid)
+          );
+          continue;
+        }
+        if (beforeUpload) {
+          const canContinue = await beforeUpload(file);
+          if (!canContinue) continue;
+        }
+        const uid = newFiles.find((n) => n.name === file.name)?.uid;
+        if (uid) uploadFile(file, uid);
       }
-      const uid = newFiles.find((n) => n.name === file.name)?.uid;
-      if (uid) uploadFile(file, uid);
-    }
-  }, [maxCount, fileList.length, validateFile, beforeUpload, uploadFile, updateFiles, onError]);
+    },
+    [maxCount, fileList.length, validateFile, beforeUpload, uploadFile, updateFiles, onError]
+  );
 
-  const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files ?? []);
-    if (files.length) addFiles(files);
-    e.target.value = '';
-  }, [addFiles]);
+  const handleInputChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const files = Array.from(e.target.files ?? []);
+      if (files.length) addFiles(files);
+      e.target.value = '';
+    },
+    [addFiles]
+  );
 
-  const handleDrop = useCallback((e: DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    setDragOver(false);
-    const files = Array.from(e.dataTransfer.files);
-    if (files.length) addFiles(files);
-  }, [addFiles]);
+  const handleDrop = useCallback(
+    (e: DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      setDragOver(false);
+      const files = Array.from(e.dataTransfer.files);
+      if (files.length) addFiles(files);
+    },
+    [addFiles]
+  );
 
-  const handleRemove = useCallback((uid: string) => {
-    updateFiles((prev) => prev.filter((f) => f.uid !== uid));
-  }, [updateFiles]);
+  const handleRemove = useCallback(
+    (uid: string) => {
+      updateFiles((prev) => prev.filter((f) => f.uid !== uid));
+    },
+    [updateFiles]
+  );
 
   return (
     <div className={styles.root}>
@@ -215,7 +233,10 @@ export function FileUploader({
           disabled ? styles.disabled : '',
           className ?? '',
         ].join(' ')}
-        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragOver(true);
+        }}
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
         onClick={() => !disabled && inputRef.current?.click()}
@@ -247,13 +268,14 @@ export function FileUploader({
               {file.status === 'uploading' && (
                 <span className={styles.progress}>{file.progress ?? 0}%</span>
               )}
-              {file.status === 'done' && (
-                <span className={styles.done}>✓</span>
-              )}
+              {file.status === 'done' && <span className={styles.done}>✓</span>}
               {file.status === 'error' && (
                 <button
                   className={styles.removeBtn}
-                  onClick={(e) => { e.stopPropagation(); handleRemove(file.uid); }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemove(file.uid);
+                  }}
                   aria-label={`移除 ${file.name}`}
                 >
                   ×

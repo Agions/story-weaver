@@ -22,7 +22,7 @@
     "tsBuildInfoFile": ".tsbuildinfo",
     "paths": {
       "@/*": ["./src/*"],
-      "@panel-flow/common/*": ["./packages/common/src/*"]
+      "@frame-forge/common/*": ["./packages/common/src/*"]
     }
   },
   "include": ["src"],

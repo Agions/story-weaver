@@ -41,7 +41,7 @@ export class EventBus implements IEventBus {
     // Try to enable cross-tab communication
     if (typeof BroadcastChannel !== 'undefined') {
       try {
-        this.crossTabChannel = new BroadcastChannel('panel-flow-events');
+        this.crossTabChannel = new BroadcastChannel('frame-forge-events');
         this.crossTabChannel.onmessage = (msg) => {
           const event = msg.data as DomainEvent;
           this.handleCrossTabEvent(event);
@@ -60,13 +60,19 @@ export class EventBus implements IEventBus {
     handler: (event: T) => void | Promise<void>
   ): () => void {
     const subs = this.subscriptions.get(eventType) ?? [];
-    const sub: Subscription = { handler: handler as (event: DomainEvent) => void | Promise<void>, once: false };
+    const sub: Subscription = {
+      handler: handler as (event: DomainEvent) => void | Promise<void>,
+      once: false,
+    };
     subs.push(sub);
     this.subscriptions.set(eventType, subs);
 
     return () => {
       const current = this.subscriptions.get(eventType) ?? [];
-      this.subscriptions.set(eventType, current.filter((s) => s.handler !== handler));
+      this.subscriptions.set(
+        eventType,
+        current.filter((s) => s.handler !== handler)
+      );
     };
   }
 
@@ -78,13 +84,19 @@ export class EventBus implements IEventBus {
     handler: (event: T) => void | Promise<void>
   ): () => void {
     const subs = this.subscriptions.get(eventType) ?? [];
-    const sub: Subscription = { handler: handler as (event: DomainEvent) => void | Promise<void>, once: true };
+    const sub: Subscription = {
+      handler: handler as (event: DomainEvent) => void | Promise<void>,
+      once: true,
+    };
     subs.push(sub);
     this.subscriptions.set(eventType, subs);
 
     return () => {
       const current = this.subscriptions.get(eventType) ?? [];
-      this.subscriptions.set(eventType, current.filter((s) => s.handler !== handler));
+      this.subscriptions.set(
+        eventType,
+        current.filter((s) => s.handler !== handler)
+      );
     };
   }
 

@@ -1,12 +1,12 @@
 # Docker 部署
 
-panel-flow 的 Docker 容器化部署。
+frame-forge 的 Docker 容器化部署。
 
 ## 快速开始
 
 ```bash
-docker build -t panelflow .
-docker run -p 8080:80 panelflow
+docker build -t frameforge .
+docker run -p 8080:80 frameforge
 ```
 
 ## Docker Compose
@@ -14,13 +14,13 @@ docker run -p 8080:80 panelflow
 ```yaml
 version: '3.8'
 services:
-  panelflow:
+  frameforge:
     build: .
     ports:
       - '8080:80'
     environment:
       - VITE_APP_MODE=web
-      - VITE_APP_NAME=panel-flow
+      - VITE_APP_NAME=frame-forge
       - VITE_API_BASE_URL=https://api.example.com
       - VITE_MINIMAX_API_KEY=your_key
     restart: unless-stopped
@@ -48,10 +48,10 @@ CMD ["nginx", "-g", "daemon off;"]
 
 ```bash
 # 构建时传入
-docker build --build-arg VITE_MINIMAX_API_KEY=your_key -t panelflow .
+docker build --build-arg VITE_MINIMAX_API_KEY=your_key -t frameforge .
 
 # 运行时环境变量
-docker run -p 8080:80 --env-file .env panelflow
+docker run -p 8080:80 --env-file .env frameforge
 ```
 
 ## 构建产物

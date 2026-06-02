@@ -15,7 +15,7 @@ import {
 import { aiService } from './ai/text/ai.service';
 
 // 存储键
-const STORYBOARD_STORAGE_KEY = 'panel-flow-storyboards';
+const STORYBOARD_STORAGE_KEY = 'frame-forge-storyboards';
 
 // 分镜服务选项
 export interface StoryboardServiceOptions {

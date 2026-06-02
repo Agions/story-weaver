@@ -55,7 +55,9 @@ function scoreCost(actual: number, target: number): number {
 const itemRows = results.map((r) => {
   const sample = samples.find((s) => s.id === r.sampleId)!;
   const consistency = clamp(r.characterConsistency);
-  const pacing = clamp(r.pacing - Math.min(Math.abs(r.generatedDurationSec - sample.targetDurationSec), 20));
+  const pacing = clamp(
+    r.pacing - Math.min(Math.abs(r.generatedDurationSec - sample.targetDurationSec), 20)
+  );
   const readability = clamp(r.subtitleReadability);
   const cost = clamp(scoreCost(r.generatedCostUSD, sample.targetCostUSD));
   const overall = clamp(consistency * 0.35 + pacing * 0.25 + readability * 0.2 + cost * 0.2);
@@ -84,7 +86,7 @@ const summary = {
 };
 
 const lines: string[] = [];
-lines.push('# ManGa AI 回归评测报告');
+lines.push('# FrameForge 回归评测报告');
 lines.push('');
 lines.push(`生成时间: ${new Date().toISOString()}`);
 lines.push(`样例数: ${samples.length}`);
@@ -100,7 +102,9 @@ lines.push('## 样例明细');
 lines.push('| ID | 标题 | 一致性 | 节奏 | 可读性 | 成本 | 综合 |');
 lines.push('|---|---|---:|---:|---:|---:|---:|');
 itemRows.forEach((row) => {
-  lines.push(`| ${row.sample.id} | ${row.sample.title} | ${row.consistency.toFixed(1)} | ${row.pacing.toFixed(1)} | ${row.readability.toFixed(1)} | ${row.cost.toFixed(1)} | ${row.overall.toFixed(1)} |`);
+  lines.push(
+    `| ${row.sample.id} | ${row.sample.title} | ${row.consistency.toFixed(1)} | ${row.pacing.toFixed(1)} | ${row.readability.toFixed(1)} | ${row.cost.toFixed(1)} | ${row.overall.toFixed(1)} |`
+  );
 });
 
 fs.mkdirSync(outputDir, { recursive: true });

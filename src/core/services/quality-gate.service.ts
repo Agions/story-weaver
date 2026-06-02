@@ -5,3 +5,4 @@
  * top-level path. New code should import from `./pipeline/quality-gate.service` directly.
  */
 export * from './pipeline/quality-gate.service';
+export { default } from './pipeline/quality-gate.service';

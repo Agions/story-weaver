@@ -45,12 +45,12 @@ const HomeView = () => {
       <div className={styles.footer}>
         <Separator />
         <div className="flex items-center gap-2 justify-center flex-wrap">
-          <span className="text-muted-foreground text-sm">© 2026 panel-flow AI</span>
+          <span className="text-muted-foreground text-sm">© 2026 frame-forge AI</span>
           <Separator orientation="vertical" className="h-4" />
           <span className="text-muted-foreground text-sm">基于 Tauri 和 React 构建</span>
           <Separator orientation="vertical" className="h-4" />
           <a
-            href="https://github.com/agions/panel-flow"
+            href="https://github.com/agions/frame-forge"
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-foreground text-sm hover:underline hover:text-[#6366f1]"

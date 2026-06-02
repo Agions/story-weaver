@@ -5,3 +5,4 @@
  * top-level path. New code should import from `./audio/audio-pipeline.service` directly.
  */
 export * from './audio/audio-pipeline.service';
+export { default } from './audio/audio-pipeline.service';

@@ -5,3 +5,4 @@
  * top-level path. New code should import from `./pipeline/pipeline.service` directly.
  */
 export * from './pipeline/pipeline.service';
+export { default } from './pipeline/pipeline.service';

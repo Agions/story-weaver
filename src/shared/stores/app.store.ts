@@ -12,15 +12,15 @@ export interface AppState {
   sidebarCollapsed: boolean;
   theme: 'light' | 'dark' | 'auto';
   language: 'zh' | 'en';
-  
+
   // 当前选中
   currentProjectId: string | null;
   currentModel: AIModel | null;
-  
+
   // 全局加载状态
   isLoading: boolean;
   loadingMessage: string;
-  
+
   // 通知
   notifications: Array<{
     id: string;
@@ -28,7 +28,7 @@ export interface AppState {
     message: string;
     duration?: number;
   }>;
-  
+
   // Actions
   toggleSidebar: () => void;
   setTheme: (theme: 'light' | 'dark' | 'auto') => void;
@@ -58,34 +58,35 @@ export const useAppStore = create<AppState>()(
       notifications: [],
 
       // Actions
-      toggleSidebar: () => set(state => ({ 
-        sidebarCollapsed: !state.sidebarCollapsed 
-      })),
+      toggleSidebar: () =>
+        set((state) => ({
+          sidebarCollapsed: !state.sidebarCollapsed,
+        })),
 
       setTheme: (theme) => set({ theme }),
 
       setLanguage: (language) => set({ language }),
 
-      setCurrentProject: (projectId) => set({ 
-        currentProjectId: projectId 
-      }),
+      setCurrentProject: (projectId) =>
+        set({
+          currentProjectId: projectId,
+        }),
 
-      setCurrentModel: (model) => set({ 
-        currentModel: model 
-      }),
+      setCurrentModel: (model) =>
+        set({
+          currentModel: model,
+        }),
 
-      setLoading: (isLoading, message = '') => set({ 
-        isLoading, 
-        loadingMessage: message 
-      }),
+      setLoading: (isLoading, message = '') =>
+        set({
+          isLoading,
+          loadingMessage: message,
+        }),
 
       addNotification: (notification) => {
         const id = `notification_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-        set(state => ({
-          notifications: [
-            ...state.notifications,
-            { ...notification, id }
-          ]
+        set((state) => ({
+          notifications: [...state.notifications, { ...notification, id }],
         }));
 
         // 自动移除 — track timer so it can be cleared if notification is manually removed
@@ -93,7 +94,7 @@ export const useAppStore = create<AppState>()(
         const timer = setTimeout(() => {
           notificationTimers.delete(id);
           // Check the notification still exists before removing (may have been manually removed)
-          if (get().notifications.some(n => n.id === id)) {
+          if (get().notifications.some((n) => n.id === id)) {
             get().removeNotification(id);
           }
         }, duration);
@@ -107,27 +108,27 @@ export const useAppStore = create<AppState>()(
           clearTimeout(timer);
           notificationTimers.delete(id);
         }
-        set(state => ({
-          notifications: state.notifications.filter(n => n.id !== id)
+        set((state) => ({
+          notifications: state.notifications.filter((n) => n.id !== id),
         }));
       },
 
       clearAllNotifications: () => {
         // Clear all pending timers
-        notificationTimers.forEach(timer => clearTimeout(timer));
+        notificationTimers.forEach((timer) => clearTimeout(timer));
         notificationTimers.clear();
         set({ notifications: [] });
-      }
+      },
     }),
     {
-      name: 'mangaai-app-storage',
+      name: 'frameforge-app-storage',
       partialize: (state) => ({
         sidebarCollapsed: state.sidebarCollapsed,
         theme: state.theme,
         language: state.language,
         currentProjectId: state.currentProjectId,
-        currentModel: state.currentModel
-      })
+        currentModel: state.currentModel,
+      }),
     }
   )
 );

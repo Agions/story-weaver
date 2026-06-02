@@ -1,5 +1,5 @@
 /**
- * @panel-flow/common — 公共库统一导出
+ * @frame-forge/common — 公共库统一导出
  */
 
 // Utils

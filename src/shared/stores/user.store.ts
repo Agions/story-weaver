@@ -14,29 +14,36 @@ export interface UserState {
   username: string | null;
   email: string | null;
   avatar: string | null;
-  
+
   // 偏好设置
   preferences: UserPreferences;
-  
+
   // API 设置
   apiSettings: Record<string, AIModelSettings>;
-  
+
   // 最近文件
   recentFiles: string[];
-  
+
   // Actions
-  setUser: (user: Partial<Omit<UserState, 'setUser' | 'updatePreferences' | 'setApiSettings' | 'addRecentFile' | 'removeRecentFile'>>) => void;
+  setUser: (
+    user: Partial<
+      Omit<
+        UserState,
+        'setUser' | 'updatePreferences' | 'setApiSettings' | 'addRecentFile' | 'removeRecentFile'
+      >
+    >
+  ) => void;
   clearUser: () => void;
-  
+
   // 偏好设置
   updatePreferences: (prefs: Partial<UserPreferences>) => void;
   resetPreferences: () => void;
-  
+
   // API 设置
   setApiSettings: (provider: string, settings: AIModelSettings) => void;
   removeApiSettings: (provider: string) => void;
   getApiSettings: (provider: string) => AIModelSettings | null;
-  
+
   // 最近文件
   addRecentFile: (path: string) => void;
   removeRecentFile: (path: string) => void;
@@ -51,7 +58,7 @@ const defaultPreferences: UserPreferences = {
   enablePreview: true,
   previewQuality: 'medium',
   notifications: true,
-  soundEffects: true
+  soundEffects: true,
 };
 
 export const useUserStore = create<UserState>()(
@@ -67,18 +74,19 @@ export const useUserStore = create<UserState>()(
       recentFiles: [],
 
       // Actions
-      setUser: (user) => set(state => ({ ...state, ...user })),
+      setUser: (user) => set((state) => ({ ...state, ...user })),
 
-      clearUser: () => set({
-        userId: null,
-        username: null,
-        email: null,
-        avatar: null
-      }),
+      clearUser: () =>
+        set({
+          userId: null,
+          username: null,
+          email: null,
+          avatar: null,
+        }),
 
       // 偏好设置
       updatePreferences: (prefs) => {
-        set(state => {
+        set((state) => {
           const newPrefs = { ...state.preferences, ...prefs };
           storageService.preferences.set(newPrefs);
           return { preferences: newPrefs };
@@ -92,10 +100,10 @@ export const useUserStore = create<UserState>()(
 
       // API 设置
       setApiSettings: (provider, settings) => {
-        set(state => {
+        set((state) => {
           const newSettings = {
             ...state.apiSettings,
-            [provider]: settings
+            [provider]: settings,
           };
           storageService.modelSettings.set(provider, settings);
           return { apiSettings: newSettings };
@@ -103,7 +111,7 @@ export const useUserStore = create<UserState>()(
       },
 
       removeApiSettings: (provider) => {
-        set(state => {
+        set((state) => {
           const { [provider]: _provider, ...rest } = state.apiSettings;
           storageService.modelSettings.delete(provider);
           return { apiSettings: rest };
@@ -116,16 +124,16 @@ export const useUserStore = create<UserState>()(
 
       // 最近文件
       addRecentFile: (path) => {
-        set(state => {
-          const files = [path, ...state.recentFiles.filter(f => f !== path)].slice(0, 20);
+        set((state) => {
+          const files = [path, ...state.recentFiles.filter((f) => f !== path)].slice(0, 20);
           storageService.recentFiles.add(path);
           return { recentFiles: files };
         });
       },
 
       removeRecentFile: (path) => {
-        set(state => {
-          const files = state.recentFiles.filter(f => f !== path);
+        set((state) => {
+          const files = state.recentFiles.filter((f) => f !== path);
           storageService.recentFiles.remove(path);
           return { recentFiles: files };
         });
@@ -134,10 +142,10 @@ export const useUserStore = create<UserState>()(
       clearRecentFiles: () => {
         set({ recentFiles: [] });
         storageService.recentFiles.clear();
-      }
+      },
     }),
     {
-      name: 'mangaai-user-storage',
+      name: 'frameforge-user-storage',
       partialize: (state) => ({
         userId: state.userId,
         username: state.username,
@@ -145,8 +153,8 @@ export const useUserStore = create<UserState>()(
         avatar: state.avatar,
         preferences: state.preferences,
         apiSettings: state.apiSettings,
-        recentFiles: state.recentFiles
-      })
+        recentFiles: state.recentFiles,
+      }),
     }
   )
 );

@@ -5,3 +5,4 @@
  * top-level path. New code should import from `./ai/text/story-analysis.service` directly.
  */
 export * from './ai/text/story-analysis.service';
+export { default } from './ai/text/story-analysis.service';

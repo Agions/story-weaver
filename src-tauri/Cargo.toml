@@ -1,10 +1,10 @@
 [package]
-name = "panel-flow"
+name = "frame-forge"
 version = "2.1.0"
-description = "FrameForge - AI-Driven Video Creation Studio (formerly ManGa AI)"
-authors = ["ManGa AI Team"]
+description = "FrameForge - AI-Driven Video Creation Studio"
+authors = ["FrameForge Team <agions@qq.com>"]
 license = "MIT"
-repository = "https://github.com/Agions/ManGaAI"
+repository = "https://github.com/Agions/frame-forge"
 edition = "2021"
 
 [lib]

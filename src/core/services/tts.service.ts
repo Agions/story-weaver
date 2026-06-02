@@ -5,3 +5,4 @@
  * top-level path. New code should import from `./audio/tts.service` directly.
  */
 export * from './audio/tts.service';
+export { default } from './audio/tts.service';

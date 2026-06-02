@@ -1,5 +1,5 @@
 /**
- * panel-flow AI 设计系统
+ * frame-forge AI 设计系统
  * 统一的设计令牌和 Ant Design 主题配置
  */
 

@@ -43,7 +43,7 @@ export default {
     '^jspdf$': '<rootDir>/src/__tests__/__mocks__/jspdf.js',
     '^jspdf-autotable$': '<rootDir>/src/__tests__/__mocks__/jspdf-autotable.js',
     '^uuid$': '<rootDir>/src/__tests__/__mocks__/uuid.js',
-    '^@panel-flow/common/(.*)$': '<rootDir>/packages/common/src/$1',
+    '^@frame-forge/common/(.*)$': '<rootDir>/packages/common/src/$1',
     '^@ffmpeg/ffmpeg$': '<rootDir>/src/__tests__/__mocks__/@ffmpeg/ffmpeg.js',
     '^@ffmpeg/util$': '<rootDir>/src/__tests__/__mocks__/@ffmpeg/util.js',
   },

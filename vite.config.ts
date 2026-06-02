@@ -1,9 +1,9 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import path from 'path'
-import viteCompression from 'vite-plugin-compression'
-import tailwindcss from 'tailwindcss'
-import autoprefixer from 'autoprefixer'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+import viteCompression from 'vite-plugin-compression';
+import tailwindcss from 'tailwindcss';
+import autoprefixer from 'autoprefixer';
 
 export default defineConfig({
   plugins: [
@@ -89,7 +89,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-'@panel-flow/common': path.resolve(__dirname, './packages/common/src'),
+      '@frame-forge/common': path.resolve(__dirname, './packages/common/src'),
     },
   },
 
@@ -128,42 +128,46 @@ export default defineConfig({
         manualChunks: (id) => {
           // React 核心库
           if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
-            return 'react-vendor'
+            return 'react-vendor';
           }
           // 路由库
           if (id.includes('node_modules/react-router')) {
-            return 'router-vendor'
+            return 'router-vendor';
           }
           // 状态管理
           if (id.includes('node_modules/zustand')) {
-            return 'state-vendor'
+            return 'state-vendor';
           }
           // UI 工具库
           if (id.includes('node_modules/@radix-ui') || id.includes('node_modules/lucide-react')) {
-            return 'ui-vendor'
+            return 'ui-vendor';
           }
           // 动画库
           if (id.includes('node_modules/framer-motion')) {
-            return 'animation-vendor'
+            return 'animation-vendor';
           }
           // 工具库
-          if (id.includes('node_modules/lodash') || id.includes('node_modules/date-fns') || id.includes('node_modules/dayjs')) {
-            return 'utils-vendor'
+          if (
+            id.includes('node_modules/lodash') ||
+            id.includes('node_modules/date-fns') ||
+            id.includes('node_modules/dayjs')
+          ) {
+            return 'utils-vendor';
           }
           // HTTP 客户端
           if (id.includes('node_modules/axios')) {
-            return 'http-vendor'
+            return 'http-vendor';
           }
           // 表单库
           if (id.includes('node_modules/react-hook-form') || id.includes('node_modules/zod')) {
-            return 'form-vendor'
+            return 'form-vendor';
           }
           // FFmpeg
           if (id.includes('node_modules/@ffmpeg')) {
-            return 'ffmpeg-vendor'
+            return 'ffmpeg-vendor';
           }
         },
       },
     },
   },
-})
+});

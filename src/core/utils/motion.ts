@@ -1,5 +1,5 @@
 /**
- * panel-flow AI 动效系统
+ * frame-forge AI 动效系统
  * 统一的页面过渡和组件动画配置
  *
  * 所有 motion utilities 现在统一在 @/shared/utils 中定义。

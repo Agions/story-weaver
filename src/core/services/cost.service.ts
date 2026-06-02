@@ -5,3 +5,4 @@
  * top-level path. New code should import from `./project/cost.service` directly.
  */
 export * from './project/cost.service';
+export { default } from './project/cost.service';

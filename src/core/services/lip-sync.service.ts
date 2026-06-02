@@ -5,3 +5,4 @@
  * top-level path. New code should import from `./audio/lip-sync.service` directly.
  */
 export * from './audio/lip-sync.service';
+export { default } from './audio/lip-sync.service';

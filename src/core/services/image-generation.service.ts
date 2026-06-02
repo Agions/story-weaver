@@ -5,3 +5,4 @@
  * top-level path. New code should import from `./ai/image/image-generation.service` directly.
  */
 export * from './ai/image/image-generation.service';
+export { default } from './ai/image/image-generation.service';

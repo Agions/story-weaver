@@ -1,5 +1,5 @@
 /**
- * panel-flow Script Types
+ * frame-forge Script Types
  * Extracted from src/shared/types/index.ts
  * Script and narrative content types
  */
