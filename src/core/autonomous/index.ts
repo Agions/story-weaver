@@ -1,5 +1,5 @@
 /**
- * PanelFlow Autonomous Mode — Core Module
+ * FrameForge Autonomous Mode — Core Module
  *
  * 全自动 AI 漫剧制作系统核心模块
  *
@@ -27,7 +27,7 @@
  * ```
  */
 
-export * from './autonomous.types';
-export * from './quality-gate';
-export * from './self-review-loop';
+export * from '../../../packages/core/autonomous/types/autonomous.types';
+export * from '../../../packages/core/autonomous/evaluator/quality-gate';
+export * from '../../../packages/core/autonomous/evaluator/self-review-loop';
 export * from './auto-pipeline-engine';

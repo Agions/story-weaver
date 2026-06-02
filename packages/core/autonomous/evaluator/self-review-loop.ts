@@ -11,9 +11,9 @@ import type {
   ReviewCriteria,
   ReviewDimension,
   StepOutput,
-} from './autonomous.types';
-import { aiService } from '../services/ai.service';
-import { logger } from '../utils/logger';
+} from '../types/autonomous.types';
+import { aiService } from '../../../../src/core/services/ai/text/ai.service';
+import { logger } from '../../../../src/core/utils/logger';
 
 // ============================================================================
 // Prompt 模板
@@ -120,9 +120,10 @@ export class SelfReviewLoop {
   async review(stepId: string, output: StepOutput): Promise<ReviewResult> {
     const stepName = STEP_NAMES[stepId] ?? stepId;
 
-    const prompt = REVIEW_PROMPT_TEMPLATE
-      .replace('{stepName}', stepName)
-      .replace('{originalOutput}', JSON.stringify(output, null, 2));
+    const prompt = REVIEW_PROMPT_TEMPLATE.replace('{stepName}', stepName).replace(
+      '{originalOutput}',
+      JSON.stringify(output, null, 2)
+    );
 
     try {
       const response = await aiService.generate(prompt, {
@@ -191,17 +192,17 @@ export class SelfReviewLoop {
   async repair(
     stepId: string,
     originalOutput: StepOutput,
-    reviewResult: ReviewResult,
+    reviewResult: ReviewResult
   ): Promise<StepOutput> {
     const stepName = STEP_NAMES[stepId] ?? stepId;
 
-    const reasons = reviewResult.reasons.length > 0
-      ? reviewResult.reasons.join('\n')
-      : '综合评分未达标';
+    const reasons =
+      reviewResult.reasons.length > 0 ? reviewResult.reasons.join('\n') : '综合评分未达标';
 
-    const suggestions = reviewResult.suggestions.length > 0
-      ? reviewResult.suggestions.join('\n')
-      : '请根据审核反馈优化输出质量';
+    const suggestions =
+      reviewResult.suggestions.length > 0
+        ? reviewResult.suggestions.join('\n')
+        : '请根据审核反馈优化输出质量';
 
     const reviewResultText = `
 评分：${reviewResult.score}/100
@@ -211,8 +212,7 @@ ${reviewResult.dimensions
 修复建议：${suggestions}
 `.trim();
 
-    const prompt = REPAIR_PROMPT_TEMPLATE
-      .replace(/{stepName}/g, stepName)
+    const prompt = REPAIR_PROMPT_TEMPLATE.replace(/{stepName}/g, stepName)
       .replace('{originalOutput}', JSON.stringify(originalOutput, null, 2))
       .replace('{reviewResult}', reviewResultText)
       .replace('{fallbackReasons}', reasons);
@@ -252,12 +252,8 @@ ${reviewResult.dimensions
               detail: String(d.detail ?? ''),
             }))
           : [],
-        reasons: Array.isArray(json.reasons)
-          ? json.reasons.map(String)
-          : [],
-        suggestions: Array.isArray(json.suggestions)
-          ? json.suggestions.map(String)
-          : [],
+        reasons: Array.isArray(json.reasons) ? json.reasons.map(String) : [],
+        suggestions: Array.isArray(json.suggestions) ? json.suggestions.map(String) : [],
       };
     } catch {
       // 解析失败，返回默认结果（通过）

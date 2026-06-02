@@ -1,6 +1,6 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/schema.json",
-  "productName": "PanelFlow",
+  "productName": "FrameForge",
   "version": "1.0.0",
   "identifier": "com.PanelFlow.app",
   "build": {
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "PanelFlow - Professional AI Video Script Creation Platform",
+        "title": "FrameForge - Professional AI Video Creation Studio",
         "width": 1280,
         "height": 800,
         "minWidth": 960,
@@ -71,7 +71,15 @@
   "plugins": {
     "fs": {
       "scope": {
-        "allow": ["$APPDATA/**", "$APPCONFIG/**", "$TEMP/**", "$RESOURCE/**", "$DOWNLOAD/**", "$DOCUMENT/**", "$VIDEO/**"]
+        "allow": [
+          "$APPDATA/**",
+          "$APPCONFIG/**",
+          "$TEMP/**",
+          "$RESOURCE/**",
+          "$DOWNLOAD/**",
+          "$DOCUMENT/**",
+          "$VIDEO/**"
+        ]
       }
     },
     "dialog": {

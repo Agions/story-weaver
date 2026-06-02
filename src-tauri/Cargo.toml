@@ -1,7 +1,7 @@
 [package]
 name = "panel-flow"
 version = "2.1.0"
-description = "ManGa AI - AI 漫剧视频智能创作平台"
+description = "FrameForge - AI-Driven Video Creation Studio (formerly ManGa AI)"
 authors = ["ManGa AI Team"]
 license = "MIT"
 repository = "https://github.com/Agions/ManGaAI"
@@ -21,6 +21,7 @@ serde_json = "1.0"
 log = "0.4"
 env_logger = "0.10"
 lazy_static = "1.4"
+regex = "1"
 
 tauri-plugin-fs = "2"
 tauri-plugin-dialog = "2"

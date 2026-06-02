@@ -9,6 +9,14 @@
  * 5. 降级策略：主模型不可用时自动切换备选
  */
 
+import {
+  QualityGate,
+  createQualityGate,
+} from '../../../packages/core/autonomous/evaluator/quality-gate';
+import {
+  SelfReviewLoop,
+  createSelfReviewLoop,
+} from '../../../packages/core/autonomous/evaluator/self-review-loop';
 import type {
   AutoPipelineInput,
   AutoPipelineResult,
@@ -17,9 +25,7 @@ import type {
   StepOutput,
   PipelineCheckpoint,
   PipelineEventHandler,
-} from './autonomous.types';
-import { SelfReviewLoop, createSelfReviewLoop } from './self-review-loop';
-import { QualityGate, createQualityGate } from './quality-gate';
+} from '../../../packages/core/autonomous/types/autonomous.types';
 import { logger } from '../utils/logger';
 
 // ============================================================================
@@ -81,15 +87,19 @@ export class AutoPipelineEngine {
   // 步骤链（动态注入）
   private steps: PipelineStep[] = [];
 
-  constructor(options: {
-    selfReview?: SelfReviewLoop;
-    maxReviewRetries?: number;
-    reviewModel?: string;
-  } = {}) {
-    this.selfReview = options.selfReview ?? createSelfReviewLoop({
-      maxRetries: options.maxReviewRetries ?? 3,
-      model: options.reviewModel ?? 'glm-5',
-    });
+  constructor(
+    options: {
+      selfReview?: SelfReviewLoop;
+      maxReviewRetries?: number;
+      reviewModel?: string;
+    } = {}
+  ) {
+    this.selfReview =
+      options.selfReview ??
+      createSelfReviewLoop({
+        maxRetries: options.maxReviewRetries ?? 3,
+        model: options.reviewModel ?? 'glm-5',
+      });
     this.handlers = [];
   }
 
@@ -163,9 +173,14 @@ export class AutoPipelineEngine {
         resolution: '1080p',
         fileSize: this.context.get('step_export')?.fileSize as number | undefined,
         stepDurations: this.collectStepDurations(),
-        sceneCount: (this.context.get('step_script') as unknown as { scenes?: { length: number } })?.scenes?.length as number | undefined,
-        characterCount: (this.context.get('step_character') as unknown as { characters?: { length: number } })?.characters?.length as number | undefined,
-        renderedFrames: (this.context.get('step_render') as unknown as { renderedFrames?: { length: number } })?.renderedFrames?.length as number | undefined,
+        sceneCount: (this.context.get('step_script') as unknown as { scenes?: { length: number } })
+          ?.scenes?.length as number | undefined,
+        characterCount: (
+          this.context.get('step_character') as unknown as { characters?: { length: number } }
+        )?.characters?.length as number | undefined,
+        renderedFrames: (
+          this.context.get('step_render') as unknown as { renderedFrames?: { length: number } }
+        )?.renderedFrames?.length as number | undefined,
       };
     } catch (error) {
       this.status = 'failed';
@@ -225,7 +240,7 @@ export class AutoPipelineEngine {
   getStatus(): { status: PipelineStatus; currentStepId: string | null; progress: number } {
     const totalSteps = this.steps.length;
     const completedSteps = Array.from(this.stepStates.values()).filter(
-      (s) => s.status === 'completed' || s.status === 'skipped',
+      (s) => s.status === 'completed' || s.status === 'skipped'
     ).length;
     const progress = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
 
@@ -288,29 +303,33 @@ export class AutoPipelineEngine {
 
     // 自审循环
     let reviewCount = 0;
-    const maxRetries = qualityGate.isSelfReviewEnabled()
-      ? qualityGate.getMaxReviewRetries()
-      : 0;
+    const maxRetries = qualityGate.isSelfReviewEnabled() ? qualityGate.getMaxReviewRetries() : 0;
 
     while (true) {
       // 质量门禁判定
       const gateResult = qualityGate.evaluate(step.stepId, output);
 
       if (gateResult.passed) {
-        logger.info(`[AutoPipeline] Step ${step.name} passed quality gate (score: ${gateResult.score})`);
+        logger.info(
+          `[AutoPipeline] Step ${step.name} passed quality gate (score: ${gateResult.score})`
+        );
         this.emit('quality_gate', step.stepId, { passed: true, score: gateResult.score });
         break;
       }
 
       reviewCount++;
-      logger.warn(`[AutoPipeline] Step ${step.name} failed quality gate (attempt ${reviewCount}), score: ${gateResult.score}`);
+      logger.warn(
+        `[AutoPipeline] Step ${step.name} failed quality gate (attempt ${reviewCount}), score: ${gateResult.score}`
+      );
 
       this.updateStepState(step.stepId, 'reviewing', { reviewCount });
       this.emit('step_review_start', step.stepId, reviewCount);
 
       if (reviewCount > maxRetries) {
         // 超过最大自审次数，降级处理
-        logger.error(`[AutoPipeline] Step ${step.name} exceeded max review retries (${maxRetries})`);
+        logger.error(
+          `[AutoPipeline] Step ${step.name} exceeded max review retries (${maxRetries})`
+        );
         this.emit('step_fail', step.stepId, `Quality gate failed after ${maxRetries} retries`);
         this.updateStepState(step.stepId, 'failed', {
           error: `Quality gate failed: ${gateResult.details}`,
@@ -323,7 +342,12 @@ export class AutoPipelineEngine {
 
       if (reviewResult.passed) {
         // 审核通过，但仍需修复不合格项
-        logger.info(`[AutoPipeline] Review passed, but repairing dimensions: ${reviewResult.dimensions.filter(d => !d.passed).map(d => d.dimension).join(', ')}`);
+        logger.info(
+          `[AutoPipeline] Review passed, but repairing dimensions: ${reviewResult.dimensions
+            .filter((d) => !d.passed)
+            .map((d) => d.dimension)
+            .join(', ')}`
+        );
       }
 
       // 尝试修复
@@ -354,10 +378,7 @@ export class AutoPipelineEngine {
   /**
    * 带超时的步骤执行
    */
-  private async executeWithTimeout(
-    step: PipelineStep,
-    input: StepInput,
-  ): Promise<StepOutput> {
+  private async executeWithTimeout(step: PipelineStep, input: StepInput): Promise<StepOutput> {
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
         reject(new Error(`Step ${step.name} timed out after ${step.timeout}ms`));
@@ -407,7 +428,7 @@ export class AutoPipelineEngine {
   private updateStepState(
     stepId: string,
     status: StepState['status'],
-    extra: Partial<Pick<StepState, 'error' | 'output' | 'reviewCount'>> = {},
+    extra: Partial<Pick<StepState, 'error' | 'output' | 'reviewCount'>> = {}
   ): void {
     const existing = this.stepStates.get(stepId) ?? {
       stepId,
@@ -444,10 +465,7 @@ export class AutoPipelineEngine {
   /**
    * 发送事件
    */
-  private emit(
-    eventType: string,
-    ...args: unknown[]
-  ): void {
+  private emit(eventType: string, ...args: unknown[]): void {
     for (const handler of this.handlers) {
       switch (eventType) {
         case 'step_start':
@@ -466,10 +484,16 @@ export class AutoPipelineEngine {
           handler.onStepReviewStart?.(args[0] as string, args[1] as number);
           break;
         case 'step_review_complete':
-          handler.onStepReviewComplete?.(args[0] as string, args[1] as Parameters<NonNullable<PipelineEventHandler['onStepReviewComplete']>>[1]);
+          handler.onStepReviewComplete?.(
+            args[0] as string,
+            args[1] as Parameters<NonNullable<PipelineEventHandler['onStepReviewComplete']>>[1]
+          );
           break;
         case 'quality_gate':
-          handler.onQualityGate?.(args[0] as string, args[1] as import('./autonomous.types').QualityGateResult);
+          handler.onQualityGate?.(
+            args[0] as string,
+            args[1] as import('../../../packages/core/autonomous/types/autonomous.types').QualityGateResult
+          );
           break;
         case 'pipeline_start':
           handler.onPipelineStart?.();
@@ -502,7 +526,10 @@ export class AutoPipelineEngine {
       pipelineId: this.getPipelineId(),
       status: this.status,
       currentStepId: stepId,
-      steps: Object.fromEntries(entries) as unknown as Record<string, import('./autonomous.types').StepCheckpoint>,
+      steps: Object.fromEntries(entries) as unknown as Record<
+        string,
+        import('../../../packages/core/autonomous/types/autonomous.types').StepCheckpoint
+      >,
       input: this.context.get('__input__') as unknown as AutoPipelineInput,
       startedAt: Date.now(),
       updatedAt: Date.now(),
@@ -511,7 +538,7 @@ export class AutoPipelineEngine {
     try {
       localStorage.setItem(
         `autopipeline_checkpoint_${checkpoint.pipelineId}`,
-        JSON.stringify(checkpoint),
+        JSON.stringify(checkpoint)
       );
     } catch (error) {
       logger.warn('[AutoPipeline] Failed to save checkpoint:', error);
@@ -523,9 +550,7 @@ export class AutoPipelineEngine {
    */
   private loadCheckpoint(): PipelineCheckpoint | null {
     try {
-      const stored = localStorage.getItem(
-        `autopipeline_checkpoint_${this.getPipelineId()}`,
-      );
+      const stored = localStorage.getItem(`autopipeline_checkpoint_${this.getPipelineId()}`);
       if (stored) {
         return JSON.parse(stored) as PipelineCheckpoint;
       }
@@ -540,7 +565,8 @@ export class AutoPipelineEngine {
    */
   private restoreFromCheckpoint(checkpoint: PipelineCheckpoint): void {
     for (const [stepId, stepState] of Object.entries(checkpoint.steps)) {
-      const state = stepState as unknown as import('./autonomous.types').StepState;
+      const state =
+        stepState as unknown as import('../../../packages/core/autonomous/types/autonomous.types').StepState;
       this.stepStates.set(stepId, state);
       if (stepState.data) {
         this.context.set(stepId, stepState.data);

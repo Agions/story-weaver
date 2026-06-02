@@ -1,10 +1,14 @@
-# panel-flow
+# FrameForge
+
+> 之前叫 ManGa AI / PanelFlow, 现在统称 **FrameForge** — AI 驱动的视频创作工作室
+>
+> 包名仍为 `panel-flow` (v2.1.0, 二进制兼容), 用户可见品牌已统一为 FrameForge。
 
 **AI 驱动的视频脚本创作平台** — 将小说、剧本或提示词转化为专业级视频内容
 
 <div align="center">
 
-**MIT License · React 18 + Tauri 2.0 + TypeScript 5**
+**MIT License · React 18 + Tauri 2.1 + TypeScript 5**
 
 [![CI](https://img.shields.io/github/actions/workflow/status/Agions/panel-flow/ci.yml?style=flat-square&label=CI)](https://github.com/Agions/panel-flow/actions)
 [![License](https://img.shields.io/badge/License-MIT-45B8AC?style=flat-square)](https://opensource.org/licenses/MIT)

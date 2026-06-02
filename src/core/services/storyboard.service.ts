@@ -8,8 +8,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { logger } from '@/core/utils/logger';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
 
-import { aiService } from './ai.service';
-import { imageGenerationService, type ImageGenerationOptions } from './image-generation.service';
+import {
+  imageGenerationService,
+  type ImageGenerationOptions,
+} from './ai/image/image-generation.service';
+import { aiService } from './ai/text/ai.service';
 
 // 存储键
 const STORYBOARD_STORAGE_KEY = 'panel-flow-storyboards';

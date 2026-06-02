@@ -1,8 +1,7 @@
 /**
- * 视频处理服务 — 转发到实现
- * ==========================
- * 实现：@/features/video-export/services/video.service.ts
+ * Backward-compat shim — re-exports from reorganized ./video/video.service.
+ *
+ * Kept to avoid breaking the 21+ files that still import from the old
+ * top-level path. New code should import from `./video/video.service` directly.
  */
-
-export { videoService } from '@/features/video-export/services/video.service';
-export { default } from '@/features/video-export/services/video.service';
+export * from './video/video.service';

@@ -6,6 +6,7 @@
  */
 
 import type { FFmpeg } from '@ffmpeg/ffmpeg';
+
 import type {
   Scene,
   SceneEffect,

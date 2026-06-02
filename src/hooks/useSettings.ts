@@ -1,7 +1,7 @@
 /**
  * 应用设置相关的自定义钩子
  * 提供了一系列钩子用于管理应用设置和API密钥
- * 
+ *
  * @author Agions
  * @date 2024
  * @version 1.1 - API密钥改用secureStorage存储
@@ -39,11 +39,11 @@ const setStoredValue = <T>(key: string, value: T): void => {
 
 // 安全存储的API密钥key映射
 const API_KEY_SECURE_KEYS: Record<string, string> = {
-  'openai_api_key': 'openai_api_key',
-  'anthropic_api_key': 'anthropic_api_key',
-  'iflytek_api_key': 'iflytek_api_key',
-  'zhipu_api_key': 'zhipu_api_key',
-  'baidu_api_key': 'baidu_api_key',
+  openai_api_key: 'openai_api_key',
+  anthropic_api_key: 'anthropic_api_key',
+  iflytek_api_key: 'iflytek_api_key',
+  zhipu_api_key: 'zhipu_api_key',
+  baidu_api_key: 'baidu_api_key',
 };
 
 // 安全存储的API密钥获取
@@ -103,7 +103,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   preferredAICategory: 'all',
   language: 'zh',
   theme: 'auto',
-  recentProjects: []
+  recentProjects: [],
 };
 
 // API密钥状态类型
@@ -115,13 +115,13 @@ export interface ApiKeyState {
 
 // 应用设置钩子
 export const useSettingsStore = () => {
-  const [settings, setSettings] = useState<AppSettings>(
-    () => getStoredValue('app_settings', DEFAULT_SETTINGS)
+  const [settings, setSettings] = useState<AppSettings>(() =>
+    getStoredValue('app_settings', DEFAULT_SETTINGS)
   );
 
   // 更新设置
   const updateSettings = useCallback((newSettings: Partial<AppSettings>) => {
-    setSettings(prev => {
+    setSettings((prev) => {
       const updated = { ...prev, ...newSettings };
       setStoredValue('app_settings', updated);
       return updated;
@@ -137,34 +137,34 @@ export const useSettingsStore = () => {
 
   // 添加最近项目
   const addRecentProject = useCallback((projectId: string) => {
-    setSettings(prev => {
+    setSettings((prev) => {
       const recentProjects = prev.recentProjects || [];
       // 如果已存在，先移除
-      const filtered = recentProjects.filter(id => id !== projectId);
+      const filtered = recentProjects.filter((id) => id !== projectId);
       // 添加到最前面
       const updated = [projectId, ...filtered].slice(0, 10); // 最多保留10个
-      
+
       const newSettings = { ...prev, recentProjects: updated };
       setStoredValue('app_settings', newSettings);
       return newSettings;
     });
   }, []);
 
-  return { 
-    settings, 
-    updateSettings, 
+  return {
+    settings,
+    updateSettings,
     resetSettings,
-    addRecentProject
+    addRecentProject,
   };
 };
 
 // API密钥相关钩子
 // OpenAI API密钥
 export const useOpenAIAPIKey = () => {
-  const [apiKey, setApiKey] = useState<ApiKeyState>({ 
-    value: '', 
-    isValid: null, 
-    isTesting: false 
+  const [apiKey, setApiKey] = useState<ApiKeyState>({
+    value: '',
+    isValid: null,
+    isTesting: false,
   });
 
   // 初始化时从安全存储加载
@@ -173,7 +173,7 @@ export const useOpenAIAPIKey = () => {
   }, []);
 
   const updateApiKey = useCallback(async (newApiKey: Partial<ApiKeyState>) => {
-    setApiKey(prev => {
+    setApiKey((prev) => {
       const updated = { ...prev, ...newApiKey };
       setSecureStoredApiKey('openai_api_key', updated);
       return updated;
@@ -185,10 +185,10 @@ export const useOpenAIAPIKey = () => {
 
 // Claude API密钥
 export const useClaudeAPIKey = () => {
-  const [apiKey, setApiKey] = useState<ApiKeyState>({ 
-    value: '', 
-    isValid: null, 
-    isTesting: false 
+  const [apiKey, setApiKey] = useState<ApiKeyState>({
+    value: '',
+    isValid: null,
+    isTesting: false,
   });
 
   useEffect(() => {
@@ -196,7 +196,7 @@ export const useClaudeAPIKey = () => {
   }, []);
 
   const updateApiKey = useCallback(async (newApiKey: Partial<ApiKeyState>) => {
-    setApiKey(prev => {
+    setApiKey((prev) => {
       const updated = { ...prev, ...newApiKey };
       setSecureStoredApiKey('anthropic_api_key', updated);
       return updated;
@@ -208,10 +208,10 @@ export const useClaudeAPIKey = () => {
 
 // 讯飞 API密钥
 export const useXFAPIKey = () => {
-  const [apiKey, setApiKey] = useState<ApiKeyState>({ 
-    value: '', 
-    isValid: null, 
-    isTesting: false 
+  const [apiKey, setApiKey] = useState<ApiKeyState>({
+    value: '',
+    isValid: null,
+    isTesting: false,
   });
 
   useEffect(() => {
@@ -219,7 +219,7 @@ export const useXFAPIKey = () => {
   }, []);
 
   const updateApiKey = useCallback(async (newApiKey: Partial<ApiKeyState>) => {
-    setApiKey(prev => {
+    setApiKey((prev) => {
       const updated = { ...prev, ...newApiKey };
       setSecureStoredApiKey('iflytek_api_key', updated);
       return updated;
@@ -231,10 +231,10 @@ export const useXFAPIKey = () => {
 
 // 智谱 API密钥
 export const useZhipuAPIKey = () => {
-  const [apiKey, setApiKey] = useState<ApiKeyState>({ 
-    value: '', 
-    isValid: null, 
-    isTesting: false 
+  const [apiKey, setApiKey] = useState<ApiKeyState>({
+    value: '',
+    isValid: null,
+    isTesting: false,
   });
 
   useEffect(() => {
@@ -242,7 +242,7 @@ export const useZhipuAPIKey = () => {
   }, []);
 
   const updateApiKey = useCallback(async (newApiKey: Partial<ApiKeyState>) => {
-    setApiKey(prev => {
+    setApiKey((prev) => {
       const updated = { ...prev, ...newApiKey };
       setSecureStoredApiKey('zhipu_api_key', updated);
       return updated;
@@ -254,10 +254,10 @@ export const useZhipuAPIKey = () => {
 
 // Anthropic API密钥 (与Claude相同)
 export const useAnthropic = () => {
-  const [apiKey, setApiKey] = useState<ApiKeyState>({ 
-    value: '', 
-    isValid: null, 
-    isTesting: false 
+  const [apiKey, setApiKey] = useState<ApiKeyState>({
+    value: '',
+    isValid: null,
+    isTesting: false,
   });
 
   useEffect(() => {
@@ -265,7 +265,7 @@ export const useAnthropic = () => {
   }, []);
 
   const updateApiKey = useCallback(async (newApiKey: Partial<ApiKeyState>) => {
-    setApiKey(prev => {
+    setApiKey((prev) => {
       const updated = { ...prev, ...newApiKey };
       setSecureStoredApiKey('anthropic_api_key', updated);
       return updated;
@@ -277,10 +277,10 @@ export const useAnthropic = () => {
 
 // 百度 API密钥
 export const useBaiduAPIKey = () => {
-  const [apiKey, setApiKey] = useState<ApiKeyState>({ 
-    value: '', 
-    isValid: null, 
-    isTesting: false 
+  const [apiKey, setApiKey] = useState<ApiKeyState>({
+    value: '',
+    isValid: null,
+    isTesting: false,
   });
 
   useEffect(() => {
@@ -288,7 +288,7 @@ export const useBaiduAPIKey = () => {
   }, []);
 
   const updateApiKey = useCallback(async (newApiKey: Partial<ApiKeyState>) => {
-    setApiKey(prev => {
+    setApiKey((prev) => {
       const updated = { ...prev, ...newApiKey };
       setSecureStoredApiKey('baidu_api_key', updated);
       return updated;
@@ -301,24 +301,27 @@ export const useBaiduAPIKey = () => {
 // 通用API密钥设置钩子
 export const useApiKey = (provider: string) => {
   const storageKey = `${provider}_api_key`;
-  
-  const [apiKey, setApiKey] = useState<ApiKeyState>({ 
-    value: '', 
-    isValid: null, 
-    isTesting: false 
+
+  const [apiKey, setApiKey] = useState<ApiKeyState>({
+    value: '',
+    isValid: null,
+    isTesting: false,
   });
 
   useEffect(() => {
     getSecureStoredApiKey(storageKey).then(setApiKey);
   }, [storageKey]);
 
-  const updateApiKey = useCallback(async (newApiKey: Partial<ApiKeyState>) => {
-    setApiKey(prev => {
-      const updated = { ...prev, ...newApiKey };
-      setSecureStoredApiKey(storageKey, updated);
-      return updated;
-    });
-  }, [storageKey]);
+  const updateApiKey = useCallback(
+    async (newApiKey: Partial<ApiKeyState>) => {
+      setApiKey((prev) => {
+        const updated = { ...prev, ...newApiKey };
+        setSecureStoredApiKey(storageKey, updated);
+        return updated;
+      });
+    },
+    [storageKey]
+  );
 
   // 验证API密钥
   const validateApiKey = useCallback(async () => {
@@ -328,11 +331,11 @@ export const useApiKey = (provider: string) => {
     }
 
     updateApiKey({ isTesting: true });
-    
+
     try {
       // 这里应该调用实际的验证接口
       // 目前使用模拟验证
-      const valid = await new Promise<boolean>(resolve => {
+      const valid = await new Promise<boolean>((resolve) => {
         setTimeout(() => {
           if (provider === 'openai' && !apiKey.value.startsWith('sk-')) {
             resolve(false);
@@ -380,17 +383,20 @@ export const useTheme = () => {
   }, [isDarkMode, setIsDarkMode, updateSettings]);
 
   // 设置主题
-  const setTheme = useCallback((theme: 'light' | 'dark' | 'auto') => {
-    updateSettings({ theme });
-    
-    if (theme === 'auto') {
-      // 使用系统设置
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setIsDarkMode(prefersDark);
-    } else {
-      setIsDarkMode(theme === 'dark');
-    }
-  }, [setIsDarkMode, updateSettings]);
+  const setTheme = useCallback(
+    (theme: 'light' | 'dark' | 'auto') => {
+      updateSettings({ theme });
+
+      if (theme === 'auto') {
+        // 使用系统设置
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        setIsDarkMode(prefersDark);
+      } else {
+        setIsDarkMode(theme === 'dark');
+      }
+    },
+    [setIsDarkMode, updateSettings]
+  );
 
   return { isDarkMode, toggleTheme, theme: settings.theme, setTheme };
 };
@@ -399,9 +405,12 @@ export const useTheme = () => {
 export const usePreferredModel = () => {
   const { settings, updateSettings } = useSettingsStore();
 
-  const updateDefaultModelIndex = useCallback((index: number) => {
-    updateSettings({ defaultModelIndex: index });
-  }, [updateSettings]);
+  const updateDefaultModelIndex = useCallback(
+    (index: number) => {
+      updateSettings({ defaultModelIndex: index });
+    },
+    [updateSettings]
+  );
 
   return [settings.defaultModelIndex, updateDefaultModelIndex] as const;
 };
@@ -410,9 +419,12 @@ export const usePreferredModel = () => {
 export const usePreferredAIProvider = () => {
   const { settings, updateSettings } = useSettingsStore();
 
-  const updatePreferredProvider = useCallback((provider: string) => {
-    updateSettings({ preferredAIProvider: provider });
-  }, [updateSettings]);
+  const updatePreferredProvider = useCallback(
+    (provider: string) => {
+      updateSettings({ preferredAIProvider: provider });
+    },
+    [updateSettings]
+  );
 
   return [settings.preferredAIProvider, updatePreferredProvider] as const;
 };
@@ -421,9 +433,12 @@ export const usePreferredAIProvider = () => {
 export const usePreferredAICategory = () => {
   const { settings, updateSettings } = useSettingsStore();
 
-  const updatePreferredCategory = useCallback((category: string) => {
-    updateSettings({ preferredAICategory: category });
-  }, [updateSettings]);
+  const updatePreferredCategory = useCallback(
+    (category: string) => {
+      updateSettings({ preferredAICategory: category });
+    },
+    [updateSettings]
+  );
 
   return [settings.preferredAICategory, updatePreferredCategory] as const;
-}; 
+};

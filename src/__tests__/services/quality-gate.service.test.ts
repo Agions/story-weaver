@@ -1,23 +1,57 @@
-import { qualityGateService } from '@/core/services/quality-gate.service';
+import { qualityGateService } from '@/core/services/pipeline/quality-gate.service';
 
 describe('qualityGateService', () => {
   it('should fail when frame count is too low', () => {
     const result = qualityGateService.evaluate({
       storyboardFrames: [
-        { id: 'f1', title: '1', sceneDescription: 'a', composition: '中心构图', cameraType: 'wide', dialogue: '', duration: 5 },
-        { id: 'f2', title: '2', sceneDescription: 'b', composition: '中心构图', cameraType: 'medium', dialogue: '', duration: 4 },
+        {
+          id: 'f1',
+          title: '1',
+          sceneDescription: 'a',
+          composition: '中心构图',
+          cameraType: 'wide',
+          dialogue: '',
+          duration: 5,
+        },
+        {
+          id: 'f2',
+          title: '2',
+          sceneDescription: 'b',
+          composition: '中心构图',
+          cameraType: 'medium',
+          dialogue: '',
+          duration: 4,
+        },
       ],
     });
 
     expect(result.passed).toBe(false);
-    expect(result.issues.some(issue => issue.code === 'frame_count_low' && issue.level === 'error')).toBe(true);
+    expect(
+      result.issues.some((issue) => issue.code === 'frame_count_low' && issue.level === 'error')
+    ).toBe(true);
   });
 
   it('should include frame location metadata for storyboard issues', () => {
     const result = qualityGateService.evaluate({
       storyboardFrames: [
-        { id: 'f1', title: '1', sceneDescription: '', composition: '中心构图', cameraType: 'wide', dialogue: '', duration: 5 },
-        { id: 'f2', title: '2', sceneDescription: 'ok', composition: '中心构图', cameraType: 'medium', dialogue: '', duration: 20 },
+        {
+          id: 'f1',
+          title: '1',
+          sceneDescription: '',
+          composition: '中心构图',
+          cameraType: 'wide',
+          dialogue: '',
+          duration: 5,
+        },
+        {
+          id: 'f2',
+          title: '2',
+          sceneDescription: 'ok',
+          composition: '中心构图',
+          cameraType: 'medium',
+          dialogue: '',
+          duration: 20,
+        },
       ],
       thresholds: {
         minFrameCount: 2,
@@ -80,6 +114,8 @@ describe('qualityGateService', () => {
     });
 
     expect(result.passed).toBe(false);
-    expect(result.issues.some(issue => issue.code === 'evaluation_missing' && issue.level === 'error')).toBe(true);
+    expect(
+      result.issues.some((issue) => issue.code === 'evaluation_missing' && issue.level === 'error')
+    ).toBe(true);
   });
 });

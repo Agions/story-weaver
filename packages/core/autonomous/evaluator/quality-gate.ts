@@ -10,7 +10,7 @@ import type {
   QualityGateConfig,
   StepOutput,
   ReviewCriteria,
-} from './autonomous.types';
+} from '../types/autonomous.types';
 
 // ============================================================================
 // 内置审核标准
@@ -185,7 +185,10 @@ export class QualityGate {
   /**
    * 执行基础检查
    */
-  private performBasicChecks(stepId: string, output: StepOutput): {
+  private performBasicChecks(
+    stepId: string,
+    output: StepOutput
+  ): {
     passed: boolean;
     reason?: string;
     score: number;
@@ -202,7 +205,9 @@ export class QualityGate {
         if (!chapters || chapters.length === 0) {
           return { passed: false, reason: 'No chapters found in import', score: 0 };
         }
-        const wordCount = (output.metadata as Record<string, unknown>)?.wordCount as number | undefined;
+        const wordCount = (output.metadata as Record<string, unknown>)?.wordCount as
+          | number
+          | undefined;
         if (!wordCount || wordCount < 100) {
           return { passed: false, reason: 'Word count too low (<100)', score: 30 };
         }
@@ -237,7 +242,11 @@ export class QualityGate {
         }
         const successRate = renderedFrames.length / totalFrames;
         if (successRate < 0.5) {
-          return { passed: false, reason: `Success rate too low (${(successRate * 100).toFixed(0)}%)`, score: 30 };
+          return {
+            passed: false,
+            reason: `Success rate too low (${(successRate * 100).toFixed(0)}%)`,
+            score: 30,
+          };
         }
         return { passed: true, score: Math.round(successRate * 100) };
       }
@@ -261,7 +270,7 @@ export class QualityGate {
   private evaluateWithCriteria(
     _stepId: string,
     _output: StepOutput,
-    _criteria: ReviewCriteria,
+    _criteria: ReviewCriteria
   ): QualityGateResult {
     // 实际评分由 SelfReviewLoop 调用 LLM 完成
     // 此处仅作占位，返回需要 LLM 审核的标记

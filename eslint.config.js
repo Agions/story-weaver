@@ -20,6 +20,7 @@ export default [
       'scripts/**',
       'src/__tests__/__mocks__/**',
       'src/__mocks__/**',
+      'packages/**',
     ],
   },
 

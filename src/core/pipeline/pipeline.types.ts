@@ -4,7 +4,7 @@
  * 定义流水线步骤的标准化接口、数据契约和质量门控
  */
 
-import type { QualityGateThresholds } from '@/core/services/quality-gate.service';
+import type { QualityGateThresholds } from '@/core/services/pipeline/quality-gate.service';
 
 // ========== 流水线步骤 ID 枚举 ==========
 
