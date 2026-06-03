@@ -5,22 +5,22 @@
 
 // 应用信息
 export const APP_CONFIG = Object.freeze({
-  name: 'FrameForge',
-  nameZh: 'FrameForge',
+  name: 'frame-fab',
+  nameZh: 'frame-fab',
   version: '2.2.0',
   description: 'AI 漫剧创作平台',
-  repository: 'https://github.com/Agions/frame-forge',
+  repository: 'https://github.com/Agions/frame-fab',
   license: 'MIT',
 } as const);
 
 // 存储配置
 export const STORAGE_CONFIG = Object.freeze({
-  prefix: 'frameforge_',
+  prefix: 'framefab_',
   keys: Object.freeze({
-    store: 'frameforge_store',
-    settings: 'frameforge_settings',
-    projects: 'frameforge_projects',
-    cache: 'frameforge_cache',
+    store: 'framefab_store',
+    settings: 'framefab_settings',
+    projects: 'framefab_projects',
+    cache: 'framefab_cache',
   }),
 } as const);
 

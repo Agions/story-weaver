@@ -1,10 +1,10 @@
 <div align="center">
 
-<img src="assets/logo-horizontal.svg" alt="FrameForge" width="480"/>
+<img src="assets/logo-horizontal.svg" alt="frame-fab" width="480"/>
 
 <br/>
 
-# FrameForge · AI 漫剧创作平台
+# frame-fab · AI 漫剧创作平台
 
 > **输入一本小说，AI 自动把它拍成一部漫剧——你只需要按"开始"。**
 
@@ -23,7 +23,7 @@
 
 ## 它是什么？
 
-FrameForge 是一款**桌面端 AI 漫剧创作平台**，基于 Tauri 2.1 + Rust 构建，集成多模型 AI（GLM-5 / M2.5 / Kimi / Seedream / Kling / Vidu / Edge TTS）实现从小说/剧本到漫剧成片的**端到端自动化**。提供 Manual 模式（七步半自动，逐步审批）和 Autonomous 模式（10 步全自主 + Self-Review Loop）两种工作流，配备 Quality Gate 质量门禁、Checkpoint 断点续传，让创作者专注于故事本身。
+frame-fab 是一款**桌面端 AI 漫剧创作平台**，基于 Tauri 2.1 + Rust 构建，集成多模型 AI（GLM-5 / M2.5 / Kimi / Seedream / Kling / Vidu / Edge TTS）实现从小说/剧本到漫剧成片的**端到端自动化**。提供 Manual 模式（七步半自动，逐步审批）和 Autonomous 模式（10 步全自主 + Self-Review Loop）两种工作流，配备 Quality Gate 质量门禁、Checkpoint 断点续传，让创作者专注于故事本身。
 
 ---
 
@@ -62,10 +62,10 @@ FrameForge 是一款**桌面端 AI 漫剧创作平台**，基于 Tauri 2.1 + Rus
 
 | 平台 | 架构 | 下载 |
 |------|------|------|
-| macOS | Apple Silicon (M1/M2/M3/M4) | [FrameForge_x.x.x_aarch64.dmg](https://github.com/Agions/frame-fab/releases/latest) |
-| macOS | Intel | [FrameForge_x.x.x_x64.dmg](https://github.com/Agions/frame-fab/releases/latest) |
-| Windows | x64 | [FrameForge_x.x.x_x64-setup.exe](https://github.com/Agions/frame-fab/releases/latest) |
-| Linux | AppImage | [FrameForge_x.x.x_amd64.AppImage](https://github.com/Agions/frame-fab/releases/latest) |
+| macOS | Apple Silicon (M1/M2/M3/M4) | [frame-fab_x.x.x_aarch64.dmg](https://github.com/Agions/frame-fab/releases/latest) |
+| macOS | Intel | [frame-fab_x.x.x_x64.dmg](https://github.com/Agions/frame-fab/releases/latest) |
+| Windows | x64 | [frame-fab_x.x.x_x64-setup.exe](https://github.com/Agions/frame-fab/releases/latest) |
+| Linux | AppImage | [frame-fab_x.x.x_amd64.AppImage](https://github.com/Agions/frame-fab/releases/latest) |
 
 > 没有找到合适的桌面端？试试从源码运行（开发模式） ↓
 
@@ -284,4 +284,4 @@ chore: 构建/工具链变更
 
 MIT License · © 2024-2026 [Agions](https://github.com/Agions)
 
-如果你觉得 FrameForge 有帮助，请给我们一个 ⭐
+如果你觉得 frame-fab 有帮助，请给我们一个 ⭐

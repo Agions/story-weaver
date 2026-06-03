@@ -1,5 +1,5 @@
 /**
- * frame-forge AI - 工作流配置
+ * frame-fab AI - 工作流配置
  * 包含工作流步骤定义和注册表
  *
  * 类型定义在 workflow-config.types.ts

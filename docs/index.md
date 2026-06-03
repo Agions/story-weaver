@@ -1,14 +1,14 @@
 ---
-title: FrameForge - AI 漫剧创作平台
+title: frame-fab - AI 漫剧创作平台
 description: 基于 Tauri 2.1 桌面端 + 多模型 AI 编排的端到端 AI 漫剧创作工作台
 layout: home
 hero:
-  name: "FrameForge"
+  name: "frame-fab"
   text: "AI 漫剧创作平台"
   tagline: "输入一本小说，AI 自动把它拍成一部漫剧——你只需要按『开始』"
   image:
     src: /logo.svg
-    alt: FrameForge
+    alt: frame-fab
   actions:
     - theme: brand
       text: 快速开始
@@ -94,4 +94,4 @@ step-import → step-analysis → step-script → step-character → step-scene
 
 ---
 
-> **© 2024-2026 FrameForge · MIT License · 让创作更简单，让创意更自由**
+> **© 2024-2026 frame-fab · MIT License · 让创作更简单，让创意更自由**

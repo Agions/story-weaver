@@ -1,7 +1,7 @@
 {
-  "name": "@frame-forge/core",
+  "name": "@frame-fab/core",
   "version": "0.1.0",
-  "description": "FrameForge core domain layer: pipeline engine, autonomous orchestration, shared types",
+  "description": "frame-fab core domain layer: pipeline engine, autonomous orchestration, shared types",
   "private": true,
   "type": "module",
   "main": "./index.ts",

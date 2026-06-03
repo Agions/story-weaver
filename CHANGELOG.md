@@ -28,7 +28,7 @@ All notable changes to this project will be documented in this file.
 
 - `package.json` / `Cargo.toml` / `tauri.conf.json` / `app.config.ts` description 全中文化
 - 仓库名最终定稿: **Agions/frame-fab**（git remote 已更新）
-- `tauri.conf.json` window title → "FrameForge - AI 漫剧创作平台"
+- `tauri.conf.json` window title → "frame-fab - AI 漫剧创作平台"
 - GitHub 仓库描述同步更新
 
 #### 测试规模
@@ -48,9 +48,9 @@ All notable changes to this project will be documented in this file.
 
 ## [2.1.0] - 2026-06-02
 
-### 🏗️ 全面架构重构 (FrameForge Refactoring v3)
+### 🏗️ 全面架构重构 (frame-fab Refactoring v3)
 
-> 项目代号从 FrameForge / FrameForge 演进为 **FrameForge** (AI 漫剧创作平台)
+> 项目代号从 frame-fab / frame-fab 演进为 **frame-fab** (AI 漫剧创作平台)
 > 此版本完成了 §1.1 目标架构的 8 个 Phase 重构。
 
 #### Phase 1: Rust 后端模块化拆分
@@ -96,11 +96,11 @@ All notable changes to this project will be documented in this file.
 
 #### Phase 5: 品牌升级
 
-- `package.json` description → **FrameForge**
-- `Cargo.toml` description → **FrameForge v2.2.0 - AI 漫剧创作平台**
-- `tauri.conf.json` productName → **FrameForge**
-- `index.html` title → **FrameForge - AI 漫剧创作平台**
-- Rust 启动日志更新 (`info!("FrameForge 启动中...")`)
+- `package.json` description → **frame-fab**
+- `Cargo.toml` description → **frame-fab v2.2.0 - AI 漫剧创作平台**
+- `tauri.conf.json` productName → **frame-fab**
+- `index.html` title → **frame-fab - AI 漫剧创作平台**
+- Rust 启动日志更新 (`info!("frame-fab 启动中...")`)
 - 54 个源/测试文件 brand 字符串统一
 
 #### Phase 6: Zustand Stores 收敛
@@ -132,10 +132,10 @@ All notable changes to this project will be documented in this file.
 
 ### 🎉 Project Renamed
 
-- **Project Name**: Nova → FrameForge → **FrameForge**
+- **Project Name**: Nova → frame-fab → **frame-fab**
 - New ASCII art logo
 - Updated all documentation references
-- GitHub: https://github.com/Agions/FrameForge
+- GitHub: https://github.com/Agions/frame-fab
 
 ### 🗑️ UI 组件库迁移
 
@@ -152,10 +152,10 @@ All notable changes to this project will be documented in this file.
 
 ### 🔧 Configuration Updates
 
-- Package name: `manga-ai` → `FrameForge`
-- Tauri identifier: `com.frameforge.app` → `com.FrameForge.app`
-- Window title updated to FrameForge branding
-- Storage key prefix updated to `FrameForge_`
+- Package name: `manga-ai` → `frame-fab`
+- Tauri identifier: `com.frame-fab.app` → `com.frame-fab.app`
+- Window title updated to frame-fab branding
+- Storage key prefix updated to `frame-fab_`
 
 ### ✨ Added
 

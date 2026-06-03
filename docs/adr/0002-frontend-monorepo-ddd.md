@@ -2,11 +2,11 @@
 
 - **状态**: Accepted
 - **日期**: 2026-06-03
-- **决策者**: FrameForge 架构组
+- **决策者**: frame-fab 架构组
 
 ## 背景
 
-FrameForge 前端（React 18 + TS 5）规模达到 5 万行+,出现以下问题:
+frame-fab 前端（React 18 + TS 5）规模达到 5 万行+,出现以下问题:
 
 - `src/core/services/` 48+ 文件平铺,职责混杂（AI/图像/视频/音频/Pipeline/项目）
 - `src/components/ui/` 48 个 antd 风格 + `src/shared/components/ui/` 8 个 Radix 风格两套并存
@@ -80,7 +80,7 @@ src-tauri/      ──▶  独立 Rust 编译,不依赖任何 JS
 
 ### Phase 5: 品牌升级（已完成）
 
-- 包名 `panel-flow` → `frame-forge` → `frame-fab`
+- 包名 `panel-flow` → `frame-fab` → `frame-fab`
 - `package.json` / `Cargo.toml` / `tauri.conf.json` 名称统一
 - 描述中文化（v2.2.0 commit `537bacf`）
 
@@ -95,13 +95,13 @@ src-tauri/      ──▶  独立 Rust 编译,不依赖任何 JS
 
 ### 负面
 
-- **跨包 import 路径长**（`@frame-forge/common/hooks`）
+- **跨包 import 路径长**（`@frame-fab/common/hooks`）
 - **包版本同步成本**——pnpm workspace 升级需要批量 bump
 - **IDE 跳转偶尔跨包慢**——大 monorepo 的通病
 
 ### 中和
 
-- `tsconfig.json` 配置 `paths` 别名（`@frame-forge/common/*`）
+- `tsconfig.json` 配置 `paths` 别名（`@frame-fab/common/*`）
 - 关键导出提供 `PUBLIC_API.md`（每个 `packages/` 下维护）
 - Barrel export 限制 `index.ts` 仅 export 语句,禁止逻辑混入
 

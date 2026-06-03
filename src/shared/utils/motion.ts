@@ -1,5 +1,5 @@
 /**
- * frame-forge Shared Utils - Motion/Animation Utilities
+ * frame-fab Shared Utils - Motion/Animation Utilities
  */
 
 import { Variants, Easing, Transition } from 'framer-motion';

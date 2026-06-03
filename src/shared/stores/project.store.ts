@@ -136,7 +136,7 @@ export const useProjectStore = create<ProjectState>()(
       };
     },
     {
-      name: 'frameforge-project-storage',
+      name: 'framefab-project-storage',
       storage: createJSONStorage(() => createDebouncedStorage(localStorage, 1500)),
       partialize: (state) => ({
         projects: state.projects,

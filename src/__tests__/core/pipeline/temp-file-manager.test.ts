@@ -20,7 +20,7 @@ describe('TemporaryFileManager', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    manager = new TemporaryFileManager('/tmp/test-frame-forge');
+    manager = new TemporaryFileManager('/tmp/test-frame-fab');
   });
 
   afterEach(() => {

@@ -34,7 +34,7 @@ const HeroSection = () => {
         </div>
 
         <h1 className={styles.title}>
-          frame-forge
+          frame-fab
           <span className={styles.highlight}>AI</span>
         </h1>
 

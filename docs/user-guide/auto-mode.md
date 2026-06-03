@@ -14,7 +14,7 @@
 ### 基本语法
 
 ```bash
-frame-forge auto --input <输入路径> --output <输出路径>
+frame-fab auto --input <输入路径> --output <输出路径>
 ```
 
 ### 参数说明
@@ -39,13 +39,13 @@ frame-forge auto --input <输入路径> --output <输出路径>
 
 ```bash
 # 基本用法
-frame-forge auto --input ./panels.json --output ./output/
+frame-fab auto --input ./panels.json --output ./output/
 
 # 详细日志模式
-frame-forge auto --input ./panels.json --output ./output/ --verbose
+frame-fab auto --input ./panels.json --output ./output/ --verbose
 
 # 自定义配置
-frame-forge auto --input ./panels.json --output ./output/ --config ./custom.yaml
+frame-fab auto --input ./panels.json --output ./output/ --config ./custom.yaml
 ```
 
 ## 注意事项

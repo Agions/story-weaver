@@ -1,4 +1,4 @@
-# FrameForge v2.2.0 性能基准报告
+# frame-fab v2.2.0 性能基准报告
 
 > 测量日期: 2026-06-03
 > 测量环境: Tauri 2.1 + React 18 + TypeScript 5 + Node.js 20.x
@@ -114,7 +114,7 @@ pnpm bench:pipeline
 pnpm test:e2e:perf
 
 # Rust 二进制大小
-du -sh src-tauri/target/release/bundle/macos/FrameForge.app
+du -sh src-tauri/target/release/bundle/macos/frame-fab.app
 ```
 
 ## 7. 附录：测量脚本版本

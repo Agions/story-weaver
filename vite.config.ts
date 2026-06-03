@@ -74,7 +74,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@frame-forge/common': path.resolve(__dirname, './packages/common/src'),
+      '@frame-fab/common': path.resolve(__dirname, './packages/common/src'),
     },
   },
 

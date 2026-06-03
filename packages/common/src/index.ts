@@ -1,5 +1,5 @@
 /**
- * @frame-forge/common — 公共库统一导出
+ * @frame-fab/common — 公共库统一导出
  */
 
 // Utils

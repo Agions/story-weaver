@@ -1,6 +1,6 @@
 # 安装指南
 
-本文档详细介绍 FrameForge 的安装和部署过程，包括本地开发和 Docker 部署两种方式。
+本文档详细介绍 frame-fab 的安装和部署过程，包括本地开发和 Docker 部署两种方式。
 
 ---
 
@@ -38,8 +38,8 @@
 ### 步骤 1：克隆代码仓库
 
 ```bash
-git clone https://github.com/Agions/frame-forge.git
-cd frame-forge
+git clone https://github.com/Agions/frame-fab.git
+cd frame-fab
 ```
 
 ### 步骤 2：安装依赖
@@ -112,7 +112,7 @@ docker compose up -d
 
 ```bash
 docker compose ps
-docker compose logs -f frame-forge
+docker compose logs -f frame-fab
 ```
 
 服务启动后，访问 `http://localhost:3000`。
@@ -179,7 +179,7 @@ server {
 
 ```yaml
 services:
-  frame-forge:
+  frame-fab:
     build:
       context: .
       dockerfile: Dockerfile
@@ -211,10 +211,10 @@ ports:
 
 ```yaml
 volumes:
-  - frame-forge-data:/app/data
+  - frame-fab-data:/app/data
 
 volumes:
-  frame-forge-data:
+  frame-fab-data:
     driver: local
 ```
 
@@ -232,8 +232,8 @@ PORT=3000
 #### 1. 创建 Nginx 配置
 
 ```nginx
-# /etc/nginx/conf.d/frame-forge.conf
-upstream frameforge_backend {
+# /etc/nginx/conf.d/frame-fab.conf
+upstream framefab_backend {
     server 127.0.0.1:3000;
 }
 
@@ -251,7 +251,7 @@ server {
     ssl_certificate_key /path/to/key.pem;
 
     location / {
-        proxy_pass http://frameforge_backend;
+        proxy_pass http://framefab_backend;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection 'upgrade';

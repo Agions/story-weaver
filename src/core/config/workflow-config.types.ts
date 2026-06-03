@@ -1,5 +1,5 @@
 /**
- * frame-forge AI - 工作流配置类型
+ * frame-fab AI - 工作流配置类型
  * 拆出 types 以减小 workflow-config.tsx 体积
  */
 

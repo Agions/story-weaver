@@ -7,7 +7,7 @@ import type { FrameComment, StoryboardVersion } from '@/core/services/collaborat
 import type { CostRecord, CostStats } from '@/core/services/cost.service';
 import type { EvaluationScores } from '@/core/services/evaluation.service';
 
-const REVIEW_EXPORT_ACTIVITY_KEY = 'frame-forge_review_export_activities';
+const REVIEW_EXPORT_ACTIVITY_KEY = 'frame-fab_review_export_activities';
 
 export interface ReviewExportProjectMeta {
   id: string;
@@ -58,7 +58,7 @@ class ReviewExportService {
     const generatedAt = input.generatedAt || new Date();
     const lines: string[] = [];
 
-    lines.push('# frame-forge AI Review Export');
+    lines.push('# frame-fab AI Review Export');
     lines.push('');
     lines.push(`- Project ID: ${input.project.id}`);
     lines.push(`- Project Name: ${input.project.name}`);

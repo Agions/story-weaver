@@ -54,7 +54,7 @@ const steps: Step[] = [
 
 /**
  * 工作流程步骤组件
- * 展示 FrameForge 完整创作流程
+ * 展示 frame-fab 完整创作流程
  */
 const WorkflowSteps = () => {
   const { isDarkMode } = useTheme();

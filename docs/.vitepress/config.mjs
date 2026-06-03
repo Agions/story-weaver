@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitepress'
 
 export default defineConfig({
-  title: 'FrameForge',
+  title: 'frame-fab',
   description: 'AI 漫剧创作平台 — 输入一本小说，AI 自动把它拍成一部漫剧',
   srcDir: '.',
   srcExclude: ['plans/**', 'ui-redesign/**'],
@@ -15,7 +15,7 @@ export default defineConfig({
     ['meta', { name: 'theme-color', content: '#0a0e27' }],
     // Open Graph
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:title', content: 'FrameForge - AI 漫剧创作平台' }],
+    ['meta', { property: 'og:title', content: 'frame-fab - AI 漫剧创作平台' }],
     [
       'meta',
       {
@@ -27,7 +27,7 @@ export default defineConfig({
     ['meta', { property: 'og:locale', content: 'zh_CN' }],
     // Twitter Card
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
-    ['meta', { name: 'twitter:title', content: 'FrameForge - AI 漫剧创作平台' }],
+    ['meta', { name: 'twitter:title', content: 'frame-fab - AI 漫剧创作平台' }],
     [
       'meta',
       {
@@ -38,8 +38,8 @@ export default defineConfig({
     ['meta', { name: 'twitter:image', content: '/logo.svg' }],
   ],
   themeConfig: {
-    siteTitle: 'FrameForge',
-    logo: { src: '/logo-horizontal.svg', alt: 'FrameForge' },
+    siteTitle: 'frame-fab',
+    logo: { src: '/logo-horizontal.svg', alt: 'frame-fab' },
     nav: [
       { text: '快速开始', link: '/getting-started/quick-start' },
       { text: '用户指南', link: '/user-guide/workflow-overview' },
@@ -125,7 +125,7 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/Agions/frame-fab' },
     ],
     footer: {
-      message: 'MIT License © 2024-2026 Agions · FrameForge',
+      message: 'MIT License © 2024-2026 Agions · frame-fab',
       copyright: '基于 Tauri 2.1 + React 18 + Rust 构建',
     },
     search: { provider: 'local' },

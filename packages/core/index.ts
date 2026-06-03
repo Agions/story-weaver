@@ -1,7 +1,7 @@
 /**
- * @frame-forge/core — 核心层公共 API
+ * @frame-fab/core — 核心层公共 API
  *
- * 这是 FrameForge 核心领域层的 monorepo 入口。
+ * 这是 frame-fab 核心领域层的 monorepo 入口。
  * 当前通过 shim 指向 src/core/ 的实现，monorepo 迁移完成后
  * 会切换为 packages/core/* 内部实现。
  *

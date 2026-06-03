@@ -1,5 +1,5 @@
 /**
- * frame-forge Shared Utils - Request Utilities & Request Cache
+ * frame-fab Shared Utils - Request Utilities & Request Cache
  */
 
 export interface RetryOptions {

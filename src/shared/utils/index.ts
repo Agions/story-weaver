@@ -1,5 +1,5 @@
 /**
- * frame-forge Shared Utils - Barrel Export
+ * frame-fab Shared Utils - Barrel Export
  * Re-exports all utilities from modular files for backward compatibility
  */
 

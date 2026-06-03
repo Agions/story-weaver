@@ -1,6 +1,6 @@
 # 构建与部署
 
-frame-forge 构建和部署指南。
+frame-fab 构建和部署指南。
 
 ## 构建命令
 
@@ -49,8 +49,8 @@ netlify deploy --dir=dist --prod
 ### Docker
 
 ```bash
-docker build -t frameforge .
-docker run -p 8080:80 frameforge
+docker build -t frame-fab .
+docker run -p 8080:80 frame-fab
 ```
 
 ## 环境配置

@@ -1,5 +1,5 @@
 /**
- * frame-forge Script Types
+ * frame-fab Script Types
  * Extracted from src/shared/types/index.ts
  * Script and narrative content types
  */

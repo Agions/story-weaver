@@ -1,6 +1,6 @@
 # 配置 AI API Key
 
-本文档介绍如何为 FrameForge 配置各类 AI 服务 API Key，包括文本生成、图像生成和语音合成服务。
+本文档介绍如何为 frame-fab 配置各类 AI 服务 API Key，包括文本生成、图像生成和语音合成服务。
 
 ---
 
@@ -100,7 +100,7 @@ COSYVOICE_API_KEY=xxxxxxxxxxxxxxxx
 
 ## 降级策略说明
 
-FrameForge 内置智能降级策略，当主选模型不可用时，会自动切换到备选模型：
+frame-fab 内置智能降级策略，当主选模型不可用时，会自动切换到备选模型：
 
 ### 图像生成降级链
 
@@ -188,7 +188,7 @@ npm run check-config
 
 **Q: 是否所有 API Key 都必须配置？**
 
-不需要。FrameForge 支持降级策略，只需配置核心服务即可运行。建议至少配置一个图像生成 API Key 以保证视频渲染功能正常。
+不需要。frame-fab 支持降级策略，只需配置核心服务即可运行。建议至少配置一个图像生成 API Key 以保证视频渲染功能正常。
 
 **Q: 如何确保 API Key 安全？**
 
@@ -196,4 +196,4 @@ npm run check-config
 
 **Q: 遇到 API 限流怎么办？**
 
-FrameForge 内置请求队列和重试机制。如频繁遇到限流，可在 `.env.local` 中配置多个备选 API Key，系统会自动负载均衡。
+frame-fab 内置请求队列和重试机制。如频繁遇到限流，可在 `.env.local` 中配置多个备选 API Key，系统会自动负载均衡。

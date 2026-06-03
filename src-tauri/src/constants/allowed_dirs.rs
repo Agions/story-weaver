@@ -4,9 +4,10 @@
 //! of least privilege: output files may only be created inside these directories
 //! (typically the OS temp dir + per-app subdirectories).
 //!
-//! **Naming convention**: Each subdirectory uses the `frameforge_*` prefix for
-//! brand continuity with the FrameForge product line. The `blazecut_*` aliases
-//! are retained for backwards compatibility with any pre-existing temp data.
+//! **Naming convention**: Each subdirectory uses the `framefab_*` prefix for
+//! brand continuity with the frame-fab product line. The `blazecut_*` and
+//! `frameforge` aliases are retained for backwards compatibility with any
+//! pre-existing temp data created by prior versions of the application.
 
 use std::path::PathBuf;
 
@@ -14,10 +15,10 @@ use std::path::PathBuf;
 /// Used by `validate_output_path`.
 pub const ALLOWED_OUTPUT_DIRS: &[&str] = &[
     "frameforge",
-    "frameforge_temp",
-    "frameforge_keyframes",
-    "frameforge_thumbnails",
-    "frameforge_preview",
+    "framefab_temp",
+    "framefab_keyframes",
+    "framefab_thumbnails",
+    "framefab_preview",
     "blazecut",
     "blazecut_temp",
     "blazecut_preview",
@@ -29,10 +30,10 @@ pub const ALLOWED_OUTPUT_DIRS: &[&str] = &[
 /// Used by `clean_temp_file` to verify a path is safe to delete.
 pub const ALLOWED_TEMP_CLEANUP_DIRS: &[&str] = &[
     "frameforge",
-    "frameforge_keyframes",
-    "frameforge_thumbnails",
-    "frameforge_temp",
-    "frameforge_preview",
+    "framefab_keyframes",
+    "framefab_thumbnails",
+    "framefab_temp",
+    "framefab_preview",
 ];
 
 /// Build the full OS temp dir + subdirectory path for a given subdir.
@@ -46,8 +47,8 @@ mod tests {
 
     #[test]
     fn output_dirs_includes_keyframes() {
-        assert!(ALLOWED_OUTPUT_DIRS.contains(&"frameforge_keyframes"));
-        assert!(ALLOWED_OUTPUT_DIRS.contains(&"frameforge_preview"));
+        assert!(ALLOWED_OUTPUT_DIRS.contains(&"framefab_keyframes"));
+        assert!(ALLOWED_OUTPUT_DIRS.contains(&"framefab_preview"));
     }
 
     #[test]
@@ -63,7 +64,7 @@ mod tests {
 
     #[test]
     fn temp_subdir_creates_under_temp() {
-        let p = temp_subdir("frameforge_keyframes");
-        assert!(p.ends_with("frameforge_keyframes"));
+        let p = temp_subdir("framefab_keyframes");
+        assert!(p.ends_with("framefab_keyframes"));
     }
 }

@@ -207,8 +207,8 @@ class ProjectImportExportService {
       backups.shift();
     }
 
-    localStorage.setItem('frameforge_backups', JSON.stringify(backups));
-    localStorage.setItem(`frameforge_backup_${backupId}`, backup);
+    localStorage.setItem('framefab_backups', JSON.stringify(backups));
+    localStorage.setItem(`framefab_backup_${backupId}`, backup);
 
     return backupId;
   }
@@ -217,7 +217,7 @@ class ProjectImportExportService {
    * 恢复备份
    */
   async restoreBackup(backupId: string): Promise<ProjectData | null> {
-    const backup = localStorage.getItem(`frameforge_backup_${backupId}`);
+    const backup = localStorage.getItem(`framefab_backup_${backupId}`);
 
     if (!backup) {
       return null;
@@ -242,7 +242,7 @@ class ProjectImportExportService {
     createdAt: string;
     size: number;
   }> {
-    const backups = localStorage.getItem('frameforge_backups');
+    const backups = localStorage.getItem('framefab_backups');
     return backups ? JSON.parse(backups) : [];
   }
 
@@ -250,10 +250,10 @@ class ProjectImportExportService {
    * 删除备份
    */
   deleteBackup(backupId: string): void {
-    localStorage.removeItem(`frameforge_backup_${backupId}`);
+    localStorage.removeItem(`framefab_backup_${backupId}`);
 
     const backups = this.getBackupList().filter((b) => b.id !== backupId);
-    localStorage.setItem('frameforge_backups', JSON.stringify(backups));
+    localStorage.setItem('framefab_backups', JSON.stringify(backups));
   }
 
   /**
@@ -376,7 +376,7 @@ class ProjectImportExportService {
   private generateFilename(projectName: string, format: ExportFormat): string {
     const timestamp = new Date().toISOString().slice(0, 10);
     const sanitizedName = projectName.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '_');
-    return `frameforge_${sanitizedName}_${timestamp}.${format}`;
+    return `framefab_${sanitizedName}_${timestamp}.${format}`;
   }
 }
 

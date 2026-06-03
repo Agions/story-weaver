@@ -1,12 +1,12 @@
 # 自主引擎 API 文档
 
-本文档详细描述 FrameForge 全自主流水线的 API 接口设计与使用方法。
+本文档详细描述 frame-fab 全自主流水线的 API 接口设计与使用方法。
 
 ---
 
 ## 一、概述
 
-Autonomous API 是 FrameForge 全自动漫剧制作系统的核心 API，允许开发者通过编程方式启动、管理和监控全自动流水线任务。
+Autonomous API 是 frame-fab 全自动漫剧制作系统的核心 API，允许开发者通过编程方式启动、管理和监控全自动流水线任务。
 
 **基础 URL**: `/api/v1/autonomous`
 
@@ -492,16 +492,16 @@ interface ReviewResult {
 ### 5.1 安装
 
 ```bash
-npm install @frameforge/autonomous-sdk
+npm install @frame-fab/autonomous-sdk
 ```
 
 ### 5.2 初始化
 
 ```typescript
-import { AutonomousClient } from '@frameforge/autonomous-sdk';
+import { AutonomousClient } from '@frame-fab/autonomous-sdk';
 
 const client = new AutonomousClient({
-  baseUrl: 'https://api.frameforge.com',
+  baseUrl: 'https://api.frame-fab.com',
   token: 'your_api_token',
   // 可选：WebSocket 连接选项
   wsOptions: {
@@ -514,10 +514,10 @@ const client = new AutonomousClient({
 ### 5.3 创建并启动任务
 
 ```typescript
-import { AutonomousClient, InputMode, OutputStyle, QualityLevel } from '@frameforge/autonomous-sdk';
+import { AutonomousClient, InputMode, OutputStyle, QualityLevel } from '@frame-fab/autonomous-sdk';
 
 const client = new AutonomousClient({
-  baseUrl: 'https://api.frameforge.com',
+  baseUrl: 'https://api.frame-fab.com',
   token: 'your_api_token',
 });
 
@@ -678,7 +678,7 @@ interface APIError {
 ### 6.3 SDK 错误处理示例
 
 ```typescript
-import { AutonomousClient, APIError, RateLimitError, TaskNotFoundError } from '@frameforge/autonomous-sdk';
+import { AutonomousClient, APIError, RateLimitError, TaskNotFoundError } from '@frame-fab/autonomous-sdk';
 
 const client = new AutonomousClient({ ... });
 
@@ -720,7 +720,7 @@ try {
 
 ```typescript
 await client.webhooks.configure({
-  url: 'https://your-server.com/webhooks/frameforge',
+  url: 'https://your-server.com/webhooks/frame-fab',
   events: ['task.completed', 'task.failed', 'step.completed'],
   secret: 'your_webhook_secret',
 });

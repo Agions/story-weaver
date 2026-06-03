@@ -238,7 +238,7 @@ class TauriService {
     options?: { title?: string; kind?: 'info' | 'warning' | 'error' }
   ): Promise<void> {
     await message(msg, {
-      title: options?.title ?? 'frame-forge AI',
+      title: options?.title ?? 'frame-fab AI',
       kind: options?.kind ?? 'info',
     });
   }

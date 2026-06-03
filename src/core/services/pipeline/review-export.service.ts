@@ -7,7 +7,7 @@ import type { FrameComment, StoryboardVersion } from '@/core/services/domain/col
 import type { CostRecord, CostStats } from '@/core/services/project/cost.service';
 import type { EvaluationScores } from '@/core/services/project/evaluation.service';
 
-const REVIEW_EXPORT_ACTIVITY_KEY = 'frame-forge_review_export_activities';
+const REVIEW_EXPORT_ACTIVITY_KEY = 'frame-fab_review_export_activities';
 
 export interface ReviewExportProjectMeta {
   id: string;
@@ -58,7 +58,7 @@ class ReviewExportService {
     const generatedAt = input.generatedAt || new Date();
     const lines: string[] = [];
 
-    lines.push('# frame-forge AI 评审记录导出');
+    lines.push('# frame-fab AI 评审记录导出');
     lines.push('');
     lines.push(`- 项目ID: ${input.project.id}`);
     lines.push(`- 项目名称: ${input.project.name}`);

@@ -1,5 +1,5 @@
 /**
- * frame-forge Shared Utils - i18n
+ * frame-fab Shared Utils - i18n
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -12,7 +12,7 @@ interface Translations {
 
 const translations: Translations = {
   zh: {
-    'app.name': 'frame-forge AI',
+    'app.name': 'frame-fab AI',
     'app.save': '保存',
     'app.cancel': '取消',
     'app.confirm': '确认',
@@ -26,7 +26,7 @@ const translations: Translations = {
     'settings.title': '设置',
   },
   en: {
-    'app.name': 'frame-forge AI',
+    'app.name': 'frame-fab AI',
     'app.save': 'Save',
     'app.cancel': 'Cancel',
     'app.confirm': 'Confirm',

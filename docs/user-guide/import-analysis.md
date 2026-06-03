@@ -20,7 +20,7 @@ Panel Flow 支持从多种来源导入面板配置。
 使用 `Importer` 类导入配置文件：
 
 ```python
-from frameforge.importing import Importer
+from frame-fab.importing import Importer
 
 importer = Importer()
 panel = importer.load('path/to/config.json')
@@ -31,7 +31,7 @@ panel = importer.load('path/to/config.json')
 支持从目录批量导入：
 
 ```python
-from frameforge.importing import BatchImporter
+from frame-fab.importing import BatchImporter
 
 batch_importer = BatchImporter('./configs')
 panels = batch_importer.load_all()
@@ -51,7 +51,7 @@ Panel Flow 提供了多种分析器来检查和处理面板配置：
 ### 使用分析器
 
 ```python
-from frameforge.analysis import SchemaAnalyzer, DependencyAnalyzer
+from frame-fab.analysis import SchemaAnalyzer, DependencyAnalyzer
 
 # 验证 Schema
 schema_analyzer = SchemaAnalyzer()
@@ -69,7 +69,7 @@ print(f"依赖项: {deps}")
 分析完成后可以生成报告：
 
 ```python
-from frameforge.analysis import ReportGenerator
+from frame-fab.analysis import ReportGenerator
 
 report_gen = ReportGenerator()
 report = report_gen.generate(analysis_result)
@@ -90,7 +90,7 @@ report.save('analysis_report.json')
 导入和分析过程中的错误处理：
 
 ```python
-from frameforge.exceptions import ImportError, AnalysisError
+from frame-fab.exceptions import ImportError, AnalysisError
 
 try:
     panel = importer.load('config.json')

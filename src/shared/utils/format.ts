@@ -1,5 +1,5 @@
 /**
- * frame-forge Shared Utils - Formatting Utilities
+ * frame-fab Shared Utils - Formatting Utilities
  */
 
 /**

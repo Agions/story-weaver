@@ -121,7 +121,7 @@ export const useAppStore = create<AppState>()(
       },
     }),
     {
-      name: 'frameforge-app-storage',
+      name: 'framefab-app-storage',
       partialize: (state) => ({
         sidebarCollapsed: state.sidebarCollapsed,
         theme: state.theme,

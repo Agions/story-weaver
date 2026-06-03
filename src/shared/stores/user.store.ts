@@ -145,7 +145,7 @@ export const useUserStore = create<UserState>()(
       },
     }),
     {
-      name: 'frameforge-user-storage',
+      name: 'framefab-user-storage',
       partialize: (state) => ({
         userId: state.userId,
         username: state.username,

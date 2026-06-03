@@ -30,7 +30,7 @@ class TemporaryFileManager {
   private maxAge: number = 5 * 60 * 1000;
   private cleanupTimer: ReturnType<typeof setInterval> | null = null;
 
-  private constructor(tempDir: string = '/tmp/frame-forge') {
+  private constructor(tempDir: string = '/tmp/frame-fab') {
     this.tempDir = tempDir;
     this.startAutoCleanup();
   }

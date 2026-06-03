@@ -41,7 +41,7 @@ export class EventBus implements IEventBus {
     // Try to enable cross-tab communication
     if (typeof BroadcastChannel !== 'undefined') {
       try {
-        this.crossTabChannel = new BroadcastChannel('frame-forge-events');
+        this.crossTabChannel = new BroadcastChannel('frame-fab-events');
         this.crossTabChannel.onmessage = (msg) => {
           const event = msg.data as DomainEvent;
           this.handleCrossTabEvent(event);

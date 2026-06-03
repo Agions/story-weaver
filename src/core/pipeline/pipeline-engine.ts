@@ -286,15 +286,15 @@ export const LoggerMiddleware: PipelineMiddleware = {
 /**
  * Pipeline Metrics - 独立模块，不污染 window 全局变量
  */
-interface FrameForgeMetrics {
+interface FrameFabMetrics {
   steps: Record<string, { completedAt: number; success: boolean }>;
   completedAt?: number;
 }
 
 // Module-level singleton (accessible via getMetrics() for debugging)
-let pipelineMetrics: FrameForgeMetrics = { steps: {} };
+let pipelineMetrics: FrameFabMetrics = { steps: {} };
 
-export const getMetrics = (): Readonly<FrameForgeMetrics> => Object.freeze({ ...pipelineMetrics });
+export const getMetrics = (): Readonly<FrameFabMetrics> => Object.freeze({ ...pipelineMetrics });
 
 export const resetMetrics = (): void => {
   pipelineMetrics = { steps: {} };

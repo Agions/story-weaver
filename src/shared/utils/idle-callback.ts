@@ -1,5 +1,5 @@
 /**
- * frame-forge Shared Utils - Idle Callback
+ * frame-fab Shared Utils - Idle Callback
  */
 
 export interface IdleRunOptions {

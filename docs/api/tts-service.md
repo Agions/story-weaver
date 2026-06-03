@@ -28,7 +28,7 @@ async synthesize(config: TTSConfig): Promise<TTSResult>
 
 ```typescript
 const result = await ttsService.synthesize({
-  text: '欢迎使用 frame-forge',
+  text: '欢迎使用 frame-fab',
   provider: 'edge',
   voice: 'zh-CN-XiaoxiaoNeural',
   speed: 1.0,

@@ -28,7 +28,7 @@ import {
   type Resolution,
   type FrameRate,
   type QualityPreset,
-} from '@frame-forge/common/constants';
+} from '@frame-fab/common/constants';
 
 export type { ExportFormat, Resolution, FrameRate, QualityPreset };
 

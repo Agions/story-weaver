@@ -13,11 +13,11 @@ import {
 
 describe('APP_CONFIG', () => {
   it('should have correct app name', () => {
-    expect(APP_CONFIG.name).toBe('FrameForge');
+    expect(APP_CONFIG.name).toBe('frame-fab');
   });
 
   it('should have correct Chinese name', () => {
-    expect(APP_CONFIG.nameZh).toBe('FrameForge');
+    expect(APP_CONFIG.nameZh).toBe('frame-fab');
   });
 
   it('should have valid version format', () => {

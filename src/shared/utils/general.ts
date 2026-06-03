@@ -1,5 +1,5 @@
 /**
- * frame-forge Shared Utils - General Utilities
+ * frame-fab Shared Utils - General Utilities
  */
 
 import { useState, useEffect, useCallback } from 'react';

@@ -8,12 +8,12 @@ import type { AppState } from '@/shared/stores/app.store';
 
 // 存储键名
 const STORAGE_KEYS = {
-  PROJECTS: 'frameforge_projects',
-  APP_STATE: 'frameforge_app_state',
-  USER_PREFERENCES: 'frameforge_preferences',
-  RECENT_FILES: 'frameforge_recent_files',
-  MODEL_SETTINGS: 'frameforge_model_settings',
-  EXPORT_HISTORY: 'frameforge_export_history',
+  PROJECTS: 'framefab_projects',
+  APP_STATE: 'framefab_app_state',
+  USER_PREFERENCES: 'framefab_preferences',
+  RECENT_FILES: 'framefab_recent_files',
+  MODEL_SETTINGS: 'framefab_model_settings',
+  EXPORT_HISTORY: 'framefab_export_history',
 };
 
 class StorageService {
@@ -214,16 +214,16 @@ class StorageService {
    * 通用存储
    */
   set<T>(key: string, value: T): void {
-    localStorage.setItem(`frameforge_${key}`, JSON.stringify(value));
+    localStorage.setItem(`framefab_${key}`, JSON.stringify(value));
   }
 
   get<T>(key: string, defaultValue?: T): T | undefined {
-    const data = localStorage.getItem(`frameforge_${key}`);
+    const data = localStorage.getItem(`framefab_${key}`);
     return data ? JSON.parse(data) : defaultValue;
   }
 
   remove(key: string): void {
-    localStorage.removeItem(`frameforge_${key}`);
+    localStorage.removeItem(`framefab_${key}`);
   }
 
   /**
@@ -234,11 +234,11 @@ class StorageService {
       localStorage.removeItem(key);
     });
 
-    // 清理所有 frameforge_ 前缀的数据
+    // 清理所有 framefab_ 前缀的数据
     const keysToRemove: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key?.startsWith('frameforge_')) {
+      if (key?.startsWith('framefab_')) {
         keysToRemove.push(key);
       }
     }
@@ -253,7 +253,7 @@ class StorageService {
 
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key?.startsWith('frameforge_')) {
+      if (key?.startsWith('framefab_')) {
         const value = localStorage.getItem(key);
         data[key] = value ? JSON.parse(value) : null;
       }
@@ -284,7 +284,7 @@ class StorageService {
     let used = 0;
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key?.startsWith('frameforge_')) {
+      if (key?.startsWith('framefab_')) {
         const value = localStorage.getItem(key);
         if (value) {
           used += key.length + value.length;

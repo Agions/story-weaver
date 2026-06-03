@@ -1,6 +1,6 @@
 # 部署文档
 
-本文档详细介绍 FrameForge 系统的部署方式、配置要求和运维指南。
+本文档详细介绍 frame-fab 系统的部署方式、配置要求和运维指南。
 
 ---
 
@@ -10,7 +10,7 @@
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                           FrameForge 部署架构                              │
+│                           frame-fab 部署架构                              │
 └─────────────────────────────────────────────────────────────────────────┘
 
                               ┌─────────────┐
@@ -123,7 +123,7 @@
 #### 目录结构
 
 ```
-frame-forge/
+frame-fab/
 ├── docker-compose.yml
 ├── .env
 ├── services/
@@ -164,7 +164,7 @@ services:
       - '4000:4000'
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgresql://paneluser:panelpass@postgres:5432/frameforge
+      - DATABASE_URL=postgresql://paneluser:panelpass@postgres:5432/frame-fab
       - REDIS_URL=redis://redis:6379
       - MINIO_ENDPOINT=minio:9000
       - MINIO_ACCESS_KEY=minioadmin
@@ -184,7 +184,7 @@ services:
     environment:
       - POSTGRES_USER=paneluser
       - POSTGRES_PASSWORD=panelpass
-      - POSTGRES_DB=frameforge
+      - POSTGRES_DB=frame-fab
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:
@@ -231,8 +231,8 @@ networks:
 
 ```bash
 # 克隆项目
-git clone https://github.com/Agions/frame-forge.git
-cd frame-forge
+git clone https://github.com/Agions/frame-fab.git
+cd frame-fab
 
 # 创建环境配置文件
 cp .env.example .env
@@ -262,16 +262,16 @@ docker-compose logs -f api
 
 ```bash
 # 添加 Helm 仓库
-helm repo add frameforge https://charts.frameforge.com
+helm repo add frame-fab https://charts.frame-fab.com
 helm repo update
 
 # 创建命名空间
-kubectl create namespace frameforge
+kubectl create namespace frame-fab
 
-# 安装 FrameForge
-helm install frameforge frameforge/frameforge \
-  --namespace frameforge \
-  --set global.domain=frameforge.example.com \
+# 安装 frame-fab
+helm install frame-fab frame-fab/frame-fab \
+  --namespace frame-fab \
+  --set global.domain=frame-fab.example.com \
   --set global.tls.enabled=true \
   --set postgres.enabled=true \
   --set redis.enabled=true \
@@ -331,7 +331,7 @@ PORT=4000
 LOG_LEVEL=info
 
 # 数据库配置
-DATABASE_URL=postgresql://user:password@host:5432/frameforge
+DATABASE_URL=postgresql://user:password@host:5432/frame-fab
 DATABASE_POOL_SIZE=20
 
 # Redis 配置
@@ -343,7 +343,7 @@ MINIO_ENDPOINT=minio.example.com
 MINIO_PORT=9000
 MINIO_ACCESS_KEY=your_access_key
 MINIO_SECRET_KEY=your_secret_key
-MINIO_BUCKET=frameforge-output
+MINIO_BUCKET=frame-fab-output
 MINIO_USE_SSL=true
 
 # AI 服务配置
@@ -367,7 +367,7 @@ RENDER_BATCH_SIZE=4
 
 ```bash
 # CORS 配置
-CORS_ORIGIN=https://frameforge.example.com
+CORS_ORIGIN=https://frame-fab.example.com
 
 # 限流配置
 RATE_LIMIT_MAX=100
@@ -413,7 +413,7 @@ METRICS_PORT=9090
   },
   "storage": {
     "provider": "minio",
-    "bucket": "frameforge-output",
+    "bucket": "frame-fab-output",
     "presignedUrlExpiry": 3600
   },
   "ai": {
@@ -521,7 +521,7 @@ TTL: 60s
 ### 5.3 对象存储结构
 
 ```
-frameforge-output/
+frame-fab-output/
 ├── tasks/
 │   ├── ${taskId}/
 │   │   ├── final.mp4              # 最终视频
@@ -564,7 +564,7 @@ frameforge-output/
 ```yaml
 # prometheus.yml
 scrape_configs:
-  - job_name: 'frameforge'
+  - job_name: 'frame-fab'
     static_configs:
       - targets: ['api:9090']
     metrics_path: /metrics
@@ -576,20 +576,20 @@ scrape_configs:
 # fluentd-config.yaml
 <source>
 @type tail
-path /var/log/frameforge/*.log
-pos_file /var/log/frameforge/log.pos
-tag frameforge.app
+path /var/log/frame-fab/*.log
+pos_file /var/log/frame-fab/log.pos
+tag frame-fab.app
 <parse>
 @type json
 </parse>
 </source>
 
-<match frameforge.app>
+<match frame-fab.app>
 @type elasticsearch
 host elasticsearch.example.com
 port 9200
 logstash_format true
-logstash_prefix frameforge
+logstash_prefix frame-fab
 </match>
 ```
 
@@ -600,10 +600,10 @@ logstash_prefix frameforge
 # backup.sh
 
 # 数据库备份
-pg_dump -h postgres -U paneluser -d frameforge | gzip > backup/db_$(date +%Y%m%d).sql.gz
+pg_dump -h postgres -U paneluser -d frame-fab | gzip > backup/db_$(date +%Y%m%d).sql.gz
 
 # MinIO 备份（使用 mc）
-mc mirror frameforge-output/ frameforge-backup/$(date +%Y%m%d)/
+mc mirror frame-fab-output/ frame-fab-backup/$(date +%Y%m%d)/
 
 # Redis 持久化
 redis-cli BGSAVE
@@ -623,12 +623,12 @@ redis-cli BGSAVE
 # recovery-runbook.md
 ## 数据库恢复
 1. 停止应用服务
-2. 从备份恢复: pg_restore -h postgres -U paneluser -d frameforge backup/db_xxx.sql.gz
+2. 从备份恢复: pg_restore -h postgres -U paneluser -d frame-fab backup/db_xxx.sql.gz
 3. 验证数据完整性
 4. 重启应用服务
 
 ## 对象存储恢复
-1. 从备份复制: mc cp frameforge-backup/2024-xx-xx/ frameforge-output/
+1. 从备份复制: mc cp frame-fab-backup/2024-xx-xx/ frame-fab-output/
 2. 验证文件完整性
 3. 重新触发失败任务
 ```
@@ -637,14 +637,14 @@ redis-cli BGSAVE
 
 ```bash
 # 手动扩缩容
-kubectl scale deployment frameforge-api --replicas=5 -n frameforge
+kubectl scale deployment frame-fab-api --replicas=5 -n frame-fab
 
 # 自动扩缩容配置
-kubectl autoscale deployment frameforge-api \
+kubectl autoscale deployment frame-fab-api \
   --min=3 \
   --max=10 \
   --cpu-percent=70 \
-  -n frameforge
+  -n frame-fab
 ```
 
 ---
@@ -657,10 +657,10 @@ kubectl autoscale deployment frameforge-api \
 # nginx.conf
 server {
     listen 443 ssl http2;
-    server_name frameforge.example.com;
+    server_name frame-fab.example.com;
 
-    ssl_certificate /etc/ssl/certs/frameforge.crt;
-    ssl_certificate_key /etc/ssl/private/frameforge.key;
+    ssl_certificate /etc/ssl/certs/frame-fab.crt;
+    ssl_certificate_key /etc/ssl/private/frame-fab.key;
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256;
     ssl_prefer_server_ciphers on;
@@ -692,13 +692,13 @@ server {
 
 ```bash
 # 使用 Kubernetes Secret
-kubectl create secret generic frameforge-secrets \
+kubectl create secret generic frame-fab-secrets \
   --from-literal=LLM_API_KEY=xxx \
   --from-literal=JWT_SECRET=xxx \
-  --namespace frameforge
+  --namespace frame-fab
 
 # 使用 HashiCorp Vault
-vault kv put secret/frameforge \
+vault kv put secret/frame-fab \
   LLM_API_KEY=xxx \
   IMAGE_API_KEY=xxx
 ```
@@ -767,13 +767,13 @@ video:
 
 ```bash
 # API 健康检查
-curl -f https://api.frameforge.com/health
+curl -f https://api.frame-fab.com/health
 
 # 数据库连接检查
-kubectl exec -it frameforge-api-xxx -- nslookup postgres
+kubectl exec -it frame-fab-api-xxx -- nslookup postgres
 
 # Redis 连接检查
-kubectl exec -it frameforge-api-xxx -- redis-cli -h redis ping
+kubectl exec -it frame-fab-api-xxx -- redis-cli -h redis ping
 ```
 
 ---
@@ -784,27 +784,27 @@ kubectl exec -it frameforge-api-xxx -- redis-cli -h redis ping
 
 ```bash
 # 1. 备份当前版本
-kubectl get deployment frameforge-api -o yaml > backup/api-deployment.yaml
+kubectl get deployment frame-fab-api -o yaml > backup/api-deployment.yaml
 
 # 2. 更新 Helm chart
 helm repo update
-helm upgrade frameforge frameforge/frameforge \
+helm upgrade frame-fab frame-fab/frame-fab \
   --version 2.0.0 \
-  --namespace frameforge
+  --namespace frame-fab
 
 # 3. 验证新版本
-kubectl rollout status deployment/frameforge-api -n frameforge
+kubectl rollout status deployment/frame-fab-api -n frame-fab
 
 # 4. 回滚（如有问题）
-kubectl rollout undo deployment/frameforge-api -n frameforge
+kubectl rollout undo deployment/frame-fab-api -n frame-fab
 ```
 
 ### 10.2 数据库迁移
 
 ```bash
 # 运行数据库迁移
-kubectl exec -it frameforge-api-xxx -- npm run db:migrate
+kubectl exec -it frame-fab-api-xxx -- npm run db:migrate
 
 # 或使用 Flyway
-kubectl exec -it frameforge-api-xxx -- flyway -url=jdbc:postgresql://postgres/frameforge migrate
+kubectl exec -it frame-fab-api-xxx -- flyway -url=jdbc:postgresql://postgres/frame-fab migrate
 ```

@@ -1,6 +1,6 @@
 import { CharacterCard } from '../types/character';
 
-const STORAGE_KEY = 'frame-forge_character_cards';
+const STORAGE_KEY = 'frame-fab_character_cards';
 
 export interface CharacterCardStorage {
   save(cards: CharacterCard[]): Promise<void>;

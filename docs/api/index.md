@@ -1,12 +1,12 @@
 # API 文档
 
-本文档提供 FrameForge 完整的 REST API 接口参考。
+本文档提供 frame-fab 完整的 REST API 接口参考。
 
 ---
 
 ## 一、概述
 
-**基础 URL**: `https://api.frameforge.com/api/v1`
+**基础 URL**: `https://api.frame-fab.com/api/v1`
 
 **认证方式**: 所有 API 请求需要在 Header 中携带 Bearer Token：
 
@@ -99,7 +99,7 @@ interface CreateTaskRequest {
 **示例**:
 
 ```bash
-curl -X POST https://api.frameforge.com/api/v1/tasks \
+curl -X POST https://api.frame-fab.com/api/v1/tasks \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{
@@ -664,13 +664,13 @@ curl -X POST https://api.frameforge.com/api/v1/tasks \
 
 ```bash
 # 下载原视频
-curl -O https://api.frameforge.com/api/v1/tasks/task_abc123xyz/download?type=video
+curl -O https://api.frame-fab.com/api/v1/tasks/task_abc123xyz/download?type=video
 
 # 下载缩略图
-curl -O https://api.frameforge.com/api/v1/tasks/task_abc123xyz/download?type=thumbnail
+curl -O https://api.frame-fab.com/api/v1/tasks/task_abc123xyz/download?type=thumbnail
 
 # 下载特定格式
-curl -O "https://api.frameforge.com/api/v1/tasks/task_abc123xyz/download?type=video&format=webm"
+curl -O "https://api.frame-fab.com/api/v1/tasks/task_abc123xyz/download?type=video&format=webm"
 ```
 
 ### 8.3 获取预览链接
@@ -683,7 +683,7 @@ curl -O "https://api.frameforge.com/api/v1/tasks/task_abc123xyz/download?type=vi
 
 ```json
 {
-  "previewUrl": "https://cdn.frameforge.com/preview/xyz?token=abc",
+  "previewUrl": "https://cdn.frame-fab.com/preview/xyz?token=abc",
   "expiresAt": 1747987500000
 }
 ```
@@ -871,14 +871,14 @@ curl -O "https://api.frameforge.com/api/v1/tasks/task_abc123xyz/download?type=vi
 ### 12.1 JavaScript/TypeScript SDK
 
 ```bash
-npm install @frameforge/api-sdk
+npm install @frame-fab/api-sdk
 ```
 
 ```typescript
-import { FrameForgeAPI } from '@frameforge/api-sdk';
+import { FrameFabAPI } from '@frame-fab/api-sdk';
 
-const api = new FrameForgeAPI({
-  baseUrl: 'https://api.frameforge.com/api/v1',
+const api = new FrameFabAPI({
+  baseUrl: 'https://api.frame-fab.com/api/v1',
   token: 'your_access_token',
 });
 
@@ -905,14 +905,14 @@ api.tasks.subscribe('task_abc123xyz', (event) => {
 ### 12.2 Python SDK
 
 ```bash
-pip install frameforge-api
+pip install frame-fab-api
 ```
 
 ```python
-from frameforge import FrameForgeAPI
+from frame-fab import FrameFabAPI
 
-api = FrameForgeAPI(
-    base_url='https://api.frameforge.com/api/v1',
+api = FrameFabAPI(
+    base_url='https://api.frame-fab.com/api/v1',
     token='your_access_token'
 )
 

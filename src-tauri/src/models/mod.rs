@@ -1,4 +1,4 @@
-//! Data models for the FrameForge Tauri backend.
+//! Data models for the frame-fab Tauri backend.
 
 pub mod app_settings;
 pub mod shortcut;

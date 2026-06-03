@@ -1,7 +1,7 @@
 import type { Config } from 'tailwindcss'
 
 /**
- * FrameForge Tailwind Config
+ * frame-fab Tailwind Config
  *
  * Migrated from CJS module.exports to ESM in Phase 1 of frame-fab refactor.
  * Tailwind v4 (via @tailwindcss/vite plugin) handles base/components/utilities

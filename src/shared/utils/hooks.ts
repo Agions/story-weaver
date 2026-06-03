@@ -1,5 +1,5 @@
 /**
- * frame-forge Shared Utils - React Hooks Re-exports
+ * frame-fab Shared Utils - React Hooks Re-exports
  */
 
 export {

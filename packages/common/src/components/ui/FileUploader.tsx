@@ -14,7 +14,7 @@
 
 import React, { useState, useCallback, useRef, type ChangeEvent, type DragEvent } from 'react';
 import { Upload } from 'lucide-react';
-import { generateId, detectFileType } from '@frame-forge/common/utils';
+import { generateId, detectFileType } from '@frame-fab/common/utils';
 import styles from './FileUploader.module.css';
 
 export interface UploadFile {

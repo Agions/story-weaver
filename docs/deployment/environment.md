@@ -1,6 +1,6 @@
 # 环境变量
 
-frame-forge 环境变量配置说明。
+frame-fab 环境变量配置说明。
 
 ## 变量命名规范
 
@@ -38,7 +38,7 @@ VITE_TTS_PROVIDER=edge  # edge | cosyvoice | kantts
 
 ```bash
 VITE_APP_MODE=web              # web | desktop
-VITE_APP_NAME=frame-forge
+VITE_APP_NAME=frame-fab
 VITE_API_BASE_URL=https://api.example.com
 ```
 
@@ -58,7 +58,7 @@ VITE_API_BASE_URL=https://api.example.com
 
 ```bash
 VITE_APP_MODE=web
-VITE_APP_NAME=frame-forge-dev
+VITE_APP_NAME=frame-fab-dev
 VITE_API_BASE_URL=http://localhost:3000
 VITE_MINIMAX_API_KEY=your_dev_key
 ```

@@ -1,5 +1,5 @@
 /**
- * FrameForge Autonomous Mode — Core Module
+ * frame-fab Autonomous Mode — Core Module
  *
  * 全自动 AI 漫剧制作系统核心模块
  *

@@ -1,7 +1,7 @@
 {
-  "name": "frame-forge-common",
+  "name": "frame-fab-common",
   "version": "1.0.0",
-  "description": "Shared utilities, UI components, hooks, and domain models for frame-forge",
+  "description": "Shared utilities, UI components, hooks, and domain models for frame-fab",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

@@ -1,5 +1,5 @@
 /**
- * frame-forge AI - 工作流各步骤配置
+ * frame-fab AI - 工作流各步骤配置
  * 拆出以减小 workflow-config.tsx 体积
  */
 

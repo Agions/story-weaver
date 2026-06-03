@@ -1,5 +1,5 @@
 name: Feature Request
-description: Suggest a new feature for FrameForge
+description: Suggest a new feature for frame-fab
 labels: ["enhancement", "needs-triage"]
 body:
   - type: markdown

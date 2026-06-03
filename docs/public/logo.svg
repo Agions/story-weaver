@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="FrameForge logo">
-  <title>FrameForge</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="frame-fab logo">
+  <title>frame-fab</title>
   <defs>
     <!-- 深空背景渐变 -->
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -53,7 +53,7 @@
   <circle cx="128" cy="128" r="44" fill="#0a0e27" opacity="0.95"/>
   <circle cx="128" cy="128" r="44" fill="none" stroke="url(#aiGrad)" stroke-width="1.5" opacity="0.8"/>
 
-  <!-- 播放三角 ▶（FrameForge 标志性符号） -->
+  <!-- 播放三角 ▶（frame-fab 标志性符号） -->
   <path d="M 116 110 L 148 128 L 116 146 Z" fill="url(#aiGrad)"/>
   <!-- 三角高光（左缘） -->
   <path d="M 116 110 L 120 128 L 116 146 Z" fill="#ffffff" opacity="0.18"/>

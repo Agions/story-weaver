@@ -65,7 +65,7 @@ continue;
 };
 
 // ================================================================
-// AFTER (zero duplication — uses @frame-forge/common)
+// AFTER (zero duplication — uses @frame-fab/common)
 // ================================================================
 
 import {
@@ -78,18 +78,18 @@ formatFileSize, // 统一文件大小格式化
 validateFileSize, // 统一文件大小校验
 detectFileType, // 统一文件类型检测
 readFileAsDataURL, // 统一文件读取
-} from '@frame-forge/common';
+} from '@frame-fab/common';
 
 import {
 useStepNavigation,
 useLocalStorage,
 useDebounce,
-} from '@frame-forge/common/hooks';
+} from '@frame-fab/common/hooks';
 
 import {
 validateCharacterName,
 validateScriptTitle,
-} from '@frame-forge/common/domain/script/validators';
+} from '@frame-fab/common/domain/script/validators';
 
 // ✅ AudioEditor: 配置化，0 重复上传逻辑
 const AudioEditor: React.FC = ({ onTracksChange }) => (

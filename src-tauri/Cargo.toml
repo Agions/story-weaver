@@ -1,10 +1,10 @@
 [package]
-name = "frame-forge"
+name = "frame-fab"
 version = "2.2.0"
-description = "FrameForge v2.2.0 - AI 漫剧创作平台"
-authors = ["FrameForge Team <agions@qq.com>"]
+description = "frame-fab v2.2.0 - AI 漫剧创作平台"
+authors = ["frame-fab Team <agions@qq.com>"]
 license = "MIT"
-repository = "https://github.com/Agions/frame-forge"
+repository = "https://github.com/Agions/frame-fab"
 edition = "2021"
 
 [lib]

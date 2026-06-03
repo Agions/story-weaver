@@ -1,4 +1,4 @@
-//! FrameForge Tauri backend.
+//! frame-fab Tauri backend.
 //!
 //! This crate is the Rust-side first citizen of the desktop application.
 //! It exposes Tauri commands to the JS frontend, and is internally organized
@@ -26,7 +26,7 @@ pub fn run() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
         .init();
 
-    info!("FrameForge 启动中...");
+    info!("frame-fab 启动中...");
 
     tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())
@@ -65,5 +65,5 @@ pub fn run() {
             commands::shortcuts::get_registered_shortcuts,
         ])
         .run(tauri::generate_context!())
-        .expect("启动 FrameForge 时发生错误");
+        .expect("启动 frame-fab 时发生错误");
 }

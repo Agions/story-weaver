@@ -48,7 +48,7 @@ rendering:
 支持批量导出多个面板配置：
 
 ```bash
-frame-forge export --input ./panels --output ./dist --format json
+frame-fab export --input ./panels --output ./dist --format json
 ```
 
 ## 进阶用法
@@ -58,7 +58,7 @@ frame-forge export --input ./panels --output ./dist --format json
 可以通过继承 `Renderer` 基类来创建自定义渲染器：
 
 ```python
-from frameforge.rendering import Renderer
+from frame-fab.rendering import Renderer
 
 class CustomRenderer(Renderer):
     def render(self, panel, options):

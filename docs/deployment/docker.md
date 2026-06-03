@@ -1,12 +1,12 @@
 # Docker 部署
 
-frame-forge 的 Docker 容器化部署。
+frame-fab 的 Docker 容器化部署。
 
 ## 快速开始
 
 ```bash
-docker build -t frameforge .
-docker run -p 8080:80 frameforge
+docker build -t frame-fab .
+docker run -p 8080:80 frame-fab
 ```
 
 ## Docker Compose
@@ -14,13 +14,13 @@ docker run -p 8080:80 frameforge
 ```yaml
 version: '3.8'
 services:
-  frameforge:
+  frame-fab:
     build: .
     ports:
       - '8080:80'
     environment:
       - VITE_APP_MODE=web
-      - VITE_APP_NAME=frame-forge
+      - VITE_APP_NAME=frame-fab
       - VITE_API_BASE_URL=https://api.example.com
       - VITE_MINIMAX_API_KEY=your_key
     restart: unless-stopped
@@ -48,10 +48,10 @@ CMD ["nginx", "-g", "daemon off;"]
 
 ```bash
 # 构建时传入
-docker build --build-arg VITE_MINIMAX_API_KEY=your_key -t frameforge .
+docker build --build-arg VITE_MINIMAX_API_KEY=your_key -t frame-fab .
 
 # 运行时环境变量
-docker run -p 8080:80 --env-file .env frameforge
+docker run -p 8080:80 --env-file .env frame-fab
 ```
 
 ## 构建产物

@@ -1,5 +1,5 @@
 /**
- * frame-forge Shared Utils - Async Error Handling Utilities
+ * frame-fab Shared Utils - Async Error Handling Utilities
  */
 
 import { logger } from '@/core/utils/logger';

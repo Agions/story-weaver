@@ -1,5 +1,5 @@
 /**
- * frame-forge Shared Utils - Platform Utilities
+ * frame-fab Shared Utils - Platform Utilities
  */
 
 export type Platform = 'web' | 'desktop';

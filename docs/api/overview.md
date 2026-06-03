@@ -5,7 +5,7 @@ title: API 概述
 
 # API 概述
 
-FrameForge 核心服务 API。
+frame-fab 核心服务 API。
 
 ## 核心服务
 
