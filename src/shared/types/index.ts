@@ -14,12 +14,20 @@ export * from './script';
 export * from './story-context';
 export * from './video-composition.types';
 
-// Note: novel.ts and video.ts both export 'Scene' (with different semantics).
-// We re-export them via aliased names to avoid conflict; consumers should
-// import the specific one they need.
-// - video.ts Scene: 视频场景分析（带 startTime/endTime/thumbnail）
-// - novel.ts SceneEmotion: 小说场景情感
-export * from './video';
+// Note: video.ts and video-composition.types.ts both export 'Scene' (with different semantics).
+// We re-export video.ts Scene as 'VideoScene' (analysis) and video-composition.types Scene
+// stays as 'Scene' (composition). Consumers should import the specific one they need.
+export {
+  type VideoInfo,
+  type Keyframe,
+  type ObjectDetection,
+  type EmotionAnalysis,
+  type Emotion,
+  type KeyMoment,
+  type VideoAnalysis,
+  type Scene,
+} from './video';
+
 export {
   EmotionType,
   type NovelMetadata,
@@ -46,3 +54,4 @@ export {
   type StoryAnalysis,
   type ScriptFormat,
 } from './novel';
+

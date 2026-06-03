@@ -164,7 +164,7 @@ export const FormSkeleton = ({
 export interface StatisticSkeletonProps {
   count?: number;
   icon?: boolean;
-  title?: boolean;
+  title?: boolean | string;
   value?: boolean;
   active?: boolean;
   [key: string]: unknown;

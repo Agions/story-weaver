@@ -15,7 +15,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Empty } from '@/components/ui/empty';
 import { List } from '@/components/ui/list';
-import { Popconfirm } from '@/components/ui/confirm-dialog';
+import { Popconfirm } from '@/components/ui/popconfirm';
 import { Tag } from '@/components/ui/tag';
 import { Tooltip } from '@/components/ui/tooltip';
 import { Text, Title } from '@/components/ui/typography';

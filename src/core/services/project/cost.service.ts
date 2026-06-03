@@ -1,98 +1,30 @@
 /**
  * 成本追踪服务
  * 监控和优化 LLM/视频生成成本
+ *
+ * 类型定义在 cost.types.ts
+ * 定价常量在 cost.constants.ts
  */
 
 import { secureStorage } from '@/core/services/project/secure-storage.service';
 import { logger } from '@/core/utils/logger';
+import { MODEL_COSTS, VIDEO_COSTS } from '@/core/services/project/cost.constants';
+import type {
+  CostRecord,
+  CostStats,
+  BudgetStatus,
+  CostAlert,
+  CostBudget,
+} from '@/core/services/project/cost.types';
 
-// 成本记录
-export interface CostRecord {
-  id: string;
-  type: 'llm' | 'video' | 'audio' | 'storage';
-  provider: string;
-  model?: string;
-  inputTokens?: number;
-  outputTokens?: number;
-  cost: number; // USD
-  duration?: number; // ms
-  timestamp: string;
-  metadata?: Record<string, any>;
-}
-
-// 成本统计
-export interface CostStats {
-  total: number;
-  today: number;
-  thisWeek: number;
-  thisMonth: number;
-  byType: Record<string, number>;
-  byProvider: Record<string, number>;
-  byModel: Record<string, number>;
-}
-
-export interface BudgetStatus {
-  daily: { used: number; limit: number; percent: number };
-  weekly: { used: number; limit: number; percent: number };
-  monthly: { used: number; limit: number; percent: number };
-}
-
-export interface CostAlert {
-  id: string;
-  period: 'daily' | 'weekly' | 'monthly';
-  percent: number;
-  threshold: number;
-  timestamp: string;
-}
-
-// 成本预算
-export interface CostBudget {
-  daily: number;
-  weekly: number;
-  monthly: number;
-  alerts: {
-    daily: number; // 百分比阈值
-    weekly: number;
-    monthly: number;
-  };
-}
-
-// 模型成本配置 (USD per 1K tokens)
-const MODEL_COSTS: Record<string, { input: number; output: number }> = {
-  // OpenAI
-  'gpt-5': { input: 0.005, output: 0.015 },
-  'gpt-5-mini': { input: 0.0005, output: 0.0015 },
-
-  // Anthropic
-  'claude-4-sonnet': { input: 0.003, output: 0.015 },
-  'claude-4-opus': { input: 0.015, output: 0.075 },
-
-  // 百度
-  'ernie-5.0': { input: 0.0012, output: 0.0012 },
-  'ernie-speed': { input: 0.0001, output: 0.0001 },
-
-  // 阿里
-  'qwen-max': { input: 0.002, output: 0.006 },
-  'qwen-plus': { input: 0.0008, output: 0.002 },
-  'qwen-turbo': { input: 0.0003, output: 0.0006 },
-
-  // 月之暗面
-  'kimi-k2.5': { input: 0.001, output: 0.003 },
-
-  // 智谱
-  'glm-5': { input: 0.001, output: 0.003 },
-
-  // MiniMax
-  'minimax-m2.5': { input: 0.001, output: 0.003 },
-};
-
-// 视频生成成本 (USD per minute)
-const VIDEO_COSTS: Record<string, number> = {
-  vidu: 0.5,
-  seedance: 0.4,
-  kling: 0.3,
-  local: 0, // 本地免费
-};
+// Re-export types 保持向后兼容
+export type {
+  CostRecord,
+  CostStats,
+  BudgetStatus,
+  CostAlert,
+  CostBudget,
+} from '@/core/services/project/cost.types';
 
 class CostService {
   private records: CostRecord[] = [];

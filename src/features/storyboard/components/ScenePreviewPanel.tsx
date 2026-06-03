@@ -7,7 +7,7 @@ import React from 'react';
 
 import { Cloud, Lightbulb, MapPin, Sun, Trash2 } from 'lucide-react';
 import { Divider } from '@/components/ui/divider';
-import { Popconfirm } from '@/components/ui/confirm-dialog';
+import { Popconfirm } from '@/components/ui/popconfirm';
 import { Row, Col } from '@/components/ui/grid';
 import { Slider } from '@/components/ui/slider';
 import { Space } from '@/components/ui/space';

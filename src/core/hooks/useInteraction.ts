@@ -7,7 +7,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { toast as sonnerToast } from 'sonner';
 
 import { toast } from '@/shared/components/ui';
-import { useConfirm, ConfirmDialogProps } from '@/shared/components/ui/ConfirmDialog';
+import { useConfirm, ConfirmDialogProps, UseConfirmOptions } from '@/shared/components/ui/ConfirmDialog';
 
 // ============================================
 // 加载状态 Hook
@@ -211,7 +211,7 @@ export const useMessage = (_options?: UseMessageOptions): UseMessageReturn => {
 // 确认对话框 Hook
 // ============================================
 
-export type UseModalConfirmOptions = ConfirmDialogProps
+export type UseModalConfirmOptions = UseConfirmOptions
 
 export interface UseModalConfirmReturn {
   confirm: (options?: UseModalConfirmOptions) => Promise<boolean>;

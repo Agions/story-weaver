@@ -3,7 +3,7 @@ import React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Collapse } from '@/components/ui/collapse';
-import { Popconfirm } from '@/components/ui/confirm-dialog';
+import { Popconfirm } from '@/components/ui/popconfirm';
 import { Divider } from '@/components/ui/divider';
 import { Empty } from '@/components/ui/empty';
 import { Row, Col } from '@/components/ui/grid';

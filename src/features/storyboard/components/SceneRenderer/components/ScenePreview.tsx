@@ -1,7 +1,7 @@
 import { Lightbulb, Cloud, Sun, Trash2 } from 'lucide-react';
 import React from 'react';
 
-import { Popconfirm } from '@/components/ui/confirm-dialog';
+import { Popconfirm } from '@/components/ui/popconfirm';
 import { Divider } from '@/components/ui/divider';
 import { Empty } from '@/components/ui/empty';
 import { Row, Col } from '@/components/ui/grid';
