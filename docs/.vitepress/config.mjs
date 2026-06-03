@@ -9,18 +9,43 @@ export default defineConfig({
   appearance: 'light', // default to light theme; user can toggle to dark
   cleanUrls: true,
   ignoreDeadLinks: true,
-  base: '/frame-forge/',
+  base: '/frame-fab/',
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
-    ['meta', { name: 'theme-color', content: '#ffffff' }],
+    ['meta', { name: 'theme-color', content: '#0a0e27' }],
+    // Open Graph
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:title', content: 'FrameForge - AI 驱动的视频创作工作室' }],
+    [
+      'meta',
+      {
+        property: 'og:description',
+        content: '基于 Tauri 2.1 桌面端 + 多模型 AI 编排的端到端视频创作工作台。',
+      },
+    ],
+    ['meta', { property: 'og:image', content: '/logo.svg' }],
+    ['meta', { property: 'og:locale', content: 'zh_CN' }],
+    // Twitter Card
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:title', content: 'FrameForge - AI 驱动的视频创作工作室' }],
+    [
+      'meta',
+      {
+        name: 'twitter:description',
+        content: '基于 Tauri 2.1 桌面端 + 多模型 AI 编排的端到端视频创作工作台。',
+      },
+    ],
+    ['meta', { name: 'twitter:image', content: '/logo.svg' }],
   ],
   themeConfig: {
     siteTitle: 'FrameForge',
+    logo: { src: '/logo-horizontal.svg', alt: 'FrameForge' },
     nav: [
       { text: '快速开始', link: '/getting-started/quick-start' },
       { text: '用户指南', link: '/user-guide/workflow-overview' },
       { text: '开发指南', link: '/developer-guide/architecture' },
       { text: 'API', link: '/api/overview' },
+      { text: '架构决策', link: '/adr/0001-tauri-desktop-architecture' },
     ],
     sidebar: {
       '/getting-started/': [
@@ -78,12 +103,30 @@ export default defineConfig({
           ],
         },
       ],
+      '/adr/': [
+        {
+          text: '架构决策记录 (ADR)',
+          items: [
+            { text: '0001 Tauri 桌面优先', link: '/adr/0001-tauri-desktop-architecture' },
+            { text: '0002 Monorepo + DDD', link: '/adr/0002-frontend-monorepo-ddd' },
+          ],
+        },
+      ],
+      '/performance/': [
+        {
+          text: '性能基准',
+          items: [
+            { text: 'v2.2.0 基准报告', link: '/performance/benchmark-v2.2.0' },
+          ],
+        },
+      ],
     },
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/Agions/frame-forge' },
+      { icon: 'github', link: 'https://github.com/Agions/frame-fab' },
     ],
     footer: {
-      message: 'MIT License © 2026 Agions',
+      message: 'MIT License © 2024-2026 Agions · FrameForge',
+      copyright: '基于 Tauri 2.1 + React 18 + Rust 构建',
     },
     search: { provider: 'local' },
   },

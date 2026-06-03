@@ -1,108 +1,97 @@
-# FrameForge — 全自动 AI 漫剧制作平台
-
-> **输入一本小说，AI 自动把它拍成一部漫剧，你只需要按「开始」。**
-
 ---
-
-## 🎯 平台简介
-
-FrameForge 是一款基于大语言模型的**全自主 Agent 型**漫剧制作系统。用户只需提供原始文本（小说/剧本/需求描述），AI 将自主完成从剧本解析到成片输出的全部环节，真正实现**零参与、自动化**的漫剧生产体验。
-
+title: FrameForge - AI 驱动的视频创作工作室
+description: 基于 Tauri 2.1 桌面端 + 多模型 AI 编排的端到端视频创作工作台
+layout: home
+hero:
+  name: "FrameForge"
+  text: "AI 驱动的视频创作工作室"
+  tagline: "输入一个故事，AI 把剧本 / 分镜 / 角色 / TTS / 渲染一站式做完——你只管『开始』"
+  image:
+    src: /logo.svg
+    alt: FrameForge
+  actions:
+    - theme: brand
+      text: 快速开始
+      link: /getting-started/quick-start
+    - theme: alt
+      text: 架构设计
+      link: /developer-guide/architecture
+    - theme: alt
+      text: GitHub
+      link: https://github.com/Agions/frame-fab
+    - theme: alt
+      text: 下载桌面端
+      link: https://github.com/Agions/frame-fab/releases
+features:
+  - title: 🎬 双模式工作流
+    details: Manual 模式（七步半自动，逐步审批）+ Autonomous 模式（10 步全自主 + Self-Review Loop + Quality Gate），适配精细化与批量场景
+  - title: 🧠 多模型 AI 编排
+    details: 智谱 GLM-5 / MiniMax M2.5 / 月之暗面 Kimi K2.5 / 字节 Seedream 5.0 / 快手 Kling 1.6 / Edge TTS，完整 Fallback Chain
+  - title: 🦀 Rust 高性能后端
+    details: Tauri 2.1 桌面端 + FFmpeg 子进程，包体积 30MB 以内，冷启动 < 1s，macOS/Windows/Linux 三端一致
+  - title: 🔄 断点续传 + 自审修复
+    details: PipelineEngine 30s 自动 Checkpoint，SelfReviewLoop 自动修复不合格输出，质量门禁不通过可降级或回滚
+  - title: 🏗️ 桌面优先架构
+    details: 全局快捷键、系统托盘、原生菜单、文件 I/O；Rust 是第一公民承担系统级能力，JS/TS 仅做 UI 渲染
+  - title: 📦 Monorepo + DDD 分层
+    details: src + packages/core + packages/common 三层 Monorepo，领域驱动分层；零循环依赖，0 ts-prune 未使用导出
 ---
 
 ## ⚖️ Manual Mode vs Autonomous Mode
 
-| 维度           | Manual Mode（手动模式） | Autonomous Mode（全自动模式） |
-| -------------- | ----------------------- | ----------------------------- |
-| **用户参与度** | 高（逐环节审批、编辑）  | **零（仅提供原材料）**        |
-| **操作方式**   | 工具型，需逐步骤操作    | Agent型，一键启动             |
-| **适合场景**   | 精细化调整、定制化创作  | 快速成片、批量生产            |
-| **时间成本**   | 较长                    | **极短**                      |
-| **AI 自审**    | 无                      | **每步自审 + 自动修复**       |
-| **断点续传**   | 不支持                  | 支持                          |
+| 维度 | Manual Mode | Autonomous Mode |
+|------|-------------|-----------------|
+| 用户参与度 | 高（逐步审批） | 零（仅提供原材料） |
+| 操作方式 | 工具型，逐步操作 | Agent 型，一键启动 |
+| 适合场景 | 精细化调整、定制化 | 快速成片、批量生产 |
+| 时间成本 | 较长 | 极短 |
+| AI 自审 | 无 | 每步自审 + 自动修复 |
+| 断点续传 | 不支持 | 支持（30s Checkpoint） |
+| 质量门禁 | 可选 | 强制 |
 
----
-
-## 🚀 核心功能
-
-- 🎬 **全自动流水线** — 11 步自主执行，无需人工干预
-- 🧠 **Self-Review Loop** — 每步 AI 自审，不合格自动修复（最多 3 次循环）
-- ✅ **Quality Gate** — 全自动质量门禁，确保输出品质
-- 👥 **角色一致性** — AI 自动保证角色外观统一
-- 🎞️ **智能分镜** — 自动生成分镜脚本与参考图
-- 🔊 **配音 + 唇形同步** — 自动生成语音并对齐口型
-- 💾 **断点续传** — 中途刷新可继续，任务可暂停/恢复
-- 🔄 **降级策略** — 主模型不可用时自动切换备选模型
-
----
-
-## 🔄 七大步骤工作流
+## 🔄 七步工作流（Manual Mode）
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        FrameForge 工作流                          │
-└─────────────────────────────────────────────────────────────────┘
-
-  📥 输入                              📤 输出
-     │                                    ▲
-     ▼                                    │
-┌─────────┐    ┌───────────┐    ┌──────────────┐    ┌──────────┐
-│  导入   │───▶│  故事分析  │───▶│  脚本生成    │───▶│  角色设计 │
-└─────────┘    └───────────┘    └──────────────┘    └──────────┘
-                                                        │
-                                                        ▼
-┌─────────┐    ┌───────────┐    ┌──────────────┐    ┌──────────┐
-│  导出   │◀───│  字幕嵌入  │◀───│  音频合成    │◀───│  分镜生成 │
-└─────────┘    └───────────┘    └──────────────┘    └──────────┘
-     ▲
-     │
-  🎉 成片
-
-详细流程：
-1️⃣ [Auto] ImportStep      ─ 解析原材料（小说/剧本）
-2️⃣ [Auto] AnalysisStep    ─ AI 分析故事结构、人物、场景
-3️⃣ [Auto] ScriptStep      ─ 生成结构化视频剧本
-4️⃣ [Auto] CharacterStep   ─ 创建角色设定卡，保证一致性
-5️⃣ [Auto] StoryboardStep  ─ 生成分镜脚本 + 参考图
-6️⃣ [Auto] RenderStep      ─ 批量渲染关键帧
-7️⃣ [Auto] CompositionStep ─ 合成视频片段 + 配音 + 字幕
+📥 导入 ──▶ 🧠 AI 分析 ──▶ 📝 脚本生成 ──▶ 🎬 分镜设计
+                                              │
+                                              ▼
+              🖼️ 批量渲染  ◀──  🎭 角色设计
+                   │
+                   ▼
+              🎞️ 合成导出
 ```
 
----
+## 🚀 10 步自主流水线（Autonomous Mode）
+
+```
+step-import → step-analysis → step-script → step-character → step-scene
+                                                              │
+                                                              ▼
+              step-render ← step-storyboard ←────── step-video-editing
+                  │
+                  ▼
+              step-composition (final export)
+```
+
+每步配备 **Self-Review Loop** + **Quality Gate** + **Checkpoint 自动保存**。
 
 ## 🤖 支持的 AI 模型
 
-| 步骤         | 推荐模型（按优先级）     | 备选模型                                |
-| ------------ | ------------------------ | --------------------------------------- |
-| **剧本解析** | GLM-5 / M2.5 / Kimi K2.5 | -                                       |
-| **故事分析** | Doubao 2.0 / ERNIE 4.0   | -                                       |
-| **脚本生成** | GLM-5 / M2.5             | -                                       |
-| **角色设定** | Seedream 5.0             | -                                       |
-| **分镜生成** | Seedream 5.0 / Kling 1.6 | -                                       |
-| **图像渲染** | Seedream 5.0 ✅          | Kling 1.6 / Vidu 2.0 / Stable Diffusion |
-| **视频合成** | FFmpeg WASM + 关键帧     | -                                       |
-| **配音**     | Edge TTS（免费）✅       | CosyVoice 2.0 / 百度 TTS                |
-| **唇形同步** | Wav2Lip API              | 第三方服务                              |
-| **字幕**     | 内置 OCR + 时间轴对齐    | -                                       |
-
-### 降级链路
-
-```
-Seedream 5.0 → Kling 1.6 → Vidu 2.0 → Stable Diffusion API
-Edge TTS → CosyVoice 2.0 → 百度 TTS
-```
-
----
+| 模态 | 模型 |
+|------|------|
+| 文字生成 | GLM-5（智谱）· M2.5（MiniMax）· Kimi K2.5（月之暗面）· Doubao 2.0（字节）· Qwen 2.5（阿里）· ERNIE 4.0（百度）|
+| 图像生成 | Seedream 5.0（字节，推荐）· Kling 1.6（快手）· Vidu 2.0（生数）|
+| 视频生成 | Seedance 2.0（字节）· Image-to-Video 工作流 |
+| 语音合成 | Edge TTS（免费）· CosyVoice 2.0（阿里）· KAN-TTS（阿里）|
 
 ## 📖 文档导航
 
-| 文档                             | 说明                       |
-| -------------------------------- | -------------------------- |
-| [快速开始](./getting-started/)   | 3 步启动你的第一个漫剧项目 |
-| [用户指南](./user-guide/)        | 详细功能介绍与使用教程     |
-| [开发者指南](./developer-guide/) | 架构设计与 API 文档        |
-| [部署文档](./deployment/)        | 生产环境部署指南           |
+- [快速开始](./getting-started/quick-start) — 5 分钟启动
+- [用户指南](./user-guide/) — 详细功能介绍
+- [开发者指南](./developer-guide/) — 架构设计与 API 文档
+- [架构决策记录](./adr/) — ADR 决策记录
+- [性能基准](./performance/) — 性能基准报告
 
 ---
 
-> **© 2026 FrameForge — 让创作更简单，让创意更自由**
+> **© 2024-2026 FrameForge · MIT License · 让创作更简单，让创意更自由**

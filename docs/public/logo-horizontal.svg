@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 128" role="img" aria-label="FrameForge horizontal logo">
+  <title>FrameForge</title>
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0e27"/>
+      <stop offset="50%" stop-color="#1a1a3e"/>
+      <stop offset="100%" stop-color="#24243e"/>
+    </linearGradient>
+    <linearGradient id="filmGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ff8a5b"/>
+      <stop offset="100%" stop-color="#e63946"/>
+    </linearGradient>
+    <linearGradient id="aiGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4cc9f0"/>
+      <stop offset="100%" stop-color="#7209b7"/>
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#c5cae9"/>
+    </linearGradient>
+    <pattern id="filmPerfH" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+      <rect x="2" y="2" width="6" height="6" rx="1" fill="#0a0e27"/>
+    </pattern>
+  </defs>
+
+  <!-- 深空背景 -->
+  <rect width="512" height="128" rx="20" ry="20" fill="url(#bgGrad)"/>
+
+  <!-- Logo 标志区（左侧 128×128） -->
+  <g transform="translate(0, 0)">
+    <!-- 倾斜电影胶片条 -->
+    <g transform="rotate(-22 64 64)">
+      <rect x="-15" y="50" width="158" height="28" fill="url(#filmGrad)" opacity="0.92"/>
+      <rect x="-15" y="50" width="158" height="28" fill="url(#filmPerfH)" opacity="0.55"/>
+      <rect x="22" y="54" width="84" height="20" fill="url(#filmGrad)"/>
+    </g>
+    <!-- 中央暗盘 -->
+    <circle cx="64" cy="64" r="26" fill="#0a0e27" opacity="0.95"/>
+    <circle cx="64" cy="64" r="26" fill="none" stroke="url(#aiGrad)" stroke-width="1.2" opacity="0.8"/>
+    <!-- 播放三角 -->
+    <path d="M 57 53 L 76 64 L 57 75 Z" fill="url(#aiGrad)"/>
+    <!-- AI 脉冲线 -->
+    <path d="M 18 92 Q 50 86, 76 88 T 110 84"
+          stroke="url(#aiGrad)" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.85"/>
+    <circle cx="18" cy="92" r="1.6" fill="#4cc9f0"/>
+    <circle cx="110" cy="84" r="1.6" fill="#7209b7"/>
+  </g>
+
+  <!-- 品牌名（右侧文字） -->
+  <g transform="translate(150, 0)">
+    <text x="0" y="58" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+          font-size="40" font-weight="800" fill="url(#textGrad)" letter-spacing="-0.5">FrameForge</text>
+    <text x="2" y="84" font-family="ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+          font-size="13" font-weight="500" fill="#8a8db5" letter-spacing="2.5">AI · VIDEO · FORGE</text>
+    <!-- 装饰小色块（呼应 logo 主题色） -->
+    <rect x="2" y="96" width="32" height="3" rx="1.5" fill="url(#filmGrad)"/>
+    <rect x="38" y="96" width="32" height="3" rx="1.5" fill="url(#aiGrad)" opacity="0.7"/>
+  </g>
+</svg>
