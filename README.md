@@ -8,7 +8,7 @@
 
 > **输入一本小说，AI 自动把它拍成一部漫剧——你只需要按"开始"。**
 
-[![CI](https://img.shields.io/github/actions/workflow/status/Agions/frame-fab/ci.yml?style=for-the-badge&label=CI)](https://github.com/Agions/frame-fab/actions)
+[![CI](https://img.shields.io/github/actions/workflow/status/Agions/frame-fab/test.yml?style=for-the-badge&label=CI)](https://github.com/Agions/frame-fab/actions)
 [![License](https://img.shields.io/github/license/Agions/frame-fab?style=for-the-badge&color=45B8AC)](https://opensource.org/licenses/MIT)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react)](https://react.dev)
 [![Tauri](https://img.shields.io/badge/Tauri-2.1-FFC131?style=for-the-badge&logo=tauri)](https://tauri.app)

@@ -2,7 +2,7 @@
 
 ## 项目概述
 
-frame-fab 是 AI 驱动的视频脚本创作平台，将小说、剧本或提示词转化为专业级视频内容。
+frame-fab 是 AI 驱动的 **AI 漫剧创作平台**，输入一本小说，AI 自动把它拍成一部漫剧。基于 Tauri 2.1 + Rust 桌面端，集成多模型 AI（GLM-5 / M2.5 / Kimi / Seedream / Kling / Vidu / Edge TTS）实现端到端自动化。
 
 ## 技术栈
 
