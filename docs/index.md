@@ -5,7 +5,7 @@ layout: home
 hero:
   name: "FrameForge"
   text: "AI 漫剧创作平台"
-  tagline: "输入一个故事，AI 把剧本 / 分镜 / 角色 / TTS / 渲染一站式做完——你只管『开始』"
+  tagline: "输入一本小说，AI 自动把它拍成一部漫剧——你只需要按『开始』"
   image:
     src: /logo.svg
     alt: FrameForge

@@ -142,7 +142,7 @@ export class ScriptStep implements PipelineStep {
     const genre = analysisResult?.metadata?.title ?? '通用';
     const sceneCount = chapters.length;
 
-    return `你是专业的视频剧本作家。请根据以下故事内容生成适合AI视频制作的剧本。
+    return `你是专业的漫剧剧本作家。请根据以下故事内容生成适合AI漫剧制作的剧本。
 
 ## 故事概要
 类型: ${genre}

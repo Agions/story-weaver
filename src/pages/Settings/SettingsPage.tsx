@@ -448,7 +448,7 @@ const Settings = () => {
             <Card className={styles.aboutCard}>
               <div className={styles.aboutHeader}>
                 <h2 className="text-2xl font-bold">🎬 frame-forge AI</h2>
-                <p className="text-muted-foreground">AI 视频脚本视频智能创作平台</p>
+                <p className="text-muted-foreground">AI 漫剧智能创作平台</p>
               </div>
 
               <div className={styles.aboutInfo}>

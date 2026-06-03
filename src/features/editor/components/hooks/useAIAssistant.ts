@@ -33,7 +33,7 @@ export function useAIAssistant(): UseAIAssistantReturn {
     {
       role: 'ai',
       content:
-        '您好!我是您的AI视频助手。我可以帮助您生成字幕、智能剪辑片段、提供内容建议以及增强视频效果。请告诉我您需要什么帮助?',
+        '您好!我是您的AI漫剧助手。我可以帮助您生成角色、撰写脚本、设计分镜、合成配音与字幕,提供创意建议。请告诉我您需要什么帮助?',
       time: new Date(),
     },
   ]);

@@ -30,7 +30,7 @@ const HeroSection = () => {
       <div className={styles.heroContent}>
         <div className={styles.badge}>
           <Sparkles className="h-3.5 w-3.5" />
-          <span>AI驱动的视频创作平台</span>
+          <span>AI 驱动的漫剧创作平台</span>
         </div>
 
         <h1 className={styles.title}>
