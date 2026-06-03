@@ -1,4 +1,4 @@
-//! FrameForge (formerly ManGa AI) Tauri backend.
+//! FrameForge Tauri backend.
 //!
 //! This crate is the Rust-side first citizen of the desktop application.
 //! It exposes Tauri commands to the JS frontend, and is internally organized

@@ -1,4 +1,4 @@
-// FrameForge (formerly ManGa AI) desktop entry point.
+// FrameForge desktop entry point.
 //
 // On Windows in release builds, hides the console window.
 // The actual application logic lives in `lib::run()`.

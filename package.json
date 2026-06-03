@@ -1,7 +1,7 @@
 {
   "name": "frame-forge",
   "private": true,
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "FrameForge - Professional AI-Powered Video Creation Studio. Transform stories and scripts into polished video content with multi-model AI, voice synthesis, and automated rendering.",
   "author": "Agions <agions@qq.com>",
   "license": "MIT",
