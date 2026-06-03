@@ -2,8 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 import { ThemeProvider } from '@/app/providers/ThemeContext';
-import './index.css';
-import './assets/theme.less';
+import '@/app/styles/index.css';
 import { logger } from '@/core/utils/logger';
 
 import App from '@/app/index';
