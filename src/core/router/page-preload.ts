@@ -3,11 +3,11 @@ type Importer = () => Promise<unknown>;
 const pageImporters = {
   home: () => import('@/pages/Home/HomePage'),
   workflow: () => import('@/pages/Workflow/WorkflowPage'),
-  projectEdit: () => import('@/pages/ProjectEdit/ProjectEditPage'),
-  projectDetail: () => import('@/pages/ProjectDetail/ProjectDetailPage'),
-  scriptDetail: () => import('@/pages/ProjectEdit/ScriptDetailPage'),
+  projectEdit: () => import('@/pages/project-edit/ProjectEditPage'),
+  projectDetail: () => import('@/pages/project-detail/ProjectDetailPage'),
+  scriptDetail: () => import('@/pages/project-edit/ScriptDetailPage'),
   settings: () => import('@/pages/Settings/SettingsPage'),
-  autoPipeline: () => import('@/pages/AutoPipeline/AutoPipelinePage'),
+  autoPipeline: () => import('@/pages/auto-pipeline/AutoPipelinePage'),
 } as const;
 
 const routeImporterMap: Array<{ prefix: string; importer: Importer }> = [
@@ -38,7 +38,7 @@ export async function preloadPage(importer: Importer, key: string): Promise<void
 }
 
 export function matchPagePrefix(path: string): string | null {
-  const hit = routeImporterMap.find(item => path.startsWith(item.prefix));
+  const hit = routeImporterMap.find((item) => path.startsWith(item.prefix));
   return hit ? hit.prefix : null;
 }
 
@@ -46,9 +46,9 @@ export function preloadPageByPath(
   path: string,
   preloader: (importer: Importer, key: string) => void = (importer, key) => {
     void preloadPage(importer, key);
-  },
+  }
 ): void {
-  const hit = routeImporterMap.find(item => path.startsWith(item.prefix));
+  const hit = routeImporterMap.find((item) => path.startsWith(item.prefix));
   if (!hit) return;
   preloader(hit.importer, hit.prefix);
 }

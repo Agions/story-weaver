@@ -1,9 +1,8 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 
+import ProjectDetail from '@/pages/project-detail/ProjectDetailPage';
 import { useProjectStore } from '@/shared/stores';
-
-import ProjectDetail from '@/pages/ProjectDetailPage';
 
 const mockNavigate = jest.fn();
 const mockUpdateProject = jest.fn();

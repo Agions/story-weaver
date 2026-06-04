@@ -20,6 +20,10 @@ module.exports = {
     '<rootDir>/src/__tests__/utils/test-utils.tsx',
     '<rootDir>/src/__tests__/__mocks__/@tauri-apps/api-tauri.ts',
     '<rootDir>/src/__tests__/__mocks__/@tauri-apps/api-core.ts',
+    // ProjectEdit/ProjectDetail page tests skipped: useForm() in ProjectEditPage
+    // expects AntD-style tuple return [form] but actual RHF useForm returns object
+    // — pre-existing bug (NOTE comment "intentional until form refactor").
+    // Awaiting dedicated form refactor before re-enabling.
     '<rootDir>/src/__tests__/pages/project-edit.test.tsx',
     '<rootDir>/src/__tests__/pages/project-detail.test.tsx',
     '<rootDir>/src/__tests__/core/api/client.test.ts',

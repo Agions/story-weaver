@@ -1,27 +1,15 @@
 /**
  * @frame-fab/common — 公共库统一导出
+ *
+ * Phase 2-B (2026-06-04): 收缩至仅 constants 子目录。
+ *
+ * 历史包袱：原设计期望 packages/common 是可独立发布的 npm 包
+ * (含 utils/formatters/motion/hooks/components/domain/validation)。
+ * 实际项目内全部 0 引用，未形成 monorepo 复用。
+ * 见 docs/adr/0002-frontend-monorepo-ddd.md 原始设计意图。
+ *
+ * 现仅保留 constants 子目录（4 处真实引用）。
+ * 未来若需要重提 monorepo 拆分，可基于 src/shared/* 现有实现重新组织。
  */
 
-// Utils
-export * from './utils';
-
-// Formatters
-export * from './formatters';
-
-// Constants
 export * from './constants';
-
-// Motion
-export * from './motion';
-
-// UI Components (DRY 通用组件 - 跨项目共享)
-export * from './components/ui/FileUploader';
-export * from './components/ui/ProgressBar';
-export * from './components/ui/Modal';
-export * from './components/ui/ConfirmDialog';
-
-// Hooks
-export * from './hooks';
-
-// Domain Validators (各子域校验器)
-export * from './domain';
