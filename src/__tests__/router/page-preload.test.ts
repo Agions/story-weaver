@@ -3,7 +3,7 @@ import {
   matchPagePrefix,
   preloadPage,
   preloadPageByPath,
-} from '@/core/router/page-preload';
+} from '@/app/router/page-preload';
 
 describe('page-preload', () => {
   beforeEach(() => {
