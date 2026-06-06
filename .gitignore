@@ -65,3 +65,5 @@ N8N_REMOVAL_REPORT.md
 REPORT.md
 docs/.vitepress/cache/
 .tsbuildinfo
+
+demo/
