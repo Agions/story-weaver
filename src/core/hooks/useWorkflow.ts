@@ -4,7 +4,7 @@
  */
 import { useState, useCallback } from 'react';
 
-import type { ScriptTemplate, AIModel } from '@/core/types';
+import type { ScriptTemplate, AIModel } from '@/shared/types';
 
 export type WorkflowStep =
   | 'upload'
@@ -68,7 +68,9 @@ export interface UseWorkflowReturn {
   selectTemplate: (template: ScriptTemplate) => void;
   generateScript: (model: AIModel, params: unknown) => Promise<void>;
   dedupScript: () => Promise<void>;
-  ensureUniqueness: (content: string) => Promise<{ isUnique: boolean; duplicates: unknown[]; suggestions: unknown[] }>;
+  ensureUniqueness: (
+    content: string
+  ) => Promise<{ isUnique: boolean; duplicates: unknown[]; suggestions: unknown[] }>;
   editScript: (content: string) => void;
   editTimeline: (timeline: unknown) => void;
   preview: () => Promise<void>;
@@ -85,7 +87,7 @@ export function useWorkflow(callbacks?: WorkflowCallbacks): UseWorkflowReturn {
     step: 'upload',
     status: 'idle',
     progress: 0,
-    data: {}
+    data: {},
   });
 
   const isRunning = state.status === 'running';
@@ -93,54 +95,69 @@ export function useWorkflow(callbacks?: WorkflowCallbacks): UseWorkflowReturn {
   const isCompleted = state.status === 'completed';
   const hasError = state.status === 'error';
 
-  const updateStep = useCallback((step: WorkflowStep) => {
-    setState(prev => ({ ...prev, step }));
-    callbacks?.onStepChange?.(step);
-  }, [callbacks]);
+  const updateStep = useCallback(
+    (step: WorkflowStep) => {
+      setState((prev) => ({ ...prev, step }));
+      callbacks?.onStepChange?.(step);
+    },
+    [callbacks]
+  );
 
   const analyze = useCallback(async () => {
     updateStep('analyze');
-    setState(prev => ({ ...prev, progress: 20 }));
+    setState((prev) => ({ ...prev, progress: 20 }));
   }, [updateStep]);
 
-  const updateStatus = useCallback((status: WorkflowState['status'], error?: string) => {
-    setState(prev => ({ ...prev, status, error }));
-    if (status === 'error' && error) {
-      callbacks?.onError?.(error);
-    }
-  }, [callbacks]);
+  const updateStatus = useCallback(
+    (status: WorkflowState['status'], error?: string) => {
+      setState((prev) => ({ ...prev, status, error }));
+      if (status === 'error' && error) {
+        callbacks?.onError?.(error);
+      }
+    },
+    [callbacks]
+  );
 
-  const start = useCallback(async (projectId: string, file: File, config?: WorkflowConfig) => {
-    updateStatus('running');
-    setState(prev => ({
-      ...prev,
-      data: { ...prev.data, projectId }
-    }));
+  const start = useCallback(
+    async (projectId: string, file: File, config?: WorkflowConfig) => {
+      updateStatus('running');
+      setState((prev) => ({
+        ...prev,
+        data: { ...prev.data, projectId },
+      }));
 
-    if (config?.autoAnalyze) {
-      await analyze();
-    }
-    if (config?.autoGenerateScript && config?.preferredTemplate) {
+      if (config?.autoAnalyze) {
+        await analyze();
+      }
+      if (config?.autoGenerateScript && config?.preferredTemplate) {
+        updateStep('script-generate');
+      }
+    },
+    [updateStep, updateStatus, analyze]
+  );
+
+  const selectTemplate = useCallback(
+    (_template: ScriptTemplate) => {
+      setState((prev) => ({
+        ...prev,
+        data: { ...prev.data, script: prev.data.script },
+      }));
+      updateStep('template-select');
+    },
+    [updateStep]
+  );
+
+  const generateScript = useCallback(
+    async (_model: AIModel, _params: unknown) => {
       updateStep('script-generate');
-    }
-  }, [updateStep, updateStatus, analyze]);
-
-  const selectTemplate = useCallback((_template: ScriptTemplate) => {
-    setState(prev => ({
-      ...prev,
-      data: { ...prev.data, script: prev.data.script }
-    }));
-    updateStep('template-select');
-  }, [updateStep]);
-
-  const generateScript = useCallback(async (_model: AIModel, _params: unknown) => {
-    updateStep('script-generate');
-    setState(prev => ({ ...prev, progress: 40 }));
-  }, [updateStep]);
+      setState((prev) => ({ ...prev, progress: 40 }));
+    },
+    [updateStep]
+  );
 
   const dedupScript = useCallback(async () => {
     updateStep('script-dedup');
-    setState(prev => ({ ...prev, progress: 50 }));
+    setState((prev) => ({ ...prev, progress: 50 }));
   }, [updateStep]);
 
   const ensureUniqueness = useCallback(async (_content: string) => {
@@ -148,34 +165,40 @@ export function useWorkflow(callbacks?: WorkflowCallbacks): UseWorkflowReturn {
     return {
       isUnique: true,
       duplicates: [],
-      suggestions: []
+      suggestions: [],
     };
   }, []);
 
-  const editScript = useCallback((content: string) => {
-    updateStep('script-edit');
-    setState(prev => ({
-      ...prev,
-      data: { ...prev.data, script: { content } }
-    }));
-  }, [updateStep]);
+  const editScript = useCallback(
+    (content: string) => {
+      updateStep('script-edit');
+      setState((prev) => ({
+        ...prev,
+        data: { ...prev.data, script: { content } },
+      }));
+    },
+    [updateStep]
+  );
 
-  const editTimeline = useCallback((timeline: unknown) => {
-    updateStep('timeline-edit');
-    setState(prev => ({
-      ...prev,
-      data: { ...prev.data, timeline }
-    }));
-  }, [updateStep]);
+  const editTimeline = useCallback(
+    (timeline: unknown) => {
+      updateStep('timeline-edit');
+      setState((prev) => ({
+        ...prev,
+        data: { ...prev.data, timeline },
+      }));
+    },
+    [updateStep]
+  );
 
   const preview = useCallback(async () => {
     updateStep('preview');
-    setState(prev => ({ ...prev, progress: 80 }));
+    setState((prev) => ({ ...prev, progress: 80 }));
   }, [updateStep]);
 
   const exportFn = useCallback(async () => {
     updateStep('export');
-    setState(prev => ({ ...prev, progress: 100, status: 'completed' }));
+    setState((prev) => ({ ...prev, progress: 100, status: 'completed' }));
     callbacks?.onComplete?.();
   }, [updateStep, callbacks]);
 
@@ -189,7 +212,7 @@ export function useWorkflow(callbacks?: WorkflowCallbacks): UseWorkflowReturn {
 
   const cancel = useCallback(() => {
     updateStatus('idle');
-    setState(prev => ({ ...prev, progress: 0 }));
+    setState((prev) => ({ ...prev, progress: 0 }));
   }, [updateStatus]);
 
   const reset = useCallback(() => {
@@ -197,13 +220,16 @@ export function useWorkflow(callbacks?: WorkflowCallbacks): UseWorkflowReturn {
       step: 'upload',
       status: 'idle',
       progress: 0,
-      data: {}
+      data: {},
     });
   }, []);
 
-  const jumpToStep = useCallback((step: WorkflowStep) => {
-    updateStep(step);
-  }, [updateStep]);
+  const jumpToStep = useCallback(
+    (step: WorkflowStep) => {
+      updateStep(step);
+    },
+    [updateStep]
+  );
 
   return {
     state,
@@ -229,6 +255,6 @@ export function useWorkflow(callbacks?: WorkflowCallbacks): UseWorkflowReturn {
     resume,
     cancel,
     reset,
-    jumpToStep
+    jumpToStep,
   };
 }

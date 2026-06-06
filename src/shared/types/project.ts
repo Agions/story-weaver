@@ -3,12 +3,13 @@
  * Extracted from src/shared/types/index.ts
  */
 
-import type { Script } from './script';
-import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
-import type { Character } from './novel';
-import type { CompositionProject } from './composition';
-import type { AudioTrackConfig } from '@/features/audio/components/AudioEditor';
 import type { EvaluationScores } from '@/core/services';
+import type { AudioTrackConfig } from '@/features/audio/components/AudioEditor';
+import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
+
+import type { CompositionProject } from './composition';
+import type { Character } from './novel';
+import type { Script } from './script';
 
 export interface ProjectData {
   id: string;
@@ -16,7 +17,19 @@ export interface ProjectData {
   description?: string;
   status?: 'draft' | 'processing' | 'completed' | 'failed';
   content?: string;
-  videos?: { id: string; path?: string; name: string; duration?: number; width?: number; height?: number; fps?: number; format?: string; size?: number; thumbnail?: string; createdAt?: string }[];
+  videos?: {
+    id: string;
+    path?: string;
+    name: string;
+    duration?: number;
+    width?: number;
+    height?: number;
+    fps?: number;
+    format?: string;
+    size?: number;
+    thumbnail?: string;
+    createdAt?: string;
+  }[];
   scripts?: Script[];
   settings?: ProjectSettings;
   createdAt: string;
@@ -61,4 +74,42 @@ export interface ProjectSettings {
 }
 
 // Pipeline step tracking
-export type PipelineStep = 'import' | 'analysis' | 'script' | 'character' | 'storyboard' | 'render' | 'video_editing' | 'export';
+export type PipelineStep =
+  | 'import'
+  | 'analysis'
+  | 'script'
+  | 'character'
+  | 'storyboard'
+  | 'render'
+  | 'video_editing'
+  | 'export';
+
+/**
+ * Task status (used by hooks/stores; previously lived in @/core/types).
+ */
+export type TaskStatus = {
+  id: string;
+  type: string;
+  status: 'pending' | 'running' | 'completed' | 'failed';
+  progress: number;
+  message?: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+/**
+ * User preferences bag (used by user.store; previously @/core/types).
+ */
+export interface UserPreferences {
+  [key: string]: unknown;
+}
+
+/**
+ * Script generation template (used by useWorkflow; previously @/core/types).
+ */
+export interface ScriptTemplate {
+  id: string;
+  name: string;
+  description?: string;
+  content?: string;
+}

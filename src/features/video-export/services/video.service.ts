@@ -5,8 +5,8 @@
 
 import { v4 as uuidv4 } from 'uuid';
 
-import type { VideoInfo, VideoAnalysis, Scene, Keyframe } from '@/core/types';
 import { logger } from '@/core/utils/logger';
+import type { VideoInfo, VideoAnalysis, Scene, Keyframe } from '@/shared/types';
 import { formatFileSize, delay, PROCESSING_DELAY_MS } from '@/shared/utils';
 
 // FFmpeg Command Builder

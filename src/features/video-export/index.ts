@@ -10,12 +10,7 @@ export { videoCompositorService } from './services/video-compositor.service';
 export { reviewExportService } from './services/review-export.service';
 export { getTauriService } from './services/tauri.service';
 
-export type {
-  VideoInfo,
-  VideoAnalysis,
-  Scene,
-  Keyframe,
-} from '@/core/types';
+export type { VideoInfo, VideoAnalysis, Scene, Keyframe } from '@/shared/types';
 
 export type {
   Scene as ExportScene,

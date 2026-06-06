@@ -7,9 +7,9 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { scriptImportService, tauriService } from '@/core/services';
-import type { ScriptChapter, ScriptSource, ScriptValidationResult } from '@/core/types';
 import { logger } from '@/core/utils/logger';
 import { Loading } from '@/shared/components/ui';
+import type { ScriptChapter, ScriptSource, ScriptValidationResult } from '@/shared/types';
 
 import styles from './NovelImporter.module.less';
 

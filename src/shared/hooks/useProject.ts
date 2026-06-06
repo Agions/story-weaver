@@ -8,11 +8,17 @@ import { useNavigate } from 'react-router-dom';
 
 import { tauriService } from '@/core/services';
 import type { EvaluationScores } from '@/core/services';
-import type { StoryAnalysis, StoryboardFrame, Character, CompositionProject , ExportSettings } from '@/core/types';
 import { logger } from '@/core/utils/logger';
 import type { AudioTrackConfig } from '@/features/audio/components/AudioEditor';
 import type { NovelMetadata } from '@/features/script/components/NovelImporter';
 import { toast } from '@/shared/components/ui/Toast';
+import type {
+  StoryAnalysis,
+  StoryboardFrame,
+  Character,
+  CompositionProject,
+  ExportSettings,
+} from '@/shared/types';
 
 export interface ProjectData {
   id: string;
@@ -63,7 +69,7 @@ export function useProject(_projectId?: string): UseProjectReturn {
       const projectText = await tauriService.readText(id);
       const projectData = JSON.parse(projectText) as ProjectData;
       setProject(projectData);
-      
+
       // 根据数据恢复 step
       if (projectData.script) setCurrentStep(2);
       else if (projectData.content) setCurrentStep(1);
@@ -85,10 +91,7 @@ export function useProject(_projectId?: string): UseProjectReturn {
         ...project,
         updatedAt: new Date().toISOString(),
       };
-      await tauriService.writeText(
-        project.id,
-        JSON.stringify(updatedProject, null, 2)
-      );
+      await tauriService.writeText(project.id, JSON.stringify(updatedProject, null, 2));
       setProject(updatedProject);
       toast.success('项目已保存');
     } catch (err) {
@@ -101,7 +104,7 @@ export function useProject(_projectId?: string): UseProjectReturn {
 
   // 更新项目数据
   const updateProject = useCallback((data: Partial<ProjectData>) => {
-    setProject(prev => prev ? { ...prev, ...data } : null);
+    setProject((prev) => (prev ? { ...prev, ...data } : null));
   }, []);
 
   // 重置项目
@@ -116,7 +119,6 @@ export function useProject(_projectId?: string): UseProjectReturn {
     if (_projectId) {
       loadProject(_projectId);
     }
-    
   }, [_projectId, loadProject]);
 
   return {

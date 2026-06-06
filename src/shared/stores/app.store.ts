@@ -5,7 +5,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import type { AIModel } from '@/core/types';
+import type { AIModel } from '@/shared/types';
 
 export interface AppState {
   // UI 状态

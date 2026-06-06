@@ -217,7 +217,7 @@ export type {
 export type {
   NovelChapter,
   ScriptScene,
-  Script,
+  NovelScript,
   NovelParseResult,
   Storyboard,
 } from './ai/text/novel.service';
@@ -228,4 +228,4 @@ export type {
   TTSRequest,
   TTSResponse,
   TTSStreamChunk,
-} from '@/core/types';
+} from '@/shared/types';

@@ -36,8 +36,8 @@ import {
 } from '@/components/ui/ui-components';
 import { useModel, useModelCost } from '@/core/hooks/useModel';
 import { useProject } from '@/core/hooks/useProject';
-import type { ScriptData, ScriptSegment } from '@/core/types';
 import ModelSelector from '@/features/ai/components/ModelSelector';
+import type { Script, ScriptSegment } from '@/shared/types';
 import { delay } from '@/shared/utils';
 
 import styles from './ScriptGenerator.module.less';
@@ -93,8 +93,8 @@ type ScriptFormValues = {
 interface ScriptGeneratorProps {
   projectId?: string;
   videoDuration?: number;
-  onGenerate?: (script: ScriptData) => void;
-  onSave?: (script: ScriptData) => void;
+  onGenerate?: (script: Script) => void;
+  onSave?: (script: Script) => void;
 }
 
 export function ScriptGenerator({
@@ -133,7 +133,7 @@ export function ScriptGenerator({
   });
   const [isGenerating, setIsGenerating] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [generatedScript, setGeneratedScript] = useState<ScriptData | null>(null);
+  const [generatedScript, setGeneratedScript] = useState<Script | null>(null);
   const [showModelSelector, setShowModelSelector] = useState(false);
 
   // 估算成本
@@ -178,7 +178,7 @@ export function ScriptGenerator({
         }
 
         // 生成模拟脚本
-        const script: ScriptData = {
+        const script: Script = {
           id: `script_${Date.now()}`,
           title: formData.topic || '生成的脚本',
           content: generateMockScript(formData),

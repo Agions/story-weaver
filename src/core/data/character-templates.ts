@@ -8,8 +8,8 @@ import type {
   CharacterAppearance,
   ClothingItem,
   CharacterExpression,
-} from '@/core/types';
-import type { CharacterConsistency } from '@/shared/types';
+  CharacterConsistency,
+} from '@/shared/types';
 
 // 基础模板类型
 export interface CharacterTemplate {

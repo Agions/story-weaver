@@ -16,7 +16,7 @@ import type {
   Keyframe,
   ObjectDetection,
   EmotionAnalysis,
-} from '@/core/types';
+} from '@/shared/types';
 
 // Mock uuid
 jest.mock('uuid', () => ({

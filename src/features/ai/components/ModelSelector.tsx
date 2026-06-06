@@ -18,7 +18,7 @@ import { Tooltip } from '@/components/ui/tooltip';
 import { MODEL_PROVIDERS } from '@/core/config/models.config';
 import { LLM_MODELS, type LLMModelConfig } from '@/core/constants';
 import { useModel, useModelCost, useRecommendedModel } from '@/core/hooks/useModel';
-import type { ModelCategory, ModelProvider } from '@/core/types';
+import type { ModelCategory, ModelProvider } from '@/shared/types';
 
 import styles from './ModelSelector.module.less';
 

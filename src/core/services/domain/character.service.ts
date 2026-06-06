@@ -11,9 +11,8 @@ import {
   getTemplatesByCategory,
   type CharacterTemplate,
 } from '@/core/data/character-templates';
-import type { Character, CharacterAppearance } from '@/core/types';
 import { logger } from '@/core/utils/logger';
-import type { CharacterConsistency } from '@/shared/types';
+import type { Character, CharacterAppearance, CharacterConsistency } from '@/shared/types';
 
 // 本地存储键
 const CHARACTER_STORAGE_KEY = 'man ga-characters';

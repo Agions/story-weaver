@@ -13,7 +13,7 @@ import {
   getRecommendedModels,
 } from '@/core/config/models.config';
 import { secureStorage } from '@/core/services/secure-storage.service';
-import type { AIModel, ModelProvider, ModelCategory, AIModelSettings } from '@/core/types';
+import type { AIModel, ModelProvider, ModelCategory, AIModelSettings } from '@/shared/types';
 
 export interface UseModelReturn {
   // 模型列表

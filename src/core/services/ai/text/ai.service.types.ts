@@ -3,18 +3,16 @@
  * Re-exports shared AI types used across the application
  */
 
-import type {
+// Re-export from shared/types (canonical source of truth)
+export type {
   AIModel,
   AIModelSettings,
-  ScriptData,
+  Script,
   VideoAnalysis,
   ScriptSegment,
   Scene,
   Keyframe,
-} from '@/core/types';
-
-// Re-export from core/types for convenience
-export type { AIModel, AIModelSettings, ScriptData, VideoAnalysis, ScriptSegment, Scene, Keyframe };
+} from '@/shared/types';
 
 // API 响应类型
 export interface AIResponse {

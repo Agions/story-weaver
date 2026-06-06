@@ -2,8 +2,8 @@
  * Project Store 测试
  */
 
-import type { ProjectData } from '@/core/types';
 import { useProjectStore } from '@/shared/stores';
+import type { ProjectData } from '@/shared/types';
 
 // 模拟 storage service
 jest.mock('@/shared/services/storage', () => ({

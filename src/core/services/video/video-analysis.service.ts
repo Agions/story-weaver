@@ -6,6 +6,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { aiService } from '@/core/services/ai/text/ai.service';
+import { logger } from '@/core/utils/logger';
 import type {
   VideoInfo,
   VideoAnalysis,
@@ -13,8 +14,7 @@ import type {
   Keyframe,
   ObjectDetection,
   EmotionAnalysis,
-} from '@/core/types';
-import { logger } from '@/core/utils/logger';
+} from '@/shared/types';
 import { formatTime } from '@/shared/utils';
 
 // 分析配置

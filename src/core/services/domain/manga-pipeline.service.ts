@@ -23,7 +23,7 @@ import {
   type CompositionOptions,
 } from '@/core/services/video/ffmpeg-wasm.service';
 import { composeVideo, addSubtitles } from '@/core/services/video/video-compositor.service';
-import type { TTSConfig } from '@/core/types';
+import type { TTSConfig } from '@/shared/types';
 
 // ========== 类型定义 ==========
 

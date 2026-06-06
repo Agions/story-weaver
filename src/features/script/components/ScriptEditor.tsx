@@ -21,8 +21,8 @@ import {
 } from '@/components/ui/select';
 import { toast } from '@/components/ui/sonner';
 import { tauriService } from '@/core/services';
-import type { ScriptData, ScriptMetadata } from '@/core/types';
 import { logger } from '@/core/utils/logger';
+import type { Script, ScriptMetadata } from '@/shared/types';
 import { formatDurationShort } from '@/shared/utils';
 
 import styles from './ScriptEditor.module.less';
@@ -44,9 +44,9 @@ interface ScriptEditorProps {
   onSave?: (segments: VideoSegment[]) => void;
   onExport?: (format: string) => void;
   // 新接口 (来自 VideoStudio)
-  script?: ScriptData;
+  script?: Script;
   metadata?: ScriptMetadata;
-  onScriptUpdate?: (updatedScript: ScriptData) => void;
+  onScriptUpdate?: (updatedScript: Script) => void;
   // VideoStudio 使用的 segments
   segments?: VideoSegment[];
   onSegmentsChange?: (newSegments: VideoSegment[]) => void;

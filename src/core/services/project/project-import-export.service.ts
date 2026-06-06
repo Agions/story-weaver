@@ -5,7 +5,7 @@
 
 import { v4 as uuidv4 } from 'uuid';
 
-import type { ProjectData } from '@/core/types';
+import type { ProjectData } from '@/shared/types';
 
 // 导出格式
 export type ExportFormat = 'json' | 'zip';

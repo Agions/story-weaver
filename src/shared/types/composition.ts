@@ -47,31 +47,41 @@ export interface CharacterConsistency {
 
 // ========== Camera & Motion Types ==========
 
-export type CameraMotion = 
+export type CameraMotion =
   | 'static'
-  | 'pan-left' | 'pan-right'
-  | 'tilt-up' | 'tilt-down'
-  | 'dolly-in' | 'dolly-out'
-  | 'zoom-in' | 'zoom-out'
-  | 'shake' | 'sway'
+  | 'pan-left'
+  | 'pan-right'
+  | 'tilt-up'
+  | 'tilt-down'
+  | 'dolly-in'
+  | 'dolly-out'
+  | 'zoom-in'
+  | 'zoom-out'
+  | 'shake'
+  | 'sway'
   | 'follow';
 
-export type TransitionEffect = 
+export type TransitionEffect =
   | 'none'
-  | 'fade' | 'crossfade'
+  | 'fade'
+  | 'crossfade'
   | 'dissolve'
-  | 'wipe-left' | 'wipe-right' | 'wipe-up' | 'wipe-down'
-  | 'slide-left' | 'slide-right'
+  | 'wipe-left'
+  | 'wipe-right'
+  | 'wipe-up'
+  | 'wipe-down'
+  | 'slide-left'
+  | 'slide-right'
   | 'zoom'
   | 'blur';
 
-export type AnimationProperty = 
-  | 'position-x' 
-  | 'position-y' 
-  | 'scale' 
-  | 'rotation' 
-  | 'opacity' 
-  | 'zoom' 
+export type AnimationProperty =
+  | 'position-x'
+  | 'position-y'
+  | 'scale'
+  | 'rotation'
+  | 'opacity'
+  | 'zoom'
   | 'blur'
   | 'brightness'
   | 'contrast'
@@ -140,4 +150,23 @@ export interface CompositionProject {
   };
   createdAt: string;
   updatedAt: string;
+}
+
+/**
+ * Export settings (used by ExportPanel + StepComposition; previously @/core/types).
+ */
+export interface ExportSettings {
+  format: string;
+  resolution: string;
+  frameRate: number;
+  quality: string;
+  filename: string;
+  [key: string]: unknown;
+}
+
+/**
+ * Export record (used by export slice + project store; previously @/core/types).
+ */
+export interface ExportRecord {
+  [key: string]: unknown;
 }

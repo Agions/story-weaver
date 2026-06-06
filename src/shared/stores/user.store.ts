@@ -6,7 +6,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 import { storageService } from '@/core/services';
-import type { AIModelSettings, UserPreferences } from '@/core/types';
+import type { AIModelSettings, UserPreferences } from '@/shared/types';
 
 export interface UserState {
   // 用户信息

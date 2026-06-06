@@ -7,9 +7,9 @@ import React, { lazy } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { StoryboardVersion, VersionDiffSummary } from '@/core/services';
-import type { StoryAnalysis } from '@/core/types';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
 import { toast } from '@/shared/components/ui/Toast';
+import type { StoryAnalysis } from '@/shared/types';
 
 import styles from '../ProjectEdit.module.less';
 

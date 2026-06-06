@@ -13,7 +13,7 @@ import type {
   TransitionConfig,
   TransitionEffect,
   AnimationKeyframe,
-} from '@/core/types';
+} from '@/shared/types';
 import { generatePrefixedId } from '@/shared/utils';
 
 const DEFAULT_TRANSITION: TransitionConfig = {

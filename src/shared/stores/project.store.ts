@@ -6,7 +6,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
-import type { ExportRecord } from '@/core/types';
+import type { ExportRecord } from '@/shared/types';
 import type { ProjectData } from '@/shared/types/project';
 import type { Script } from '@/shared/types/script';
 import type { VideoInfo } from '@/shared/types/video';
