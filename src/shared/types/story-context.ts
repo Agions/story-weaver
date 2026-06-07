@@ -20,17 +20,11 @@ import { logger } from '@/core/utils/logger';
 export type StoryContextWorkflowId = string;
 export type StoryContextProjectId = string | undefined;
 
-export interface StoryboardFrame {
-  id: string;
-  sceneId: string;
-  shotNumber: number;
-  shotType: 'ECU' | 'CU' | 'MCU' | 'MS' | 'WS' | 'EWS';
-  cameraAngle: string;
-  lighting: string;
-  description: string;
-  prompt: string;
-  duration: number;
-}
+// Re-export canonical StoryboardFrame from the editor module so all
+// `@/shared/types` consumers (and downstream) see the same shape.
+// Source of truth: @/features/storyboard/components/StoryboardEditor
+import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
+export type { StoryboardFrame };
 
 export interface RenderedFrame {
   frameId: string;

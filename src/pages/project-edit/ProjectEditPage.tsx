@@ -36,7 +36,6 @@ import type {
   StoryboardVersion,
   VersionDiffSummary,
 } from '@/core/services';
-import type { ExportSettings, StoryAnalysis, Character, CompositionProject } from '@/core/types';
 import { runWhenIdle } from '@/core/utils/idle';
 import { logger } from '@/core/utils/logger';
 import type { AudioTrackConfig } from '@/features/audio/components/AudioEditor';
@@ -44,6 +43,7 @@ import type { NovelMetadata } from '@/features/script/components/NovelImporter';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
 import CostDashboard from '@/shared/components/business/CostDashboard';
 import { toast } from '@/shared/components/ui/Toast';
+import type { ExportSettings, StoryAnalysis, Character, CompositionProject } from '@/shared/types';
 
 import {
   StepImport,

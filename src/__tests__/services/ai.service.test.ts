@@ -3,7 +3,7 @@
  */
 
 import { aiService } from '@/core/services/ai.service';
-import type { AIModel, AIModelSettings } from '@/core/types';
+import type { AIModel, AIModelSettings } from '@/shared/types';
 
 // Mock 配置
 const mockModel: AIModel = {
@@ -91,12 +91,7 @@ describe('AI Service', () => {
   describe('translateScript', () => {
     it('应该翻译脚本', async () => {
       const script = '这是原始脚本';
-      const result = await aiService.translateScript(
-        mockModel,
-        mockSettings,
-        script,
-        'English'
-      );
+      const result = await aiService.translateScript(mockModel, mockSettings, script, 'English');
 
       expect(typeof result).toBe('string');
     });
@@ -132,7 +127,7 @@ describe('AI Service', () => {
       });
 
       expect(results).toHaveLength(3);
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(typeof result).toBe('string');
       });
     });
@@ -167,7 +162,7 @@ describe('AI Service', () => {
   describe('Model Info & Listings', () => {
     it('getAllModels should return all models', () => {
       const models = aiService.getAllModels();
-      
+
       expect(Array.isArray(models)).toBe(true);
       expect(models.length).toBeGreaterThan(0);
     });
@@ -177,7 +172,7 @@ describe('AI Service', () => {
       if (allModels.length > 0) {
         const modelId = allModels[0].modelId;
         const info = aiService.getModelInfo(modelId);
-        
+
         expect(info).not.toBeNull();
         expect(info?.modelId).toBe(modelId);
       }
@@ -185,17 +180,17 @@ describe('AI Service', () => {
 
     it('getModelInfo should return null for invalid id', () => {
       const info = aiService.getModelInfo('nonexistent-model-id');
-      
+
       expect(info).toBeNull();
     });
 
     it('getDomesticModels should return only domestic models', () => {
       const domesticModels = aiService.getDomesticModels();
-      
+
       expect(Array.isArray(domesticModels)).toBe(true);
       expect(domesticModels.length).toBeGreaterThan(0);
       // Domestic models should be from Chinese providers
-      domesticModels.forEach(m => {
+      domesticModels.forEach((m) => {
         expect(['baidu', 'alibaba', 'moonshot', 'zhipu', 'minimax']).toContain(m.provider);
       });
     });
@@ -205,7 +200,7 @@ describe('AI Service', () => {
     it('should toggle mock mode', () => {
       aiService.setMockMode(true);
       expect(aiService.isMockMode()).toBe(true);
-      
+
       aiService.setMockMode(false);
       expect(aiService.isMockMode()).toBe(false);
     });

@@ -8,8 +8,8 @@ import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { toast } from '@/components/ui/sonner';
 import { Tooltip } from '@/components/ui/tooltip';
-import type { ScriptData } from '@/core/types';
 import { logger } from '@/core/utils/logger';
+import type { Script } from '@/shared/types';
 
 import styles from './ExportPanel.module.less';
 
@@ -21,7 +21,7 @@ import styles from './ExportPanel.module.less';
  * @param format 导出格式 (txt|srt|pdf|html)
  * @param filename 文件名（不含扩展名）
  */
-const exportScript = async (script: ScriptData, format: ExportFormat, filename: string) => {
+const exportScript = async (script: Script, format: ExportFormat, filename: string) => {
   const content = generateScriptContent(script, format);
   const mimeType = getMimeType(format);
   const extension = format;
@@ -34,7 +34,7 @@ const exportScript = async (script: ScriptData, format: ExportFormat, filename: 
 /**
  * 根据格式生成脚本内容
  */
-const generateScriptContent = (script: ScriptData, format: ExportFormat): string => {
+const generateScriptContent = (script: Script, format: ExportFormat): string => {
   switch (format) {
     case 'txt':
       return generateTxtContent(script);
@@ -52,7 +52,7 @@ const generateScriptContent = (script: ScriptData, format: ExportFormat): string
 /**
  * 生成纯文本格式
  */
-const generateTxtContent = (script: ScriptData): string => {
+const generateTxtContent = (script: Script): string => {
   const lines: string[] = [];
   lines.push(`# ${script.title || '脚本'}\n`);
   lines.push(`创建时间: ${new Date().toLocaleString()}\n`);
@@ -78,7 +78,7 @@ const generateTxtContent = (script: ScriptData): string => {
 /**
  * 生成 SRT 字幕格式
  */
-const generateSrtContent = (script: ScriptData): string => {
+const generateSrtContent = (script: Script): string => {
   const subtitles: string[] = [];
   let index = 1;
 
@@ -116,14 +116,14 @@ const formatSrtTime = (seconds: number): string => {
  * 生成 PDF 文本（jsPDF 需要单独处理）
  * 注意：此函数返回文本，实际 PDF 生成在 exportScript 中调用 jsPDF
  */
-const generatePdfText = (script: ScriptData): string => {
+const generatePdfText = (script: Script): string => {
   return generateTxtContent(script);
 };
 
 /**
  * 生成 HTML 格式
  */
-const generateHtmlContent = (script: ScriptData): string => {
+const generateHtmlContent = (script: Script): string => {
   const html = `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -207,7 +207,7 @@ const _getFormatIcon = (format: ExportFormat) => {
 type ExportFormat = 'txt' | 'srt' | 'pdf' | 'html';
 
 interface ExportPanelProps {
-  script: ScriptData;
+  script: Script;
 }
 
 function ExportPanel({ script }: ExportPanelProps) {

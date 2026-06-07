@@ -6,7 +6,7 @@
 import { renderHook, act } from '@testing-library/react';
 
 import { useWorkflow } from '@/core/hooks/useWorkflow';
-import type { ScriptTemplate, AIModel } from '@/core/types';
+import type { ScriptTemplate, AIModel } from '@/shared/types';
 
 // Mock UUID
 jest.mock('uuid', () => ({
@@ -514,7 +514,17 @@ describe('useWorkflow Hook', () => {
 
     it('应该能够跳转到任意有效步骤', () => {
       const { result } = renderHook(() => useWorkflow());
-      const steps: Array<'upload' | 'analyze' | 'template-select' | 'script-generate' | 'script-dedup' | 'script-edit' | 'timeline-edit' | 'preview' | 'export'> = [
+      const steps: Array<
+        | 'upload'
+        | 'analyze'
+        | 'template-select'
+        | 'script-generate'
+        | 'script-dedup'
+        | 'script-edit'
+        | 'timeline-edit'
+        | 'preview'
+        | 'export'
+      > = [
         'upload',
         'analyze',
         'template-select',
@@ -564,9 +574,7 @@ describe('useWorkflow Hook', () => {
     it('应该能够完成完整的工作流程', async () => {
       const onStepChange = jest.fn();
       const onComplete = jest.fn();
-      const { result } = renderHook(() =>
-        useWorkflow({ onStepChange, onComplete })
-      );
+      const { result } = renderHook(() => useWorkflow({ onStepChange, onComplete }));
 
       const file = createMockFile();
       const template = createMockTemplate();

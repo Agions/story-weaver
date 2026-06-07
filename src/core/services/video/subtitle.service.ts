@@ -6,8 +6,8 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { aiService } from '@/core/services/ai/text/ai.service';
-import type { ScriptSegment } from '@/core/types';
 import { logger } from '@/core/utils/logger';
+import type { ScriptSegment } from '@/shared/types';
 import { formatTime } from '@/shared/utils';
 
 // 字幕格式类型

@@ -35,7 +35,7 @@ export interface ScriptScene {
 }
 
 // 剧本
-export interface Script {
+export interface NovelScript {
   id: string;
   title: string;
   source: 'novel' | 'original';
@@ -270,7 +270,7 @@ ${chapter.content.slice(0, 5000)}${chapter.content.length > 5000 ? '...' : ''}
       provider?: string;
       model?: string;
     } = {}
-  ): Promise<Script> {
+  ): Promise<NovelScript> {
     const {
       chaptersToUse = 5,
       scenesPerChapter = 3,
@@ -305,7 +305,7 @@ ${chapter.content.slice(0, 5000)}${chapter.content.length > 5000 ? '...' : ''}
 
     const totalDuration = allScenes.reduce((sum, s) => sum + s.duration, 0);
 
-    const script: Script = {
+    const script: NovelScript = {
       id: `script_${Date.now()}`,
       title: `${novelResult.title} (改编)`,
       source: 'novel',
@@ -490,7 +490,7 @@ ${shotTypeMap[shotType] || shotType}，${angleMap[angle] || angle}，
   /**
    * 导出剧本
    */
-  exportScript(script: Script, format: 'json' | 'pdf' | 'docx'): string {
+  exportScript(script: NovelScript, format: 'json' | 'pdf' | 'docx'): string {
     switch (format) {
       case 'json':
         return JSON.stringify(script, null, 2);
@@ -508,7 +508,7 @@ ${shotTypeMap[shotType] || shotType}，${angleMap[angle] || angle}，
   /**
    * 生成剧本文本
    */
-  private generateScriptText(script: Script): string {
+  private generateScriptText(script: NovelScript): string {
     const lines: string[] = [
       `《${script.title}》`,
       `改编剧本`,

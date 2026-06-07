@@ -5,6 +5,7 @@
 
 import { v4 as uuidv4 } from 'uuid';
 
+import { logger } from '@/core/utils/logger';
 import type {
   CompositionProject,
   FrameAnimation,
@@ -12,8 +13,7 @@ import type {
   StoryboardFrame,
   CameraMotion,
   AnimationProperty,
-} from '@/core/types';
-import { logger } from '@/core/utils/logger';
+} from '@/shared/types';
 
 // 本地存储键
 const COMPOSITION_STORAGE_KEY = 'frame-fab-compositions';

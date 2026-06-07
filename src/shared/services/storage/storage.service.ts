@@ -3,8 +3,8 @@
  * 统一的本地存储管理
  */
 
-import type { ProjectData, UserPreferences } from '@/core/types';
 import type { AppState } from '@/shared/stores/app.store';
+import type { ProjectData, UserPreferences } from '@/shared/types';
 
 // 存储键名
 const STORAGE_KEYS = {

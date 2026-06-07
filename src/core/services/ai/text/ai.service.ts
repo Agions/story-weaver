@@ -20,24 +20,26 @@ export type {
   MockConfig,
   AIModel,
   AIModelSettings,
-  ScriptData,
   VideoAnalysis,
   ScriptSegment,
   Scene,
   Keyframe,
 } from '@/core/services/ai/text/ai.service.types';
+// Note: do NOT re-import Script here to avoid `export *` duplicate-export
+// ambiguity in src/core/services/ai/text/index.ts. Script is already
+// re-exported via ai.service.types.
 import type {
+  AIResponse,
   AIModel,
   AIModelSettings,
-  ScriptData,
   VideoAnalysis,
   ScriptSegment,
   Scene,
   Keyframe,
-  AIResponse,
   RequestConfig,
   MockConfig,
 } from '@/core/services/ai/text/ai.service.types';
+import type { Script } from '@/shared/types';
 
 class AIService {
   // Mock 配置（由 mockStrategy 管理）
@@ -127,7 +129,7 @@ class AIService {
       requirements?: string;
       videoDuration?: number;
     }
-  ): Promise<ScriptData> {
+  ): Promise<Script> {
     const prompt = promptBuilderService.buildScriptPrompt(params);
 
     try {

@@ -5,7 +5,7 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 
-import type { CompositionProject } from '@/core/types';
+import type { CompositionProject } from '@/shared/types';
 
 interface UseCompositionPlaybackOptions {
   frameCount: number;

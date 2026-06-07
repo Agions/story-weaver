@@ -2,7 +2,7 @@
  * video.slice.ts — 视频操作切片
  */
 
-import type { VideoInfo } from '@/core/types';
+import type { VideoInfo } from '@/shared/types';
 
 type SetState = (...args: any[]) => void;
 type GetState = () => any;

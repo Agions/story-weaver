@@ -46,7 +46,7 @@ import type {
   TransitionConfig,
   TransitionEffect,
   AnimationKeyframe,
-} from '@/core/types';
+} from '@/shared/types';
 import { generatePrefixedId } from '@/shared/utils';
 
 import FrameEditForm from './FrameEditForm';
