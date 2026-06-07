@@ -13,7 +13,7 @@ import { Slider } from '@/shared/components/ui/slider';
 import { Space } from '@/shared/components/ui/space';
 import { Tag } from '@/shared/components/ui/tag';
 import { formatTime } from '@/shared/utils';
-import { PRESET_BGM_LIST } from '@frame-fab/common/constants';
+import { PRESET_BGM_LIST } from '@/shared/constants/media-presets';
 
 import type { BackgroundMusic } from '../types/audio.entities';
 

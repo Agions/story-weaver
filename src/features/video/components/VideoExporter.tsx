@@ -28,7 +28,7 @@ import {
   type Resolution,
   type FrameRate,
   type QualityPreset,
-} from '@frame-fab/common/constants';
+} from '@/shared/constants/media-presets';
 
 export type { ExportFormat, Resolution, FrameRate, QualityPreset };
 

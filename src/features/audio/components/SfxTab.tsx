@@ -11,7 +11,7 @@ import { message } from '@/shared/components/ui/message';
 import { Slider } from '@/shared/components/ui/slider';
 import { Space } from '@/shared/components/ui/space';
 import { Tag } from '@/shared/components/ui/tag';
-import { PRESET_SFX_LIST } from '@frame-fab/common/constants';
+import { PRESET_SFX_LIST } from '@/shared/constants/media-presets';
 
 import type { SoundEffect } from '../types/audio.entities';
 
