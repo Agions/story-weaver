@@ -16,6 +16,7 @@ import React from 'react';
 
 import { Button } from '@/shared/components/ui/button';
 import { Progress } from '@/shared/components/ui/progress';
+import { theme } from '@/styles/theme';
 import { Separator } from '@/shared/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/shared/components/ui/tooltip';
 
@@ -37,7 +38,7 @@ const aiFeatures = [
     title: '智能剪辑',
     description: 'AI 自动识别精彩片段',
     tag: 'AI',
-    tagColor: '#6366f1',
+    tagColor: theme.colors.primary,
   },
   {
     key: 'smartDub',
@@ -45,7 +46,7 @@ const aiFeatures = [
     title: '智能配音',
     description: '文字转语音，情感合成',
     tag: 'AI',
-    tagColor: '#ec4899',
+    tagColor: theme.colors.secondary,
   },
   {
     key: 'subtitle',
@@ -53,7 +54,7 @@ const aiFeatures = [
     title: '字幕生成',
     description: '语音识别自动生成字幕',
     tag: 'AI',
-    tagColor: '#14b8a6',
+    tagColor: theme.colors.accent,
   },
   {
     key: 'autoHighlight',
@@ -61,7 +62,7 @@ const aiFeatures = [
     title: '精彩时刻',
     description: '自动识别高能片段',
     tag: 'AI',
-    tagColor: '#f59e0b',
+    tagColor: theme.colors.warning,
   },
   {
     key: 'storyline',
@@ -69,7 +70,7 @@ const aiFeatures = [
     title: '故事线',
     description: 'AI 生成视频叙事结构',
     tag: 'Beta',
-    tagColor: '#8b5cf6',
+    tagColor: '#8b5cf6', // TODO: add theme token
   },
   {
     key: 'bRoll',
@@ -77,7 +78,7 @@ const aiFeatures = [
     title: 'B-Roll',
     description: '智能推荐辅助镜头',
     tag: 'AI',
-    tagColor: '#10b981',
+    tagColor: theme.colors.success,
   },
   {
     key: 'background',
@@ -85,7 +86,7 @@ const aiFeatures = [
     title: '背景音乐',
     description: '智能匹配背景音乐',
     tag: 'AI',
-    tagColor: '#3b82f6',
+    tagColor: theme.colors.info,
   },
   {
     key: 'colorGrade',
@@ -93,7 +94,7 @@ const aiFeatures = [
     title: '智能调色',
     description: '一键电影级调色',
     tag: 'AI',
-    tagColor: '#ef4444',
+    tagColor: theme.colors.error,
   },
 ];
 
@@ -105,11 +106,11 @@ function AIFeaturePanel({
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'processing':
-        return <Zap size={14} className={styles.spinIcon} style={{ color: '#3b82f6' }} />;
+        return <Zap size={14} className={styles.spinIcon} style={{ color: theme.colors.info }} />;
       case 'completed':
-        return <CheckCircle size={14} style={{ color: '#10b981' }} />;
+        return <CheckCircle size={14} style={{ color: theme.colors.success }} />;
       case 'error':
-        return <Clock size={14} style={{ color: '#ef4444' }} />;
+        return <Clock size={14} style={{ color: theme.colors.error }} />;
       default:
         return null;
     }

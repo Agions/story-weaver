@@ -7,6 +7,7 @@
  */
 
 import { Upload, FileText, PlayCircle, Settings, Zap, Download, Image } from 'lucide-react';
+import { theme } from '@/styles/theme';
 
 import type { StepSetting, WorkflowStep } from './workflow-config.types';
 import {
@@ -28,35 +29,35 @@ export const WORKFLOW_STEPS: WorkflowStep[] = [
     key: 'import',
     title: '📥 导入',
     icon: <Upload />,
-    color: '#6366f1',
+    color: theme.colors.primary,
     description: '上传小说/漫画素材',
   },
   {
     key: 'generate',
     title: '🤖 生成',
     icon: <Zap />,
-    color: '#8b5cf6',
+    color: '#8b5cf6', // violet — no theme token yet
     description: 'AI 智能生成内容',
   },
   {
     key: 'storyboard',
     title: '🎬 分镜',
     icon: <Image />,
-    color: '#ec4899',
+    color: theme.colors.secondary,
     description: 'AI 智能分镜设计',
   },
   {
     key: 'character',
     title: '👤 角色',
     icon: <FileText />,
-    color: '#f59e0b',
+    color: theme.colors.warning,
     description: '角色形象设计',
   },
   {
     key: 'render',
     title: '🎨 渲染',
     icon: <PlayCircle />,
-    color: '#10b981',
+    color: theme.colors.success,
     description: '场景与角色渲染',
   },
 ];

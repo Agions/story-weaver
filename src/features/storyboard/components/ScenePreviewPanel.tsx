@@ -99,7 +99,7 @@ interface ScenePreviewPanelProps {
 function ScenePreviewPanel({ scene, onSceneUpdate, onPropRemove }: ScenePreviewPanelProps) {
   const getAtmosphereColor = (atmosphere: string) => {
     const option = ATMOSPHERE_OPTIONS.find((opt) => opt.value === atmosphere);
-    return option?.color ?? '#1890ff';
+    return option?.color ?? '#1890ff'; // TODO: add theme token
   };
 
   return (
@@ -123,7 +123,7 @@ function ScenePreviewPanel({ scene, onSceneUpdate, onPropRemove }: ScenePreviewP
           <img src={scene.imageUrl} alt={scene.name} />
         ) : (
           <div className={styles.previewPlaceholder}>
-            <MapPin style={{ fontSize: 64, color: '#d9d9d9' }} />
+            <MapPin style={{ fontSize: 64, color: '#d9d9d9' }} /> {/* TODO: add theme token */}
             <Text type="secondary">场景预览区域</Text>
             <div style={{ marginTop: 8, textAlign: 'center' }}>
               <Text type="secondary">

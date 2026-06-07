@@ -1,6 +1,7 @@
 /** 工作流节点模板定义 */
 
 import { generatePrefixedId } from '@/shared/utils';
+import { theme } from '@/styles/theme';
 
 export interface NodeTemplate {
   type: string;
@@ -22,13 +23,13 @@ export interface WorkflowData {
 }
 
 export const CATEGORY_INFO: Record<string, { label: string; color: string }> = {
-  input: { label: '输入', color: '#3b82f6' },
-  output: { label: '输出', color: '#10b981' },
+  input: { label: '输入', color: theme.colors.info },
+  output: { label: '输出', color: theme.colors.success },
   ai: { label: 'AI', color: '#8b5cf6' },
-  video: { label: '视频', color: '#13c2c2' },
-  audio: { label: '音频', color: '#fa8c16' },
+  video: { label: '视频', color: theme.colors.accent },
+  audio: { label: '音频', color: theme.colors.warning },
   logic: { label: '逻辑', color: '#722ed1' },
-  utility: { label: '工具', color: '#8c8c8c' },
+  utility: { label: '工具', color: theme.colors.gray[500] },
 };
 
 /** 节点模板注册表 */

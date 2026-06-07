@@ -16,6 +16,7 @@ import {
 import React, { useState } from 'react';
 
 import { useTheme } from '@/app/providers/ThemeContext';
+import { theme } from '@/styles/theme';
 import { Alert, AlertDescription } from '@/shared/components/ui/alert';
 import { Avatar, AvatarFallback } from '@/shared/components/ui/avatar';
 import { Badge } from '@/shared/components/ui/badge';
@@ -179,7 +180,7 @@ const Settings = () => {
                   <div className="flex items-center gap-4">
                     <div
                       className={styles.statIcon}
-                      style={{ background: '#e0e7ff', color: '#6366f1' }}
+                      style={{ background: theme.colors.primaryLight, color: theme.colors.primary }}
                     >
                       <Zap className="h-5 w-5" />
                     </div>
@@ -193,7 +194,7 @@ const Settings = () => {
                   <div className="flex items-center gap-4">
                     <div
                       className={styles.statIcon}
-                      style={{ background: '#fef3c7', color: '#f59e0b' }}
+                      style={{ background: theme.colors.warningLight, color: theme.colors.warning }}
                     >
                       <Key className="h-5 w-5" />
                     </div>
@@ -207,7 +208,7 @@ const Settings = () => {
                   <div className="flex items-center gap-4">
                     <div
                       className={styles.statIcon}
-                      style={{ background: '#d1fae5', color: '#10b981' }}
+                      style={{ background: theme.colors.successLight, color: theme.colors.success }}
                     >
                       <CheckCircle className="h-5 w-5" />
                     </div>

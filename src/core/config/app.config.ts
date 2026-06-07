@@ -3,6 +3,8 @@
  * 集中管理所有配置项，禁止硬编码
  */
 
+import { theme } from '@/styles/theme';
+
 // 应用信息
 export const APP_CONFIG = Object.freeze({
   name: 'frame-fab',
@@ -89,9 +91,9 @@ export const EXPORT_CONFIG = Object.freeze({
 // 主题配置
 export const THEME_CONFIG = Object.freeze({
   colors: Object.freeze({
-    primary: '#1890ff',
-    success: '#52c41a',
-    warning: '#faad14',
-    error: '#f5222d',
+    primary: theme.colors.primary,
+    success: theme.colors.success,
+    warning: theme.colors.warning,
+    error: theme.colors.error,
   }),
 } as const);

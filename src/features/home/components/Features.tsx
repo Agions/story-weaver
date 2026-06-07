@@ -3,6 +3,7 @@ import React from 'react';
 
 import { useTheme } from '@/app/providers/ThemeContext';
 import { Card, CardContent } from '@/shared/components/ui/card';
+import { theme } from '@/styles/theme';
 
 import styles from './Features.module.less';
 
@@ -19,42 +20,42 @@ const featureList: Feature[] = [
     icon: <Brain className="h-6 w-6" />,
     title: '多模型 AI',
     description: '支持 GLM-5、M2.5、Kimi K2.5 等多种大模型，智能编排工作流',
-    color: '#6366f1',
+    color: theme.colors.primary,
     tag: 'GLM · Kimi · M2.5',
   },
   {
     icon: <Sparkles className="h-6 w-6" />,
     title: '视觉风格',
     description: '分镜支持写实、动漫、水墨等多种视觉风格一键切换',
-    color: '#ec4899',
+    color: theme.colors.secondary,
     tag: '写实 · 动漫 · 水墨',
   },
   {
     icon: <Users className="h-6 w-6" />,
     title: '角色一致性',
     description: '种子机制确保多场景角色外观一致，批量生成统一形象',
-    color: '#14b8a6',
+    color: theme.colors.accent,
     tag: '种子 · 批次',
   },
   {
     icon: <Mic2 className="h-6 w-6" />,
     title: '唇形同步',
     description: 'TTS 语音与视频帧级对齐，支持多语言配音和情感合成',
-    color: '#f59e0b',
+    color: theme.colors.warning,
     tag: 'TTS · 情感',
   },
   {
     icon: <Download className="h-6 w-6" />,
     title: '多格式导出',
     description: 'MP4/WebM/MOV 多格式输出，2K 直出 + 4K 增强模式',
-    color: '#10b981',
+    color: theme.colors.success,
     tag: '2K · 4K',
   },
   {
     icon: <Shield className="h-6 w-6" />,
     title: '本地优先',
     description: '基于 Tauri 构建，原生桌面体验，数据完全本地存储',
-    color: '#8b5cf6',
+    color: '#8b5cf6', // TODO: add theme token
     tag: 'Tauri · 本地',
   },
 ];

@@ -295,7 +295,7 @@ function AIModelSelector({
   };
 
   const getProviderInfo = (provider: ModelProvider) =>
-    providerInfo[provider] || { name: provider, nameCn: provider, icon: '🔹', color: '#666' };
+    providerInfo[provider] || { name: provider, nameCn: provider, icon: '🔹', color: '#666' }; // TODO: add theme token
 
   const renderPricing = (model: AIModel) => {
     if (!model.pricing) return null;
@@ -356,7 +356,7 @@ function AIModelSelector({
                     animate={{ scale: 1 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                   >
-                    <CheckCircle size={20} color="#1677ff" />
+                    <CheckCircle size={20} color="#1677ff" /> {/* TODO: add theme token */}
                   </motion.div>
                 )}
               </div>
@@ -428,7 +428,7 @@ function AIModelSelector({
                   gap: 12,
                   padding: '12px',
                   borderRadius: 8,
-                  border: selectedModelId === model.id ? '1px solid #1677ff' : '1px solid #f0f0f0',
+                  border: selectedModelId === model.id ? '1px solid #1677ff' : '1px solid #f0f0f0', // TODO: add theme tokens
                   cursor: 'pointer',
                   flex: 1,
                 }}

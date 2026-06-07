@@ -88,7 +88,7 @@ function SceneListPanel({
 
   const getAtmosphereColor = (atmosphere: string) => {
     const option = ATMOSPHERE_OPTIONS.find((opt) => opt.value === atmosphere);
-    return option?.color ?? '#1890ff';
+    return option?.color ?? '#1890ff'; // TODO: add theme token
   };
 
   return (
