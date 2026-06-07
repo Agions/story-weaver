@@ -5,7 +5,7 @@
 import {
   SelfReviewLoop,
   createSelfReviewLoop,
-} from '../../../../packages/core/autonomous/evaluator/self-review-loop';
+} from '../../../core/autonomous/evaluator/self-review-loop';
 
 describe('SelfReviewLoop', () => {
   describe('factory', () => {

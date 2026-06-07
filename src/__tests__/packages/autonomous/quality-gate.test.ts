@@ -7,7 +7,7 @@ import {
   createQualityGate,
   DEFAULT_REVIEW_CRITERIA,
   DEFAULT_QUALITY_GATE_CONFIG,
-} from '../../../../packages/core/autonomous/evaluator/quality-gate';
+} from '../../../core/autonomous/evaluator/quality-gate';
 
 describe('QualityGate', () => {
   describe('default review criteria', () => {

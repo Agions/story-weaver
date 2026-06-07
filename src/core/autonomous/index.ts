@@ -27,7 +27,7 @@
  * ```
  */
 
-export * from '../../../packages/core/autonomous/types/autonomous.types';
-export * from '../../../packages/core/autonomous/evaluator/quality-gate';
-export * from '../../../packages/core/autonomous/evaluator/self-review-loop';
+export * from './types/autonomous.types';
+export * from './evaluator/quality-gate';
+export * from './evaluator/self-review-loop';
 export * from './auto-pipeline-engine';

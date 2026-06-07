@@ -10,7 +10,7 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useAutoPipelineStore } from '../stores/autoPipelineStore';
 import { autoPipelineService } from '../services/autoPipelineService';
-import type { AutoPipelineInput, PipelineEventHandler } from '@/core/autonomous/autonomous.types';
+import type { AutoPipelineInput, PipelineEventHandler } from '@/core/autonomous/types/autonomous.types';
 
 export function useAutoPipeline() {
   const store = useAutoPipelineStore();

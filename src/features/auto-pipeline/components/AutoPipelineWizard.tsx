@@ -21,7 +21,7 @@ import {
   SelectValue,
 } from '@/shared/components/ui/select';
 import { useAutoPipeline } from '../hooks/useAutoPipeline';
-import type { MangaStyle, QualityLevel } from '@/core/autonomous/autonomous.types';
+import type { MangaStyle, QualityLevel } from '@/core/autonomous/types/autonomous.types';
 
 export function AutoPipelineWizard() {
   const [content, setContent] = useState('');

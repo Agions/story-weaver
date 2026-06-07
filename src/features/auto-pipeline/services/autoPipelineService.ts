@@ -10,7 +10,7 @@ import type {
   AutoPipelineResult,
   PipelineEventHandler,
   StepConfig,
-} from '@/core/autonomous/autonomous.types';
+} from '@/core/autonomous/types/autonomous.types';
 
 // ============================================================================
 // Service

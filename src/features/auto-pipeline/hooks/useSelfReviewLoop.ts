@@ -5,7 +5,7 @@
  */
 
 import { useCallback, useState } from 'react';
-import type { ReviewResult } from '@/core/autonomous/autonomous.types';
+import type { ReviewResult } from '@/core/autonomous/types/autonomous.types';
 import { delay, PROCESSING_DELAY_MS } from '@/shared/utils';
 
 interface UseSelfReviewLoopReturn {

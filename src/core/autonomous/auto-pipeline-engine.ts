@@ -12,11 +12,11 @@
 import {
   QualityGate,
   createQualityGate,
-} from '../../../packages/core/autonomous/evaluator/quality-gate';
+} from './evaluator/quality-gate';
 import {
   SelfReviewLoop,
   createSelfReviewLoop,
-} from '../../../packages/core/autonomous/evaluator/self-review-loop';
+} from './evaluator/self-review-loop';
 import type {
   AutoPipelineInput,
   AutoPipelineResult,
@@ -25,7 +25,7 @@ import type {
   StepOutput,
   PipelineCheckpoint,
   PipelineEventHandler,
-} from '../../../packages/core/autonomous/types/autonomous.types';
+} from './types/autonomous.types';
 import { logger } from '../utils/logger';
 
 // ============================================================================
@@ -492,7 +492,7 @@ export class AutoPipelineEngine {
         case 'quality_gate':
           handler.onQualityGate?.(
             args[0] as string,
-            args[1] as import('../../../packages/core/autonomous/types/autonomous.types').QualityGateResult
+            args[1] as import('./types/autonomous.types').QualityGateResult
           );
           break;
         case 'pipeline_start':
@@ -528,7 +528,7 @@ export class AutoPipelineEngine {
       currentStepId: stepId,
       steps: Object.fromEntries(entries) as unknown as Record<
         string,
-        import('../../../packages/core/autonomous/types/autonomous.types').StepCheckpoint
+        import('./types/autonomous.types').StepCheckpoint
       >,
       input: this.context.get('__input__') as unknown as AutoPipelineInput,
       startedAt: Date.now(),
@@ -566,7 +566,7 @@ export class AutoPipelineEngine {
   private restoreFromCheckpoint(checkpoint: PipelineCheckpoint): void {
     for (const [stepId, stepState] of Object.entries(checkpoint.steps)) {
       const state =
-        stepState as unknown as import('../../../packages/core/autonomous/types/autonomous.types').StepState;
+        stepState as unknown as import('./types/autonomous.types').StepState;
       this.stepStates.set(stepId, state);
       if (stepState.data) {
         this.context.set(stepId, stepState.data);

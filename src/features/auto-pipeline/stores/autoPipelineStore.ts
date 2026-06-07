@@ -10,7 +10,7 @@ import type {
   StepState,
   AutoPipelineResult,
   AutoPipelineInput,
-} from '@/core/autonomous/autonomous.types';
+} from '@/core/autonomous/types/autonomous.types';
 
 // ============================================================================
 // State & Types

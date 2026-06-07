@@ -4,7 +4,7 @@
  * 使用 Jest 测试框架
  */
 
-import type { StepState, AutoPipelineResult, AutoPipelineInput } from '@/core/autonomous/autonomous.types';
+import type { StepState, AutoPipelineResult, AutoPipelineInput } from '@/core/autonomous/types/autonomous.types';
 
 describe('AutoPipelineStore', () => {
   // 重新实现 store 逻辑用于测试
