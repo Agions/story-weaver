@@ -10,7 +10,7 @@ import { getModelById } from '@/core/config/models.config';
 import { LLM_MODELS, DEFAULT_LLM_MODEL, MODEL_RECOMMENDATIONS } from '@/core/constants';
 import { promptBuilderService } from '@/core/domains/ai/services/prompt-builder.service';
 import { logger } from '@/core/utils/logger';
-import { requestCache } from '@/core/utils/requestCache';
+import { requestCache } from '@/shared/utils/request';
 
 // Re-export shared types from centralized types file
 export type {

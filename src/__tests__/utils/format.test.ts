@@ -15,7 +15,7 @@ import {
   uniqueArray,
   chunkArray,
   delay,
-} from '@/core/utils';
+} from '@/shared/utils';
 
 describe('工具函数测试', () => {
   describe('formatDuration', () => {
