@@ -11,6 +11,7 @@ import { logger } from '@/core/utils/logger';
 import ScriptEditor from '@/features/script/components/ScriptEditor';
 import { ConfirmDialog } from '@/shared/components/ui/ConfirmDialog';
 import { toast } from '@/shared/components/ui/Toast';
+import { handleAsyncError } from '@/shared/utils/async';
 import { useProjectStore } from '@/shared/stores';
 import type { ProjectData } from '@/shared/types';
 import type { Script, ScriptSegment } from '@/shared/types/script';
@@ -116,8 +117,7 @@ const ScriptDetail = () => {
 
       toast.success('保存成功');
     } catch (error) {
-      logger.error('保存失败:', error);
-      toast.error('保存失败');
+      handleAsyncError(error, '保存失败');
     } finally {
       setLoading(false);
     }
@@ -140,8 +140,7 @@ const ScriptDetail = () => {
       );
       toast.success('导出成功');
     } catch (error) {
-      logger.error('导出脚本失败:', error);
-      toast.error('导出失败');
+      handleAsyncError(error, '导出脚本失败', { toastMessage: '导出失败' });
     }
   };
 
@@ -163,8 +162,7 @@ const ScriptDetail = () => {
       toast.success('删除成功');
       navigate(`/projects/${project.id}`);
     } catch (error) {
-      logger.error('删除脚本失败:', error);
-      toast.error('删除失败');
+      handleAsyncError(error, '删除脚本失败', { toastMessage: '删除失败' });
     }
   };
 

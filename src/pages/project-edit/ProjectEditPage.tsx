@@ -43,6 +43,7 @@ import type { NovelMetadata } from '@/features/script/components/NovelImporter';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
 import CostDashboard from '@/shared/components/business/CostDashboard';
 import { toast } from '@/shared/components/ui/Toast';
+import { handleAsyncError } from '@/shared/utils/async';
 import type { ExportSettings, StoryAnalysis, Character, CompositionProject } from '@/shared/types';
 
 import {
@@ -404,8 +405,7 @@ const ProjectEdit = () => {
         toast.success(`已生成 ${result.voiceTracks.length} 条配音`);
       }
     } catch (error) {
-      logger.error('自动生成配音失败:', error);
-      toast.error('自动生成配音失败');
+      handleAsyncError(error, '自动生成配音失败');
     } finally {
       setAudioGenerating(false);
     }
@@ -430,8 +430,7 @@ const ProjectEdit = () => {
       setAnalysisState('generated');
       toast.success('结构化解析完成，请确认结果后继续');
     } catch (error) {
-      logger.error('AI解析失败:', error);
-      toast.error('AI解析失败，请稍后再试');
+      handleAsyncError(error, 'AI解析失败', { toastMessage: 'AI解析失败，请稍后再试' });
     } finally {
       setLoading(false);
     }
@@ -459,8 +458,7 @@ const ProjectEdit = () => {
       toast.success('剧本生成完成');
       setCurrentStep(2);
     } catch (error) {
-      logger.error('接受解析结果失败:', error);
-      toast.error('解析 JSON 格式无效，请修正后重试');
+      handleAsyncError(error, '接受解析结果失败', { toastMessage: '解析 JSON 格式无效，请修正后重试' });
     } finally {
       setLoading(false);
     }
@@ -504,8 +502,7 @@ const ProjectEdit = () => {
         navigate(`/project/${projectData.id}`);
       }
     } catch (error) {
-      logger.error('保存项目失败:', error);
-      toast.error('保存项目失败，请稍后再试');
+      handleAsyncError(error, '保存项目失败', { toastMessage: '保存项目失败，请稍后再试' });
     } finally {
       setSaving(false);
     }
@@ -550,8 +547,7 @@ const ProjectEdit = () => {
       );
       if (saved) toast.success('评审记录导出成功');
     } catch (error) {
-      logger.error('导出评审记录失败:', error);
-      toast.error('导出评审记录失败');
+      handleAsyncError(error, '导出评审记录失败');
     }
   };
 

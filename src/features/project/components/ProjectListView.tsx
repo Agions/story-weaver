@@ -8,6 +8,7 @@ import { toast } from '@/shared/components/ui/sonner';
 import { logger } from '@/core/utils/logger';
 import { EmptyState, Skeleton } from '@/shared/components/ui';
 import { useProjectStore } from '@/shared/stores/project.store';
+import { handleAsyncError } from '@/shared/utils/async';
 import type { ProjectData } from '@/shared/types';
 import { formatDate } from '@/shared/utils/format-ui';
 
@@ -46,8 +47,7 @@ const ProjectListView = () => {
       deleteProject(project.id);
       toast.success(`项目 "${project.name}" 已删除`);
     } catch (error) {
-      logger.error('删除项目失败', error);
-      toast.error('删除失败');
+      handleAsyncError(error, '删除项目失败', { toastMessage: '删除失败' });
     }
   };
 
