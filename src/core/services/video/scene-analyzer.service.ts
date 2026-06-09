@@ -9,47 +9,9 @@ import {
   generateDefaultPrompt,
   DIALOGUE_PATTERNS,
 } from '@/core/services/ai/text/novel-helpers';
+import { concurrentLimit } from '@/core/utils/concurrency';
 import { logger } from '@/core/utils/logger';
 import { type NovelScene, type Character, type SceneDescription } from '@/shared/types';
-
-/**
- * 并发控制辅助函数
- */
-async function concurrentLimit<T, R>(
-  items: T[],
-  concurrency: number,
-  processor: (item: T, index: number) => Promise<R>
-): Promise<{ results: R[]; errors: Array<{ item: T; error: unknown; index: number }> }> {
-  const results: R[] = new Array(items.length);
-  const errors: Array<{ item: T; error: unknown; index: number }> = [];
-
-  for (let i = 0; i < items.length; i += concurrency) {
-    const batch = items.slice(i, i + concurrency);
-    const batchPromises = batch.map((item, batchIndex) => {
-      const globalIndex = i + batchIndex;
-      return processor(item, globalIndex)
-        .then((result) => ({
-          success: true as const,
-          result,
-          index: globalIndex,
-          item: undefined as unknown as T,
-        }))
-        .catch((error) => ({ success: false as const, error, item, index: globalIndex }));
-    });
-
-    const batchResults = await Promise.all(batchPromises);
-
-    for (const batchResult of batchResults) {
-      if ('error' in batchResult && batchResult.success === false) {
-        errors.push({ item: batchResult.item, error: batchResult.error, index: batchResult.index });
-      } else if ('result' in batchResult) {
-        results[batchResult.index] = batchResult.result;
-      }
-    }
-  }
-
-  return { results, errors };
-}
 
 export interface SceneAnalyzerConfig {
   provider?: string;

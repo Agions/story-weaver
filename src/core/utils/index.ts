@@ -8,3 +8,4 @@ export * from './hooks';
 export * from './idle';
 export * from './motion';
 export * from './tauri';
+export * from './concurrency';

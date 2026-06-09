@@ -19,6 +19,7 @@ import {
 } from '@/core/services/ai/text/novel-helpers';
 import { scriptAnalyzer } from '@/core/services/ai/text/script-analyzer.service';
 import { sceneAnalyzer } from '@/core/services/video/scene-analyzer.service';
+import { concurrentLimit } from '@/core/utils/concurrency';
 import { logger } from '@/core/utils/logger';
 import type {
   NovelMetadata,
@@ -30,46 +31,6 @@ import type {
   NovelStatistics,
   EmotionType,
 } from '@/shared/types';
-
-/**
- * 并发控制辅助函数
- * 使用 Promise.allSettled 并发执行任务，支持限制并发数
- */
-async function concurrentLimit<T, R>(
-  items: T[],
-  concurrency: number,
-  processor: (item: T, index: number) => Promise<R>
-): Promise<{ results: R[]; errors: Array<{ item: T; error: unknown; index: number }> }> {
-  const results: R[] = new Array(items.length);
-  const errors: Array<{ item: T; error: unknown; index: number }> = [];
-
-  for (let i = 0; i < items.length; i += concurrency) {
-    const batch = items.slice(i, i + concurrency);
-    const batchPromises = batch.map((item, batchIndex) => {
-      const globalIndex = i + batchIndex;
-      return processor(item, globalIndex)
-        .then((result) => ({
-          success: true as const,
-          result,
-          index: globalIndex,
-          item: undefined as unknown as T,
-        }))
-        .catch((error) => ({ success: false as const, error, item, index: globalIndex }));
-    });
-
-    const batchResults = await Promise.all(batchPromises);
-
-    for (const batchResult of batchResults) {
-      if ('error' in batchResult && batchResult.success === false) {
-        errors.push({ item: batchResult.item, error: batchResult.error, index: batchResult.index });
-      } else if ('result' in batchResult) {
-        results[batchResult.index] = batchResult.result;
-      }
-    }
-  }
-
-  return { results, errors };
-}
 
 /**
  * 小说分析器

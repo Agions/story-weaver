@@ -1,10 +1,14 @@
 /**
- * 小说拆解服务
+ * 小说剧本生成服务
  * 将小说内容自动拆分为剧本格式
+ *
+ * 通用并发工具 concurrentLimit 已抽取到 @/core/utils/concurrency，
+ * 本文件不再内嵌重复实现。
  */
 
 import { aiService } from '@/core/services/ai/text/ai.service';
 import { costService } from '@/core/services/project/cost.service';
+import { concurrentLimit } from '@/core/utils/concurrency';
 import { logger } from '@/core/utils/logger';
 
 // 小说章节
@@ -76,46 +80,6 @@ export interface Storyboard {
   mood: string;
   duration: number;
   prompt: string; // AI 生成提示词
-}
-
-/**
- * 并发控制辅助函数
- * 使用 Promise.allSettled 并发执行任务，支持限制并发数
- */
-async function concurrentLimit<T, R>(
-  items: T[],
-  concurrency: number,
-  processor: (item: T, index: number) => Promise<R>
-): Promise<{ results: R[]; errors: Array<{ item: T; error: unknown; index: number }> }> {
-  const results: R[] = new Array(items.length);
-  const errors: Array<{ item: T; error: unknown; index: number }> = [];
-
-  for (let i = 0; i < items.length; i += concurrency) {
-    const batch = items.slice(i, i + concurrency);
-    const batchPromises = batch.map((item, batchIndex) => {
-      const globalIndex = i + batchIndex;
-      return processor(item, globalIndex)
-        .then((result) => ({
-          success: true as const,
-          result,
-          index: globalIndex,
-          item: undefined as unknown as T,
-        }))
-        .catch((error) => ({ success: false as const, error, item, index: globalIndex }));
-    });
-
-    const batchResults = await Promise.all(batchPromises);
-
-    for (const batchResult of batchResults) {
-      if ('error' in batchResult && batchResult.success === false) {
-        errors.push({ item: batchResult.item, error: batchResult.error, index: batchResult.index });
-      } else if ('result' in batchResult) {
-        results[batchResult.index] = batchResult.result;
-      }
-    }
-  }
-
-  return { results, errors };
 }
 
 class NovelService {
