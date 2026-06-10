@@ -1,599 +1,348 @@
 ---
 title: 服务清单
-description: 13 个核心服务的功能与依赖关系图，含 facade 拆分列表
+description: frame-fab 7 大服务领域架构：ai / audio / video / pipeline / project / domain / platform，依赖关系图与单例调用规范
 category: developer-guide
-version: '>=2.4'
+version: '>=3.0'
 ---
 
-# 服务文档
+# 服务清单
 
-本文档介绍 frame-fab 核心服务的架构与使用方法。
+> frame-fab v3.0 把全部业务能力收敛到 **`src/core/services/`** 下的 **7 大领域**。
+> 所有服务**默认导出单例**（不要 `new`），统一从 `@/core/services` 导入。
 
----
+## 一、领域全景
 
-## 一、服务架构概览
+```
+src/core/services/
+├── ai/                    # AI 编排：文本/图像/视频生成 + ProviderRegistry
+│   ├── text/              #   - ai.service · novel.* · story-analysis · script-import
+│   └── image/             #   - image-generation.service (Seedream/Kling/Vidu)
+│
+├── audio/                 # 音频：TTS + 唇形同步 + 音频流水线
+│   └── - tts.service · lip-sync · audio-pipeline · tts-provider-registry
+│
+├── video/                 # 视频：FFmpeg.wasm + 场景分析 + 字幕 + 视觉一致性
+│   └── - ffmpeg-wasm · scene-analyzer · subtitle · video-compositor · visual-consistency
+│
+├── pipeline/              # 流水线：编排引擎 + 步骤工厂 + 质量门 + 评审导出
+│   └── - pipeline.service · pipeline-runner · step-factories · quality-gate · review-export
+│
+├── project/               # 项目：导入导出 + 渲染队列 + 成本 + 评估 + 安全存储
+│   └── - project-import-export · render-queue · cost · evaluation · secure-storage
+│
+├── domain/                # 业务领域：角色 + 漫剧编排 + 组合 + 协作
+│   └── - character · manga-pipeline · composition · collaboration
+│
+└── (root)                 # 平台桥接：desktop-app / storyboard / 根级便捷导出
+    └── - desktop-app · storyboard · image-generation (re-export)
+```
 
-frame-fab 采用微服务化的模块设计，核心服务分为以下几类：
+## 二、7 大领域详解
+
+### 2.1 AI 编排（`ai/`）
+
+> 所有 AI 模型调用的统一入口。通过 `ProviderRegistry` 注册所有 Provider，**自动 Fallback**。
+
+**核心服务**：
+
+| 服务 | 文件 | 能力 |
+|------|------|------|
+| `aiService` | `ai/text/ai.service.ts` | 统一文本生成/分析/对话/流式 |
+| `novelService` | `ai/text/novel.service.ts` | 小说导入与结构化 |
+| `novelAnalyzer` | `ai/text/novel-analyze.service.ts` | 章节/场景/人物识别 |
+| `storyAnalysisService` | `ai/text/story-analysis.service.ts` | 故事结构深度分析 |
+| `scriptImportService` | `ai/text/script-import.service.ts` | 剧本导入（行业格式） |
+| `imageGenerationService` | `ai/image/image-generation.service.ts` | 图像/视频生成 |
+
+**子模块**（拆分后 25+ 文件）：
+- `ai-cache.ts` / `ai-batch.ts` / `ai-stream.ts` / `ai-call-dispatcher.ts`
+- `novel-ai-parser.ts` / `novel-prompt-templates.ts` / `novel-helpers.ts`
+- `novel-analyze-chapter-segments.ts` / `novel-analyze-scene-segments.ts` / `novel-analyze-metadata.ts` / `novel-analyze-config.ts` / `novel-analyze-statistics.ts`
+- `novel-suitability.ts` / `novel-script-exporter.ts` / `novel-types.ts`
+- `script-analyzer.service.ts`
+- `image-generation/image-generation-*.ts`（按模型/降级链拆分）
+
+**ProviderRegistry 与 Fallback**：
+
+```typescript
+// 默认降级链
+aiService.setFallbackChain(['zhipu', 'anthropic', 'minimax', 'moonshot']);
+```
+
+详见 [AI 服务 API](../api/ai-service.md)。
+
+### 2.2 音频（`audio/`）
+
+> TTS 合成 + 唇形同步元数据 + 完整音频流水线。
+
+**核心服务**：
+
+| 服务 | 文件 | 能力 |
+|------|------|------|
+| `ttsService` | `audio/tts.service.ts` | 文本转语音（200+ 音色） |
+| `lipSyncService` | `audio/lip-sync.service.ts` | 唇形同步元数据 |
+| `audioPipelineService` | `audio/audio-pipeline.service.ts` | 音频编排（混音/对齐） |
+| `ttsProviderRegistry` | `audio/tts-provider-registry.ts` | TTS Provider 管理 |
+
+**TTS Provider 降级链**：
+
+```
+Edge TTS（免费）→ CosyVoice 2.0 → 百度 TTS → KAN-TTS
+```
+
+详见 [TTS 服务 API](../api/tts-service.md)。
+
+### 2.3 视频（`video/`）
+
+> 视频合成（FFmpeg.wasm）+ 场景分析 + 字幕生成 + 视觉一致性评分。
+
+**核心服务**：
+
+| 服务 | 文件 | 能力 |
+|------|------|------|
+| `videoCompositorService` | `video/video-compositor.service.ts` | FFmpeg 视频合成（多轨） |
+| `ffmpegWasmService` | `video/ffmpeg-wasm.service.ts` | FFmpeg.wasm 加载/调用 |
+| `sceneAnalyzerService` | `video/scene-analyzer.service.ts` | 视频场景识别 |
+| `subtitleService` | `video/subtitle.service.ts` | 字幕生成与多格式导出 |
+| `videoAnalysisService` | `video/video-analysis.service.ts` | 视频内容分析 |
+| `visualConsistencyService` | `video/visual-consistency-scorer.service.ts` | 跨镜头视觉一致性评分 |
+
+**子模块**（拆分后 25+ 文件）：
+- `video-compositor-{dispatch,environment,ffmpeg,helpers,tauri}.ts`
+- `video-analysis-{abort-registry,emotions,keyframes,objects,scenes,stats,suggestions,summary,types}.ts`
+- `visual-consistency-{heuristic,keywords,scorer,types,vlm}.ts`
+- `scene-analyzer-{character-extractor,description-generator,dialogue-extractor,prompt-builder,types}.ts`
+- `subtitle/subtitle-*.ts`
+
+详见 [字幕服务 API](../api/subtitle-service.md)。
+
+### 2.4 流水线（`pipeline/`）
+
+> 11 步端到端编排引擎，含 Checkpoint、Quality Gate、Self-Review Loop。
+
+**核心服务**：
+
+| 服务 | 文件 | 能力 |
+|------|------|------|
+| `pipelineService` | `pipeline/pipeline.service.ts` | 主入口（run/resume/checkpoint） |
+| `pipelineRunner` | `pipeline/pipeline-runner.ts` | 步骤执行器 |
+| `pipelineStepFactories` | `pipeline/pipeline-step-factories.ts` | 11 步工厂 |
+| `qualityGateService` | `pipeline/quality-gate.service.ts` | 质量门禁评分 |
+| `reviewExportService` | `pipeline/review-export.service.ts` | 自审循环导出 |
+
+**11 个步骤**（按顺序）：
+
+```
+import → analysis → script → character → scene → storyboard
+       → render → video-edit → audio → subtitle → export
+```
+
+详见 [流水线 API](../api/pipeline-service.md) 和 [Pipeline 引擎](./pipeline-api.md)。
+
+### 2.5 项目（`project/`）
+
+> 项目导入导出、渲染队列、成本统计、评估、安全存储。
+
+**核心服务**：
+
+| 服务 | 文件 | 能力 |
+|------|------|------|
+| `projectImportExportService` | `project/project-import-export.service.ts` | 项目导入导出（10+ 格式） |
+| `renderQueueService` | `project/render-queue.service.ts` | 渲染任务队列 |
+| `costService` | `project/cost.service.ts` | API 成本统计 |
+| `evaluationService` | `project/evaluation.service.ts` | 项目质量评估 |
+| `secureStorageService` | `project/secure-storage.service.ts` | API Key 加密存储 |
+| `exportDispatcher` | `project/export-dispatcher.ts` | 多格式导出调度 |
+
+**子模块**（拆分后 25+ 文件）：
+- `project-import-export-{importer,exporter,validator,duplicator,compare,backup,types}.ts`
+- `render-queue-{fallback,logger,runner,subscriber,types}.ts`
+- `cost-{record-builders,report,stats,types,constants}.ts`
+- `export-{dispatcher,service,types,utils,image-export,video-export,pdf-export}.ts`
+- `secure-storage-{initializer,tauri,fallback,types}.ts`
+- `subtitle-generators.ts`
+
+### 2.6 业务领域（`domain/`）
+
+> 角色、漫剧编排、组合、协作四大领域服务。
+
+**核心服务**：
+
+| 服务 | 文件 | 能力 |
+|------|------|------|
+| `characterService` | `domain/character.service.ts` | 角色设定卡管理 |
+| `mangaPipelineService` | `domain/manga-pipeline.service.ts` | 漫剧 6 步编排 |
+| `compositionService` | `domain/composition.service.ts` | 单镜头组合 |
+| `collaborationService` | `domain/collaboration.service.ts` | 多人协作（v3.1+） |
+
+**子模块**（拆分后 20+ 文件）：
+- `character-{factory,persistence,subscriber,template,types}.ts`
+- `composition-{factory,persistence,subscriber,types}.ts`
+- `manga-pipeline-{orchestrator,extra,progress,types,stage-audio,stage-compose,stage-images,stage-lipsync}.ts`
+- `frame-defaults.ts`
+
+### 2.7 平台桥接（root）
+
+> 桌面端能力 + 分镜独立服务 + 根级便捷导出。
+
+| 服务 | 文件 | 能力 |
+|------|------|------|
+| `desktopAppService` | `desktop-app.service.ts` | 桌面应用元信息 |
+| `desktopAppInfo` | `desktop-app-info.ts` | 系统信息 |
+| `desktopFileDrop` | `desktop-file-drop.ts` | 文件拖拽桥 |
+| `desktopNotificationController` | `desktop-notification-controller.ts` | 系统通知 |
+| `desktopShortcutController` | `desktop-shortcut-controller.ts` | 全局快捷键 |
+| `desktopWindowController` | `desktop-window-controller.ts` | 窗口控制 |
+| `getStoryboardService` | `storyboard.service.ts` | 分镜生命周期 |
+| `getStoryboardService` | `storyboard.service.ts` | 分镜管理 |
+
+详见 [平台适配层](./platform-layer.md)。
+
+## 三、依赖关系图
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                      frame-fab Services                       │
-├─────────────────────────────────────────────────────────────┤
-│  AI 服务层                                                     │
-│  ├── LLM Service (大语言模型服务)                              │
-│  ├── Image Generation Service (图像生成服务)                   │
-│  ├── TTS Service (语音合成服务)                                │
-│  └── Video Composition Service (视频合成服务)                  │
-├─────────────────────────────────────────────────────────────┤
-│  Pipeline 服务层                                               │
-│  ├── Pipeline Engine (流水线引擎)                             │
-│  ├── Auto Pipeline Engine (全自动流水线引擎)                  │
-│  ├── Self Review Loop (自审循环服务)                           │
-│  └── Quality Gate (质量门禁服务)                               │
-├─────────────────────────────────────────────────────────────┤
-│  Feature 服务层                                                │
-│  ├── Auto Pipeline Service (自动流水线服务)                   │
-│  ├── Import Service (导入服务)                                │
-│  ├── Analysis Service (分析服务)                              │
-│  └── Export Service (导出服务)                                 │
-└─────────────────────────────────────────────────────────────────┘
+│                    app/  (路由 + Providers)                  │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+                           ▼
+┌─────────────────────────────────────────────────────────────┐
+│              features/  (按用户故事切分)                       │
+└──────────────────────────┬──────────────────────────────────┘
+                           │
+              ┌────────────┼────────────┐
+              ▼            ▼            ▼
+       ┌──────────┐  ┌──────────┐  ┌──────────┐
+       │  ai/     │  │ pipeline/│  │  domain/ │
+       │          │  │          │  │          │
+       │ aiService│  │pipelineS.│  │characterS│
+       │ imageGen │  │ qualityG │  │mangaPipe │
+       └────┬─────┘  └────┬─────┘  └────┬─────┘
+            │              │             │
+            └──────────────┼─────────────┘
+                           ▼
+                  ┌──────────────────┐
+                  │   project/       │
+                  │  (导入导出+队列)  │
+                  └────────┬─────────┘
+                           │
+                           ▼
+                  ┌──────────────────┐
+                  │  video/ audio/   │
+                  │  (FFmpeg + TTS)  │
+                  └──────────────────┘
 ```
 
----
+**依赖规则**：
+- `domain/` 依赖 `ai/`、`pipeline/`、`project/`
+- `pipeline/` 依赖 `ai/`、`project/`
+- `video/` 和 `audio/` 是**叶子**（不再依赖其他 service）
+- `app/` 和 `features/` 是**唯一允许依赖多个领域**的层
 
-## 二、AI 服务层
+## 四、单例调用规范
 
-### 2.1 LLM Service（大语言模型服务）
-
-**文件位置**: `src/core/ai/llm-service.ts`
-
-**功能**: 调用大语言模型进行文本生成与分析
-
-**支持的模型**:
-
-| 模型       | 用途               | 优先级 |
-| ---------- | ------------------ | ------ |
-| GLM-5      | 剧本解析、脚本生成 | ⭐⭐⭐ |
-| Doubao 2.0 | 故事分析           | ⭐⭐⭐ |
-| ERNIE 4.0  | 故事分析           | ⭐⭐   |
-| M2.5       | 剧本解析           | ⭐⭐   |
-| Kimi K2.5  | 剧本解析           | ⭐⭐   |
-
-**降级策略**:
+### 4.1 ✅ 正确：导入单例
 
 ```typescript
-LLM 降级链路: GLM-5 → Doubao 2.0 → ERNIE 4.0 → M2.5
+import { aiService, imageGenerationService } from '@/core/services';
+
+const result = await aiService.generate('写一段独白');
 ```
 
-**核心接口**:
+### 4.2 ❌ 错误：手动 new
 
 ```typescript
-interface LLMService {
-  // 文本补全
-  complete(prompt: string, options?: LLMOptions): Promise<string>;
+// ❌ 破坏单例，绕过 ProviderRegistry
+import { AIService } from '@/core/services/ai/text/ai.service';
+const ai = new AIService();
+```
 
-  // 结构化输出（JSON）
-  structuredOutput<T>(prompt: string, schema: Schema, options?: LLMOptions): Promise<T>;
+> 提示：所有 service 在 `index.ts` 中已默认导出**单例**（如 `aiService`、`imageGenerationService`），且 export 同时提供 class 供测试时 mock。
 
-  // 批量处理
-  batchComplete(prompts: string[], options?: LLMOptions): Promise<string[]>;
+### 4.3 自定义降级链
+
+```typescript
+aiService.setFallbackChain(['zhipu', 'anthropic']);
+ttsService.setFallbackChain(['edge', 'cosyvoice']);
+```
+
+## 五、错误处理
+
+| 错误类型 | 触发场景 | 推荐处理 |
+|---------|---------|---------|
+| `AIProviderError` | AI 模型调用失败 | 自动降级，UI 提示用户 |
+| `InvalidInputError` | 入参校验失败 | 表单红字提示 |
+| `QuotaExceededError` | 配额耗尽 | 引导用户升级/换 Provider |
+| `CheckpointError` | 断点续传损坏 | 提示用户从最近有效 Checkpoint 恢复 |
+| `RenderQueueError` | 渲染队列满 | 排队等待或清理旧任务 |
+
+```typescript
+try {
+  await aiService.generate(prompt);
+} catch (err) {
+  if (err instanceof AIProviderError) {
+    // 自动 fallback 已尝试；用户可手动切换 Provider
+    showProviderSwitchDialog();
+  }
 }
 ```
 
-**使用示例**:
+## 六、性能与监控
+
+### 6.1 实时成本
 
 ```typescript
-import { llmService } from '@/core/ai/llm-service';
-
-// 简单文本补全
-const storyAnalysis = await llmService.complete(`请分析以下故事的人物和场景：\n${storyText}`);
-
-// 结构化输出
-const script = await llmService.structuredOutput<ScriptOutput>('请生成视频剧本', ScriptSchema);
+const stats = aiService.getUsageStats();
+console.log(`今日: $${stats.todayUsd}`);
 ```
 
-### 2.2 Image Generation Service（图像生成服务）
-
-**文件位置**: `src/core/ai/image-generation-service.ts`
-
-**功能**: 调用 AI 图像生成模型生成角色图、分镜图
-
-**支持的模型**:
-
-| 模型             | 用途               | 优先级 |
-| ---------------- | ------------------ | ------ |
-| Seedream 5.0     | 角色设计、分镜生成 | ⭐⭐⭐ |
-| Kling 1.6        | 分镜生成、图像渲染 | ⭐⭐   |
-| Vidu 2.0         | 备选渲染           | ⭐     |
-| Stable Diffusion | 降级渲染           | ⭐     |
-
-**降级链路**:
+### 6.2 进度回调
 
 ```typescript
-Seedream 5.0 → Kling 1.6 → Vidu 2.0 → Stable Diffusion API
-```
-
-**核心接口**:
-
-```typescript
-interface ImageGenerationService {
-  // 生成单张图片
-  generate(prompt: string, options?: ImageOptions): Promise<ImageResult>;
-
-  // 批量生成
-  batchGenerate(prompts: string[], options?: ImageOptions): Promise<ImageResult[]>;
-
-  // 角色一致性生成
-  generateWithCharacter(
-    characterId: string,
-    prompt: string,
-    options?: ImageOptions
-  ): Promise<ImageResult>;
-}
-```
-
-**使用示例**:
-
-```typescript
-import { imageService } from '@/core/ai/image-generation-service';
-
-// 生成角色图
-const characterImage = await imageService.generateWithCharacter(
-  characterId,
-  '正面站姿，开心表情，学院风校服',
-  { size: '1024x1024', quality: 'high' }
-);
-
-// 批量生成分镜图
-const storyboardImages = await imageService.batchGenerate(storyboardPrompts, {
-  size: '1280x720',
-  style: 'anime',
+pipelineService.onProgress((p) => {
+  console.log(`${p.stage}: ${p.overallProgress}%`);
 });
 ```
 
-### 2.3 TTS Service（语音合成服务）
-
-**文件位置**: `src/core/ai/tts-service.ts`
-
-**功能**: 将文本转换为语音，支持配音和唇形同步
-
-**支持的引擎**:
-
-| 引擎          | 特点         | 优先级 |
-| ------------- | ------------ | ------ |
-| Edge TTS      | 免费、低延迟 | ⭐⭐⭐ |
-| CosyVoice 2.0 | 高质量音色   | ⭐⭐   |
-| 百度 TTS      | 降级方案     | ⭐     |
-
-**降级链路**:
+### 6.3 渲染队列
 
 ```typescript
-Edge TTS → CosyVoice 2.0 → 百度 TTS
+const queue = renderQueueService.getStatus();
+// { pending: 3, running: 1, completed: 12, failed: 0 }
 ```
-
-**核心接口**:
-
-```typescript
-interface TTSService {
-  // 文本转语音
-  synthesize(text: string, options?: TTSOptions): Promise<AudioResult>;
-
-  // 唇形同步数据生成
-  lipSync(audioPath: string): Promise<LipSyncData>;
-
-  // 多角色配音
-  multiCharacterDub(dialogues: Dialogue[]): Promise<DubbingResult>;
-}
-```
-
-### 2.4 Video Composition Service（视频合成服务）
-
-**文件位置**: `src/core/ai/video-composition-service.ts`
-
-**功能**: 将图像、音频、字幕合成为最终视频
-
-**核心接口**:
-
-```typescript
-interface VideoCompositionService {
-  // 合成视频
-  compose(scenes: Scene[], options?: VideoOptions): Promise<VideoResult>;
-
-  // 添加转场效果
-  addTransitions(videoPath: string, transitions: Transition[]): Promise<string>;
-
-  // 嵌入字幕
-  burnSubtitles(videoPath: string, subtitles: Subtitle[]): Promise<string>;
-
-  // 导出最终格式
-  export(
-    videoPath: string,
-    format: 'mp4' | 'webm',
-    quality: 'low' | 'medium' | 'high'
-  ): Promise<string>;
-}
-```
-
----
-
-## 三、Pipeline 服务层
-
-### 3.1 Pipeline Engine（流水线引擎）
-
-**文件位置**: `src/core/pipeline/pipeline-engine.ts`
-
-**功能**: 管理手动模式下的流水线执行
-
-**步骤定义**:
-
-```typescript
-interface PipelineStep {
-  id: string;
-  name: string;
-  execute(context: PipelineContext): Promise<StepResult>;
-  validate?(result: StepResult): boolean;
-  rollback?(context: PipelineContext): Promise<void>;
-}
-```
-
-**执行流程**:
-
-```
-ImportStep → AnalysisStep → ScriptStep → CharacterStep
-          → StoryboardStep → RenderStep → CompositionStep → ExportStep
-```
-
-**使用示例**:
-
-```typescript
-import { pipelineEngine } from '@/core/pipeline/pipeline-engine';
-
-const result = await pipelineEngine.run({
-  input: storyText,
-  mode: 'manual',
-  onStepComplete: (step) => console.log(`完成: ${step.name}`),
-  onStepError: (step, error) => console.error(`失败: ${step.name}`, error),
-});
-```
-
-### 3.2 Auto Pipeline Engine（全自动流水线引擎）
-
-**文件位置**: `src/core/autonomous/auto-pipeline-engine.ts`
-
-**功能**: 管理全自动模式的流水线执行，包含自审循环
-
-**11 步执行流程**:
-
-```typescript
-const AUTONOMOUS_STEPS = [
-  'ImportStep', // 解析原材料
-  'AnalysisStep', // 分析故事结构
-  'ScriptStep', // 生成视频剧本
-  'CharacterStep', // 角色设定与一致化
-  'SceneStep', // 场景规划
-  'StoryboardStep', // 分镜脚本 + 参考图
-  'RenderStep', // 批量渲染帧
-  'VideoEditStep', // 视频剪辑 + 转场
-  'AudioStep', // 配音 + 音效 + 唇形同步
-  'SubtitleStep', // 字幕生成与嵌入
-  'ExportStep', // 最终合成输出
-];
-```
-
-**核心接口**:
-
-```typescript
-interface AutoPipelineEngine {
-  // 启动全自动流水线
-  run(input: AutoPipelineInput): Promise<AutoPipelineResult>;
-
-  // 暂停流水线
-  pause(): void;
-
-  // 恢复流水线
-  resume(): void;
-
-  // 取消流水线
-  cancel(): void;
-
-  // 获取当前状态
-  getStatus(): AutoPipelineStatus;
-}
-```
-
-**使用示例**:
-
-```typescript
-import { autoPipelineEngine } from '@/core/autonomous/auto-pipeline-engine';
-
-const result = await autoPipelineEngine.run({
-  content: novelText,
-  mode: 'novel',
-  title: '我的漫剧',
-  style: 'anime',
-  qualityLevel: 'balanced',
-});
-```
-
-### 3.3 Self Review Loop（自审循环服务）
-
-**文件位置**: `src/core/autonomous/self-review-loop.ts`
-
-**功能**: 对每步输出进行 AI 自审，不合格时自动修复
-
-**审核维度**:
-
-| 维度     | 判定标准                             |
-| -------- | ------------------------------------ |
-| 完整性   | 输出是否包含所有必要字段/元素        |
-| 一致性   | 人物描写、场景描述前后是否矛盾       |
-| 画面感   | 描述是否具备足够的视觉细节供 AI 生图 |
-| 时长匹配 | 对话/场景时长是否与内容体量匹配      |
-| 爆点检测 | 是否包含情绪爆点、转折、高潮         |
-
-**核心接口**:
-
-```typescript
-interface SelfReviewLoop {
-  // 执行自审
-  review(stepOutput: StepOutput, criteria: ReviewCriteria): Promise<ReviewResult>;
-
-  // 执行修复
-  repair(
-    originalOutput: StepOutput,
-    reviewResult: ReviewResult,
-    repairPrompt: string
-  ): Promise<StepOutput>;
-}
-```
-
-**循环上限**: 每次步骤最多自审 3 次，3 次仍不通过则降级到人工审核模式。
-
-### 3.4 Quality Gate（质量门禁服务）
-
-**文件位置**: `src/core/autonomous/quality-gate.ts`
-
-**功能**: 自动判定每步输出是否符合质量标准
-
-**各步骤门禁标准**:
-
-| Step       | 通过条件                        | 不通过处理       |
-| ---------- | ------------------------------- | ---------------- |
-| Import     | 章节数 ≥ 1，字数 > 100          | 提示用户检查输入 |
-| Analysis   | 人物 ≥ 1，场景 ≥ 1              | 自动补充默认值   |
-| Script     | 场景数 ≥ 3，时长 5-30min        | 自审循环重做     |
-| Character  | 角色图 ≥ 1张/角色，一致性 > 70% | 自审循环重做     |
-| Storyboard | 分镜数 ≥ 脚本场景数             | 自审循环重做     |
-| Render     | 成功率 > 80%                    | 自动重抽失败的帧 |
-| VideoEdit  | 片段数 = 分镜数                 | 自动补间         |
-| Audio      | 时长偏差 < 5%                   | 自动重新生成     |
-| Export     | 文件存在且可播放                | 重新导出         |
-
----
-
-## 四、Feature 服务层
-
-### 4.1 Auto Pipeline Service
-
-**文件位置**: `src/features/auto-pipeline/services/autoPipelineService.ts`
-
-**功能**: 自动流水线的服务封装，供 UI 层调用
-
-**核心接口**:
-
-```typescript
-interface AutoPipelineService {
-  // 创建新任务
-  createTask(input: CreateTaskInput): Promise<Task>;
-
-  // 获取任务状态
-  getTaskStatus(taskId: string): Promise<TaskStatus>;
-
-  // 获取任务进度
-  getTaskProgress(taskId: string): Promise<TaskProgress>;
-
-  // 取消任务
-  cancelTask(taskId: string): Promise<void>;
-
-  // 下载结果
-  downloadResult(taskId: string): Promise<string>;
-}
-```
-
-### 4.2 Import Service
-
-**文件位置**: `src/features/import/services/importService.ts`
-
-**功能**: 解析各类输入格式（小说、剧本、需求描述）
-
-**支持格式**:
-
-| 格式     | 解析方式            |
-| -------- | ------------------- |
-| TXT      | 纯文本按章节分割    |
-| Markdown | 按 # 标题分割章节   |
-| PDF      | 文本提取 + 章节分析 |
-| Word     | 文档解析            |
-| URL      | 网页内容抓取        |
-
-### 4.3 Analysis Service
-
-**文件位置**: `src/features/analysis/services/analysisService.ts`
-
-**功能**: AI 分析故事结构、人物关系、场景列表
-
-**输出结构**:
-
-```typescript
-interface StoryAnalysis {
-  title: string;
-  synopsis: string;
-  characters: Character[];
-  scenes: Scene[];
-  timeline: TimelineEvent[];
-  moodCurve: MoodPoint[];
-}
-```
-
-### 4.4 Export Service
-
-**文件位置**: `src/features/export/services/exportService.ts`
-
-**功能**: 导出最终成片，支持多种格式
-
-**支持格式**:
-
-| 格式        | 用途       |
-| ----------- | ---------- |
-| MP4 (H.264) | 通用兼容性 |
-| WebM (VP9)  | web 嵌入   |
-| MOV         | 苹果生态   |
-
-**质量选项**:
-
-| 质量   | 分辨率 | 码率    |
-| ------ | ------ | ------- |
-| low    | 720p   | 2 Mbps  |
-| medium | 1080p  | 5 Mbps  |
-| high   | 1080p+ | 10 Mbps |
-
----
-
-## 五、服务配置
-
-### 5.1 环境变量配置
-
-```bash
-# AI 服务配置
-LLM_PROVIDER=glm
-LLM_API_KEY=your_api_key
-IMAGE_PROVIDER=seedream
-IMAGE_API_KEY=your_api_key
-TTS_PROVIDER=edge
-TTS_API_KEY=your_api_key
-
-# 视频处理配置
-FFMPEG_PATH=/usr/local/bin/ffmpeg
-MAX_CONCURRENT_RENDERS=4
-RENDER_BATCH_SIZE=4
-
-# 存储配置
-STORAGE_TYPE=local
-STORAGE_PATH=./output
-CHECKPOINT_STORAGE=localStorage
-```
-
-### 5.2 配置文件
-
-**文件位置**: `src/config/services.ts`
-
-```typescript
-export const serviceConfig = {
-  llm: {
-    provider: process.env.LLM_PROVIDER || 'glm',
-    apiKey: process.env.LLM_API_KEY,
-    model: 'glm-5',
-    temperature: 0.7,
-    maxTokens: 4096,
-    fallbackChain: ['doubao', 'ernie', 'm2.5'],
-  },
-  image: {
-    provider: process.env.IMAGE_PROVIDER || 'seedream',
-    apiKey: process.env.IMAGE_API_KEY,
-    model: 'seedream-5.0',
-    defaultSize: '1024x1024',
-    fallbackChain: ['kling', 'vidu', 'stable-diffusion'],
-  },
-  tts: {
-    provider: process.env.TTS_PROVIDER || 'edge',
-    apiKey: process.env.TTS_API_KEY,
-    voice: 'zh-CN-Female-1',
-    fallbackChain: ['cosyvoice', 'baidu-tts'],
-  },
-  video: {
-    ffmpegPath: process.env.FFMPEG_PATH || 'ffmpeg',
-    maxConcurrent: parseInt(process.env.MAX_CONCURRENT_RENDERS) || 4,
-    batchSize: parseInt(process.env.RENDER_BATCH_SIZE) || 4,
-  },
-};
-```
-
----
-
-## 六、错误处理
-
-### 6.1 错误类型
-
-```typescript
-enum ServiceErrorType {
-  // AI 服务错误
-  LLM_ERROR = 'LLM_ERROR',
-  IMAGE_GENERATION_ERROR = 'IMAGE_GENERATION_ERROR',
-  TTS_ERROR = 'TTS_ERROR',
-  VIDEO_COMPOSITION_ERROR = 'VIDEO_COMPOSITION_ERROR',
-
-  // Pipeline 错误
-  STEP_EXECUTION_ERROR = 'STEP_EXECUTION_ERROR',
-  QUALITY_GATE_FAILED = 'QUALITY_GATE_FAILED',
-  REVIEW_LOOP_EXCEEDED = 'REVIEW_LOOP_EXCEEDED',
-
-  // 存储错误
-  STORAGE_ERROR = 'STORAGE_ERROR',
-  CHECKPOINT_ERROR = 'CHECKPOINT_ERROR',
-
-  // 配置错误
-  CONFIG_ERROR = 'CONFIG_ERROR',
-}
-```
-
-### 6.2 错误处理策略
-
-```typescript
-interface ErrorHandler {
-  // 重试策略
-  retry?: {
-    maxAttempts: number;
-    backoffMs: number;
-  };
-
-  // 降级策略
-  fallback?: {
-    service: string;
-    action: 'skip' | 'use-default' | 'notify-user';
-  };
-
-  // 日志策略
-  logging?: {
-    level: 'error' | 'warn' | 'info';
-    includeContext: boolean;
-  };
-}
-```
-
----
 
 ## 七、最佳实践
 
-### 7.1 服务调用规范
+### 7.1 调用规范
 
-1. **Always use dependency injection** for services in tests
-2. **Implement circuit breaker** for external API calls
-3. **Use checkpointing** for long-running operations
-4. **Log all service calls** with request/response context
+- ✅ **总是从 `@/core/services` 导入单例**
+- ✅ **捕获并处理已知错误类型**（`AIProviderError` 等）
+- ✅ **订阅进度回调**（`onProgress`）提升 UX
+- ✅ **合理使用 `setFallbackChain`** 自定义降级
+- ❌ **不要直接 new service**
+- ❌ **不要在 feature 层直接调 Provider**（绕过了 Fallback）
 
 ### 7.2 性能优化
 
-1. **Batch API calls** when possible
-2. **Cache model outputs** for identical prompts
-3. **Use streaming** for large text generation
-4. **Parallelize independent steps** in pipeline
+- ✅ **使用 `generateBatch`** 批量生成（默认并发 4）
+- ✅ **启用 AI Cache** 减少重复调用
+- ✅ **异步非阻塞**：长任务用 `Promise` + 进度回调
+- ❌ **避免同步大文件 IO**（用 streaming API）
 
-### 7.3 监控与告警
+### 7.3 扩展新 Provider
 
-建议监控以下指标：
+1. 实现 `AIProvider` 接口
+2. 在 `ProviderRegistry.register()` 注册
+3. 添加到降级链
+4. 提供单元测试
 
-- API 响应时间 (P50, P95, P99)
-- 错误率 (按服务、按错误类型)
-- 降级触发次数
-- 自审循环平均次数
-- 最终输出质量评分
+详见 [AI Providers](./ai-providers.md)。
+
+## 八、相关文档
+
+- [架构设计](./architecture.md) — 整体架构图
+- [模块系统](./module-system.md) — 目录结构
+- [AI Providers](./ai-providers.md) — 扩展 AI 提供商
+- [Pipeline 引擎](./pipeline-api.md) — 11 步编排
+- [平台适配层](./platform-layer.md) — Tauri 桥接
+- [API 文档](../api/) — 7 大服务 API
