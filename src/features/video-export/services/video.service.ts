@@ -1,6 +1,23 @@
 /**
- * Video Service
- * Unified video processing functionality
+ * Video Service Facade
+ * ====================
+ * 统一对外的"视频处理"门面，把 4 个子模块的纯函数 + 内部循环编排成完整服务。
+ *
+ * 内部按职责拆分到 4 个 sibling 文件：
+ * - video-constants.ts                : 全部常量 / 字典
+ * - ffmpeg-command-builder.ts         : 流式 builder
+ * - video-info-extractor.ts           : File → VideoInfo (DOM)
+ * - thumbnail-capture.ts              : video 帧 → dataURL (Canvas)
+ * - video-ffmpeg-operations.ts        : 4 个 ffmpeg CLI 操作
+ * - duration-formatter.ts             : 时长格式化
+ *
+ * 设计原则：
+ * 1. 公共方法签名保持与原代码完全一致，测试零修改
+ * 2. extractKeyframes / detectScenes / analyzeVideo 这 3 个方法
+ *    内部用 `this.xxx` 调用同类其它方法 —— 这样测试可以用
+ *    `jest.spyOn(videoService, 'generateThumbnail')` 拦截
+ * 3. 私有方法 / 内部 helper 一律下沉到纯函数模块
+ * 4. 单例导出 `videoService` (兼容 core facade 转发)
  */
 
 import { v4 as uuidv4 } from 'uuid';
@@ -9,129 +26,52 @@ import { logger } from '@/core/utils/logger';
 import type { VideoInfo, VideoAnalysis, Scene, Keyframe } from '@/shared/types';
 import { formatFileSize, delay, PROCESSING_DELAY_MS } from '@/shared/utils';
 
-// FFmpeg Command Builder
-class FFmpegCommandBuilder {
-  private inputs: string[] = [];
-  private filters: string[] = [];
-  private outputs: string[] = [];
-  private options: string[] = [];
-
-  input(path: string): this {
-    this.inputs.push(`-i "${path}"`);
-    return this;
-  }
-
-  option(...opts: string[]): this {
-    this.options.push(...opts);
-    return this;
-  }
-
-  filter(filter: string): this {
-    this.filters.push(filter);
-    return this;
-  }
-
-  output(path: string, options?: string[]): this {
-    const opts = options ? options.join(' ') : '';
-    this.outputs.push(`${opts} "${path}"`);
-    return this;
-  }
-
-  build(): string {
-    const parts = [
-      'ffmpeg',
-      ...this.inputs,
-      ...this.options,
-      this.filters.length > 0 ? `-vf "${this.filters.join(',')}"` : '',
-      ...this.outputs,
-    ];
-    return parts.filter(Boolean).join(' ');
-  }
-}
+import { formatVideoDuration } from './duration-formatter';
+import { captureVideoFrameAsDataURL } from './thumbnail-capture';
+import {
+  DEFAULT_KEYFRAME_COUNT,
+  DEFAULT_SCENE_DURATION_SEC,
+  DEFAULT_SCENE_DETECTION_THRESHOLD,
+  DEFAULT_THUMBNAIL_WIDTH,
+} from './video-constants';
+import {
+  exportVideo,
+  clipVideo,
+  mergeVideos,
+  addSubtitles,
+  convertFormat,
+  type VideoExportOptions,
+  type SubtitleStyle,
+} from './video-ffmpeg-operations';
+import { extractVideoInfoFromFile } from './video-info-extractor';
 
 class VideoService {
   /**
-   * Get video information
+   * Get video information (DOM-driven File → VideoInfo)
    */
   async getVideoInfo(file: File): Promise<VideoInfo> {
-    return new Promise((resolve, reject) => {
-      const video = document.createElement('video');
-      const url = URL.createObjectURL(file);
-
-      video.onloadedmetadata = () => {
-        URL.revokeObjectURL(url);
-
-        resolve({
-          id: uuidv4(),
-          path: url,
-          name: file.name,
-          duration: video.duration,
-          width: video.videoWidth,
-          height: video.videoHeight,
-          fps: 30,
-          format: file.name.split('.').pop()?.toLowerCase() || 'mp4',
-          size: file.size,
-          createdAt: new Date().toISOString(),
-        });
-      };
-
-      video.onerror = () => {
-        URL.revokeObjectURL(url);
-        reject(new Error('Failed to read video file'));
-      };
-
-      video.src = url;
-    });
+    return extractVideoInfoFromFile(file);
   }
 
   /**
-   * Generate thumbnail
+   * Generate thumbnail at a specific timestamp
    */
   async generateThumbnail(
     videoPath: string,
     timestamp: number = 0,
-    width: number = 320
+    width: number = DEFAULT_THUMBNAIL_WIDTH
   ): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const video = document.createElement('video');
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-
-      video.crossOrigin = 'anonymous';
-
-      video.onloadeddata = () => {
-        const aspectRatio = video.videoHeight / video.videoWidth;
-        canvas.width = width;
-        canvas.height = Math.round(width * aspectRatio);
-
-        video.currentTime = timestamp;
-      };
-
-      video.onseeked = () => {
-        if (ctx) {
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-          const thumbnail = canvas.toDataURL('image/jpeg', 0.8);
-          resolve(thumbnail);
-        } else {
-          reject(new Error('Failed to create canvas context'));
-        }
-      };
-
-      video.onerror = () => {
-        reject(new Error('Failed to load video'));
-      };
-
-      video.src = videoPath;
-    });
+    return captureVideoFrameAsDataURL(videoPath, timestamp, width);
   }
 
   /**
-   * Extract keyframes
+   * Extract keyframes (evenly distributed)
+   * 内部循环里调 this.generateThumbnail 以便测试可 spy
    */
   async extractKeyframes(
     videoPath: string,
     duration: number,
-    count: number = 10
+    count: number = DEFAULT_KEYFRAME_COUNT
   ): Promise<Keyframe[]> {
     const keyframes: Keyframe[] = [];
     const interval = duration / (count + 1);
@@ -155,15 +95,16 @@ class VideoService {
   }
 
   /**
-   * Detect scenes
+   * Detect scenes (fixed-window cut)
+   * 内部循环里调 this.generateThumbnail 以便测试可 spy
    */
   async detectScenes(
     videoPath: string,
     duration: number,
-    _threshold: number = 0.3
+    _threshold: number = DEFAULT_SCENE_DETECTION_THRESHOLD
   ): Promise<Scene[]> {
     const scenes: Scene[] = [];
-    const sceneDuration = 30;
+    const sceneDuration = DEFAULT_SCENE_DURATION_SEC;
     const sceneCount = Math.floor(duration / sceneDuration);
 
     for (let i = 0; i < sceneCount; i++) {
@@ -189,11 +130,12 @@ class VideoService {
   }
 
   /**
-   * Analyze video
+   * Analyze video: keyframes + scenes + summary
+   * 内部用 this.extractKeyframes / this.detectScenes 以便测试可 spy
    */
   async analyzeVideo(videoInfo: VideoInfo): Promise<VideoAnalysis> {
     const [keyframes, scenes] = await Promise.all([
-      this.extractKeyframes(videoInfo.path!, videoInfo.duration!, 10),
+      this.extractKeyframes(videoInfo.path!, videoInfo.duration!, DEFAULT_KEYFRAME_COUNT),
       this.detectScenes(videoInfo.path!, videoInfo.duration!),
     ]);
 
@@ -204,75 +146,31 @@ class VideoService {
       keyframes,
       objects: [],
       emotions: [],
-      summary: `Video duration ${this.formatDuration(videoInfo.duration!)}, resolution ${videoInfo!.width}x${videoInfo!.height}, contains ${scenes.length} scenes.`,
+      summary: `Video duration ${formatVideoDuration(videoInfo.duration!)}, resolution ${videoInfo!.width}x${videoInfo!.height}, contains ${scenes.length} scenes.`,
       createdAt: new Date().toISOString(),
     };
   }
 
   /**
-   * Generate preview
+   * Generate preview (placeholder: returns input path as-is)
    */
   async generatePreview(videoPath: string, _startTime: number, _endTime: number): Promise<string> {
     return videoPath;
   }
 
   /**
-   * Export video
+   * Export video with quality/resolution/subtitle options
    */
   async exportVideo(
     inputPath: string,
     outputPath: string,
-    options: {
-      format?: string;
-      quality?: 'low' | 'medium' | 'high' | 'ultra';
-      resolution?: '720p' | '1080p' | '2k' | '4k';
-      includeSubtitles?: boolean;
-      subtitlePath?: string;
-    }
+    options: VideoExportOptions
   ): Promise<string> {
-    const builder = new FFmpegCommandBuilder();
-    builder.input(inputPath);
-
-    const qualityMap: Record<string, string[]> = {
-      low: ['-crf', '28'],
-      medium: ['-crf', '23'],
-      high: ['-crf', '18'],
-      ultra: ['-crf', '15'],
-    };
-
-    const resolutionMap: Record<string, string> = {
-      '720p': '1280:720',
-      '1080p': '1920:1080',
-      '2k': '2560:1440',
-      '4k': '3840:2160',
-    };
-
-    const quality = options.quality || 'high';
-    const resolution = options.resolution || '1080p';
-
-    builder.option(...qualityMap[quality]);
-
-    if (resolution !== '1080p') {
-      builder.filter(`scale=${resolutionMap[resolution]}`);
-    }
-
-    if (options.includeSubtitles && options.subtitlePath) {
-      builder.input(options.subtitlePath);
-      builder.filter('subtitles=subtitle.srt');
-    }
-
-    builder.output(outputPath, ['-c:v', 'libx264', '-c:a', 'aac']);
-
-    const command = builder.build();
-    logger.info('FFmpeg command:', command);
-
-    await delay(PROCESSING_DELAY_MS.EXPORT_VIDEO);
-
-    return outputPath;
+    return exportVideo(inputPath, outputPath, options);
   }
 
   /**
-   * Clip video
+   * Clip video between start/end
    */
   async clipVideo(
     inputPath: string,
@@ -280,117 +178,44 @@ class VideoService {
     startTime: number,
     endTime: number
   ): Promise<string> {
-    const builder = new FFmpegCommandBuilder();
-    builder
-      .input(inputPath)
-      .option('-ss', startTime.toString(), '-t', (endTime - startTime).toString(), '-c', 'copy')
-      .output(outputPath);
-
-    const command = builder.build();
-    logger.info('Clip command:', command);
-
-    await delay(PROCESSING_DELAY_MS.CLIP_VIDEO);
-    return outputPath;
+    return clipVideo(inputPath, outputPath, startTime, endTime);
   }
 
   /**
-   * Merge videos
+   * Merge multiple videos via concat demuxer
    */
   async mergeVideos(inputPaths: string[], outputPath: string): Promise<string> {
-    const fileList = inputPaths.map((p) => `file '${p}'`).join('\n');
-    logger.info('Merge file list:', fileList);
-
-    const builder = new FFmpegCommandBuilder();
-    builder
-      .option('-f', 'concat', '-safe', '0')
-      .input('filelist.txt')
-      .option('-c', 'copy')
-      .output(outputPath);
-
-    const command = builder.build();
-    logger.info('Merge command:', command);
-
-    await delay(PROCESSING_DELAY_MS.MERGE_VIDEO);
-    return outputPath;
+    return mergeVideos(inputPaths, outputPath);
   }
 
   /**
-   * Add subtitles
+   * Burn subtitles into video
    */
   async addSubtitles(
     videoPath: string,
     subtitlePath: string,
     outputPath: string,
-    style?: {
-      fontSize?: number;
-      fontColor?: string;
-      backgroundColor?: string;
-      position?: 'top' | 'middle' | 'bottom';
-    }
+    style?: SubtitleStyle
   ): Promise<string> {
-    const defaultStyle = {
-      fontSize: 24,
-      fontColor: '#FFFFFF',
-      backgroundColor: '#000000',
-      position: 'bottom' as const,
-    };
-
-    const finalStyle = { ...defaultStyle, ...style };
-
-    const builder = new FFmpegCommandBuilder();
-    builder
-      .input(videoPath)
-      .filter(
-        `subtitles=${subtitlePath}:force_style='FontSize=${finalStyle.fontSize},PrimaryColour=${finalStyle.fontColor}'`
-      )
-      .output(outputPath, ['-c:v', 'libx264', '-c:a', 'copy']);
-
-    const command = builder.build();
-    logger.info('Subtitle command:', command);
-
-    await delay(PROCESSING_DELAY_MS.ADD_SUBTITLE);
-    return outputPath;
+    return addSubtitles(videoPath, subtitlePath, outputPath, style);
   }
 
   /**
-   * Convert format
+   * Convert video to a different container format
    */
   async convertFormat(inputPath: string, outputPath: string, format: string): Promise<string> {
-    const formatMap: Record<string, string[]> = {
-      mp4: ['-c:v', 'libx264', '-c:a', 'aac'],
-      webm: ['-c:v', 'libvpx-vp9', '-c:a', 'libopus'],
-      mov: ['-c:v', 'libx264', '-c:a', 'aac', '-f', 'mov'],
-      avi: ['-c:v', 'libx264', '-c:a', 'mp3', '-f', 'avi'],
-    };
-
-    const codec = formatMap[format] || formatMap.mp4;
-
-    const builder = new FFmpegCommandBuilder();
-    builder.input(inputPath).output(outputPath, codec);
-
-    const command = builder.build();
-    logger.info('Convert command:', command);
-
-    await delay(2000);
-    return outputPath;
+    return convertFormat(inputPath, outputPath, format);
   }
 
   /**
-   * Format duration
+   * Format duration (mm:ss or hh:mm:ss)
    */
   private formatDuration(seconds: number): string {
-    const hours = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    const secs = Math.floor(seconds % 60);
-
-    if (hours > 0) {
-      return `${hours}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    }
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return formatVideoDuration(seconds);
   }
 
   /**
-   * Format file size (uses shared/utils)
+   * Format file size (delegates to shared/utils)
    */
   formatFileSize(bytes: number): string {
     return formatFileSize(bytes);
