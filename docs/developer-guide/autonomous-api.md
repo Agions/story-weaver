@@ -1,41 +1,147 @@
 ---
 title: 自主引擎 API
-description: AutoPipelineEngine / QualityGate / SelfReviewLoop 的 API 与使用模式
+description: AutoPipelineEngine / QualityGate / SelfReviewLoop 本地服务 API：创建、事件订阅、Checkpoint 恢复
 category: developer-guide
-version: '>=2.4'
+version: '>=3.0'
 ---
 
-# 自主引擎 API 文档
+# 自主引擎 API
 
-本文档详细描述 frame-fab 全自主流水线的 API 接口设计与使用方法。
+> frame-fab **Autonomous 模式**的核心 API——`AutoPipelineEngine` + `QualityGate` + `SelfReviewLoop`。
+> **本地服务接口**，**无 REST API**，**无 token 鉴权**——所有调用在进程内完成。
 
----
+## 一、模块结构
 
-## 一、概述
+> 代码位置：`src/core/autonomous/`
 
-Autonomous API 是 frame-fab 全自动漫剧制作系统的核心 API，允许开发者通过编程方式启动、管理和监控全自动流水线任务。
+```
+core/autonomous/
+├── auto-pipeline-engine.ts      # 引擎主入口
+├── pipeline-checkpoint.ts       # Checkpoint 序列化/恢复
+├── pipeline-executor.ts         # 步骤执行器
+├── pipeline-event-dispatcher.ts # 事件总线
+├── pipeline-step-state.ts       # 步骤状态机
+├── pipeline-types.ts            # 类型定义
+├── evaluator/
+│   ├── quality-gate.ts          # 质量门禁
+│   └── self-review-loop.ts      # 自审循环
+├── prompts/                     # Self-Review 提示词模板
+├── types/                       # 领域类型
+└── index.ts                     # 统一导出
+```
 
-**基础 URL**: `/api/v1/autonomous`
-
-**认证方式**: Bearer Token (在请求头中携带)
-
----
-
-## 二、核心类型定义
-
-### 2.1 输入类型
+**统一导入**：
 
 ```typescript
-// 输入模式
+import {
+  createAutoPipelineEngine,
+  QualityGate,
+  SelfReviewLoop,
+  type AutoPipelineInput,
+  type AutoPipelineResult,
+  type AutoPipelineEvent,
+} from '@/core/autonomous';
+```
+
+## 二、AutoPipelineEngine
+
+### 2.1 创建实例
+
+```typescript
+import { createAutoPipelineEngine } from '@/core/autonomous';
+
+const engine = createAutoPipelineEngine({
+  maxReviewRetries: 3,    // Self-Review 最大循环（默认 3）
+  checkpointIntervalMs: 30_000,  // Checkpoint 保存间隔（默认 30s）
+  enableCheckpoint: true, // 启用断点续传（默认 true）
+});
+```
+
+### 2.2 启动流水线
+
+```typescript
+const result = await engine.run({
+  content: '从前有座山，山里有座庙...',
+  mode: 'novel',                  // 'novel' | 'script' | 'prompt'
+  style: 'anime',                 // '2d' | '3d' | 'anime' | 'realistic'
+  qualityLevel: 'balanced',       // 'fast' | 'balanced' | 'premium'
+  title: '山与庙',                // 可选
+  options: {
+    maxReviewLoops: 3,
+    maxConcurrentRenders: 4,
+    language: 'zh-CN',
+    subtitle: {
+      enabled: true,
+      position: 'bottom',         // 'bottom' | 'top'
+    },
+  },
+});
+```
+
+### 2.3 事件订阅
+
+```typescript
+engine.onEvents({
+  onStepStart: (stepId: PipelineStepId) => {
+    console.log(`▶ 开始：${stepId}`);
+  },
+  onStepProgress: (stepId, progress, message) => {
+    console.log(`  [${stepId}] ${progress}% ${message ?? ''}`);
+  },
+  onStepComplete: (stepId, output) => {
+    console.log(`✅ 完成：${stepId}`);
+  },
+  onStepRetry: (stepId, attempt, reason) => {
+    console.log(`🔄 重试：${stepId} 第 ${attempt} 次（${reason}）`);
+  },
+  onReviewLoop: (stepId, score, passed) => {
+    console.log(`📊 自审：${stepId} 评分 ${score.toFixed(2)} ${passed ? '通过' : '不通过'}`);
+  },
+  onCheckpointSaved: (projectId, timestamp) => {
+    console.log(`💾 Checkpoint 已保存：${projectId} @ ${new Date(timestamp).toISOString()}`);
+  },
+  onPipelineComplete: (result) => {
+    console.log('🎉 完成！成片：', result.outputPath);
+  },
+  onPipelineFailed: (error) => {
+    console.error('❌ 失败：', error);
+  },
+});
+```
+
+### 2.4 暂停 / 恢复 / 取消
+
+```typescript
+// 暂停
+engine.pause();
+
+// 恢复
+engine.resume();
+
+// 取消
+engine.cancel();
+```
+
+### 2.5 Checkpoint 恢复
+
+```typescript
+// 列出所有可恢复项目
+const resumable = await engine.listCheckpoints();
+// [{ projectId, lastStep, savedAt, progress }]
+
+// 恢复指定项目
+const result = await engine.resumeFromCheckpoint('proj_abc123');
+```
+
+## 三、类型定义
+
+### 3.1 AutoPipelineInput
+
+```typescript
 type InputMode = 'novel' | 'script' | 'prompt';
-
-// 输出风格
 type OutputStyle = '2d' | '3d' | 'anime' | 'realistic';
-
-// 质量级别
 type QualityLevel = 'fast' | 'balanced' | 'premium';
 
-// 自动流水线输入
 interface AutoPipelineInput {
   /** 原材料内容（小说/剧本/需求描述） */
   content: string;
@@ -72,678 +178,198 @@ interface AutoPipelineInput {
 }
 ```
 
-### 2.2 输出类型
+### 3.2 AutoPipelineResult
 
 ```typescript
-// 流水线状态
 type PipelineStatus = 'idle' | 'running' | 'paused' | 'completed' | 'failed' | 'cancelled';
 
-// 步骤状态
-interface StepStatus {
-  stepId: string;
-  stepName: string;
-  status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
-  progress: number; // 0-100
-  reviewCount: number;
-  startTime?: number;
-  endTime?: number;
-  output?: any;
-  error?: string;
-}
-
-// 自动流水线结果
 interface AutoPipelineResult {
-  taskId: string;
+  projectId: string;
   status: PipelineStatus;
-  currentStep: string;
-  progress: number; // 0-100
-  steps: StepStatus[];
-  output?: {
-    videoPath: string;
-    thumbnailPath: string;
-    duration: number;
-    resolution: string;
-    fileSize: number;
-  };
-  error?: {
-    code: string;
-    message: string;
-    stepId?: string;
-  };
-  createdAt: number;
-  updatedAt: number;
-  completedAt?: number;
+  outputPath: string;        // 成片 MP4 路径
+  outputUrl: string;         // 浏览器可访问的 URL
+  duration: number;          // 视频时长（秒）
+  totalSteps: number;        // 总步数
+  completedSteps: PipelineStepId[];
+  failedSteps: PipelineStepId[];
+  retryCount: Record<PipelineStepId, number>;
+  cost: CostBreakdown;       // 成本明细
+  startedAt: number;
+  completedAt: number;
+  checkpointId?: string;     // 用于恢复
 }
 ```
 
-### 2.3 质量审核结果
+### 3.3 AutoPipelineEvent
 
 ```typescript
-// 审核维度
-interface ReviewCriteria {
-  completeness?: boolean; // 完整性
-  consistency?: boolean; // 一致性
-  visualQuality?: boolean; // 画面感
-  timing?: boolean; // 时长匹配
-  climaxDetection?: boolean; // 爆点检测
-}
-
-// 审核结果
-interface ReviewResult {
-  passed: boolean;
-  scores: Record<string, number>; // 各维度得分 0-100
-  reasons: string[]; // 不合格原因
-  suggestions: string[]; // 修复建议
+interface AutoPipelineEventMap {
+  onStepStart: (stepId: PipelineStepId) => void;
+  onStepProgress: (stepId: PipelineStepId, progress: number, message?: string) => void;
+  onStepComplete: (stepId: PipelineStepId, output: StepOutput) => void;
+  onStepRetry: (stepId: PipelineStepId, attempt: number, reason: string) => void;
+  onReviewLoop: (stepId: PipelineStepId, score: number, passed: boolean) => void;
+  onCheckpointSaved: (projectId: string, timestamp: number) => void;
+  onPipelineComplete: (result: AutoPipelineResult) => void;
+  onPipelineFailed: (error: Error) => void;
 }
 ```
 
----
+## 四、QualityGate（质量门禁）
 
-## 三、REST API 接口
-
-### 3.1 创建任务
-
-**POST** `/api/v1/autonomous/tasks`
-
-创建新的全自动流水线任务。
-
-**请求体**:
-
-```json
-{
-  "content": "小说文本内容...",
-  "mode": "novel",
-  "title": "我的漫剧项目",
-  "style": "anime",
-  "qualityLevel": "balanced",
-  "options": {
-    "maxReviewLoops": 3,
-    "maxConcurrentRenders": 4,
-    "language": "zh-CN",
-    "subtitle": {
-      "enabled": true,
-      "position": "bottom"
-    }
-  }
-}
-```
-
-**响应** (201 Created):
-
-```json
-{
-  "taskId": "task_abc123xyz",
-  "status": "running",
-  "currentStep": "ImportStep",
-  "progress": 0,
-  "createdAt": 1747987200000
-}
-```
-
-**错误响应**:
-
-| 状态码 | 错误码            | 说明                    |
-| ------ | ----------------- | ----------------------- |
-| 400    | INVALID_INPUT     | 输入内容无效或格式错误  |
-| 400    | CONTENT_TOO_SHORT | 内容过短（少于 100 字） |
-| 401    | UNAUTHORIZED      | 未提供或无效的认证令牌  |
-| 429    | RATE_LIMITED      | 请求过于频繁            |
-| 500    | INTERNAL_ERROR    | 服务器内部错误          |
-
-### 3.2 获取任务状态
-
-**GET** `/api/v1/autonomous/tasks/{taskId}`
-
-获取指定任务的详细状态信息。
-
-**路径参数**:
-
-| 参数   | 类型   | 说明    |
-| ------ | ------ | ------- |
-| taskId | string | 任务 ID |
-
-**响应** (200 OK):
-
-```json
-{
-  "taskId": "task_abc123xyz",
-  "status": "running",
-  "currentStep": "StoryboardStep",
-  "progress": 45,
-  "steps": [
-    {
-      "stepId": "import",
-      "stepName": "ImportStep",
-      "status": "completed",
-      "progress": 100,
-      "reviewCount": 1,
-      "startTime": 1747987200000,
-      "endTime": 1747987205000
-    },
-    {
-      "stepId": "analysis",
-      "stepName": "AnalysisStep",
-      "status": "completed",
-      "progress": 100,
-      "reviewCount": 1,
-      "startTime": 1747987205000,
-      "endTime": 1747987220000
-    },
-    {
-      "stepId": "script",
-      "stepName": "ScriptStep",
-      "status": "completed",
-      "progress": 100,
-      "reviewCount": 2,
-      "startTime": 1747987220000,
-      "endTime": 1747987250000
-    },
-    {
-      "stepId": "character",
-      "stepName": "CharacterStep",
-      "status": "running",
-      "progress": 60,
-      "reviewCount": 1,
-      "startTime": 1747987250000
-    }
-  ],
-  "createdAt": 1747987200000,
-  "updatedAt": 1747987260000
-}
-```
-
-**错误响应**:
-
-| 状态码 | 错误码         | 说明       |
-| ------ | -------------- | ---------- |
-| 404    | TASK_NOT_FOUND | 任务不存在 |
-
-### 3.3 获取任务进度（WebSocket 推荐）
-
-**GET** `/api/v1/autonomous/tasks/{taskId}/progress`
-
-获取任务的实时进度信息。
-
-**响应** (200 OK):
-
-```json
-{
-  "taskId": "task_abc123xyz",
-  "progress": 45,
-  "currentStep": {
-    "id": "character",
-    "name": "CharacterStep",
-    "progress": 60,
-    "reviewLoop": {
-      "current": 1,
-      "max": 3
-    }
-  },
-  "estimatedTimeRemaining": 300000,
-  "lastUpdated": 1747987260000
-}
-```
-
-### 3.4 暂停任务
-
-**POST** `/api/v1/autonomous/tasks/{taskId}/pause`
-
-暂停正在运行的任务。
-
-**响应** (200 OK):
-
-```json
-{
-  "taskId": "task_abc123xyz",
-  "status": "paused",
-  "pausedAt": 1747987260000,
-  "checkpoint": {
-    "stepId": "character",
-    "stepProgress": 60,
-    "data": { ... }
-  }
-}
-```
-
-**错误响应**:
-
-| 状态码 | 错误码         | 说明                     |
-| ------ | -------------- | ------------------------ |
-| 400    | INVALID_STATE  | 任务无法暂停（如已完成） |
-| 404    | TASK_NOT_FOUND | 任务不存在               |
-
-### 3.5 恢复任务
-
-**POST** `/api/v1/autonomous/tasks/{taskId}/resume`
-
-恢复已暂停的任务。
-
-**响应** (200 OK):
-
-```json
-{
-  "taskId": "task_abc123xyz",
-  "status": "running",
-  "resumedAt": 1747987300000
-}
-```
-
-**错误响应**:
-
-| 状态码 | 错误码         | 说明                     |
-| ------ | -------------- | ------------------------ |
-| 400    | INVALID_STATE  | 任务无法恢复（如未暂停） |
-| 404    | TASK_NOT_FOUND | 任务不存在               |
-
-### 3.6 取消任务
-
-**POST** `/api/v1/autonomous/tasks/{taskId}/cancel`
-
-取消正在运行或暂停的任务。
-
-**响应** (200 OK):
-
-```json
-{
-  "taskId": "task_abc123xyz",
-  "status": "cancelled",
-  "cancelledAt": 1747987300000
-}
-```
-
-### 3.7 获取任务输出
-
-**GET** `/api/v1/autonomous/tasks/{taskId}/output`
-
-获取已完成任务的输出结果。
-
-**响应** (200 OK):
-
-```json
-{
-  "taskId": "task_abc123xyz",
-  "status": "completed",
-  "output": {
-    "videoPath": "/output/task_abc123xyz/final.mp4",
-    "thumbnailPath": "/output/task_abc123xyz/thumbnail.jpg",
-    "duration": 1200,
-    "resolution": "1920x1080",
-    "fileSize": 52428800,
-    "format": "mp4"
-  },
-  "completedAt": 1747987400000
-}
-```
-
-**错误响应**:
-
-| 状态码 | 错误码           | 说明         |
-| ------ | ---------------- | ------------ |
-| 404    | TASK_NOT_FOUND   | 任务不存在   |
-| 400    | OUTPUT_NOT_READY | 输出尚未生成 |
-
-### 3.8 下载输出文件
-
-**GET** `/api/v1/autonomous/tasks/{taskId}/download`
-
-下载任务的输出文件（视频、缩略图等）。
-
-**查询参数**:
-
-| 参数 | 类型   | 说明                                               |
-| ---- | ------ | -------------------------------------------------- |
-| type | string | 下载类型：`video`（默认）、`thumbnail`、`subtitle` |
-
-**响应**: 文件流
-
-### 3.9 列举任务
-
-**GET** `/api/v1/autonomous/tasks`
-
-列举当前用户的所有任务。
-
-**查询参数**:
-
-| 参数      | 类型   | 默认值    | 说明       |
-| --------- | ------ | --------- | ---------- |
-| page      | number | 1         | 页码       |
-| limit     | number | 20        | 每页数量   |
-| status    | string | -         | 按状态筛选 |
-| sortBy    | string | createdAt | 排序字段   |
-| sortOrder | string | desc      | 排序方向   |
-
-**响应** (200 OK):
-
-```json
-{
-  "tasks": [
-    {
-      "taskId": "task_abc123xyz",
-      "title": "我的漫剧项目",
-      "status": "completed",
-      "progress": 100,
-      "createdAt": 1747987200000,
-      "completedAt": 1747987400000
-    }
-  ],
-  "pagination": {
-    "page": 1,
-    "limit": 20,
-    "total": 45,
-    "totalPages": 3
-  }
-}
-```
-
-### 3.10 删除任务
-
-**DELETE** `/api/v1/autonomous/tasks/{taskId}`
-
-删除指定的任务及其相关文件。
-
-**响应** (204 No Content)
-
----
-
-## 四、WebSocket 接口
-
-### 4.1 连接
-
-**WebSocket** `/api/v1/autonomous/ws`
-
-实时接收任务进度更新。
-
-**认证**: 在连接 URL 中携带 `?token=xxx` 或在连接后发送 auth 消息
-
-**客户端消息**:
-
-```json
-{
-  "type": "subscribe",
-  "taskId": "task_abc123xyz"
-}
-```
-
-**服务端消息**:
-
-```json
-{
-  "type": "progress",
-  "taskId": "task_abc123xyz",
-  "data": {
-    "status": "running",
-    "currentStep": "CharacterStep",
-    "progress": 45,
-    "stepProgress": 60
-  }
-}
-```
-
-**消息类型**:
-
-| 类型            | 说明         |
-| --------------- | ------------ |
-| `progress`      | 进度更新     |
-| `step_start`    | 步骤开始     |
-| `step_complete` | 步骤完成     |
-| `step_error`    | 步骤错误     |
-| `review_loop`   | 自审循环触发 |
-| `quality_gate`  | 质量门禁判定 |
-| `completed`     | 任务完成     |
-| `error`         | 任务错误     |
-
----
-
-## 五、JavaScript SDK
-
-### 5.1 安装
-
-```bash
-npm install @frame-fab/autonomous-sdk
-```
-
-### 5.2 初始化
+### 4.1 创建
 
 ```typescript
-import { AutonomousClient } from '@frame-fab/autonomous-sdk';
+import { QualityGate } from '@/core/autonomous';
 
-const client = new AutonomousClient({
-  baseUrl: 'https://api.frame-fab.com',
-  token: 'your_api_token',
-  // 可选：WebSocket 连接选项
-  wsOptions: {
-    reconnect: true,
-    maxRetries: 5,
+const gate = new QualityGate({
+  thresholds: {
+    completeness: 1.0,   // 完整性（必填字段不缺）
+    consistency: 0.85,   // 角色一致性
+    visualDetail: 0.80,  // 画面感
+    durationMatch: 0.90,  // 时长匹配
+    highlightDetection: 0.70, // 爆点检测（可选）
+  },
+  maxRetries: 3,
+});
+```
+
+### 4.2 评估
+
+```typescript
+const result = await gate.evaluate(stepId, output);
+// {
+//   passed: true,
+//   score: 0.92,
+//   details: { completeness: 1.0, consistency: 0.88, ... },
+//   repairPrompt?: string  // 不通过时给出修复提示
+// }
+```
+
+## 五、SelfReviewLoop（自审循环）
+
+### 5.1 创建
+
+```typescript
+import { SelfReviewLoop } from '@/core/autonomous';
+
+const reviewer = new SelfReviewLoop({
+  maxRetries: 3,
+  backoffMs: 1000,        // 重试间隔基数
+  backoffMultiplier: 2,   // 指数退避
+});
+```
+
+### 5.2 完整自审流程
+
+```typescript
+const finalOutput = await reviewer.review(
+  stepId,            // 当前步骤
+  originalOutput,    // 步骤原始输出
+  gate,              // QualityGate 实例
+  async (repairPrompt) => {
+    // 使用修复 Prompt 重新生成
+    return await regenerateWithPrompt(repairPrompt);
+  }
+);
+
+// 如果 3 次仍不通过，返回 best-of-three
+```
+
+## 六、Checkpoint 机制
+
+### 6.1 数据结构
+
+```typescript
+interface PipelineCheckpoint {
+  projectId: string;
+  mode: 'autonomous' | 'manual';
+  currentStep: PipelineStepId;
+  progress: number;
+  steps: Record<PipelineStepId, StepState>;
+  reviewLoops: Record<PipelineStepId, number>;
+  timestamp: number;
+  version: string;
+}
+```
+
+### 6.2 存储位置
+
+- **桌面端**：Tauri SecureStorage（OS Keychain 加密）
+- **Web 端**：localStorage（明文，建议定期清理）
+
+### 6.3 30s 自动保存
+
+```typescript
+engine.onEvents({
+  onCheckpointSaved: (projectId, timestamp) => {
+    // 通知 UI：显示绿色"已保存"提示
   },
 });
 ```
 
-### 5.3 创建并启动任务
+## 七、配置项
 
 ```typescript
-import { AutonomousClient, InputMode, OutputStyle, QualityLevel } from '@frame-fab/autonomous-sdk';
+interface AutoPipelineConfig {
+  /** Self-Review 最大循环（默认 3） */
+  maxReviewRetries?: number;
 
-const client = new AutonomousClient({
-  baseUrl: 'https://api.frame-fab.com',
-  token: 'your_api_token',
-});
+  /** Checkpoint 保存间隔（默认 30s） */
+  checkpointIntervalMs?: number;
 
-// 创建任务
-const task = await client.tasks.create({
-  content: novelText,
-  mode: InputMode.NOVEL,
-  title: '我的漫剧项目',
-  style: OutputStyle.ANIME,
-  qualityLevel: QualityLevel.BALANCED,
-  options: {
-    maxReviewLoops: 3,
-    maxConcurrentRenders: 4,
-    subtitle: {
-      enabled: true,
-      position: 'bottom',
-    },
-  },
-});
+  /** 启用断点续传（默认 true） */
+  enableCheckpoint?: boolean;
 
-console.log(`任务已创建: ${task.taskId}`);
-```
+  /** 启用详细日志（默认 false） */
+  verboseLogging?: boolean;
 
-### 5.4 监控任务进度
-
-**方式一：轮询**
-
-```typescript
-async function monitorTask(taskId: string) {
-  while (true) {
-    const status = await client.tasks.getStatus(taskId);
-
-    console.log(`进度: ${status.progress}%`);
-    console.log(`当前步骤: ${status.currentStep}`);
-
-    if (status.status === 'completed') {
-      console.log('任务完成!');
-      console.log('输出文件:', status.output.videoPath);
-      break;
-    }
-
-    if (status.status === 'failed') {
-      console.error('任务失败:', status.error);
-      break;
-    }
-
-    await sleep(5000); // 每 5 秒查询一次
-  }
+  /** 启动时清理旧 Checkpoint（默认 7 天前） */
+  checkpointRetentionDays?: number;
 }
 ```
 
-**方式二：WebSocket 实时监听**
+## 八、错误处理
+
+| 错误类型 | 触发场景 | 推荐处理 |
+|---------|---------|---------|
+| `AIProviderError` | AI 模型调用失败 | 自动降级 / 通知用户 |
+| `CheckpointCorruptedError` | Checkpoint 损坏 | 提示从最近有效 Checkpoint 恢复 |
+| `StepTimeoutError` | 步骤超时 | 重试或跳过 |
+| `QualityGateFailedError` | 质量门禁 3 次不通过 | 记录日志 + 继续后续步骤（不阻塞）|
 
 ```typescript
-const ws = await client.tasks.subscribeToTask(taskId);
-
-// 监听进度更新
-ws.on('progress', (data) => {
-  console.log(`进度: ${data.progress}%`);
-});
-
-// 监听步骤完成
-ws.on('step_complete', (data) => {
-  console.log(`步骤完成: ${data.stepName}`);
-});
-
-// 监听自审循环
-ws.on('review_loop', (data) => {
-  console.log(`自审循环: ${data.current}/${data.max}`);
-});
-
-// 监听任务完成
-ws.on('completed', (data) => {
-  console.log('任务完成!');
-  console.log('视频路径:', data.output.videoPath);
-});
-
-// 监听错误
-ws.on('error', (data) => {
-  console.error('任务错误:', data.message);
-});
-```
-
-### 5.5 暂停/恢复/取消
-
-```typescript
-// 暂停任务
-await client.tasks.pause(taskId);
-
-// 恢复任务
-await client.tasks.resume(taskId);
-
-// 取消任务
-await client.tasks.cancel(taskId);
-```
-
-### 5.6 获取输出并下载
-
-```typescript
-// 获取输出信息
-const output = await client.tasks.getOutput(taskId);
-
-console.log('视频时长:', output.duration, '秒');
-console.log('分辨率:', output.resolution);
-console.log('文件大小:', (output.fileSize / 1024 / 1024).toFixed(2), 'MB');
-
-// 下载视频
-const videoBlob = await client.tasks.download(taskId, { type: 'video' });
-const url = URL.createObjectURL(videoBlob);
-
-// 或者获取下载链接
-const downloadUrl = await client.tasks.getDownloadUrl(taskId, { type: 'video' });
-```
-
-### 5.7 列举任务
-
-```typescript
-const result = await client.tasks.list({
-  page: 1,
-  limit: 20,
-  status: 'completed',
-});
-
-console.log(`共 ${result.pagination.total} 个任务`);
-result.tasks.forEach((task) => {
-  console.log(`- ${task.title} [${task.status}]`);
-});
-```
-
----
-
-## 六、错误处理
-
-### 6.1 错误响应格式
-
-```typescript
-interface APIError {
-  code: string; // 错误码
-  message: string; // 错误消息
-  details?: any; // 详细信息
-  requestId: string; // 请求 ID（用于排查）
-}
-```
-
-### 6.2 常见错误码
-
-| 错误码              | HTTP 状态 | 说明                 |
-| ------------------- | --------- | -------------------- |
-| INVALID_INPUT       | 400       | 输入参数无效         |
-| CONTENT_TOO_SHORT   | 400       | 内容过短             |
-| TASK_NOT_FOUND      | 404       | 任务不存在           |
-| INVALID_STATE       | 400       | 任务状态不允许此操作 |
-| RATE_LIMITED        | 429       | 请求频率超限         |
-| UNAUTHORIZED        | 401       | 未授权               |
-| INTERNAL_ERROR      | 500       | 服务器内部错误       |
-| SERVICE_UNAVAILABLE | 503       | 服务不可用（降级中） |
-
-### 6.3 SDK 错误处理示例
-
-```typescript
-import { AutonomousClient, APIError, RateLimitError, TaskNotFoundError } from '@frame-fab/autonomous-sdk';
-
-const client = new AutonomousClient({ ... });
-
 try {
-  const task = await client.tasks.create({ ... });
-} catch (error) {
-  if (error instanceof RateLimitError) {
-    // 请求频率超限，等待后重试
-    console.log(`限流，等待 ${error.retryAfter} 秒...`);
-    await sleep(error.retryAfter * 1000);
-    // 重试...
-  } else if (error instanceof APIError) {
-    // API 错误
-    console.error(`API 错误 [${error.code}]: ${error.message}`);
-  } else {
-    // 其他错误
-    throw error;
+  const result = await engine.run(input);
+} catch (err) {
+  if (err instanceof CheckpointCorruptedError) {
+    const recovered = await engine.repairCheckpoint(err.projectId);
   }
 }
 ```
 
----
+## 九、与服务层集成
 
-## 七、速率限制
+`AutoPipelineEngine` 调用下层服务（`@/core/services`）完成实际工作：
 
-| 端点            | 限制         |
-| --------------- | ------------ |
-| POST /tasks     | 10 次/分钟   |
-| GET /tasks/{id} | 60 次/分钟   |
-| WebSocket 连接  | 5 个并发连接 |
+| 步骤 | 主要调用 |
+|------|---------|
+| IMPORT | `scriptImportService` / `novelService` |
+| ANALYSIS | `novelAnalyzer` / `storyAnalysisService` |
+| SCRIPT | `aiService.generate()` |
+| CHARACTER | `characterService` |
+| STORYBOARD | `storyboardService` + `imageGenerationService` |
+| RENDER | `imageGenerationService` |
+| VIDEO_EDITING | `videoCompositorService` |
+| COMPOSITION | `videoCompositorService` + `subtitleService` |
+| AUDIO_SYNTHESIS | `ttsService` + `lipSyncService` |
+| EXPORT | `videoCompositorService` + FFmpeg |
 
----
+详见 [服务清单](./services.md) 和 [API 文档](../api/)。
 
-## 八、Webhook（企业版）
+## 十、相关文档
 
-企业版用户可以配置 Webhook 接收任务状态更新。
-
-**配置方式**:
-
-```typescript
-await client.webhooks.configure({
-  url: 'https://your-server.com/webhooks/frame-fab',
-  events: ['task.completed', 'task.failed', 'step.completed'],
-  secret: 'your_webhook_secret',
-});
-```
-
-**Webhook payload**:
-
-```json
-{
-  "event": "task.completed",
-  "timestamp": 1747987400000,
-  "taskId": "task_abc123xyz",
-  "data": {
-    "status": "completed",
-    "output": { ... }
-  },
-  "signature": "sha256=..."
-}
-```
+- [API - 流水线](../api/pipeline-service.md) — 服务层 API
+- [架构设计 - core/autonomous](./architecture.md#四核心模块) — 模块位置
+- [Pipeline 引擎 API](./pipeline-api.md) — 步骤链细节
+- [ADR-0006 Pipeline Engine](../adr/0006-pipeline-engine)
