@@ -1,3 +1,10 @@
+---
+title: 图像生成
+description: AI 图像生成接口，支持 Seedream 5.0、Kling 1.6、Vidu 2.0，含角色一致性系统
+category: api
+version: >=2.4
+---
+
 # 图像生成
 
 多提供商图像生成。

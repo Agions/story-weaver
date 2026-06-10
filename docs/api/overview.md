@@ -1,6 +1,9 @@
 ---
 layout: doc
 title: API 概述
+description: frame-fab 核心服务 API 总览，含 7 个服务的接口索引
+category: api
+version: '>=2.4'
 ---
 
 # API 概述

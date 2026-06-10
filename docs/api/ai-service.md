@@ -1,3 +1,10 @@
+---
+title: AI 服务
+description: 统一的 AI 文本生成接口，支持 8+ 模型（GLM-5 / M2.5 / Kimi / Doubao / Qwen / ERNIE / Claude / GPT）
+category: api
+version: >=2.4
+---
+
 # AI 服务
 
 统一的 AI 文本生成接口，支持多个提供商。

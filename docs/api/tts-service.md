@@ -1,3 +1,10 @@
+---
+title: TTS 服务
+description: 语音合成接口，支持 Edge TTS（免费）、CosyVoice、KAN-TTS，含唇形同步元数据
+category: api
+version: >=2.4
+---
+
 # TTS 服务
 
 文本转语音合成。

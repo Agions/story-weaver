@@ -1,3 +1,10 @@
+---
+title: API 文档
+description: frame-fab 完整 API 参考，包含 7 个核心服务接口定义与示例
+category: api
+version: >=2.4
+---
+
 # API 文档
 
 本文档提供 frame-fab 完整的 REST API 接口参考。

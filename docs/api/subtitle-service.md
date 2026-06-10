@@ -1,3 +1,10 @@
+---
+title: 字幕服务
+description: 字幕生成与嵌入，支持 SRT/VTT/ASS，含样式配置与时间轴对齐
+category: api
+version: >=2.4
+---
+
 # 字幕服务
 
 字幕生成与多格式导出。

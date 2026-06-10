@@ -1,3 +1,10 @@
+---
+title: 流水线
+description: 10 步 Pipeline 引擎 API：import → analysis → script → character → scene → storyboard → render → video-editing → audio → export
+category: api
+version: >=2.4
+---
+
 # 流水线
 
 端到端视频生成流水线。
