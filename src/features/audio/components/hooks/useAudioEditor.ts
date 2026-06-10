@@ -1,5 +1,5 @@
 /**
- * useAudioEditor - 音频编辑状态与操作主 Hook
+ * useAudioEditor - 音频编辑状态与操作主 Hook（重构版）
  *
  * Container 职责：
  * - 管理所有音频状态（voiceTracks / backgroundMusic / soundEffects / volumes）
@@ -7,18 +7,17 @@
  * - 暴露状态 + 操作给 AudioEditor.tsx（Presenter）
  * - 管理音频元素生命周期（HTMLAudioElement refs）
  *
- * 设计原则：
- * - 状态聚合在 hook 内部，不向上泄漏 useRef / setState
- * - 音频元素用 ref Map 管理（播放控制需要跨 track 互斥）
- * - 配置变化通过 useMemo + useEffect 同步给父组件 onConfigChange
+ * 重构思路：
+ * - 3 套 voice/sfx/music 导入+播放的重复模式提取到 audio-editor-helpers.ts
+ * - loadAudioFromPath / importAudioFiles / calculateAudioVolume / getOrCreatePlayer 只定义一次
+ * - 主 hook 只负责"组合状态 + 注入 helper + 互斥播放"
  */
 
-import { convertFileSrc } from '@tauri-apps/api/core';
 import { open } from '@tauri-apps/plugin-dialog';
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 
-import { message } from '@/shared/components/ui/message';
 import { logger } from '@/core/utils/logger';
+import { message } from '@/shared/components/ui/message';
 import { generateId, formatTime } from '@/shared/utils';
 
 import {
@@ -30,6 +29,14 @@ import {
   type AudioTrackConfig,
   type AudioPlaybackState,
 } from '../../types/audio.entities';
+
+import {
+  loadAudioFromPath,
+  importAudioFiles,
+  calculateAudioVolume,
+  getOrCreatePlayer,
+  removeFromCollection,
+} from './audio-editor-helpers';
 
 interface UseAudioEditorOptions {
   projectId?: string;
@@ -190,7 +197,8 @@ export function useAudioEditor({
         }
       });
     };
-  }, [voiceTracks]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // ========== 工具方法 ==========
 
@@ -213,68 +221,39 @@ export function useAudioEditor({
     setPlayingSfxId(null);
   }, []);
 
-  /** 从文件路径加载音频元数据 */
-  const loadAudioFromPath = useCallback(
-    (filePath: string): Promise<{ duration: number; fileUrl: string }> => {
-      return new Promise((resolve, reject) => {
-        const fileUrl = convertFileSrc(filePath);
-        const audio = new Audio(fileUrl);
-        audio.onloadedmetadata = () => resolve({ duration: audio.duration, fileUrl });
-        audio.onerror = () => reject(new Error(`无法加载音频: ${filePath}`));
-      });
-    },
-    []
-  );
-
   // ========== 配音操作 ==========
 
   const handleVoiceImport = useCallback(async () => {
     try {
-      const selected = await open({
-        multiple: true,
-        filters: [{ name: '音频文件', extensions: AUDIO_FILE_EXTENSIONS }],
-      });
-      if (!selected || !Array.isArray(selected)) return;
+      const loaded = await importAudioFiles(true, '配音音频');
+      if (loaded.length === 0) return;
 
-      const newTracks: VoiceTrack[] = [];
-      for (const filePath of selected) {
-        const fileName = (filePath.split('/').pop() || '配音音频').replace(/\.[^/.]+$/, '');
-        try {
-          const { duration, fileUrl } = await loadAudioFromPath(filePath);
-          newTracks.push({
-            id: generateId(),
-            name: fileName,
-            filePath,
-            fileUrl,
-            duration,
-            startTime: 0,
-            volume: 80,
-            fadeIn: 0,
-            fadeOut: 0,
-            type: 'dubbing',
-          });
-        } catch {
-          message.error(`无法加载音频文件: ${fileName}`);
-        }
-      }
+      const newTracks: VoiceTrack[] = loaded.map(({ fileName, filePath, duration, fileUrl }) => ({
+        id: generateId(),
+        name: fileName,
+        filePath,
+        fileUrl,
+        duration,
+        startTime: 0,
+        volume: 80,
+        fadeIn: 0,
+        fadeOut: 0,
+        type: 'dubbing' as const,
+      }));
 
-      if (newTracks.length > 0) {
-        setVoiceTracks((prev) => [...prev, ...newTracks]);
-        message.success(`成功导入 ${newTracks.length} 个配音文件`);
-      }
+      setVoiceTracks((prev) => [...prev, ...newTracks]);
+      message.success(`成功导入 ${newTracks.length} 个配音文件`);
     } catch (error) {
       logger.error('导入配音失败:', error);
       message.error('导入配音失败，请重试');
     }
-  }, [loadAudioFromPath]);
+  }, []);
 
   const handleVoiceRemove = useCallback(
     (id: string) => {
-      const track = voiceTracks.find((t) => t.id === id);
-      if (track?.fileUrl?.startsWith('blob:')) {
-        URL.revokeObjectURL(track.fileUrl);
-      }
-      setVoiceTracks((prev) => prev.filter((t) => t.id !== id));
+      removeFromCollection(id, voiceTracks, (removeId) => {
+        setVoiceTracks((prev) => prev.filter((t) => t.id !== removeId));
+      });
       message.success('配音已移除');
     },
     [voiceTracks]
@@ -291,18 +270,14 @@ export function useAudioEditor({
         setPlayingVoiceId(null);
       } else {
         stopAllAudio();
-
-        let audio = voiceAudioRefs.current.get(track.id);
-        if (!audio && track.fileUrl) {
-          audio = new Audio(track.fileUrl);
-          voiceAudioRefs.current.set(track.id, audio);
-        }
-        if (audio) {
-          audio.volume = (track.volume / 100) * (voiceVolume / 100) * (masterVolume / 100);
-          audio.play();
-          setPlayingVoiceId(track.id);
-          audio.onended = () => setPlayingVoiceId(null);
-        }
+        getOrCreatePlayer(
+          voiceAudioRefs.current,
+          track.id,
+          track.fileUrl,
+          calculateAudioVolume(track.volume, voiceVolume, masterVolume),
+          () => setPlayingVoiceId(null)
+        );
+        setPlayingVoiceId(track.id);
       }
     },
     [playingVoiceId, voiceVolume, masterVolume, stopAllAudio]
@@ -350,7 +325,7 @@ export function useAudioEditor({
       logger.error('选择背景音乐失败:', error);
       message.error('选择背景音乐失败，请重试');
     }
-  }, [loadAudioFromPath]);
+  }, []);
 
   const handleMusicRemove = useCallback(() => {
     if (musicAudioRef.current) {
@@ -381,7 +356,7 @@ export function useAudioEditor({
         musicAudioRef.current = audio;
       }
       if (audio) {
-        audio.volume = (backgroundMusic.volume / 100) * (musicVolume / 100) * (masterVolume / 100);
+        audio.volume = calculateAudioVolume(backgroundMusic.volume, musicVolume, masterVolume);
         audio.play();
         setPlayingMusic(true);
       }
@@ -404,41 +379,27 @@ export function useAudioEditor({
 
   const handleSfxImport = useCallback(async () => {
     try {
-      const selected = await open({
-        multiple: true,
-        filters: [{ name: '音频文件', extensions: AUDIO_FILE_EXTENSIONS }],
-      });
-      if (!selected || !Array.isArray(selected)) return;
+      const loaded = await importAudioFiles(true, '音效');
+      if (loaded.length === 0) return;
 
-      const newEffects: SoundEffect[] = [];
-      for (const filePath of selected) {
-        const fileName = (filePath.split('/').pop() || '音效').replace(/\.[^/.]+$/, '');
-        try {
-          const { duration, fileUrl } = await loadAudioFromPath(filePath);
-          newEffects.push({
-            id: generateId(),
-            name: fileName,
-            filePath,
-            fileUrl,
-            duration,
-            volume: 80,
-            startTime: 0,
-            category: '自定义',
-          });
-        } catch {
-          message.error(`无法加载音频文件: ${fileName}`);
-        }
-      }
+      const newEffects: SoundEffect[] = loaded.map(({ fileName, filePath, duration, fileUrl }) => ({
+        id: generateId(),
+        name: fileName,
+        filePath,
+        fileUrl,
+        duration,
+        volume: 80,
+        startTime: 0,
+        category: '自定义',
+      }));
 
-      if (newEffects.length > 0) {
-        setSoundEffects((prev) => [...prev, ...newEffects]);
-        message.success(`成功导入 ${newEffects.length} 个音效文件`);
-      }
+      setSoundEffects((prev) => [...prev, ...newEffects]);
+      message.success(`成功导入 ${newEffects.length} 个音效文件`);
     } catch (error) {
       logger.error('导入音效失败:', error);
       message.error('导入音效失败，请重试');
     }
-  }, [loadAudioFromPath]);
+  }, []);
 
   const handleSfxRemove = useCallback((id: string) => {
     setSoundEffects((prev) => prev.filter((e) => e.id !== id));
@@ -456,18 +417,14 @@ export function useAudioEditor({
         setPlayingSfxId(null);
       } else {
         stopAllAudio();
-
-        let audio = sfxAudioRefs.current.get(effect.id);
-        if (!audio && effect.fileUrl) {
-          audio = new Audio(effect.fileUrl);
-          sfxAudioRefs.current.set(effect.id, audio);
-        }
-        if (audio) {
-          audio.volume = (effect.volume / 100) * (effectVolume / 100) * (masterVolume / 100);
-          audio.play();
-          setPlayingSfxId(effect.id);
-          audio.onended = () => setPlayingSfxId(null);
-        }
+        getOrCreatePlayer(
+          sfxAudioRefs.current,
+          effect.id,
+          effect.fileUrl,
+          calculateAudioVolume(effect.volume, effectVolume, masterVolume),
+          () => setPlayingSfxId(null)
+        );
+        setPlayingSfxId(effect.id);
       }
     },
     [playingSfxId, effectVolume, masterVolume, stopAllAudio]
