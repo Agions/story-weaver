@@ -160,7 +160,8 @@ export default defineConfig({
         {
           text: '性能基准',
           items: [
-            { text: 'v2.2.0 基准报告', link: '/performance/benchmark-v2.2.0' },
+            { text: 'v3.0 基准报告（当前）', link: '/performance/benchmark-v3.0' },
+            { text: 'v2.2.0 基准报告（历史）', link: '/performance/benchmark-v2.2.0' },
           ],
         },
       ],
