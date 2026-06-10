@@ -68,3 +68,7 @@ docs/.vitepress/cache/
 
 # Local demo assets (kept off repo per user pref 2026-06-06)
 demo/
+
+# Internal dev reference docs (kept off repo per user pref 2026-06-10)
+# 主人偏好: 内部参考文档（refactor plan / 收官战报）不提交到 GitHub
+docs/dev/

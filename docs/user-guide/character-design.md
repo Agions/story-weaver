@@ -1,3 +1,10 @@
+---
+title: 角色设计
+description: frame-fab 角色设定卡自动生成、跨场景一致性维护、自定义角色库
+category: user-guide
+version: '>=3.0'
+---
+
 # 角色设计
 
 > 本文档介绍 frame-fab 中的角色设计功能，包括角色设定卡的生成、角色一致性维护以及角色外观的自定义方法。

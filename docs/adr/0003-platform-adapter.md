@@ -1,4 +1,11 @@
-# ADR-0003: Platform Adapter 平台适配层
+---
+title: ADR-0003 Platform Adapter 平台适配层
+description: 抽象 Tauri 桥接为 PlatformAdapter 接口，便于 Web 端降级与未来跨端扩展
+category: adr
+version: '>=3.0'
+---
+
+# ADR 0003: Platform Adapter 平台适配层
 
 ## 状态
 

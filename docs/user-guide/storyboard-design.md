@@ -1,3 +1,10 @@
+---
+title: 分镜设计
+description: frame-fab 分镜脚本自动生成：景别/运镜/参考图、Self-Review 一致性检查
+category: user-guide
+version: '>=3.0'
+---
+
 # 分镜设计
 
 > 本文档介绍 frame-fab 中的分镜设计功能，包括分镜脚本生成、参考图生成以及分镜审核机制。

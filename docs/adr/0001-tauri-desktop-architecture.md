@@ -1,3 +1,10 @@
+---
+title: ADR-0001 Tauri 2.1 桌面优先架构
+description: 选择 Tauri 2.1 + Rust 作为桌面端容器，替代 Electron，30MB 包体积 + 冷启动 < 1s
+category: adr
+version: '>=2.4'
+---
+
 # ADR 0001: Tauri 2.1 桌面优先架构
 
 - **状态**: Accepted

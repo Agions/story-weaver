@@ -1,4 +1,11 @@
-# ADR-0006: Pipeline Engine + Checkpoint 机制
+---
+title: ADR-0006 Pipeline Engine + Checkpoint
+description: 10 步 Pipeline 引擎设计：异步步骤链 + Quality Gate + Self-Review Loop + 30s Checkpoint
+category: adr
+version: '>=2.4'
+---
+
+# ADR 0006: Pipeline Engine + Checkpoint 机制
 
 ## 状态
 

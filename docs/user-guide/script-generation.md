@@ -1,3 +1,10 @@
+---
+title: 脚本生成
+description: frame-fab 视频剧本自动生成：结构化剧本、场景拆分、Self-Review 审核
+category: user-guide
+version: '>=3.0'
+---
+
 # 脚本生成
 
 > 本文档介绍 frame-fab 中的脚本生成功能，包括视频剧本的结构、如何生成结构化脚本以及脚本审核机制。
