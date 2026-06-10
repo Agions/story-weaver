@@ -66,9 +66,15 @@ pub fn validate_output_path(path: &str) -> Result<PathBuf, String> {
 
 /// Validate that a path is inside an allowed temp directory.
 /// Used for cleanup operations where the file must already exist.
+///
+/// 【v3.1 安全强化】原实现用 `canonical_path.starts_with(allowed)`，其中 `allowed`
+/// 来自 `ALLOWED_TEMP_CLEANUP_DIRS = &["framefab_keyframes", ...]`，**这些是相对名**
+/// 而 `canonical_path` 是绝对路径——`starts_with` 实际上永远不匹配，**漏洞：永远拒绝**。
+/// 修复：把 allowed 拼接成绝对 temp 目录后再 canonicalize 比较。
 pub fn validate_temp_path(path: &str) -> Result<PathBuf, String> {
     use log::error;
     use crate::constants::allowed_dirs::ALLOWED_TEMP_CLEANUP_DIRS;
+    use crate::constants::allowed_dirs::temp_subdir;
 
     if path.contains('\0') {
         return Err("无效的临时文件路径".into());
@@ -82,11 +88,13 @@ pub fn validate_temp_path(path: &str) -> Result<PathBuf, String> {
         format!("路径无效: {}", e)
     })?;
 
-    // Ensure the canonical path is under one of the allowed directories
+    // 【v3.1 修复】allowed_dirs 是子目录名（如 "framefab_keyframes"），
+    // 需拼成 OS temp dir 下的绝对路径再 canonicalize 后比较
     let is_allowed = ALLOWED_TEMP_CLEANUP_DIRS.iter().any(|allowed| {
-        let canonical_allowed = std::path::Path::new(*allowed)
+        let allowed_abs = temp_subdir(allowed);
+        let canonical_allowed = allowed_abs
             .canonicalize()
-            .unwrap_or_else(|_| std::path::PathBuf::from(*allowed));
+            .unwrap_or_else(|_| allowed_abs);
         canonical_path.starts_with(&canonical_allowed)
     });
 

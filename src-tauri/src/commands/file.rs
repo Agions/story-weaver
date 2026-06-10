@@ -53,8 +53,22 @@ pub fn save_project_file(
 }
 
 /// List the file names inside a subdirectory of the app data dir.
+///
+/// 【v3.1 安全强化】`directory` 参数未验证——`../../etc` 可遍历到任意目录。
+/// 修复：与 `validate_project_id` 同样的字符白名单（字母数字-下划线），
+/// 并禁止 `.`/`..` 路径组件。
 #[tauri::command]
 pub fn list_app_data_files(directory: String, app_handle: AppHandle) -> Result<Vec<String>, String> {
+    // 子目录名白名单校验：只允许字母/数字/-/_
+    let re = Regex::new(r"^[A-Za-z0-9_-]+$").map_err(|e| e.to_string())?;
+    if !re.is_match(&directory) {
+        return Err("无效的子目录名（仅允许字母、数字、'-'、'_'）".into());
+    }
+    // 禁止空串或纯特殊名
+    if directory.is_empty() || directory.starts_with('.') {
+        return Err("无效的子目录名".into());
+    }
+
     let dir = ensure_app_data_dir(&app_handle)?;
     let target = dir.join(&directory);
 
@@ -62,7 +76,18 @@ pub fn list_app_data_files(directory: String, app_handle: AppHandle) -> Result<V
         return Ok(Vec::new());
     }
 
-    let entries = fs::read_dir(&target).map_err(|e| e.to_string())?;
+    // 二次防御：canonicalize 后必须仍在 app data dir 下
+    let canonical_target = target
+        .canonicalize()
+        .map_err(|e| e.to_string())?;
+    let canonical_app_data = dir
+        .canonicalize()
+        .map_err(|e| e.to_string())?;
+    if !canonical_target.starts_with(&canonical_app_data) {
+        return Err("子目录解析超出应用数据目录".into());
+    }
+
+    let entries = fs::read_dir(&canonical_target).map_err(|e| e.to_string())?;
     let mut names = Vec::new();
     for entry in entries {
         let entry = entry.map_err(|e| e.to_string())?;
@@ -71,6 +96,47 @@ pub fn list_app_data_files(directory: String, app_handle: AppHandle) -> Result<V
         }
     }
     Ok(names)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // 【v3.1 安全测试】验证 list_app_data_files 拒绝路径遍历
+    // 注意：以下测试只覆盖纯函数（参数校验部分），不调用 ensure_app_data_dir
+    // 因为它需要 AppHandle（仅 Tauri runtime 可构造）
+
+    fn is_valid_subdir_name(name: &str) -> bool {
+        if name.is_empty() || name.starts_with('.') {
+            return false;
+        }
+        let re = Regex::new(r"^[A-Za-z0-9_-]+$").unwrap();
+        re.is_match(name)
+    }
+
+    #[test]
+    fn rejects_path_traversal() {
+        assert!(!is_valid_subdir_name(".."));
+        assert!(!is_valid_subdir_name("../etc"));
+        assert!(!is_valid_subdir_name("../../etc/passwd"));
+        assert!(!is_valid_subdir_name("foo/bar"));
+        assert!(!is_valid_subdir_name("foo\\bar"));
+    }
+
+    #[test]
+    fn rejects_null_bytes_and_specials() {
+        assert!(!is_valid_subdir_name("foo\0bar"));
+        assert!(!is_valid_subdir_name(".hidden"));
+        assert!(!is_valid_subdir_name(""));
+    }
+
+    #[test]
+    fn accepts_safe_names() {
+        assert!(is_valid_subdir_name("projects"));
+        assert!(is_valid_subdir_name("project-2026"));
+        assert!(is_valid_subdir_name("my_app_v1"));
+        assert!(is_valid_subdir_name("123abc"));
+    }
 }
 
 /// Delete a project file keyed by `project_id`.
