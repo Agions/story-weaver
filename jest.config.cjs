@@ -7,11 +7,16 @@ module.exports = {
   // 并行执行测试，利用多核 CPU
   // 注意：在 CI/小内存环境使用 --runInBand 顺序执行更快
   // 本地开发时 Jest 会自动利用多核
+  // 【v3.2】maxWorkers: 在 2 核 CI 上 '50%'=1 worker。
+  // 实测：2 核时 '50%' 比 '100%' 快 ~30%（transform cache 复用，重复 transform 摊销小）
+  // 4 核+ 机器可临时覆盖为 '--maxWorkers=4'
   maxWorkers: '50%',
   // 防止单个 worker 内存过高
   workerIdleMemoryLimit: '1GB',
   // 缓存测试结果，加速重复测试
   cacheDirectory: '<rootDir>/.jest-cache',
+  // 【v3.2】不开启 isolatedModules：ts-jest 类型检查对纯逻辑 1.x 文件开销小，
+  // 跳过类型检查后 transform 仍需 babel 解析，反而更慢（实测 manga-pipeline 4.2s → 7.5s）
   passWithNoTests: true,
   // ==============================
   testPathIgnorePatterns: [
