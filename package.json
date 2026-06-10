@@ -30,6 +30,7 @@
     "test:ci:full": "jest --ci --reporters=default",
     "docs:vp:build": "vitepress build docs",
     "docs:vp:dev": "vitepress dev docs",
+    "docs:check-links": "node scripts/docs-check-links.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui"
   },
