@@ -2,6 +2,54 @@
 
 All notable changes to this project will be documented in this file.
 
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [3.0.0] - 2026-06-10
+
+### 🎨 品牌资产全面升级 v2.0
+
+- **Logo 升级**：保留原设计基因（深空蓝 + 紫粉渐变），增强三帧胶片条带、中心三圈光圈、顶角装饰点
+- **新增 `docs/BRAND_GUIDELINES.md`** (5.4KB)：Logo 元素/变体/规范、色彩系统（含 CSS 变量）、字体/间距、品牌声音
+- **OG Image 重设计**：同步品牌 v2.0 + 新增 4 个特性徽章（TAURI+RUST / 6+ AI MODELS / QUALITY GATE / CHECKPOINT）
+- **README v2.0**：聚焦快速开始 + emoji 锚点 + 路线图更新
+
+## [2.4.0] - 2026-06-10
+
+### 🧱 大文件拆分重构（44 文件 / 195+ 子模块）
+
+累计拆分 9 类大文件，每轮都通过 tsc 干净 + 全套 1375 测试零 regression：
+
+| 类型        | 代表文件                                        | 子模块                          |
+| ----------- | ----------------------------------------------- | ------------------------------- |
+| Service     | `video.service.ts` 401→222                      | 6 个                            |
+| Service     | `tauri.service.ts` 336→199                      | 7 个                            |
+| Service     | `storage.service.ts` 303→119                    | 9 个                            |
+| Service     | `scene-analyzer.service.ts` 256→89              | 5 个                            |
+| Pipeline    | `step5-keyframe/pipeline-controller.ts` 539→246 | 4 个                            |
+| Controller  | `MangaPipelineController.ts` 419→243            | 6 个                            |
+| Evaluator   | `quality-gate.ts` 369→119                       | 2 个                            |
+| Self-Review | `self-review-loop.ts` 327→163                   | 2 个                            |
+| Hook        | `useSettings.ts` 429→233                        | 3 个（消除 144 行重复）         |
+| Hook        | `useProjectDetail.ts` 410→173                   | 2 个                            |
+| Hook        | `useVideoEditor.ts` 356→215                     | 3 个                            |
+| Util        | `general.ts` 426→68                             | 6 个（6 个功能域）              |
+| Util        | `core/utils/hooks.ts` 363→40                    | 3 个（DOM/状态/计时）           |
+| Constants   | `constants/index.ts` 491→30                     | 4 个（脚本/视频/应用/LLM）      |
+| Config      | `models.config.ts` 442→20                       | 3 个（提供商/目录/工具）        |
+| Util        | `platform.ts` 335→35                            | 4 个（检测/存储/文件系统/通知） |
+| Template    | `prompt-template.ts` 329→30                     | 4 个（风格/角色/构建/校验）     |
+| Engine      | `pipeline-engine.ts` 311→200                    | 2 个（类型/中间件）             |
+| Step        | `char-illustrator.ts` 389→30                    | 4 个（风格/立绘/约束/场景）     |
+| Hook        | `useEditor.ts` 302→200                          | 1 个（类型）                    |
+
+**死代码清理**：删除 4 个无引用文件（301 行）
+
+- `visual-consistency-aggregator.ts`
+- `seedream.adapter.ts`
+- `storage.interface.ts`
+- `video-editor-history.ts`
+
 ## [2.3.0] - 2026-06-08
 
 ### 🧹 v3.3 mega cleanup — dead code, duplicates, naming (-7,677 lines, 59 files)
@@ -95,12 +143,12 @@ Comprehensive post-v3.2 audit. Single mega PR (#22) supersedes 5 planned sequent
 
 #### 测试规模
 
-| 指标 | v2.1.0 | v2.2.0 | 变化 |
-|------|--------|--------|------|
-| Test Suites | 87 | **90** | +3 |
-| Tests Passed | 1523 | **1596** | +73 |
-| Tests Skipped | 0 | 4 | +4 |
-| Tests Failed | 0 | **0** | — |
+| 指标          | v2.1.0 | v2.2.0   | 变化 |
+| ------------- | ------ | -------- | ---- |
+| Test Suites   | 87     | **90**   | +3   |
+| Tests Passed  | 1523   | **1596** | +73  |
+| Tests Skipped | 0      | 4        | +4   |
+| Tests Failed  | 0      | **0**    | —    |
 
 #### 新增文档
 
