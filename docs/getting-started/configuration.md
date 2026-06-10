@@ -1,206 +1,141 @@
 ---
 title: 配置 AI API Key
-description: AI Provider API Key 配置指南：智谱 / 阿里 / MiniMax / 月之暗面 / 字节 / 快手 等 8+ 平台
+description: frame-fab 多模型 AI API Key 配置：智谱/Anthropic/MiniMax/Seedream/Kling/TTS，含降级链
 category: getting-started
-version: >=2.4
+version: '>=3.0'
 ---
 
 # 配置 AI API Key
 
-本文档介绍如何为 frame-fab 配置各类 AI 服务 API Key，包括文本生成、图像生成和语音合成服务。
+> 配置 AI 模型是跑通 frame-fab 的**关键一步**。本文介绍所有支持的 Provider 和降级策略。
 
----
+## 一、配置入口
 
-## 创建 .env.local 文件
+启动 frame-fab → **设置** → **API Key** → 添加 Provider
 
-在项目根目录创建 `.env.local` 文件（注意：该文件不应提交到版本控制系统）：
+> **桌面端优先使用「设置面板」配置**——API Key 通过 [Tauri Secure Storage](https://tauri.app/v1/api/js/storage) 加密存储。
+> **开发模式**（`pnpm tauri dev`）可在 `.env.local` 配置。
 
-```bash
-touch .env.local
+## 二、必须配置
+
+| 类型 | 推荐 | 原因 |
+|------|------|------|
+| 文本模型 | `ZHIPU_API_KEY` | 必需，**国内首选** |
+| 图像模型 | `SEEDDREAM_API_KEY` | 必需，**质量最高** |
+| TTS | （默认 Edge TTS） | 可选，免费 |
+
+## 三、文本生成 Provider
+
+| Provider | 模型 | 价格 | 适用 |
+|----------|------|------|------|
+| 智谱 `zhipu` | GLM-5 | 💰 | 中文剧本首选 |
+| Anthropic `anthropic` | Claude 3.5 Sonnet | 💰💰 | 长文本/高质量 |
+| MiniMax `minimax` | M2.5 | 💰 | 备选 |
+| 月之暗面 `moonshot` | Kimi K2.5 | 💰 | 长上下文 |
+| 字节豆包 `doubao` | Doubao 2.0 | 💰 | 国内备选 |
+| 阿里通义 `qwen` | Qwen 2.5 | 💰 | 国内备选 |
+| 百度文心 `ernie` | ERNIE 4.0 | 💰 | 国内备选 |
+| OpenAI `openai` | GPT-4o | 💰💰💰 | 国际/英文 |
+
+### 3.1 智谱 GLM-5（推荐）
+
+1. 访问 [智谱开放平台](https://open.bigmodel.cn/)
+2. 注册 → 实名认证 → 「API Keys」 → 创建新 Key
+3. 复制到 frame-fab 设置
+
+### 3.2 Anthropic Claude 3.5
+
+1. 访问 [Anthropic Console](https://console.anthropic.com/)
+2. 创建 API Key
+3. 复制到 frame-fab 设置
+
+## 四、图像生成 Provider
+
+| Provider | 模型 | 类型 | 备注 |
+|----------|------|------|------|
+| 字节跳动 `seedream` | Seedream 5.0 | 图像 | ⭐⭐⭐ 动画/插画首选 |
+| 快手 `kling` | Kling 1.6 | 图像+视频 | 视频生成 |
+| 生数科技 `vidu` | Vidu 2.0 | 图像+视频 | 高一致性 |
+| 字节跳动 `seedance` | Seedance 2.0 | 视频 | 短运镜 |
+| Stability `stability` | SDXL | 图像 | 降级方案 |
+
+## 五、语音合成 Provider
+
+| Provider | 价格 | 备注 |
+|----------|------|------|
+| **Edge TTS** | 🆓 免费 | **默认**，无需 Key |
+| 阿里 CosyVoice 2.0 | 💰 付费 | 高质量 |
+| 百度 TTS | 💰 付费 | 老牌 |
+| KAN-TTS | 💰 付费 | 字节系 |
+
+## 六、降级链策略
+
+frame-fab 内置**自动降级**——主选不可用时自动切换备选。
+
+### 6.1 默认降级链
+
+**文本**：
+```
+GLM-5 → Claude 3.5 → M2.5 → Kimi K2.5 → Doubao 2.0 → Qwen 2.5 → ERNIE 4.0
 ```
 
-> **提示**：项目根目录已包含 `.gitignore`，默认会忽略 `.env.local` 文件。
-
----
-
-## API Key 配置项
-
-### 文本生成模型
-
-| 环境变量            | 说明                             | 必填     | 推荐配置          |
-| ------------------- | -------------------------------- | -------- | ----------------- |
-| `OPENAI_API_KEY`    | OpenAI API Key（GPT 系列）       | 建议配置 | GPT-4o            |
-| `ANTHROPIC_API_KEY` | Anthropic API Key（Claude 系列） | 可选     | Claude 3.5 Sonnet |
-| `ZHIPU_API_KEY`     | 智谱 GLM API Key                 | 建议配置 | GLM-5（性价比高） |
-| `DOUBAO_API_KEY`    | 字节豆包 API Key                 | 可选     | Doubao 2.0        |
-| `ERNIE_API_KEY`     | 百度文心 API Key                 | 可选     | ERNIE 4.0         |
-
-### 图像生成模型
-
-| 环境变量            | 说明                     | 必填         | 推荐配置         |
-| ------------------- | ------------------------ | ------------ | ---------------- |
-| `SEEDDREAM_API_KEY` | Seedream 5.0 API Key     | **强烈推荐** | 首选（质量最高） |
-| `KLING_API_KEY`     | 快影 Kling API Key       | 可选         | 备选方案         |
-| `VIDU_API_KEY`      | Vidu 2.0 API Key         | 可选         | 次级备选         |
-| `STABILITY_API_KEY` | Stable Diffusion API Key | 可选         | 降级方案         |
-
-### 语音合成模型
-
-| 环境变量               | 说明                       | 必填         | 推荐配置     |
-| ---------------------- | -------------------------- | ------------ | ------------ |
-| `EDGE_TTS_KEY`         | Edge TTS 配置              | **推荐配置** | 免费、低延迟 |
-| `COSYVOICE_API_KEY`    | 阿里 CosyVoice 2.0 API Key | 可选         | 备选方案     |
-| `BAIDU_TTS_API_KEY`    | 百度 TTS API Key           | 可选         | 降级方案     |
-| `BAIDU_TTS_SECRET_KEY` | 百度 TTS Secret Key        | 配合上者使用 | -            |
-
----
-
-## 环境变量示例
-
-```env
-# .env.local
-
-# ===== 文本生成 =====
-OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-ZHIPU_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-# ===== 图像生成 =====
-SEEDDREAM_API_KEY=xxxxxxxxxxxxxxxx
-KLING_API_KEY=xxxxxxxxxxxxxxxx
-
-# ===== 语音合成 =====
-COSYVOICE_API_KEY=xxxxxxxxxxxxxxxx
+**图像**：
+```
+Seedream 5.0 → Kling 1.6 → Vidu 2.0 → SDXL
 ```
 
----
-
-## API Key 获取链接
-
-### 文本生成
-
-| 服务      | 官方链接                                    | 特点              |
-| --------- | ------------------------------------------- | ----------------- |
-| OpenAI    | https://platform.openai.com/api-keys        | GPT-4o，功能强大  |
-| Anthropic | https://console.anthropic.com/settings/keys | Claude 3.5 Sonnet |
-| 智谱 AI   | https://open.bigmodel.cn/                   | GLM-5，性价比高   |
-| 字节豆包  | https://console.volcengine.com/ark          | Doubao 2.0        |
-| 百度文心  | https://console.bce.baidu.com/              | ERNIE 4.0         |
-
-### 图像生成
-
-| 服务             | 官方链接                       | 特点                 |
-| ---------------- | ------------------------------ | -------------------- |
-| Seedream         | https://www.seedream.com/      | 5.0 版本，强烈推荐   |
-| 快影 Kling       | https://klingai.com/           | 1.6 版本，视频能力强 |
-| Vidu             | https://www.vidu.cn/           | 2.0 版本，备选       |
-| Stable Diffusion | https://platform.stability.ai/ | 开源生态             |
-
-### 语音合成
-
-| 服务      | 官方链接                       | 特点                   |
-| --------- | ------------------------------ | ---------------------- |
-| Edge TTS  | 内置免费服务                   | 无需 API Key，推荐使用 |
-| CosyVoice | https://www.modelscope.cn/     | 阿里开源，音质好       |
-| 百度 TTS  | https://console.bce.baidu.com/ | 老牌服务               |
-
----
-
-## 降级策略说明
-
-frame-fab 内置智能降级策略，当主选模型不可用时，会自动切换到备选模型：
-
-### 图像生成降级链
-
-```
-Seedream 5.0 → Kling 1.6 → Vidu 2.0 → Stable Diffusion API
-```
-
-### 语音合成降级链
-
+**TTS**：
 ```
 Edge TTS → CosyVoice 2.0 → 百度 TTS
 ```
 
-### 文本生成降级链
+### 6.2 自定义降级链
 
-```
-GPT-4o → Claude 3.5 → GLM-5 → Doubao 2.0
-```
+在「设置 → AI 模型 → 降级链」中拖拽排序。
 
-> **说明**：降级过程完全自动化，用户无需任何操作。降级后会记录日志，如需手动指定模型，可在 `.env.local` 中配置。
+## 七、配置示例
 
----
+### 7.1 最小配置（免费可用）
 
-## 推荐配置
+| 必填 | Provider |
+|------|----------|
+| 文本 | ZHIPU_API_KEY |
+| 图像 | SEEDDREAM_API_KEY |
+| TTS | （Edge TTS 默认） |
 
-### 基础配置（免费/低成本）
+**预估成本**：约 ¥0.1/分钟漫剧
 
-```env
-# 文本生成
-ZHIPU_API_KEY=your_key_here
+### 7.2 高质量配置
 
-# 图像生成（使用免费/低成本方案）
-SEEDDREAM_API_KEY=your_key_here
+| 必填 | Provider |
+|------|----------|
+| 文本 | ZHIPU + ANTHROPIC 双备份 |
+| 图像 | SEEDDREAM + KLING 双备份 |
+| TTS | COSYVOICE |
 
-# 语音合成
-# 无需配置，使用内置 Edge TTS
-```
+**预估成本**：约 ¥0.3/分钟漫剧
 
-### 生产环境配置
+## 八、常见问题
 
-```env
-# 文本生成
-OPENAI_API_KEY=sk-xxxxx
-ZHIPU_API_KEY=your_key_here
+### Q1: API Key 在哪里输入？
 
-# 图像生成
-SEEDDREAM_API_KEY=your_key_here
-KLING_API_KEY=your_key_here
+A: 桌面端「设置 → API Key」。**不要**写进代码或提交到 Git。
 
-# 语音合成
-COSYVOICE_API_KEY=your_key_here
-```
+### Q2: 某个 Provider 报错怎么办？
 
-### 高质量配置
+A: frame-fab 会**自动降级**到备选 Provider。失败信息会显示在「设置 → 状态」。
 
-```env
-# 文本生成
-OPENAI_API_KEY=sk-xxxxx
-ANTHROPIC_API_KEY=sk-ant-xxxxx
-ZHIPU_API_KEY=your_key_here
+### Q3: API Key 会被泄露吗？
 
-# 图像生成
-SEEDDREAM_API_KEY=your_key_here
-KLING_API_KEY=your_key_here
+A: 桌面端使用 [Tauri Secure Storage](https://tauri.app/v1/api/js/storage) 加密存储。
+> ⚠️ 注意：frame-fab 是开源应用，反编译可读取内存中的 Key。建议使用**子账户 + 限额**。
 
-# 语音合成
-COSYVOICE_API_KEY=your_key_here
-```
+### Q4: 海外访问国内 API 慢？
 
----
+A: 启用「网络代理」或在「设置 → 网络」中配置代理。
 
-## 验证配置
+## 九、相关文档
 
-配置完成后，可通过以下命令验证 API Key 是否正确配置：
-
-```bash
-npm run check-config
-```
-
-或启动应用后访问设置页面，系统会自动检测各 API Key 的可用性。
-
----
-
-## 常见问题
-
-**Q: 是否所有 API Key 都必须配置？**
-
-不需要。frame-fab 支持降级策略，只需配置核心服务即可运行。建议至少配置一个图像生成 API Key 以保证视频渲染功能正常。
-
-**Q: 如何确保 API Key 安全？**
-
-不要将 `.env.local` 提交到 Git，所有环境变量仅存储在本地。生产环境建议使用容器环境变量或密钥管理服务。
-
-**Q: 遇到 API 限流怎么办？**
-
-frame-fab 内置请求队列和重试机制。如频繁遇到限流，可在 `.env.local` 中配置多个备选 API Key，系统会自动负载均衡。
+- [环境变量](../deployment/environment.md) — 开发模式 `.env.local`
+- [API 文档 - AI 服务](../api/ai-service.md)
+- [API Key 安全最佳实践](../deployment/environment.md#六安全最佳实践)
