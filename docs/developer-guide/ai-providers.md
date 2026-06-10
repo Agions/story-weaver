@@ -302,5 +302,5 @@ export const withLogging = (provider: Provider): Provider => ({
 ## 相关资源
 
 - [架构概览](/developer-guide/architecture)
-- [Pipeline 引擎](/developer-guide/pipeline-engine)
-- [ADR-0005: ProviderRegistry 决策](/adr/0005-provider-registry.md)
+- [Pipeline 引擎 API](/developer-guide/pipeline-api)
+- [ADR-0003: Platform Adapter 决策](/adr/0003-platform-adapter.md)

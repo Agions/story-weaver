@@ -291,5 +291,5 @@ A: 建议：
 
 - [脚本生成](./script-generation.md)
 - [角色设计](./character-design.md)
-- [渲染输出](./render-step.md)
+- [渲染与导出](./rendering-export.md)
 - [快速开始](../getting-started/quick-start.md)

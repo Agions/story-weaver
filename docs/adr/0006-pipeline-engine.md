@@ -139,6 +139,5 @@ interface PipelineCheckpoint {
 
 ## 相关
 
-- [Pipeline 引擎文档](/developer-guide/pipeline-engine)
-- [自审循环 (Self-Review Loop)](/user-guide/quality-gate)
-- [ADR-0005: Provider Registry](/adr/0005-provider-registry.md)
+- [Pipeline 引擎 API](/developer-guide/pipeline-api)
+- [自审循环 (Self-Review Loop)](/developer-guide/autonomous-api)
