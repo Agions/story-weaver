@@ -1,91 +1,166 @@
-# 构建与部署
+---
+title: 构建与发布
+description: frame-fab Tauri 桌面应用构建命令、产物位置、自动更新配置
+category: deployment
+version: '>=3.0'
+---
 
-frame-fab 构建和部署指南。
+# 构建与发布
 
-## 构建命令
+> frame-fab 使用 **Tauri 2.1** 构建跨平台桌面应用。
+
+## 一、构建命令
+
+### 1.1 开发模式
 
 ```bash
-# Web 开发
-pnpm dev
+# 启动开发服务器（带热重载）
+pnpm tauri dev
+```
 
-# 生产构建
-pnpm build
+### 1.2 生产构建
 
-# 预览生产构建
-pnpm preview
-
-# Tauri 桌面应用构建
+```bash
+# 全平台（需在对应平台运行）
 pnpm tauri build
 
-# 运行测试
-pnpm test
-
-# 快速测试（跳过 lint）
-pnpm test:fast
-
-# 构建 VitePress 文档
-pnpm docs:vp:build
-
-# 开发 VitePress 文档
-pnpm docs:vp:dev
+# 指定平台
+pnpm tauri build --target aarch64-apple-darwin
+pnpm tauri build --target x86_64-pc-windows-msvc
+pnpm tauri build --target x86_64-unknown-linux-gnu
 ```
 
-## Web 部署
-
-### Vercel
+### 1.3 调试构建
 
 ```bash
-npm i -g vercel
-vercel --prod
+pnpm tauri build --debug
 ```
 
-### Netlify
+## 二、构建产物位置
+
+| 平台 | 路径 |
+|------|------|
+| **macOS** | `src-tauri/target/release/bundle/macos/frame-fab.app` |
+| **macOS DMG** | `src-tauri/target/release/bundle/dmg/frame-fab_<version>_<arch>.dmg` |
+| **Windows** | `src-tauri/target/release/bundle/msi/frame-fab_<version>_<arch>-setup.exe` |
+| **Linux** | `src-tauri/target/release/bundle/appimage/frame-fab_<version>_amd64.AppImage` |
+| **Linux deb** | `src-tauri/target/release/bundle/deb/frame-fab_<version>_amd64.deb` |
+
+## 三、产物大小基准
+
+| 平台 | 大小 | 冷启动 |
+|------|------|--------|
+| macOS (Apple Silicon) | ~26 MB | < 0.9s |
+| macOS (Intel) | ~28 MB | < 1.0s |
+| Windows x64 | ~28 MB | < 1.2s |
+| Linux AppImage | ~24 MB | < 0.8s |
+
+## 四、自动更新
+
+frame-fab 使用 **Tauri Updater** 提供自动更新：
+
+```json
+// src-tauri/tauri.conf.json
+{
+  "updater": {
+    "active": true,
+    "dialog": true,
+    "endpoints": [
+      "https://github.com/Agions/frame-fab/releases/latest/download/latest.json"
+    ]
+  }
+}
+```
+
+发布新版本流程：
+
+1. 在 GitHub Releases 创建新 release（tag: `vX.Y.Z`）
+2. CI 自动构建三端产物 + `latest.json`
+3. 用户启动应用时自动检测更新
+4. 用户确认后下载并安装
+
+## 五、签名配置
+
+### 5.1 macOS
+
+需要 Apple Developer 证书：
 
 ```bash
-npm i -g netlify-cli
-netlify deploy --dir=dist --prod
+export APPLE_CERTIFICATE="..."
+export APPLE_CERTIFICATE_PASSWORD="..."
+export APPLE_SIGNING_IDENTITY="Developer ID Application: ..."
 ```
 
-### Docker
+### 5.2 Windows
+
+需要 EV 代码签名证书：
 
 ```bash
-docker build -t frame-fab .
-docker run -p 8080:80 frame-fab
+$env:TAURI_SIGNING_PRIVATE_KEY = "..."
+$env:TAURI_SIGNING_PRIVATE_KEY_PASSWORD = "..."
 ```
 
-## 环境配置
+### 5.3 Linux
 
+无需签名（AppImage 自带 SHA256 校验）。
+
+## 六、CI/CD 集成
+
+GitHub Actions 自动构建发布：
+
+```yaml
+# .github/workflows/release.yml
+name: Release
+on:
+  push:
+    tags: ['v*']
+jobs:
+  release:
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v2
+      - run: pnpm install
+      - run: pnpm tauri build --target ${{ matrix.target }}
+      - uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            src-tauri/target/release/bundle/**/*
+```
+
+## 七、常见问题
+
+### Q1: macOS 构建失败 `code signing required`？
+
+A: 临时禁用签名：
 ```bash
-# AI 提供商
-VITE_MINIMAX_API_KEY=your_key
-VITE_SEEDDREAM_API_KEY=your_key
-
-# 应用
-VITE_APP_MODE=web
+pnpm tauri build --no-bundle
 ```
+或配置有效的 `APPLE_SIGNING_IDENTITY`。
 
-## 桌面应用 (Tauri)
+### Q2: Windows 构建提示缺 MSVC？
 
-### 构建
+A: 安装 Visual Studio Build Tools 2022（含 C++ 桌面开发）。
 
+### Q3: Linux 缺 webkit2gtk？
+
+A: Ubuntu/Debian：
 ```bash
-pnpm tauri build
+sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
 ```
 
-### 构建产物位置
+### Q4: 启动崩溃？
 
-| 平台    | 路径                                        |
-| ------- | ------------------------------------------- |
-| macOS   | `src-tauri/target/release/bundle/dmg/`      |
-| Linux   | `src-tauri/target/release/bundle/appimage/` |
-| Windows | `src-tauri/target/release/bundle/msi/`      |
+A: 查看日志：
+- macOS: `~/Library/Logs/frame-fab/`
+- Windows: `%APPDATA%/frame-fab/logs/`
+- Linux: `~/.config/frame-fab/logs/`
 
-## 文档构建
+## 八、相关文档
 
-```bash
-# 构建文档（输出到 docs/.vitepress/dist）
-pnpm docs:vp:build
-
-# 开发文档（热重载）
-pnpm docs:vp:dev
-```
+- [部署文档](./index.md)
+- [环境变量](./environment.md)
+- [快速开始](../getting-started/installation.md)
