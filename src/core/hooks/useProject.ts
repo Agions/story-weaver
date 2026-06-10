@@ -1,6 +1,7 @@
 /**
- * 项目管理 Hook
- * 统一的项目创建、编辑和管理
+ * 项目管理 Hook（facade）
+ *
+ * 拆分为 project-storage（存储层）+ useProjectList（列表 hook），本文件保留主 hook。
  */
 
 import { useState, useCallback, useMemo } from 'react';
@@ -8,92 +9,33 @@ import { v4 as uuidv4 } from 'uuid';
 
 import type { ProjectData, VideoInfo, Script, ProjectSettings, TaskStatus } from '@/shared/types';
 
-export interface UseProjectReturn {
-  // 当前项目
-  project: ProjectData | null;
+import { DEFAULT_SETTINGS, projectStorage } from './project-storage';
 
-  // 项目列表
+// Re-export useProjectList 保持测试兼容
+export { useProjectList } from './useProjectList';
+export type { UseProjectListReturn } from './useProjectList';
+
+export interface UseProjectReturn {
+  project: ProjectData | null;
   projects: ProjectData[];
   recentProjects: ProjectData[];
-
-  // 操作方法
   createProject: (name: string, description?: string) => ProjectData;
   loadProject: (projectId: string) => Promise<boolean>;
   saveProject: () => Promise<boolean>;
   updateProject: (updates: Partial<ProjectData>) => void;
   deleteProject: (projectId: string) => Promise<boolean>;
   duplicateProject: (projectId: string) => Promise<ProjectData | null>;
-
-  // 视频相关
   setVideo: (videoInfo: VideoInfo) => void;
   removeVideo: () => void;
-
-  // 脚本相关
   setScript: (script: Script) => void;
   updateScript: (updates: Partial<Script>) => void;
-
-  // 设置相关
   updateSettings: (settings: Partial<ProjectSettings>) => void;
-
-  // 任务状态
   taskStatus: TaskStatus | null;
-
-  // 状态
   isLoading: boolean;
   isSaving: boolean;
   error: string | null;
   hasUnsavedChanges: boolean;
 }
-
-// 默认项目设置
-const DEFAULT_SETTINGS: ProjectSettings = {
-  videoQuality: 'high',
-  outputFormat: 'mp4',
-  resolution: '1080p',
-  frameRate: 30,
-  audioCodec: 'aac',
-  videoCodec: 'h264',
-  subtitleEnabled: true,
-  subtitleStyle: {
-    fontFamily: 'Arial',
-    fontSize: 24,
-    color: '#FFFFFF',
-    backgroundColor: '#000000',
-    outline: true,
-    outlineColor: '#000000',
-    position: 'bottom',
-    alignment: 'center',
-  },
-};
-
-// 模拟本地存储
-const storage = {
-  getProjects: (): ProjectData[] => {
-    const data = localStorage.getItem('reelforge_projects');
-    return data ? JSON.parse(data) : [];
-  },
-  saveProjects: (projects: ProjectData[]) => {
-    localStorage.setItem('reelforge_projects', JSON.stringify(projects));
-  },
-  getProject: (id: string): ProjectData | null => {
-    const projects = storage.getProjects();
-    return projects.find((p) => p.id === id) || null;
-  },
-  saveProject: (project: ProjectData) => {
-    const projects = storage.getProjects();
-    const index = projects.findIndex((p) => p.id === project.id);
-    if (index >= 0) {
-      projects[index] = project;
-    } else {
-      projects.push(project);
-    }
-    storage.saveProjects(projects);
-  },
-  deleteProject: (id: string) => {
-    const projects = storage.getProjects().filter((p) => p.id !== id);
-    storage.saveProjects(projects);
-  },
-};
 
 export function useProject(_projectId?: string): UseProjectReturn {
   const [project, setProject] = useState<ProjectData | null>(null);
@@ -105,14 +47,12 @@ export function useProject(_projectId?: string): UseProjectReturn {
   const [_taskStatus, _setTaskStatus] = useState<TaskStatus | null>(null);
   const taskStatus = _taskStatus;
 
-  // 最近项目
   const recentProjects = useMemo(() => {
     return [...projects]
       .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
       .slice(0, 10);
   }, [projects]);
 
-  // 创建项目
   const createProject = useCallback((name: string, description?: string): ProjectData => {
     const now = new Date().toISOString();
     const newProject: ProjectData = {
@@ -126,22 +66,18 @@ export function useProject(_projectId?: string): UseProjectReturn {
       createdAt: now,
       updatedAt: now,
     };
-
-    storage.saveProject(newProject);
+    projectStorage.saveProject(newProject);
     setProjects((prev) => [newProject, ...prev]);
     setProject(newProject);
     setHasUnsavedChanges(false);
-
     return newProject;
   }, []);
 
-  // 加载项目
   const loadProject = useCallback(async (id: string): Promise<boolean> => {
     setIsLoading(true);
     setError(null);
-
     try {
-      const loaded = storage.getProject(id);
+      const loaded = projectStorage.getProject(id);
       if (loaded) {
         setProject(loaded);
         setHasUnsavedChanges(false);
@@ -158,23 +94,15 @@ export function useProject(_projectId?: string): UseProjectReturn {
     }
   }, []);
 
-  // 保存项目
   const saveProject = useCallback(async (): Promise<boolean> => {
     if (!project) return false;
-
     setIsSaving(true);
-
     try {
-      const updated = {
-        ...project,
-        updatedAt: new Date().toISOString(),
-      };
-
-      storage.saveProject(updated);
+      const updated = { ...project, updatedAt: new Date().toISOString() };
+      projectStorage.saveProject(updated);
       setProject(updated);
       setProjects((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
       setHasUnsavedChanges(false);
-
       return true;
     } catch {
       setError('保存项目失败');
@@ -184,28 +112,21 @@ export function useProject(_projectId?: string): UseProjectReturn {
     }
   }, [project]);
 
-  // 更新项目
   const updateProject = useCallback(
     (updates: Partial<ProjectData>) => {
       if (!project) return;
-
       setProject((prev) => (prev ? { ...prev, ...updates } : null));
       setHasUnsavedChanges(true);
     },
     [project]
   );
 
-  // 删除项目
   const deleteProject = useCallback(
     async (id: string): Promise<boolean> => {
       try {
-        storage.deleteProject(id);
+        projectStorage.deleteProject(id);
         setProjects((prev) => prev.filter((p) => p.id !== id));
-
-        if (project?.id === id) {
-          setProject(null);
-        }
-
+        if (project?.id === id) setProject(null);
         return true;
       } catch {
         setError('删除项目失败');
@@ -215,11 +136,9 @@ export function useProject(_projectId?: string): UseProjectReturn {
     [project]
   );
 
-  // 复制项目
   const duplicateProject = useCallback(async (id: string): Promise<ProjectData | null> => {
-    const source = storage.getProject(id);
+    const source = projectStorage.getProject(id);
     if (!source) return null;
-
     const now = new Date().toISOString();
     const duplicated: ProjectData = {
       ...source,
@@ -229,14 +148,11 @@ export function useProject(_projectId?: string): UseProjectReturn {
       createdAt: now,
       updatedAt: now,
     };
-
-    storage.saveProject(duplicated);
+    projectStorage.saveProject(duplicated);
     setProjects((prev) => [duplicated, ...prev]);
-
     return duplicated;
   }, []);
 
-  // 设置视频
   const setVideo = useCallback(
     (videoInfo: VideoInfo) => {
       updateProject({ videos: [videoInfo] });
@@ -244,12 +160,10 @@ export function useProject(_projectId?: string): UseProjectReturn {
     [updateProject]
   );
 
-  // 移除视频
   const removeVideo = useCallback(() => {
     updateProject({ videos: [] });
   }, [updateProject]);
 
-  // 设置脚本
   const setScript = useCallback(
     (script: Script) => {
       updateProject({ scripts: [script] });
@@ -257,11 +171,9 @@ export function useProject(_projectId?: string): UseProjectReturn {
     [updateProject]
   );
 
-  // 更新脚本
   const updateScript = useCallback(
     (updates: Partial<Script>) => {
       if (!project?.scripts?.[0]) return;
-
       updateProject({
         scripts: [{ ...project.scripts[0], ...updates, updatedAt: new Date().toISOString() }],
       });
@@ -269,11 +181,9 @@ export function useProject(_projectId?: string): UseProjectReturn {
     [project, updateProject]
   );
 
-  // 更新设置
   const updateSettings = useCallback(
     (settings: Partial<ProjectSettings>) => {
       if (!project) return;
-
       updateProject({
         settings: { ...project.settings, ...settings } as ProjectSettings,
       });
@@ -301,69 +211,5 @@ export function useProject(_projectId?: string): UseProjectReturn {
     isSaving,
     error,
     hasUnsavedChanges,
-  };
-}
-
-// 使用项目列表
-export function useProjectList() {
-  const [projects, setProjects] = useState<ProjectData[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [filter, setFilter] = useState<{
-    search: string;
-    status: string[];
-    sortBy: keyof ProjectData;
-    sortOrder: 'asc' | 'desc';
-  }>({
-    search: '',
-    status: [],
-    sortBy: 'updatedAt',
-    sortOrder: 'desc',
-  });
-
-  // 加载项目列表
-  const loadProjects = useCallback(async () => {
-    setIsLoading(true);
-    const data = storage.getProjects();
-    setProjects(data);
-    setIsLoading(false);
-  }, []);
-
-  // 过滤和排序
-  const filteredProjects = useMemo(() => {
-    let result = [...projects];
-
-    // 搜索过滤
-    if (filter.search) {
-      const search = filter.search.toLowerCase();
-      result = result.filter(
-        (p) =>
-          p.name.toLowerCase().includes(search) || p.description?.toLowerCase().includes(search)
-      );
-    }
-
-    // 状态过滤
-    if (filter.status.length > 0) {
-      result = result.filter((p) => filter.status.includes(p.status!));
-    }
-
-    // 排序
-    result.sort((a, b) => {
-      const aVal = a[filter.sortBy] as string | number;
-      const bVal = b[filter.sortBy] as string | number;
-      const comparison = aVal > bVal ? 1 : -1;
-      return filter.sortOrder === 'asc' ? comparison : -comparison;
-    });
-
-    return result;
-  }, [projects, filter]);
-
-  return {
-    projects: filteredProjects,
-    allProjects: projects,
-    isLoading,
-    filter,
-    setFilter,
-    loadProjects,
-    refresh: loadProjects,
   };
 }

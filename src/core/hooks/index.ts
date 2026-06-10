@@ -4,6 +4,8 @@
 
 export { useModel, useModelCost } from './useModel';
 export { useProject } from './useProject';
+export { useProjectList } from './useProjectList';
+export type { UseProjectListReturn } from './useProjectList';
 export { useVideo } from './useVideo';
 export { useSmartModel } from './useSmartModel';
 export { useWorkflow } from './useWorkflow';
