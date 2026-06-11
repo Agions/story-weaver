@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useReducer } from 'react';
 
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
 import type {
@@ -9,6 +9,12 @@ import type {
   TransitionEffect,
 } from '@/shared/types';
 import { generatePrefixedId } from '@/shared/utils/data';
+
+import {
+  compositionStudioReducer,
+  initialCompositionStudioState,
+  createCompositionStudioSetters,
+} from './useCompositionStudio.reducer';
 
 const DEFAULT_TRANSITION: TransitionConfig = {
   effect: 'crossfade',
@@ -45,18 +51,36 @@ export interface UseCompositionStudioOptions {
 export function useCompositionStudio(options: UseCompositionStudioOptions) {
   const { frames, projectId, onCompositionChange } = options;
 
-  const [composition, setComposition] = useState<CompositionProject>(() =>
-    buildInitialComposition(projectId ?? '')
+  // ── 10 useState 已迁移到 useReducer 状态机 (2026-06-11) ──
+  const [state, dispatch] = useReducer(
+    compositionStudioReducer,
+    initialCompositionStudioState(buildInitialComposition(projectId ?? ''))
   );
-  const [editingFrameId, setEditingFrameId] = useState<string | null>(null);
-  const [frameModalVisible, setFrameModalVisible] = useState(false);
-  const [globalModalVisible, setGlobalModalVisible] = useState(false);
-  const [keyframeModalVisible, setKeyframeModalVisible] = useState(false);
-  const [previewModalVisible, setPreviewModalVisible] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentFrameIndex, setCurrentFrameIndex] = useState(0);
-  const [playbackSpeed, setPlaybackSpeed] = useState(1);
-  const [keyframes, setKeyframes] = useState<AnimationKeyframe[]>([]);
+  const {
+    setComposition,
+    setEditingFrameId,
+    setFrameModalVisible,
+    setGlobalModalVisible,
+    setKeyframeModalVisible,
+    setPreviewModalVisible,
+    setIsPlaying,
+    setCurrentFrameIndex,
+    setPlaybackSpeed,
+    setKeyframes,
+  } = createCompositionStudioSetters(dispatch);
+
+  const {
+    composition,
+    editingFrameId,
+    frameModalVisible,
+    globalModalVisible,
+    keyframeModalVisible,
+    previewModalVisible,
+    isPlaying,
+    currentFrameIndex,
+    playbackSpeed,
+    keyframes,
+  } = state;
   const animationRef = useRef<number | null>(null);
 
   // Stable callback wrapper to prevent useEffect re-run on every render
