@@ -44,6 +44,7 @@ import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
 import { Input } from '@/shared/components/ui/input';
 import { toast } from '@/shared/components/ui/Toast';
+import { useStoryboard } from '@/shared/hooks/useStoryboard';
 import type { StoryAnalysis, Character, CompositionProject } from '@/shared/types';
 
 import {
@@ -104,18 +105,10 @@ const ProjectEdit = () => {
   const [novelMetadata, setNovelMetadata] = useState<NovelMetadata | null>(null);
   const [scriptText, setScriptText] = useState<string>('');
   const [storyAnalysis, setStoryAnalysis] = useState<StoryAnalysis | null>(null);
-  const [storyboardFrames, setStoryboardFrames] = useState<StoryboardFrame[]>([]);
   const [analysisDraft, setAnalysisDraft] = useState<string>('');
   const [analysisState, setAnalysisState] = useState<'idle' | 'generated' | 'accepted'>('idle');
-  const [selectedFrame, setSelectedFrame] = useState<StoryboardFrame | null>(null);
-  const [storyboardComments, setStoryboardComments] = useState<FrameComment[]>([]);
-  const [storyboardVersions, setStoryboardVersions] = useState<StoryboardVersion[]>([]);
   const [commentDraft, setCommentDraft] = useState('');
   const [versionLabel, setVersionLabel] = useState('');
-  const [compareLeftVersionId, setCompareLeftVersionId] = useState<string | undefined>(undefined);
-  const [compareRightVersionId, setCompareRightVersionId] = useState<string | undefined>(undefined);
-  const [versionDiff, setVersionDiff] = useState<VersionDiffSummary | null>(null);
-  const [focusFrameId, setFocusFrameId] = useState<string | undefined>(undefined);
   const [audioConfig, setAudioConfig] = useState<AudioTrackConfig>({
     voiceTracks: [],
     backgroundMusic: null,
@@ -129,6 +122,9 @@ const ProjectEdit = () => {
   const [audioGenerating, setAudioGenerating] = useState(false);
   const [characters, setCharacters] = useState<Character[]>([]);
   const [composition, setComposition] = useState<CompositionProject | null>(null);
+  // 8 个分镜相关 useState → useStoryboard hook (v3.4 P0 phase 2)
+  const storyboard = useStoryboard();
+  const [focusFrameId, setFocusFrameId] = useState<string | undefined>(undefined); // UI 局部焦点
   const [exportPreset, setExportPreset] = useState<'9:16' | '16:9' | '1:1'>('9:16');
   const [exportSettings, setExportSettings] = useState<ExportSettings>({
     format: 'MP4',
@@ -147,10 +143,10 @@ const ProjectEdit = () => {
   const exportQualityGate = useMemo(
     () =>
       qualityGateService.evaluate({
-        storyboardFrames,
+        storyboardFrames: storyboard.frames,
         evaluationSummary,
       }),
-    [storyboardFrames, evaluationSummary]
+    [storyboard.frames, evaluationSummary]
   );
 
   const preloadByStep = useMemo<Record<number, Array<() => Promise<unknown>>>>(
@@ -207,7 +203,7 @@ const ProjectEdit = () => {
             setAnalysisState('accepted');
           }
           if (Array.isArray(projectData.storyboardFrames))
-            setStoryboardFrames(projectData.storyboardFrames);
+            storyboard.setFrames(projectData.storyboardFrames);
           if (
             Array.isArray(projectData.storyboardComments) ||
             Array.isArray(projectData.storyboardVersions)
@@ -217,8 +213,8 @@ const ProjectEdit = () => {
               projectData.storyboardComments ?? [],
               projectData.storyboardVersions ?? []
             );
-            setStoryboardComments(collaborationService.listComments(projectData.id));
-            setStoryboardVersions(collaborationService.listVersions(projectData.id));
+            storyboard.setComments(collaborationService.listComments(projectData.id));
+            storyboard.setVersions(collaborationService.listVersions(projectData.id));
           }
           if (projectData.audioConfig) {
             setAudioConfig(projectData.audioConfig);
@@ -268,17 +264,17 @@ const ProjectEdit = () => {
     setContent(newContent);
     setNovelMetadata(metadata);
     setStoryAnalysis(null);
-    setStoryboardFrames([]);
+    storyboard.setFrames([]);
     setAnalysisDraft('');
     setAnalysisState('idle');
-    setSelectedFrame(null);
-    setStoryboardComments([]);
-    setStoryboardVersions([]);
+    storyboard.selectFrame(null);
+    storyboard.setComments([]);
+    storyboard.setVersions([]);
     setCommentDraft('');
     setVersionLabel('');
-    setCompareLeftVersionId(undefined);
-    setCompareRightVersionId(undefined);
-    setVersionDiff(null);
+    storyboard.setCompareLeft(undefined);
+    storyboard.setCompareRight(undefined);
+    storyboard.setVersionDiff(null);
     if (currentStep === 0) setCurrentStep(1);
   };
 
@@ -287,7 +283,7 @@ const ProjectEdit = () => {
     setNovelMetadata(null);
     setScriptText('');
     setStoryAnalysis(null);
-    setStoryboardFrames([]);
+    storyboard.setFrames([]);
     setAnalysisDraft('');
     setAnalysisState('idle');
     setAudioConfig({
@@ -327,20 +323,20 @@ const ProjectEdit = () => {
   };
 
   const handleApplyRenderedFrame = (frameId: string, imageUrl: string) => {
-    setStoryboardFrames((prev) =>
+    storyboard.setFrames((prev) =>
       prev.map((frame) => (frame.id === frameId ? { ...frame, imageUrl } : frame))
     );
   };
 
   const handleAddFrameComment = () => {
-    if (!project?.id || !selectedFrame || !commentDraft.trim()) return;
+    if (!project?.id || !storyboard.selectedFrame || !commentDraft.trim()) return;
     collaborationService.addComment({
       projectId: project.id,
-      frameId: selectedFrame.id,
+      frameId: storyboard.selectedFrame.id,
       content: commentDraft.trim(),
       author: 'current-user',
     });
-    setStoryboardComments(collaborationService.listComments(project.id));
+    storyboard.setComments(collaborationService.listComments(project.id));
     setCommentDraft('');
   };
 
@@ -350,32 +346,35 @@ const ProjectEdit = () => {
       projectId: project.id,
       label: versionLabel.trim() ?? `版本-${new Date().toLocaleTimeString()}`,
       createdBy: 'current-user',
-      payload: storyboardFrames,
+      payload: storyboard.frames,
     });
     const versions = collaborationService.listVersions(project.id);
-    setStoryboardVersions(versions);
+    storyboard.setVersions(versions);
     setVersionLabel('');
-    setCompareLeftVersionId(versions[versions.length - 1]?.id);
+    storyboard.setCompareLeft(versions[versions.length - 1]?.id);
     toast.success('已保存分镜版本快照');
   };
 
   const handleCompareVersions = () => {
-    if (!compareLeftVersionId || !compareRightVersionId) {
+    if (!storyboard.compareLeftVersionId || !storyboard.compareRightVersionId) {
       toast.warning('请选择两个版本进行对比');
       return;
     }
-    const diff = collaborationService.diffVersions(compareLeftVersionId, compareRightVersionId);
-    setVersionDiff(diff);
+    const diff = collaborationService.diffVersions(
+      storyboard.compareLeftVersionId,
+      storyboard.compareRightVersionId
+    );
+    storyboard.setVersionDiff(diff);
   };
 
   const handleRollbackVersion = () => {
-    if (!project?.id || !compareLeftVersionId) {
+    if (!project?.id || !storyboard.compareLeftVersionId) {
       toast.warning('请选择要回滚的版本');
       return;
     }
-    const payload = collaborationService.rollback(project.id, compareLeftVersionId);
+    const payload = collaborationService.rollback(project.id, storyboard.compareLeftVersionId);
     if (Array.isArray(payload)) {
-      setStoryboardFrames(payload as StoryboardFrame[]);
+      storyboard.setFrames(payload as StoryboardFrame[]);
       toast.success('已回滚到所选版本');
       return;
     }
@@ -449,8 +448,8 @@ const ProjectEdit = () => {
       const parsed = JSON.parse(analysisDraft) as StoryAnalysis;
       setStoryAnalysis(parsed);
       setAnalysisState('accepted');
-      if (storyboardFrames.length === 0) {
-        setStoryboardFrames(buildStoryboardDraft(parsed));
+      if (storyboard.frames.length === 0) {
+        storyboard.setFrames(buildStoryboardDraft(parsed));
       }
       setLoading(true);
       toast.info('正在根据解析结果生成剧本...');
@@ -490,9 +489,9 @@ const ProjectEdit = () => {
         updatedAt: now,
         novelMetadata: novelMetadata ?? undefined,
         storyAnalysis: storyAnalysis ?? undefined,
-        storyboardFrames: storyboardFrames.length > 0 ? storyboardFrames : undefined,
-        storyboardComments: storyboardComments.length > 0 ? storyboardComments : undefined,
-        storyboardVersions: storyboardVersions.length > 0 ? storyboardVersions : undefined,
+        storyboardFrames: storyboard.frames.length > 0 ? storyboard.frames : undefined,
+        storyboardComments: storyboard.comments.length > 0 ? storyboard.comments : undefined,
+        storyboardVersions: storyboard.versions.length > 0 ? storyboard.versions : undefined,
         characters: characters.length > 0 ? characters : undefined,
         composition: composition ?? undefined,
         audioConfig: audioConfig,
@@ -534,7 +533,7 @@ const ProjectEdit = () => {
         project: {
           id: project.id,
           name: name || project.name || '未命名项目',
-          storyboardFrameCount: storyboardFrames.length,
+          storyboardFrameCount: storyboard.frames.length,
         },
         comments: projectComments,
         versions: projectVersions,
@@ -563,7 +562,7 @@ const ProjectEdit = () => {
       toast.info('该问题暂无具体分镜定位信息');
       return;
     }
-    const exists = storyboardFrames.some((frame) => frame.id === issue.frameId);
+    const exists = storyboard.frames.some((frame) => frame.id === issue.frameId);
     if (!exists) {
       toast.warning('定位分镜不存在，可能已被删除');
       return;
@@ -576,7 +575,7 @@ const ProjectEdit = () => {
 
   const handleBuildStoryboardDraft = () => {
     if (storyAnalysis) {
-      setStoryboardFrames(buildStoryboardDraft(storyAnalysis));
+      storyboard.setFrames(buildStoryboardDraft(storyAnalysis));
     }
   };
 
@@ -624,27 +623,27 @@ const ProjectEdit = () => {
       case 3:
         return (
           <StepStoryboard
-            storyboardFrames={storyboardFrames}
+            storyboardFrames={storyboard.frames}
             storyAnalysis={storyAnalysis}
-            selectedFrame={selectedFrame}
+            selectedFrame={storyboard.selectedFrame}
             focusFrameId={focusFrameId}
             commentDraft={commentDraft}
             versionLabel={versionLabel}
-            compareLeftVersionId={compareLeftVersionId}
-            compareRightVersionId={compareRightVersionId}
-            versionDiff={versionDiff}
-            storyboardVersions={storyboardVersions}
+            compareLeftVersionId={storyboard.compareLeftVersionId}
+            compareRightVersionId={storyboard.compareRightVersionId}
+            versionDiff={storyboard.versionDiff}
+            storyboardVersions={storyboard.versions}
             projectId={project?.id}
-            onFramesChange={setStoryboardFrames}
-            onFrameSelect={setSelectedFrame}
+            onFramesChange={storyboard.setFrames}
+            onFrameSelect={storyboard.selectFrame}
             onBuildDraft={handleBuildStoryboardDraft}
             onAddComment={handleAddFrameComment}
             onSaveVersion={handleSaveStoryboardVersion}
             onCompareVersions={handleCompareVersions}
             onRollback={handleRollbackVersion}
             onCommentDraftChange={setCommentDraft}
-            onLeftVersionChange={setCompareLeftVersionId}
-            onRightVersionChange={setCompareRightVersionId}
+            onLeftVersionChange={storyboard.setCompareLeft}
+            onRightVersionChange={storyboard.setCompareRight}
             onVersionLabelChange={setVersionLabel}
             onPrev={() => setCurrentStep(2)}
             onNext={() => setCurrentStep(4)}
@@ -665,7 +664,7 @@ const ProjectEdit = () => {
       case 5:
         return (
           <StepRender
-            storyboardFrames={storyboardFrames}
+            storyboardFrames={storyboard.frames}
             projectId={project?.id}
             onApplyRenderedFrame={handleApplyRenderedFrame}
             onPrev={() => setCurrentStep(4)}
@@ -676,7 +675,7 @@ const ProjectEdit = () => {
       case 6:
         return (
           <StepComposition
-            storyboardFrames={storyboardFrames}
+            storyboardFrames={storyboard.frames}
             projectId={project?.id}
             onCompositionChange={setComposition}
             onPrev={() => setCurrentStep(5)}
@@ -691,7 +690,7 @@ const ProjectEdit = () => {
             audioEditorKey={audioEditorKey}
             audioGenerating={audioGenerating}
             scriptText={scriptText}
-            storyboardFrames={storyboardFrames}
+            storyboardFrames={storyboard.frames}
             onConfigChange={setAudioConfig}
             onGenerateVoices={handleGenerateVoices}
             onPrev={() => setCurrentStep(6)}
@@ -706,7 +705,7 @@ const ProjectEdit = () => {
             exportSettings={exportSettings}
             projectId={project?.id}
             projectName={name || project?.name || '未命名项目'}
-            storyboardFrameCount={storyboardFrames.length}
+            storyboardFrameCount={storyboard.frames.length}
             qualityGateIssues={exportQualityGate.issues}
             qualityGatePassed={exportQualityGate.passed}
             saving={saving}

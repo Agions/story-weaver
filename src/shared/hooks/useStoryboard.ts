@@ -3,7 +3,7 @@
  * 分镜状态管理
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, Dispatch, SetStateAction } from 'react';
 
 import { collaborationService } from '@/core/services';
 import type { FrameComment, StoryboardVersion, VersionDiffSummary } from '@/core/services';
@@ -18,7 +18,12 @@ export interface UseStoryboardReturn {
   compareLeftVersionId: string | undefined;
   compareRightVersionId: string | undefined;
   // Actions
-  setFrames: (frames: StoryboardFrame[]) => void;
+  setFrames: Dispatch<SetStateAction<StoryboardFrame[]>>;
+  setComments: Dispatch<SetStateAction<FrameComment[]>>;
+  setVersions: Dispatch<SetStateAction<StoryboardVersion[]>>;
+  setVersionDiff: (diff: VersionDiffSummary | null) => void;
+  setCompareLeft: (id: string | undefined) => void;
+  setCompareRight: (id: string | undefined) => void;
   addFrame: (frame: StoryboardFrame) => void;
   updateFrame: (frameId: string, updates: Partial<StoryboardFrame>) => void;
   removeFrame: (frameId: string) => void;
@@ -43,24 +48,27 @@ export function useStoryboard(initialFrames: StoryboardFrame[] = []): UseStorybo
   const [compareRightVersionId, setCompareRightVersionId] = useState<string | undefined>(undefined);
 
   const addFrame = useCallback((frame: StoryboardFrame) => {
-    setFrames(prev => [...prev, frame]);
+    setFrames((prev) => [...prev, frame]);
   }, []);
 
   const updateFrame = useCallback((frameId: string, updates: Partial<StoryboardFrame>) => {
-    setFrames(prev =>
-      prev.map(frame => (frame.id === frameId ? { ...frame, ...updates } : frame))
+    setFrames((prev) =>
+      prev.map((frame) => (frame.id === frameId ? { ...frame, ...updates } : frame))
     );
   }, []);
 
-  const removeFrame = useCallback((frameId: string) => {
-    setFrames(prev => prev.filter(frame => frame.id !== frameId));
-    if (selectedFrame?.id === frameId) {
-      selectFrame(null);
-    }
-  }, [selectedFrame]);
+  const removeFrame = useCallback(
+    (frameId: string) => {
+      setFrames((prev) => prev.filter((frame) => frame.id !== frameId));
+      if (selectedFrame?.id === frameId) {
+        selectFrame(null);
+      }
+    },
+    [selectedFrame]
+  );
 
   const reorderFrames = useCallback((startIndex: number, endIndex: number) => {
-    setFrames(prev => {
+    setFrames((prev) => {
       const result = Array.from(prev);
       const [removed] = result.splice(startIndex, 1);
       result.splice(endIndex, 0, removed);
@@ -68,17 +76,20 @@ export function useStoryboard(initialFrames: StoryboardFrame[] = []): UseStorybo
     });
   }, []);
 
-  const saveVersion = useCallback((projectId: string, label?: string) => {
-    collaborationService.saveVersion({
-      projectId,
-      label: label || `版本-${new Date().toLocaleTimeString()}`,
-      createdBy: 'current-user',
-      payload: frames,
-    });
-    const updatedVersions = collaborationService.listVersions(projectId);
-    setVersions(updatedVersions);
-    setCompareLeftVersionId(updatedVersions[updatedVersions.length - 1]?.id);
-  }, [frames]);
+  const saveVersion = useCallback(
+    (projectId: string, label?: string) => {
+      collaborationService.saveVersion({
+        projectId,
+        label: label || `版本-${new Date().toLocaleTimeString()}`,
+        createdBy: 'current-user',
+        payload: frames,
+      });
+      const updatedVersions = collaborationService.listVersions(projectId);
+      setVersions(updatedVersions);
+      setCompareLeftVersionId(updatedVersions[updatedVersions.length - 1]?.id);
+    },
+    [frames]
+  );
 
   const rollbackToVersion = useCallback((projectId: string, versionId: string) => {
     const payload = collaborationService.rollback(projectId, versionId);
@@ -93,10 +104,13 @@ export function useStoryboard(initialFrames: StoryboardFrame[] = []): UseStorybo
     return diff;
   }, []);
 
-  const setCompareVersions = useCallback((leftId: string | undefined, rightId: string | undefined) => {
-    setCompareLeftVersionId(leftId);
-    setCompareRightVersionId(rightId);
-  }, []);
+  const setCompareVersions = useCallback(
+    (leftId: string | undefined, rightId: string | undefined) => {
+      setCompareLeftVersionId(leftId);
+      setCompareRightVersionId(rightId);
+    },
+    []
+  );
 
   const addComment = useCallback((projectId: string, frameId: string, content: string) => {
     collaborationService.addComment({
@@ -118,6 +132,11 @@ export function useStoryboard(initialFrames: StoryboardFrame[] = []): UseStorybo
     compareLeftVersionId,
     compareRightVersionId,
     setFrames,
+    setComments,
+    setVersions,
+    setVersionDiff,
+    setCompareLeft: setCompareLeftVersionId,
+    setCompareRight: setCompareRightVersionId,
     addFrame,
     updateFrame,
     removeFrame,
