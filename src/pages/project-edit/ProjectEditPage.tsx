@@ -16,9 +16,6 @@ import React, { Suspense, useCallback, useEffect, useMemo, useState } from 'reac
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 
-import { Button } from '@/shared/components/ui/button';
-import { Card } from '@/shared/components/ui/card';
-import { Input } from '@/shared/components/ui/input';
 import {
   aiService,
   tauriService,
@@ -41,9 +38,13 @@ import { logger } from '@/core/utils/logger';
 import type { AudioTrackConfig } from '@/features/audio/components/AudioEditor';
 import type { NovelMetadata } from '@/features/script/components/NovelImporter';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
+import type { ExportSettings } from '@/features/video/components/VideoExporter';
 import CostDashboard from '@/shared/components/business/CostDashboard';
+import { Button } from '@/shared/components/ui/button';
+import { Card } from '@/shared/components/ui/card';
+import { Input } from '@/shared/components/ui/input';
 import { toast } from '@/shared/components/ui/Toast';
-import type { ExportSettings, StoryAnalysis, Character, CompositionProject } from '@/shared/types';
+import type { StoryAnalysis, Character, CompositionProject } from '@/shared/types';
 
 import {
   StepImport,
@@ -129,11 +130,12 @@ const ProjectEdit = () => {
   const [characters, setCharacters] = useState<Character[]>([]);
   const [composition, setComposition] = useState<CompositionProject | null>(null);
   const [exportPreset, setExportPreset] = useState<'9:16' | '16:9' | '1:1'>('9:16');
-  const [exportSettings, setExportSettings] = useState<any>({
-    format: 'mp4',
+  const [exportSettings, setExportSettings] = useState<ExportSettings>({
+    format: 'MP4',
     quality: 'high',
     resolution: '1080p',
     frameRate: 30,
+    filename: '',
   });
   const [isNewProject, setIsNewProject] = useState(true);
   const [initialLoading, setInitialLoading] = useState(false);
@@ -225,7 +227,8 @@ const ProjectEdit = () => {
           if (Array.isArray(projectData.characters)) setCharacters(projectData.characters);
           if (projectData.composition) setComposition(projectData.composition);
           if (projectData.exportPreset) setExportPreset(projectData.exportPreset);
-          if (projectData.exportSettings) setExportSettings(projectData.exportSettings);
+          if (projectData.exportSettings)
+            setExportSettings((prev) => ({ ...prev, ...projectData.exportSettings }));
           if (projectData.script) {
             setScriptText(projectData.script);
             setCurrentStep(2);
@@ -708,7 +711,7 @@ const ProjectEdit = () => {
             qualityGatePassed={exportQualityGate.passed}
             saving={saving}
             onPresetChange={setExportPreset}
-            onExport={setExportSettings}
+            onExport={(settings) => setExportSettings((prev) => ({ ...prev, ...settings }))}
             onLocateIssue={handleLocateIssueFrame}
             onSave={handleSaveProject}
             onPrev={() => setCurrentStep(7)}
