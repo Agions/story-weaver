@@ -10,7 +10,6 @@ import { tauriService } from '@/core/services';
 import type { EvaluationScores } from '@/core/services';
 import type { AudioTrackConfig } from '@/features/audio/components/AudioEditor';
 import type { NovelMetadata } from '@/features/script/components/NovelImporter';
-import { handleAsyncError } from '@/shared/utils/async';
 import { toast } from '@/shared/components/ui/Toast';
 import type {
   StoryAnalysis,
@@ -19,6 +18,7 @@ import type {
   CompositionProject,
   ExportSettings,
 } from '@/shared/types';
+import { handleAsyncError } from '@/shared/utils/async';
 
 export interface ProjectData {
   id: string;
@@ -44,7 +44,9 @@ export interface UseProjectReturn {
   project: ProjectData | null;
   loading: boolean;
   saving: boolean;
+  setSaving: (saving: boolean) => void;
   error: string | null;
+  setError: (error: string | null) => void;
   currentStep: number;
   setCurrentStep: (step: number) => void;
   updateProject: (data: Partial<ProjectData>) => void;
@@ -123,7 +125,9 @@ export function useProject(_projectId?: string): UseProjectReturn {
     project,
     loading,
     saving,
+    setSaving,
     error,
+    setError,
     currentStep,
     setCurrentStep,
     updateProject,

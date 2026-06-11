@@ -44,6 +44,7 @@ import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
 import { Input } from '@/shared/components/ui/input';
 import { toast } from '@/shared/components/ui/Toast';
+import { useProject } from '@/shared/hooks/useProject';
 import { useStoryboard } from '@/shared/hooks/useStoryboard';
 import type { StoryAnalysis, Character, CompositionProject } from '@/shared/types';
 
@@ -97,10 +98,21 @@ const ProjectEdit = () => {
   const [name, setName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
 
-  const [currentStep, setCurrentStep] = useState(0);
+  // ProjectLoad 子集: currentStep/loading/saving/project/error → useProject hook
+  // (v3.4 P0 phase 4 R2 极细: 利用现成 useProject 集中管, 减少 5 useState)
+  const {
+    project,
+    saving,
+    error,
+    setError,
+    setSaving,
+    currentStep,
+    setCurrentStep,
+    updateProject,
+    resetProject,
+  } = useProject();
+  // AI 分析 loading (与 useProject.projectLoading 概念不同, 独立 useState 避免互相覆盖)
   const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [project, setProject] = useState<ProjectData | null>(null);
   const [content, setContent] = useState<string>('');
   const [novelMetadata, setNovelMetadata] = useState<NovelMetadata | null>(null);
   const [scriptText, setScriptText] = useState<string>('');
@@ -135,7 +147,7 @@ const ProjectEdit = () => {
   });
   const [isNewProject, setIsNewProject] = useState(true);
   const [initialLoading, setInitialLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // error 已从 useProject() 解构 (v3.4 P0 phase 4 R2)
 
   const evaluationSummary: EvaluationScores | undefined =
     project?.evaluationReport?.summary ?? project?.evaluationSummary;
@@ -191,7 +203,7 @@ const ProjectEdit = () => {
         .readText(projectId)
         .then((projectText) => {
           const projectData = JSON.parse(projectText) as ProjectData;
-          setProject(projectData);
+          updateProject(projectData);
           setName(projectData.name);
           setDescription(projectData.description ?? '');
 
@@ -501,7 +513,7 @@ const ProjectEdit = () => {
       };
       await tauriService.writeText(projectData.id, JSON.stringify(projectData));
       toast.success('项目保存成功');
-      setProject(projectData);
+      updateProject(projectData);
       if (isNewProject) {
         navigate(`/project/${projectData.id}`);
       }
