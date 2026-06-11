@@ -101,9 +101,13 @@ export const simulateEvent = (
 /**
  * 模拟文件上传
  */
-export const createMockFile = (name: string, type: string, size: number): File => {
-  const file = new File([''], name, { type });
-  Object.defineProperty(file, 'size', { value: size });
+export const createMockFile = (
+  name: string = 'test-video.mp4',
+  type: string = 'video/mp4',
+  size: number = 0
+): File => {
+  const file = new File(['mock-content'], name, { type });
+  Object.defineProperty(file, 'size', { value: size, configurable: true });
   return file;
 };
 

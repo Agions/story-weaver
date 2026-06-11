@@ -4,19 +4,13 @@
 
 import { renderHook, act } from '@testing-library/react';
 
+import { createMockFile } from '@/__tests__/utils/test-utils';
 import { useVideo } from '@/core/hooks/useVideo';
 
 // Mock UUID
 jest.mock('uuid', () => ({
   v4: () => 'test-uuid-' + Math.random().toString(36).substr(2, 9),
 }));
-
-// Helper to create mock file
-function createMockFile(name: string, size: number, type: string = 'video/mp4'): File {
-  const file = new File(['mock-video-content'], name, { type });
-  Object.defineProperty(file, 'size', { value: size });
-  return file;
-}
 
 describe('useVideo Hook', () => {
   describe('初始状态', () => {
@@ -38,7 +32,7 @@ describe('useVideo Hook', () => {
   describe('uploadVideo - 文件格式验证', () => {
     it('应该拒绝不支持的视频格式', async () => {
       const { result } = renderHook(() => useVideo());
-      const file = createMockFile('test.xyz', 1024 * 1024);
+      const file = createMockFile('test.xyz', 'video/mp4', 1024 * 1024);
 
       await act(async () => {
         await result.current.uploadVideo(file);
@@ -51,7 +45,7 @@ describe('useVideo Hook', () => {
     it('应该拒绝过大的文件 (超过2GB)', async () => {
       const { result } = renderHook(() => useVideo());
       // 3GB file (超过 2GB 限制)
-      const file = createMockFile('large-video.mp4', 3 * 1024 * 1024 * 1024);
+      const file = createMockFile('large-video.mp4', 'video/mp4', 3 * 1024 * 1024 * 1024);
 
       await act(async () => {
         await result.current.uploadVideo(file);
@@ -63,7 +57,7 @@ describe('useVideo Hook', () => {
 
     it('应该拒绝无效的文件扩展名', async () => {
       const { result } = renderHook(() => useVideo());
-      const file = createMockFile('video', 1024); // 没有扩展名
+      const file = createMockFile('video', 'video/mp4', 1024); // 没有扩展名
 
       await act(async () => {
         await result.current.uploadVideo(file);
@@ -74,7 +68,7 @@ describe('useVideo Hook', () => {
 
     it('应该拒绝普通图片格式', async () => {
       const { result } = renderHook(() => useVideo());
-      const file = createMockFile('photo.jpg', 1024, 'image/jpeg');
+      const file = createMockFile('photo.jpg', 'image/jpeg', 1024);
 
       await act(async () => {
         await result.current.uploadVideo(file);
@@ -87,7 +81,7 @@ describe('useVideo Hook', () => {
   describe('uploadVideo - 错误状态管理', () => {
     it('应该在上传失败后设置错误信息', async () => {
       const { result } = renderHook(() => useVideo());
-      const wrongFile = createMockFile('test.xyz', 1024);
+      const wrongFile = createMockFile('test.xyz', 'video/mp4', 1024);
 
       await act(async () => {
         await result.current.uploadVideo(wrongFile);
@@ -98,7 +92,7 @@ describe('useVideo Hook', () => {
 
     it('错误信息应该包含支持的格式列表', async () => {
       const { result } = renderHook(() => useVideo());
-      const wrongFile = createMockFile('test.unknownext', 1024);
+      const wrongFile = createMockFile('test.unknownext', 'video/mp4', 1024);
 
       await act(async () => {
         await result.current.uploadVideo(wrongFile);
@@ -264,7 +258,7 @@ describe('useVideo Hook', () => {
   describe('错误消息内容', () => {
     it('格式错误消息应该提到支持的格式', async () => {
       const { result } = renderHook(() => useVideo());
-      const file = createMockFile('test.txt', 1024, 'text/plain');
+      const file = createMockFile('test.txt', 'text/plain', 1024);
 
       await act(async () => {
         await result.current.uploadVideo(file);
@@ -276,7 +270,7 @@ describe('useVideo Hook', () => {
 
     it('文件过大错误消息应该包含MB或GB', async () => {
       const { result } = renderHook(() => useVideo());
-      const file = createMockFile('verylarge.mp4', 5 * 1024 * 1024 * 1024);
+      const file = createMockFile('verylarge.mp4', 'video/mp4', 5 * 1024 * 1024 * 1024);
 
       await act(async () => {
         await result.current.uploadVideo(file);
@@ -292,8 +286,8 @@ describe('useVideo Hook', () => {
       const { result: result1 } = renderHook(() => useVideo());
       const { result: result2 } = renderHook(() => useVideo());
 
-      const file1 = createMockFile('test1.xyz', 1024);
-      const file2 = createMockFile('test2.xyz', 1024);
+      const file1 = createMockFile('test1.xyz', 'video/mp4', 1024);
+      const file2 = createMockFile('test2.xyz', 'video/mp4', 1024);
 
       await act(async () => {
         await result1.current.uploadVideo(file1);

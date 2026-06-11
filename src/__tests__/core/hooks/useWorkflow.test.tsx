@@ -5,6 +5,7 @@
 
 import { renderHook, act } from '@testing-library/react';
 
+import { createMockFile } from '@/__tests__/utils/test-utils';
 import { useWorkflow } from '@/core/hooks/useWorkflow';
 import type { ScriptTemplate, AIModel } from '@/shared/types';
 
@@ -35,11 +36,6 @@ function createMockModel(id: string = 'test-model'): AIModel {
     tokenLimit: 4096,
     contextWindow: 4096,
   };
-}
-
-// 辅助函数：创建模拟的 File 对象
-function createMockFile(name: string = 'test-video.mp4'): File {
-  return new File(['mock-content'], name, { type: 'video/mp4' });
 }
 
 describe('useWorkflow Hook', () => {
