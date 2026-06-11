@@ -10,14 +10,18 @@ import {
   Download,
   Palette,
 } from 'lucide-react';
-import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-import { toast } from '@/shared/components/ui/Toast';
+import React, { useMemo } from 'react';
 
 import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
+import { Divider } from '@/shared/components/ui/divider';
 import Empty from '@/shared/components/ui/Empty';
-import { SelectItem } from '@/shared/components/ui/select';
+import { Row, Col } from '@/shared/components/ui/grid';
+import { InputNumber } from '@/shared/components/ui/input-number';
+import { Modal } from '@/shared/components/ui/modal';
+import { SelectItem, AntDSelect as Select } from '@/shared/components/ui/select';
 import { Slider } from '@/shared/components/ui/slider';
+import { Space } from '@/shared/components/ui/space';
 import {
   Table,
   TableHeader,
@@ -28,14 +32,14 @@ import {
 } from '@/shared/components/ui/table';
 import { Tag } from '@/shared/components/ui/tag';
 import { Timeline, TimelineItem } from '@/shared/components/ui/timeline';
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/shared/components/ui/tooltip';
+import { toast } from '@/shared/components/ui/Toast';
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from '@/shared/components/ui/tooltip';
 import { Text } from '@/shared/components/ui/typography';
-import { AntDSelect as Select } from '@/shared/components/ui/select';
-import { InputNumber } from '@/shared/components/ui/input-number';
-import { Space } from '@/shared/components/ui/space';
-import { Divider } from '@/shared/components/ui/divider';
-import { Modal } from '@/shared/components/ui/modal';
-import { Row, Col } from '@/shared/components/ui/grid';
 import type {
   StoryboardFrame,
   CompositionProject,
@@ -44,11 +48,11 @@ import type {
   TransitionEffect,
   AnimationKeyframe,
 } from '@/shared/types';
-import { generatePrefixedId } from '@/shared/utils';
 
 import FrameEditForm from './FrameEditForm';
 import GlobalSettingsForm from './GlobalSettingsForm';
 import styles from './index.module.less';
+import { useCompositionStudio } from './useCompositionStudio';
 
 // PreviewArea subcomponent
 interface PreviewAreaProps {
@@ -303,325 +307,43 @@ const TRANSITION_OPTIONS = [
   { value: 'blur', label: '模糊过渡' },
 ];
 
-// 默认转场
-const DEFAULT_TRANSITION: TransitionConfig = {
-  effect: 'crossfade',
-  duration: 0.5,
-  easing: 'ease-in-out',
-};
-
 const CompositionStudio = ({ frames, projectId, onCompositionChange }: CompositionStudioProps) => {
-  const [composition, setComposition] = useState<CompositionProject>(() => ({
-    id: generatePrefixedId('comp'),
-    projectId: projectId ?? '',
-    frames: [],
-    transitions: [],
-    masterSettings: {
-      frameDuration: 3,
-      defaultTransition: DEFAULT_TRANSITION,
-    },
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  }));
-
-  const [editingFrameId, setEditingFrameId] = useState<string | null>(null);
-  const [frameModalVisible, setFrameModalVisible] = useState(false);
-  const [globalModalVisible, setGlobalModalVisible] = useState(false);
-  const [keyframeModalVisible, setKeyframeModalVisible] = useState(false);
-  const [previewModalVisible, setPreviewModalVisible] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentFrameIndex, setCurrentFrameIndex] = useState(0);
-  const [playbackSpeed, setPlaybackSpeed] = useState(1);
-  const [keyframes, setKeyframes] = useState<AnimationKeyframe[]>([]);
-  const animationRef = useRef<number | null>(null);
-
-  // Stable callback wrapper to prevent useEffect re-run on every render
-  const stableOnCompositionChange = useCallback(
-    (c: CompositionProject) => onCompositionChange?.(c),
-    [onCompositionChange]
-  );
-
-  // 通知父组件
-  useEffect(() => {
-    stableOnCompositionChange(composition);
-  }, [composition, stableOnCompositionChange]);
-
-  // 初始化帧动画配置
-  useEffect(() => {
-    if (frames.length > 0) {
-      const existingFrameIds = new Set(composition.frames.map((f) => f.frameId));
-      const missingFrames = frames.filter((f) => !existingFrameIds.has(f.id));
-
-      if (missingFrames.length > 0) {
-        const newFrames = missingFrames.map((frame) => ({
-          frameId: frame.id,
-          cameraMotion: null,
-          zoom: 1,
-          pan: { x: 0, y: 0 },
-          rotation: 0,
-          opacity: 1,
-          filters: {
-            blur: 0,
-            brightness: 100,
-            contrast: 100,
-            saturation: 100,
-          },
-          keyframes: [], // 关键帧系统
-        })) as FrameAnimation[];
-
-        // 使用函数式更新避免直接修改状态
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setComposition((prev) => ({
-          ...prev,
-          frames: [...prev.frames, ...newFrames],
-          updatedAt: new Date().toISOString(),
-        }));
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [frames]);
-
-  // 打开帧编辑模态框
-  const handleEditFrame = useCallback((frameId: string) => {
-    setEditingFrameId(frameId);
-    setFrameModalVisible(true);
-  }, []);
-
-  // 打开关键帧编辑器
-  const handleOpenKeyframes = useCallback(
-    (frameId: string) => {
-      const frameConfig = composition.frames.find((f) => f.frameId === frameId);
-      setKeyframes(frameConfig?.keyframes ?? []);
-      setEditingFrameId(frameId);
-      setKeyframeModalVisible(true);
-    },
-    [composition.frames]
-  );
-
-  // 保存关键帧
-  const handleSaveKeyframes = useCallback(() => {
-    if (!editingFrameId) return;
-
-    setComposition((prev) => {
-      const newFrames = prev.frames.map((f) =>
-        f.frameId === editingFrameId
-          ? { ...f, keyframes: [...keyframes].sort((a, b) => a.time - b.time) }
-          : f
-      );
-      return {
-        ...prev,
-        frames: newFrames,
-        updatedAt: new Date().toISOString(),
-      };
-    });
-
-    setKeyframeModalVisible(false);
-    toast.success('关键帧已保存');
-  }, [editingFrameId, keyframes]);
-
-  // 删除关键帧
-  const handleDeleteKeyframe = useCallback((index: number) => {
-    setKeyframes((prev) => prev.filter((_, i) => i !== index));
-  }, []);
-
-  // 保存帧动画配置
-  const handleSaveFrame = useCallback(
-    (values: Partial<FrameAnimation>) => {
-      if (!editingFrameId) return;
-
-      setComposition((prev) => {
-        const newFrames = prev.frames.map((f) =>
-          f.frameId === editingFrameId
-            ? {
-                ...f,
-                ...values,
-                // 确保保留关键帧
-                keyframes: f.keyframes ?? [],
-              }
-            : f
-        );
-        return {
-          ...prev,
-          frames: newFrames,
-          updatedAt: new Date().toISOString(),
-        };
-      });
-
-      setFrameModalVisible(false);
-      setEditingFrameId(null);
-      toast.success('动画配置已保存');
-    },
-    [editingFrameId]
-  );
-
-  // 重置帧
-  const handleResetFrame = useCallback(() => {
-    if (!editingFrameId) return;
-
-    setComposition((prev) => {
-      const newFrames = prev.frames.map((f) =>
-        f.frameId === editingFrameId
-          ? {
-              frameId: f.frameId,
-              cameraMotion: null,
-              zoom: 1,
-              pan: { x: 0, y: 0 },
-              rotation: 0,
-              opacity: 1,
-              filters: {
-                blur: 0,
-                brightness: 100,
-                contrast: 100,
-                saturation: 100,
-              },
-              keyframes: [],
-            }
-          : f
-      );
-      return {
-        ...prev,
-        frames: newFrames,
-        updatedAt: new Date().toISOString(),
-      };
-    });
-
-    toast.success('已重置为默认');
-  }, [editingFrameId]);
-
-  // 打开全局设置
-  const handleOpenGlobalSettings = useCallback(() => {
-    setGlobalModalVisible(true);
-  }, []);
-
-  // 保存全局设置
-  const handleSaveGlobalSettings = useCallback(
-    (values: {
-      frameDuration: number;
-      defaultTransition: { effect: TransitionEffect; duration: number; easing?: string };
-      transitions?: TransitionConfig[];
-    }) => {
-      setComposition((prev) => ({
-        ...prev,
-        masterSettings: {
-          ...prev.masterSettings,
-          frameDuration: values.frameDuration,
-          defaultTransition: {
-            ...values.defaultTransition,
-            effect: values.defaultTransition.effect as TransitionEffect,
-          },
-        },
-        transitions: values.transitions ?? [],
-        updatedAt: new Date().toISOString(),
-      }));
-      setGlobalModalVisible(false);
-      toast.success('全局设置已保存');
-    },
-    []
-  );
-
-  // 预览转场效果
-  const handlePreviewTransition = useCallback((_transition: TransitionConfig) => {
-    // State values never read — removed to eliminate dead code
-  }, []);
-
-  // 导出合成数据
-  const handleExportComposition = useCallback(() => {
-    const exportData = {
-      version: '1.0',
-      projectId: composition.projectId,
-      frames: composition.frames.map((f) => ({
-        frameId: f.frameId,
-        duration: composition.masterSettings.frameDuration,
-        cameraMotion: f.cameraMotion,
-        zoom: f.zoom,
-        pan: f.pan,
-        rotation: f.rotation,
-        opacity: f.opacity,
-        filters: f.filters,
-        keyframes: f.keyframes,
-      })),
-      transitions: composition.transitions,
-      masterSettings: composition.masterSettings,
-      exportedAt: new Date().toISOString(),
-    };
-
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `composition-${projectId}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-
-    toast.success('合成数据已导出');
-  }, [composition, projectId]);
-
-  // 播放预览
-  const handlePlay = useCallback(() => {
-    setIsPlaying(true);
-    setCurrentFrameIndex(0);
-  }, []);
-
-  const handlePause = useCallback(() => {
-    setIsPlaying(false);
-    if (animationRef.current) {
-      cancelAnimationFrame(animationRef.current);
-    }
-  }, []);
-
-  // 播放动画帧
-  useEffect(() => {
-    if (!isPlaying) return;
-
-    const frameDuration = (composition.masterSettings.frameDuration * 1000) / playbackSpeed;
-    const startTime = Date.now() - currentFrameIndex * frameDuration;
-
-    const animate = () => {
-      const elapsed = Date.now() - startTime;
-      const frameIndex = Math.floor(elapsed / frameDuration);
-
-      if (frameIndex >= frames.length) {
-        setIsPlaying(false);
-        return;
-      }
-
-      if (frameIndex !== currentFrameIndex) {
-        setCurrentFrameIndex(frameIndex);
-      }
-
-      animationRef.current = requestAnimationFrame(animate);
-    };
-
-    animationRef.current = requestAnimationFrame(animate);
-
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [
+  const {
+    composition,
+    setComposition,
+    editingFrameId,
+    setEditingFrameId,
+    frameModalVisible,
+    setFrameModalVisible,
+    globalModalVisible,
+    setGlobalModalVisible,
+    keyframeModalVisible,
+    setKeyframeModalVisible,
+    previewModalVisible,
+    setPreviewModalVisible,
     isPlaying,
+    setIsPlaying,
     currentFrameIndex,
-    frames.length,
-    composition.masterSettings.frameDuration,
+    setCurrentFrameIndex,
     playbackSpeed,
-  ]);
-
-  // 下一帧
-  const handleNext = useCallback(() => {
-    if (currentFrameIndex < frames.length - 1) {
-      setCurrentFrameIndex((prev) => prev + 1);
-    } else {
-      setIsPlaying(false);
-    }
-  }, [currentFrameIndex, frames.length]);
-
-  // 上一帧
-  const handlePrev = useCallback(() => {
-    if (currentFrameIndex > 0) {
-      setCurrentFrameIndex((prev) => prev - 1);
-    }
-  }, [currentFrameIndex]);
+    setPlaybackSpeed,
+    keyframes,
+    setKeyframes,
+    handleEditFrame,
+    handleOpenKeyframes,
+    handleSaveKeyframes,
+    handleDeleteKeyframe,
+    handleSaveFrame,
+    handleResetFrame,
+    handleOpenGlobalSettings,
+    handleSaveGlobalSettings,
+    handlePreviewTransition,
+    handleExportComposition,
+    handlePlay,
+    handlePause,
+    handleNext,
+    handlePrev,
+  } = useCompositionStudio({ frames, projectId, onCompositionChange });
 
   // 当前帧的动画配置
   const currentFrameConfig = useMemo(() => {
