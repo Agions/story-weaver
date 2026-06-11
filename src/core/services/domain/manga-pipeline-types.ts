@@ -3,9 +3,13 @@
  * @module core/services/domain/manga-pipeline-types
  */
 
-import type { ImageGenerationOptions, VideoGenerationOptions } from '@/core/services/ai/image/image-generation.service';
+import type {
+  ImageGenerationOptions,
+  VideoGenerationOptions,
+} from '@/core/services/ai/image/image-generation.service';
 import type { LipSyncOptions } from '@/core/services/audio/lip-sync.service';
 import type { SubtitleTrack, CompositionOptions } from '@/core/services/video/ffmpeg-wasm.service';
+export { DEFAULT_TTS_CONFIG } from '../audio/tts-types';
 import type { TTSConfig } from '@/shared/types';
 
 /** 流水线配置 */
@@ -91,16 +95,6 @@ export const SCENE_VIDEO_DURATION_SECONDS = 5;
 
 /** 场景视频默认音量（与原 composeVideo 阶段 `volume: 1.0` 一致） */
 export const SCENE_VIDEO_VOLUME = 1.0;
-
-/** TTS 默认配置（与原 generateFromNovel 内 ttsService.synthesize 内联 config 字节级一致） */
-export const DEFAULT_TTS_CONFIG = {
-  provider: 'edge',
-  voice: 'zh-CN-XiaoxiaoNeural',
-  speed: 1.0,
-  pitch: 1.0,
-  volume: 100,
-  format: 'audio-24khz-48kbitrate-mono-mp3',
-} as const;
 
 /** TTS 占位 URL 前缀（与原 `pipelineScenes[i].audioUrl = 'tts_audio_' + i` 一致） */
 export const TTS_AUDIO_URL_PREFIX = 'tts_audio_';
