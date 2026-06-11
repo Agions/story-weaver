@@ -220,24 +220,6 @@ export interface PipelineExecutionState {
   error?: string;
 }
 
-// ========== 批量渲染 Checkpoint ==========
-
-export interface BatchRenderCheckpoint {
-  stepId: PipelineStepId.RENDER;
-  workflowId: string;
-  completedFrames: Array<{
-    frameId: string;
-    imageUrl: string;
-    qualityScore?: number;
-    timestamp: number;
-  }>;
-  failedFrames: string[];
-  skippedFrames: string[];
-  totalFrames: number;
-  lastBatchIndex: number;
-  modelVersion: string;
-}
-
 // ========== PipelineEngine 事件 ==========
 
 export interface PipelineEngineEvent {

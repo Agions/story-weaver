@@ -2,10 +2,11 @@
  * Anthropic Provider Strategy
  */
 
-import { BaseAIProviderStrategy } from './base';
 import type { RequestConfig, AIResponse } from '@/core/services/ai/text/ai.service.types';
 
-export class AnthropicStrategy extends BaseAIProviderStrategy {
+import { BaseAIProviderStrategy } from './base';
+
+class AnthropicStrategy extends BaseAIProviderStrategy {
   readonly name = 'anthropic';
 
   async call(apiKey: string, config: RequestConfig): Promise<AIResponse> {
