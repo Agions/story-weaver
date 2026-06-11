@@ -8,54 +8,67 @@
  * - 无任何 JSX 直接渲染
  */
 
-import { useState, useCallback } from 'react';
+import { useReducer, useCallback } from 'react';
 
 import type {
   AIAssistantState,
   AIAssistantActions,
   ChatMessage,
-  AIAssistantTab,
   UseAIAssistantReturn,
 } from '../../types/ai-assistant.entities';
 import { AI_MODELS, LANGUAGES } from '../../types/ai-assistant.entities';
 
-type SubtitleFormat = 'srt' | 'vtt' | 'ass';
-type SmartCutMode = 'content' | 'pace' | 'compact' | 'highlight';
-type TargetDuration = 'auto' | '30' | '60' | '120' | 'custom';
+import {
+  aiAssistantReducer,
+  initialAIAssistantState,
+  createAIAssistantSetters,
+} from './useAIAssistant.reducer';
 
 export function useAIAssistant(): UseAIAssistantReturn {
-  // ── Tab state ─────────────────────────────────────────────
-  const [activeTab, setActiveTab] = useState<AIAssistantTab>('chat');
+  // ── 18 个 useState 已迁移到 useReducer 状态机 (2026-06-11) ──
+  const [state, dispatch] = useReducer(aiAssistantReducer, initialAIAssistantState);
+  const {
+    setActiveTab,
+    setPrompt,
+    setMessages,
+    setSelectedModel,
+    setSelectedLang,
+    setSubtitleFormat,
+    setAutoSegment,
+    setFilterFiller,
+    setPrecision,
+    setTranslateLang,
+    setSmartCutMode,
+    setTargetDuration,
+    setRemoveSilence,
+    setOptimizeTransition,
+    setKeyContentPriority,
+    setSceneSensitivity,
+    setProcessing,
+    setProgress,
+  } = createAIAssistantSetters(dispatch);
 
-  // ── Chat state ─────────────────────────────────────────────
-  const [prompt, setPrompt] = useState('');
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      role: 'ai',
-      content:
-        '您好!我是您的AI漫剧助手。我可以帮助您生成角色、撰写脚本、设计分镜、合成配音与字幕,提供创意建议。请告诉我您需要什么帮助?',
-      time: new Date(),
-    },
-  ]);
-  const [selectedModel, setSelectedModel] = useState('gpt-4o');
-  const [processing, setProcessing] = useState(false);
-  const [progress, setProgress] = useState(0);
-
-  // ── Subtitle state ────────────────────────────────────────
-  const [selectedLang, setSelectedLang] = useState('zh');
-  const [subtitleFormat, setSubtitleFormat] = useState<SubtitleFormat>('srt');
-  const [autoSegment, setAutoSegment] = useState(true);
-  const [filterFiller, setFilterFiller] = useState(true);
-  const [precision, setPrecision] = useState(80);
-  const [translateLang, setTranslateLang] = useState('');
-
-  // ── SmartCut state ────────────────────────────────────────
-  const [smartCutMode, setSmartCutMode] = useState<SmartCutMode>('content');
-  const [targetDuration, setTargetDuration] = useState<TargetDuration>('auto');
-  const [removeSilence, setRemoveSilence] = useState(true);
-  const [optimizeTransition, setOptimizeTransition] = useState(true);
-  const [keyContentPriority, setKeyContentPriority] = useState(70);
-  const [sceneSensitivity, setSceneSensitivity] = useState(50);
+  // 派生 state — 从 reducer state 拿
+  const {
+    activeTab,
+    prompt,
+    messages,
+    selectedModel,
+    selectedLang,
+    subtitleFormat,
+    autoSegment,
+    filterFiller,
+    precision,
+    translateLang,
+    smartCutMode,
+    targetDuration,
+    removeSilence,
+    optimizeTransition,
+    keyContentPriority,
+    sceneSensitivity,
+    processing,
+    progress,
+  } = state;
 
   // ── Business logic ────────────────────────────────────────
 
