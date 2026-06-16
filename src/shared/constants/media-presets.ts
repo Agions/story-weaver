@@ -42,14 +42,14 @@ export const QUALITY_PRESETS: Record<string, QualityPreset> = {
 // 音频预设
 // ============================================
 
-export interface BgmPreset {
+interface BgmPreset {
   id: string;
   name: string;
   category: string;
   duration: number;
 }
 
-export interface SfxPreset {
+interface SfxPreset {
   id: string;
   name: string;
   category: string;
@@ -89,49 +89,3 @@ export const DEFAULT_VOLUME = {
 } as const;
 
 export const AUDIO_FILE_EXTENSIONS = ['mp3', 'wav', 'ogg', 'm4a', 'aac', 'flac'] as const;
-export const VIDEO_FILE_EXTENSIONS = ['mp4', 'mov', 'webm', 'avi', 'mkv'] as const;
-export const IMAGE_FILE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'gif'] as const;
-
-// ============================================
-// 角色常量
-// ============================================
-
-export interface CharacterAppearanceDefault {
-  gender: 'male' | 'female' | 'other';
-  age: number;
-  hairStyle: string;
-  hairColor: string;
-  eyeColor: string;
-  skinTone: string;
-  bodyType: string;
-}
-
-export const DEFAULT_CHARACTER_APPEARANCE: CharacterAppearanceDefault = {
-  gender: 'male',
-  age: 25,
-  hairStyle: '短发',
-  hairColor: '#000000',
-  eyeColor: '#000000',
-  skinTone: '#f5d0c5',
-  bodyType: 'average',
-};
-
-export type ClothingType = 'head' | 'top' | 'bottom' | 'shoes' | 'accessory';
-
-export const CLOTHING_TYPE_LABELS: Record<ClothingType, string> = {
-  head: '头部',
-  top: '上衣',
-  bottom: '下装',
-  shoes: '鞋子',
-  accessory: '配饰',
-};
-
-// 角色定位选项
-export type CharacterRole = 'protagonist' | 'antagonist' | 'supporting' | 'minor';
-
-export const CHARACTER_ROLE_LABELS: Record<CharacterRole, string> = {
-  protagonist: '主角',
-  antagonist: '反派',
-  supporting: '配角',
-  minor: '群众角色',
-};
