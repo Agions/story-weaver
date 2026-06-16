@@ -24,7 +24,7 @@ const DEFAULT_STORAGE_COST_PER_GB = 0.02;
  * 生成成本记录 ID，与原实现逐字一致。
  * 格式：`<type>_<timestamp>_<5位随机字符>`。
  */
-export function generateCostRecordId(type: CostRecordType): string {
+function generateCostRecordId(type: CostRecordType): string {
   const timestamp = Date.now();
   const randomSuffix = Math.random().toString(36).substr(2, 5);
   return `${type}_${timestamp}_${randomSuffix}`;
@@ -33,24 +33,24 @@ export function generateCostRecordId(type: CostRecordType): string {
 /**
  * 计算 LLM 调用成本：按 (输入+输出) token 数 × 单价。
  */
-export function calculateLLMCost(model: string, inputTokens: number, outputTokens: number): number {
+function calculateLLMCost(model: string, inputTokens: number, outputTokens: number): number {
   const pricing = MODEL_COSTS[model] ?? DEFAULT_LLM_PRICING;
   return (inputTokens / 1000) * pricing.input + (outputTokens / 1000) * pricing.output;
 }
 
 /** 计算视频生成成本：时长(秒) × 单价(USD/分钟) */
-export function calculateVideoCost(provider: string, durationSeconds: number): number {
+function calculateVideoCost(provider: string, durationSeconds: number): number {
   const costPerMinute = VIDEO_COSTS[provider] ?? DEFAULT_VIDEO_COST_PER_MINUTE;
   return (durationSeconds / 60) * costPerMinute;
 }
 
 /** 计算音频生成成本：时长(秒) × 0.06 USD/分钟 */
-export function calculateAudioCost(durationSeconds: number): number {
+function calculateAudioCost(durationSeconds: number): number {
   return (durationSeconds / 60) * DEFAULT_AUDIO_COST_PER_MINUTE;
 }
 
 /** 计算存储成本：大小(MB) × 0.02 USD/GB */
-export function calculateStorageCost(sizeMB: number): number {
+function calculateStorageCost(sizeMB: number): number {
   return (sizeMB / 1024) * DEFAULT_STORAGE_COST_PER_GB;
 }
 

@@ -5,17 +5,16 @@ import * as React from 'react';
 import { cn } from '@/shared/utils/class-names';
 
 // ============================================================
-// RcFile type alias (internal)
+// Internal RcFile type alias (not exported — use antd's directly)
 // ============================================================
-export type RcFile = File & { uid?: string; status?: 'uploading' | 'done' | 'error' };
+type RcFile = File & { uid?: string; status?: 'uploading' | 'done' | 'error' };
 
-// Upload info types
-export interface UploadFile {
+interface UploadFile {
   file: RcFile;
   fileList: RcFile[];
 }
 
-export interface UploadChangeParam {
+interface UploadChangeParam {
   file: RcFile;
   fileList: RcFile[];
 }
