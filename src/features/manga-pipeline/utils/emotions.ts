@@ -22,9 +22,3 @@ export const EMOTION_PROMPTS: Record<string, string[]> = {
   surprising: ['dynamic composition', 'dramatic lighting', 'unexpected angle'],
   neutral: ['balanced lighting', 'natural colors', 'calm atmosphere'],
 };
-
-// 所有情感类型列表
-export const EMOTION_TYPES = Object.keys(EMOTION_KEYWORDS);
-
-// 获取默认情感
-export const DEFAULT_EMOTION = 'neutral';

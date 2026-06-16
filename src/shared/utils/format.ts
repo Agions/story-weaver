@@ -136,36 +136,6 @@ export const formatSizeMB = (mb: number): string => {
 };
 
 /**
- * 格式化时长为友好显示（例如：2小时30分钟）
- */
-export const formatFriendlyDuration = (seconds: number): string => {
-  if (isNaN(seconds) || seconds < 0) return '0秒';
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const secs = Math.floor(seconds % 60);
-  let result = '';
-  if (hours > 0) result += `${hours}小时`;
-  if (minutes > 0 || hours > 0) result += `${minutes}分钟`;
-  if (secs > 0 && hours === 0) result += `${secs}秒`;
-  return result || '0秒';
-};
-
-/**
- * 格式化数字，添加千分位分隔符
- */
-export const formatNumber = (num: number): string => {
-  return new Intl.NumberFormat().format(num);
-};
-
-/**
- * 转换为百分比格式
- */
-export const formatPercent = (value: number, decimals: number = 0): string => {
-  if (isNaN(value)) return '0%';
-  return `${(value * 100).toFixed(decimals)}%`;
-};
-
-/**
  * 把秒数格式化为中文 "X分Y秒" 格式
  */
 export const formatChineseDuration = (totalSeconds?: number): string => {
