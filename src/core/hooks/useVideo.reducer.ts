@@ -94,8 +94,6 @@ export interface VideoSetter {
   setAnalysisProgress: (v: Updater<number>) => void;
   setTaskStatus: (v: Updater<TaskStatus | null>) => void;
   setError: (v: Updater<string | null>) => void;
-  // setIsLoading 仅满足 interface 契约, 实际不会改值 (isLoading 是死代码 const false)
-  setIsLoading: (v: Updater<boolean>) => void;
 }
 
 export function createVideoSetters(dispatch: (action: VideoAction) => void): VideoSetter {
@@ -108,6 +106,5 @@ export function createVideoSetters(dispatch: (action: VideoAction) => void): Vid
     setAnalysisProgress: makeSetter(dispatch, 'analysisProgress'),
     setTaskStatus: makeSetter(dispatch, 'taskStatus'),
     setError: makeSetter(dispatch, 'error'),
-    setIsLoading: makeSetter(dispatch, 'isLoading'),
   };
 }

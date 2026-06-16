@@ -41,18 +41,12 @@ export interface UseProjectReturn {
 export function useProject(_projectId?: string): UseProjectReturn {
   // ── 7 useState 已迁移到 useReducer 状态机 (2026-06-11) ──
   const [state, dispatch] = useReducer(projectReducer, initialProjectState);
-  const {
-    setProject,
-    setProjects,
-    setIsLoading,
-    setIsSaving,
-    setError,
-    setHasUnsavedChanges,
-    setTaskStatus,
-  } = createProjectSetters(dispatch);
+  const { setProject, setProjects, setIsLoading, setIsSaving, setError, setHasUnsavedChanges } =
+    createProjectSetters(dispatch);
 
-  const { project, projects, isLoading, isSaving, error, hasUnsavedChanges, _taskStatus } = state;
-  const taskStatus = _taskStatus;
+  const { project, projects, isLoading, isSaving, error, hasUnsavedChanges } = state;
+  // taskStatus 是接口契约 (UseProjectReturn 暴露), 永远为 null (dead code 占位已删)
+  const taskStatus: TaskStatus | null = null;
 
   const recentProjects = useMemo(() => {
     return [...projects]
