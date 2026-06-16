@@ -30,7 +30,8 @@ export interface SubtitleTrack {
   subtitles: SubtitleItem[];
 }
 
-export type SubtitleFormat = 'srt' | 'vtt' | 'ass' | 'txt';
+// SubtitleFormat: re-export from canonical source (core/services/video/subtitle/types)
+export type { SubtitleFormat } from '@/core/services/video/subtitle/types';
 
 export interface SceneEffect {
   type: 'fade_in' | 'fade_out' | 'zoom' | 'slide' | 'blur';

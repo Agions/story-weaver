@@ -13,6 +13,8 @@ export interface AppSettings {
   theme?: 'light' | 'dark' | 'system';
 }
 
+// 注: 与 core/services/video/ffmpeg/types.VideoMetadata 字段相似但 optional/required 标记不同
+// 保留独立定义以支持宽松语义 (codec/bitrate 可选)
 export interface VideoMetadata {
   duration: number;
   width: number;
