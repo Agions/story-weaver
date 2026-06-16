@@ -8,13 +8,8 @@
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { formatTime } from '@/shared/utils';
 import type { Keyframe, VideoInfo } from '@/shared/types';
-
-/** 关键帧描述模板前缀（与原 "第 ${i} 个关键帧于 ${formatTime(timestamp)}" 一致） */
-export function buildKeyframeDescription(index: number, timestamp: number): string {
-  return `第 ${index} 个关键帧于 ${formatTime(timestamp)}`;
-}
+import { formatTime } from '@/shared/utils';
 
 /**
  * 均匀提取 count 个关键帧
@@ -34,7 +29,7 @@ export function extractKeyframes(videoInfo: VideoInfo, count: number = 10): Keyf
       id: uuidv4(),
       timestamp,
       thumbnail: '', // 缩略图由前端使用 Canvas 生成
-      description: buildKeyframeDescription(i, timestamp),
+      description: `第 ${i} 个关键帧于 ${formatTime(timestamp)}`,
     });
   }
 

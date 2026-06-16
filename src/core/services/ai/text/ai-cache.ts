@@ -10,7 +10,7 @@ import { requestCache } from '@/shared/utils/request';
 import type { AIResponse } from './ai.service.types';
 
 /** 缓存 TTL（毫秒），与原实现一致 */
-export const AI_CACHE_TTL_MS = 10 * 60 * 1000;
+const AI_CACHE_TTL_MS = 10 * 60 * 1000;
 
 /** 缓存键前缀 */
 const CACHE_KEY_PREFIX = 'ai';
@@ -36,10 +36,7 @@ export function buildAICacheKey(
  * 命中则返回缓存；未命中则执行 fetcher 并写入缓存。
  * 行为与原 callAPI 的缓存分支完全一致。
  */
-export async function withAICache<T>(
-  cacheKey: string | null,
-  fetcher: () => Promise<T>
-): Promise<T> {
+async function withAICache<T>(cacheKey: string | null, fetcher: () => Promise<T>): Promise<T> {
   if (!cacheKey) {
     return fetcher();
   }

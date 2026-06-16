@@ -16,7 +16,7 @@ export interface CharacterServiceOptions {
 }
 
 /** localStorage 存储键（与原 CHARACTER_STORAGE_KEY 字节级一致——保留 "man ga" 拼写以不破坏既有数据） */
-export const CHARACTER_STORAGE_KEY = 'man ga-characters';
+const CHARACTER_STORAGE_KEY = 'man ga-characters';
 
 /** 默认角色字段值（与原 CharacterService.create / bulkCreate 内联默认值完全一致） */
 export const DEFAULT_CHARACTER_FIELDS = {
@@ -28,7 +28,7 @@ export const DEFAULT_CHARACTER_FIELDS = {
 } as const;
 
 /** 种子随机数上限（与原 Math.floor(Math.random() * 10000) 一致） */
-export const CHARACTER_SEED_RANGE = 10000;
+const CHARACTER_SEED_RANGE = 10000;
 
 /** 项目级 storage key 构造（与原 CharacterService.loadFromStorage / saveToStorage 逻辑一致） */
 export function buildCharacterStorageKey(projectId?: string): string {

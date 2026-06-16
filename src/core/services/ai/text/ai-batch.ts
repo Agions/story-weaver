@@ -7,7 +7,7 @@
 
 import { concurrentLimit } from '@/core/utils/concurrency';
 
-export interface BatchGenerateOptions {
+interface BatchGenerateOptions {
   /** 模型 ID */
   model: string;
   /** Provider ID */

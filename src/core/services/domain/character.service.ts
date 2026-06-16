@@ -30,7 +30,6 @@ import type { CharacterServiceOptions } from './character-types';
 
 // 重导出公共类型，保持 `@/core/services/domain/character.service` 一站式导入
 export type { Character, CharacterServiceOptions };
-export { validateCharacter, listTemplates, countTemplates } from './character-template';
 
 /**
  * 角色服务

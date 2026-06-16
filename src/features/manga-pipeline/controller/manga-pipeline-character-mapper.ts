@@ -9,8 +9,13 @@
  */
 import type { StoryboardGenerationResult } from '../steps/step2-storyboard/StoryboardPipeline';
 
-/** Keyframe pipeline + visual consistency 共享的"角色参考"格式 */
-export interface CharacterReferenceInput {
+/**
+ * 把 characterConstraints (可能为 undefined) 转成 pipeline 共享的"角色参考"格式。
+ * 自动剥离 imageUrls 多余字段。
+ */
+export function mapCharacterConstraintsToReferences(
+  constraints: StoryboardGenerationResult['characterConstraints'] | undefined
+): Array<{
   characterId: string;
   name: string;
   referencePrompt: string;
@@ -19,15 +24,7 @@ export interface CharacterReferenceInput {
     side?: string;
     fullBody?: string;
   };
-}
-
-/**
- * 把 characterConstraints (可能为 undefined) 转成 CharacterReferenceInput[]。
- * 自动剥离 imageUrls 多余字段。
- */
-export function mapCharacterConstraintsToReferences(
-  constraints: StoryboardGenerationResult['characterConstraints'] | undefined
-): CharacterReferenceInput[] {
+}> {
   return (constraints ?? []).map((c) => ({
     characterId: c.characterId,
     name: c.name,

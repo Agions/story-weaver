@@ -44,12 +44,3 @@ export async function hasCheckpoint(stepId: string): Promise<boolean> {
   const checkpoint = await loadCheckpoint(stepId);
   return checkpoint?.completed ?? false;
 }
-
-/**
- * 获取检查点年龄（毫秒）
- */
-export async function getCheckpointAge(stepId: string): Promise<number | null> {
-  const checkpoint = await loadCheckpoint(stepId);
-  if (!checkpoint) return null;
-  return Date.now() - checkpoint.timestamp;
-}

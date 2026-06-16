@@ -11,12 +11,6 @@ import type { AnalyzeConfig } from '@/shared/types';
 export type ResolvedAnalyzeConfig = Required<AnalyzeConfig>;
 
 /**
- * 默认 provider / model（与原代码默认值保持一致）
- */
-export const DEFAULT_AI_PROVIDER = 'alibaba';
-export const DEFAULT_AI_MODEL = 'qwen-3.5';
-
-/**
  * 把 optional 字段全部兜底为默认值，返回完整配置。
  * 原代码类构造器内的 Object spread 完全相同的逻辑。
  */
@@ -28,7 +22,7 @@ export function resolveAnalyzeConfig(config: AnalyzeConfig = {}): ResolvedAnalyz
     detectCharacters: config.detectCharacters ?? true,
     detectEmotions: config.detectEmotions ?? true,
     generatePrompts: config.generatePrompts ?? true,
-    provider: config.provider ?? DEFAULT_AI_PROVIDER,
-    model: config.model ?? DEFAULT_AI_MODEL,
+    provider: config.provider ?? 'alibaba',
+    model: config.model ?? 'qwen-3.5',
   };
 }

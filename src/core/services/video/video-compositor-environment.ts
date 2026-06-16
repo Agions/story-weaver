@@ -21,17 +21,8 @@ export function isTauri(): boolean {
  * 检测浏览器是否支持 FFmpeg.wasm。
  * SharedArrayBuffer 是 FFmpeg.wasm 多线程模式的硬性要求。
  */
-export function isSharedArrayBufferAvailable(): boolean {
-  return typeof SharedArrayBuffer !== 'undefined';
-}
-
-/**
- * 检测浏览器是否支持 FFmpeg.wasm。
- * 实际上等同于 SharedArrayBuffer 检测——保持独立函数名便于
- * 上层用 isFFmpegWasmAvailable() 表达语义。
- */
 export function isFFmpegWasmAvailable(): boolean {
-  return isSharedArrayBufferAvailable();
+  return typeof SharedArrayBuffer !== 'undefined';
 }
 
 /**
@@ -45,9 +36,10 @@ export function getSupportedFeatures(): {
   tauri: boolean;
   sharedArrayBuffer: boolean;
 } {
+  const sharedArrayBuffer = typeof SharedArrayBuffer !== 'undefined';
   return {
-    ffmpegWasm: isFFmpegWasmAvailable(),
+    ffmpegWasm: sharedArrayBuffer,
     tauri: isTauri(),
-    sharedArrayBuffer: isSharedArrayBufferAvailable(),
+    sharedArrayBuffer,
   };
 }

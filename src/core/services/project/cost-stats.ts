@@ -61,15 +61,10 @@ export function calculateProjectStats(records: CostRecord[], projectId: string):
   return calculateCostStats(scoped);
 }
 
-/** 按 timestamp 倒序排（同时间戳并列时保持原顺序） */
-export function sortRecordsByTimestampDesc(records: CostRecord[]): CostRecord[] {
-  return [...records].sort((a, b) => b.timestamp.localeCompare(a.timestamp));
-}
-
-/** 按 projectId 过滤并倒序排序 */
+/** 按 projectId 过滤并按 timestamp 倒序排 */
 export function filterRecordsByProject(records: CostRecord[], projectId?: string): CostRecord[] {
   const scoped = projectId
     ? records.filter((record) => record.metadata?.projectId === projectId)
     : records;
-  return sortRecordsByTimestampDesc(scoped);
+  return [...scoped].sort((a, b) => b.timestamp.localeCompare(a.timestamp));
 }

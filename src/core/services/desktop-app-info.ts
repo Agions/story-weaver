@@ -37,20 +37,12 @@ export function getPlatform(): Platform {
   return 'unknown';
 }
 
-/**
- * 判断当前平台是否等于 target。比 isMacOS/isWindows 更通用，
- * 后续若新增 isLinux / isUnknown 也只需调用这一个函数。
- */
-export function isPlatform(target: Platform): boolean {
-  return getPlatform() === target;
-}
-
-/** 是否为 macOS（兼容旧 API，等价 isPlatform('macos')） */
+/** 是否为 macOS */
 export function isMacOS(): boolean {
-  return isPlatform('macos');
+  return getPlatform() === 'macos';
 }
 
-/** 是否为 Windows（兼容旧 API，等价 isPlatform('windows')） */
+/** 是否为 Windows */
 export function isWindows(): boolean {
-  return isPlatform('windows');
+  return getPlatform() === 'windows';
 }
