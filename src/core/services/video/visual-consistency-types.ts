@@ -40,13 +40,13 @@ export interface VisualConsistencyResult {
 export const DEFAULT_VLM_MODEL = 'vision';
 
 /** 评分等级阈值（与原 evaluateWithVLM/Heuristic 内联三档一致） */
-export const SCORE_THRESHOLDS = {
+const SCORE_THRESHOLDS = {
   EXCELLENT: 80, // 角色外观一致性良好
-  FAIR: 60,      // 轻微差异
+  FAIR: 60, // 轻微差异
 } as const;
 
 /** 评分等级对应文案（消除 evaluateWithVLM / evaluateWithHeuristic 两处重复） */
-export const SCORE_NOTES = {
+const SCORE_NOTES = {
   EXCELLENT: '角色外观一致性良好',
   FAIR: '角色外观存在轻微差异',
   POOR: '角色外观差异明显',
@@ -74,13 +74,12 @@ export const HEURISTIC_PROMPT_CHUNK_SIZE = 20;
 export const NO_REFERENCE_NOTE = '无参考图，基于角色描述关键词匹配评分';
 
 /** 评价 model 标签 */
-export const MODEL_NO_RESULT = 'none';
 export const MODEL_HEURISTIC = 'heuristic';
 
 /**
  * 构造一个空的评估结果
  */
-export function createEmptyResult(model: string = MODEL_NO_RESULT): VisualConsistencyResult {
+export function createEmptyResult(model: string = 'none'): VisualConsistencyResult {
   return {
     overallScore: 0,
     characterScores: [],
