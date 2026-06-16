@@ -14,10 +14,7 @@
  */
 
 // 图像/视频生成服务
-export {
-  imageGenerationService,
-  default as ImageGenerationService,
-} from './ai/image/image-generation.service';
+export { imageGenerationService } from './ai/image/image-generation.service';
 export type {
   ImageGenerationOptions,
   ImageGenerationResult,
@@ -27,7 +24,7 @@ export type {
 } from './ai/image/image-generation.service';
 
 // 唇同步服务
-export { lipSyncService, default as LipSyncService } from './audio/lip-sync.service';
+export { lipSyncService } from './audio/lip-sync.service';
 export type {
   LipSyncOptions,
   LipSyncResult,
@@ -36,10 +33,7 @@ export type {
 } from './audio/lip-sync.service';
 
 // 视频合成服务
-export {
-  videoCompositorService,
-  default as VideoCompositorService,
-} from './video/video-compositor.service';
+export { videoCompositorService } from './video/video-compositor.service';
 export type {
   Scene,
   SubtitleTrack as VideoSubtitleTrack,
@@ -51,12 +45,7 @@ export type {
 } from './video/ffmpeg-wasm.service';
 
 // FFmpeg.wasm 服务
-export {
-  ffmpegWasmService,
-  default as FFmpegWasmService,
-  loadFFmpeg,
-  isFFmpegWasmAvailable,
-} from './video/ffmpeg-wasm.service';
+export { ffmpegWasmService, loadFFmpeg, isFFmpegWasmAvailable } from './video/ffmpeg-wasm.service';
 export type {
   CompositionOptions as FFmpegCompositionOptions,
   CompositionResult as FFmpegCompositionResult,
@@ -79,10 +68,7 @@ export type {
 export { aiService, type AIResponse, type RequestConfig } from './ai/text/ai.service';
 export { novelService, default as NovelService } from './ai/text/novel.service';
 export { novelAnalyzer, default as NovelAnalyzer } from './ai/text/novel-analyze.service';
-export {
-  scriptImportService,
-  default as ScriptImportService,
-} from './ai/text/script-import.service';
+export { scriptImportService } from './ai/text/script-import.service';
 export {
   storyAnalysisService,
   default as StoryAnalysisService,
@@ -97,7 +83,7 @@ export {
   audioPipelineService,
   default as AudioPipelineService,
 } from './audio/audio-pipeline.service';
-export { evaluationService, default as EvaluationService } from './project/evaluation.service';
+export { evaluationService } from './project/evaluation.service';
 export { qualityGateService, default as QualityGateService } from './pipeline/quality-gate.service';
 export {
   collaborationService,
