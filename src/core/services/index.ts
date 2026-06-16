@@ -143,8 +143,6 @@ export type {
   WindowState,
 } from './desktop-app.service';
 
-// 增强服务
-
 // Tauri 服务
 export { default as TauriService, tauriService } from '@/infrastructure/tauri-bridge/commands';
 export type {
