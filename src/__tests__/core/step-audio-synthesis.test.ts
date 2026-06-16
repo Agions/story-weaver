@@ -1,17 +1,16 @@
-import { PipelineStepId, StepStatus, QualityGateDecision } from '../../core/pipeline/pipeline.types';
-import { AudioSynthesisStep, createAudioSynthesisStep, type AudioSynthesisOutput } from '../../core/pipeline/step-audio-synthesis';
+import {
+  PipelineStepId,
+  StepStatus,
+  QualityGateDecision,
+} from '../../core/pipeline/pipeline.types';
+import {
+  AudioSynthesisStep,
+  createAudioSynthesisStep,
+  type AudioSynthesisOutput,
+} from '../../core/pipeline/step-audio-synthesis';
+import { createMockStepContext } from '../utils/mock-context';
 
 describe('AudioSynthesisStep', () => {
-  // Mock context
-  const createMockContext = (variables: Map<string, unknown>) => ({
-    getVariable: <T>(key: string) => variables.get(key) as T | undefined,
-    setVariable: <T>(_key: string, _value: T) => {},
-    log: () => {},
-    getCheckpoint: () => undefined,
-    saveCheckpoint: () => {},
-    emit: () => {},
-  });
-
   describe('constructor', () => {
     it('should have correct default stepId', () => {
       const step = new AudioSynthesisStep();
@@ -60,15 +59,13 @@ describe('AudioSynthesisStep', () => {
             ],
           },
           {
-            dialogue: [
-              { speaker: 'Alice', text: 'Great!', emotion: 'excited' },
-            ],
+            dialogue: [{ speaker: 'Alice', text: 'Great!', emotion: 'excited' }],
           },
         ],
       });
       variables.set('selectedBgm', 'bgm_track_01.mp3');
 
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
       const step = new AudioSynthesisStep();
 
       const input = {
@@ -109,7 +106,7 @@ describe('AudioSynthesisStep', () => {
         ],
       });
 
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
       const step = new AudioSynthesisStep();
 
       const input = {
@@ -137,7 +134,7 @@ describe('AudioSynthesisStep', () => {
         ],
       });
 
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
       const step = new AudioSynthesisStep();
 
       const input = {
@@ -158,7 +155,7 @@ describe('AudioSynthesisStep', () => {
         scenes: [],
       });
 
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
       const step = new AudioSynthesisStep();
 
       const input = {
@@ -178,13 +175,10 @@ describe('AudioSynthesisStep', () => {
     it('should handle scenes without dialogue', async () => {
       const variables = new Map<string, unknown>();
       variables.set('scriptOutput', {
-        scenes: [
-          { description: 'Scene without dialogue' },
-          { dialogue: [] },
-        ],
+        scenes: [{ description: 'Scene without dialogue' }, { dialogue: [] }],
       });
 
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
       const step = new AudioSynthesisStep();
 
       const input = {
@@ -205,15 +199,13 @@ describe('AudioSynthesisStep', () => {
       variables.set('scriptOutput', {
         scenes: [
           {
-            dialogue: [
-              { speaker: 'Alice', text: 'Hello' },
-            ],
+            dialogue: [{ speaker: 'Alice', text: 'Hello' }],
           },
         ],
       });
       // selectedBgm not set
 
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
       const step = new AudioSynthesisStep();
 
       const input = {
@@ -233,7 +225,7 @@ describe('AudioSynthesisStep', () => {
       const variables = new Map<string, unknown>();
       // scriptOutput not set
 
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
       const step = new AudioSynthesisStep();
 
       const input = {
@@ -256,14 +248,12 @@ describe('AudioSynthesisStep', () => {
       variables.set('scriptOutput', {
         scenes: [
           {
-            dialogue: [
-              { speaker: 'Alice', text: 'Hello world' },
-            ],
+            dialogue: [{ speaker: 'Alice', text: 'Hello world' }],
           },
         ],
       });
 
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
       const step = new AudioSynthesisStep();
       step.onProgress = (event) => progressEvents.push(event);
 
@@ -287,14 +277,12 @@ describe('AudioSynthesisStep', () => {
       variables.set('scriptOutput', {
         scenes: [
           {
-            dialogue: [
-              { speaker: 'Test', text: 'Duration test' },
-            ],
+            dialogue: [{ speaker: 'Test', text: 'Duration test' }],
           },
         ],
       });
 
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
       const step = new AudioSynthesisStep();
 
       const input = {
@@ -344,15 +332,13 @@ describe('AudioSynthesisStep', () => {
       variables.set('scriptOutput', {
         scenes: [
           {
-            dialogue: [
-              { speaker: 'Alice', text: 'Test message' },
-            ],
+            dialogue: [{ speaker: 'Alice', text: 'Test message' }],
           },
         ],
       });
 
       const setVariables: Array<{ key: string; value: unknown }> = [];
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
       context.setVariable = (key: string, value: unknown) => {
         setVariables.push({ key, value });
       };

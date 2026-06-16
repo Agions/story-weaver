@@ -1,5 +1,10 @@
 import { PipelineStepId, StepStatus } from '../../core/pipeline/pipeline.types';
-import { CompositionStep, createCompositionStep, type CompositionOutput } from '../../core/pipeline/step-composition';
+import {
+  CompositionStep,
+  createCompositionStep,
+  type CompositionOutput,
+} from '../../core/pipeline/step-composition';
+import { createMockStepContext } from '../utils/mock-context';
 
 // Mock the video compositor service at module level
 jest.mock('../../core/services/video/video-compositor.service', () => ({
@@ -22,16 +27,6 @@ jest.mock('../../core/services/video/video-compositor.service', () => ({
 }));
 
 describe('CompositionStep', () => {
-  // Mock context
-  const createMockContext = (variables: Map<string, unknown>) => ({
-    getVariable: <T>(key: string) => variables.get(key) as T | undefined,
-    setVariable: <T>(_key: string, _value: T) => {},
-    log: () => {},
-    getCheckpoint: () => undefined,
-    saveCheckpoint: () => {},
-    emit: () => {},
-  });
-
   describe('constructor', () => {
     it('should have correct default stepId', () => {
       const step = new CompositionStep();
@@ -52,7 +47,10 @@ describe('CompositionStep', () => {
     });
 
     it('should use custom id and name', () => {
-      const step = new CompositionStep({ id: 'custom-composition', name: 'Custom Composition Step' });
+      const step = new CompositionStep({
+        id: 'custom-composition',
+        name: 'Custom Composition Step',
+      });
       expect(step.id).toBe('custom-composition');
       expect(step.name).toBe('Custom Composition Step');
     });
@@ -67,7 +65,7 @@ describe('CompositionStep', () => {
     it('should fail when no rendered frames available', async () => {
       const step = new CompositionStep();
       const variables = new Map<string, unknown>();
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -93,7 +91,7 @@ describe('CompositionStep', () => {
         { start: 5, end: 8, text: 'Second line' },
       ]);
 
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -118,7 +116,7 @@ describe('CompositionStep', () => {
       ]);
       variables.set('subtitles', []);
 
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -135,13 +133,13 @@ describe('CompositionStep', () => {
       const step = new CompositionStep();
       const variables = new Map<string, unknown>();
       let savedUrl: any = null;
-      variables.set('renderedFrames', [
-        { frameId: 'f1', imageUrl: '/img/frame1.jpg' },
-      ]);
+      variables.set('renderedFrames', [{ frameId: 'f1', imageUrl: '/img/frame1.jpg' }]);
       variables.set('subtitles', []);
 
-      const context = createMockContext(variables);
-      context.setVariable = <T>(_key: string, value: T) => { savedUrl = value; };
+      const context = createMockStepContext(variables);
+      context.setVariable = <T>(_key: string, value: T) => {
+        savedUrl = value;
+      };
 
       const input = {
         workflowId: 'wf1',
@@ -157,12 +155,10 @@ describe('CompositionStep', () => {
     it('should pass quality gate on success', async () => {
       const step = new CompositionStep();
       const variables = new Map<string, unknown>();
-      variables.set('renderedFrames', [
-        { frameId: 'f1', imageUrl: '/img/frame1.jpg' },
-      ]);
+      variables.set('renderedFrames', [{ frameId: 'f1', imageUrl: '/img/frame1.jpg' }]);
       variables.set('subtitles', []);
 
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -185,7 +181,7 @@ describe('CompositionStep', () => {
       ]);
       variables.set('subtitles', []);
 
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -200,12 +196,10 @@ describe('CompositionStep', () => {
     it('should complete successfully with valid frames', async () => {
       const step = new CompositionStep();
       const variables = new Map<string, unknown>();
-      variables.set('renderedFrames', [
-        { frameId: 'f1', imageUrl: '/img/frame1.jpg' },
-      ]);
+      variables.set('renderedFrames', [{ frameId: 'f1', imageUrl: '/img/frame1.jpg' }]);
       variables.set('subtitles', []);
 
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -220,12 +214,10 @@ describe('CompositionStep', () => {
     it('should handle empty subtitles array', async () => {
       const step = new CompositionStep();
       const variables = new Map<string, unknown>();
-      variables.set('renderedFrames', [
-        { frameId: 'f1', imageUrl: '/img/frame1.jpg' },
-      ]);
+      variables.set('renderedFrames', [{ frameId: 'f1', imageUrl: '/img/frame1.jpg' }]);
       variables.set('subtitles', []);
 
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',

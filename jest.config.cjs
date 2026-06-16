@@ -23,6 +23,7 @@ module.exports = {
     '<rootDir>/node_modules/',
     '<rootDir>/src/__tests__/setup.ts',
     '<rootDir>/src/__tests__/utils/test-utils.tsx',
+    '<rootDir>/src/__tests__/utils/mock-context.ts',
     '<rootDir>/src/__tests__/__mocks__/@tauri-apps/api-tauri.ts',
     '<rootDir>/src/__tests__/__mocks__/@tauri-apps/api-core.ts',
     // ProjectEdit/ProjectDetail page tests skipped: useForm() in ProjectEditPage

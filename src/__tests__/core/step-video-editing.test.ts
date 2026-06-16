@@ -1,4 +1,12 @@
-import { VideoEditor, VideoEditingStep, type VideoClip, type SubtitleBlock, type AudioTrack, type Transition } from '../../core/pipeline/step-video-editing';
+import {
+  VideoEditor,
+  VideoEditingStep,
+  type VideoClip,
+  type SubtitleBlock,
+  type AudioTrack,
+  type Transition,
+} from '../../core/pipeline/step-video-editing';
+import { createMockStepContext } from '../utils/mock-context';
 
 describe('VideoEditor', () => {
   let editor: VideoEditor;
@@ -9,14 +17,32 @@ describe('VideoEditor', () => {
 
   describe('addClip', () => {
     it('should add a single clip and compute correct duration', () => {
-      const clip: VideoClip = { id: 'clip1', path: '/img/1.jpg', type: 'image', startTime: 0, duration: 5 };
+      const clip: VideoClip = {
+        id: 'clip1',
+        path: '/img/1.jpg',
+        type: 'image',
+        startTime: 0,
+        duration: 5,
+      };
       editor.addClip(clip);
       expect(editor.getDuration()).toBe(5);
     });
 
     it('should sort clips by start time', () => {
-      const clip2: VideoClip = { id: 'clip2', path: '/img/2.jpg', type: 'image', startTime: 10, duration: 5 };
-      const clip1: VideoClip = { id: 'clip1', path: '/img/1.jpg', type: 'image', startTime: 0, duration: 5 };
+      const clip2: VideoClip = {
+        id: 'clip2',
+        path: '/img/2.jpg',
+        type: 'image',
+        startTime: 10,
+        duration: 5,
+      };
+      const clip1: VideoClip = {
+        id: 'clip1',
+        path: '/img/1.jpg',
+        type: 'image',
+        startTime: 0,
+        duration: 5,
+      };
       editor.addClip(clip2).addClip(clip1);
       // Sort order: clip1 (0) then clip2 (10)
       const config = editor.exportConfig();
@@ -121,8 +147,20 @@ describe('VideoEditor', () => {
 
     it('should mix multiple audio tracks', () => {
       editor.addClip({ id: 'c1', path: '/img/1.jpg', type: 'image', startTime: 0, duration: 5 });
-      editor.addAudioTrack({ type: 'dialogue', path: '/audio/d1.wav', startTime: 0, duration: 5, volume: 0.9 });
-      editor.addAudioTrack({ type: 'bgm', path: '/audio/bgm.mp3', startTime: 0, duration: 5, volume: 0.3 });
+      editor.addAudioTrack({
+        type: 'dialogue',
+        path: '/audio/d1.wav',
+        startTime: 0,
+        duration: 5,
+        volume: 0.9,
+      });
+      editor.addAudioTrack({
+        type: 'bgm',
+        path: '/audio/bgm.mp3',
+        startTime: 0,
+        duration: 5,
+        volume: 0.3,
+      });
 
       // At t=2, both tracks are active
       const vol = editor.getMixedAudioVolumeAtTime(2);
@@ -133,13 +171,24 @@ describe('VideoEditor', () => {
 
   describe('getMixedAudioVolumeAtTime', () => {
     it('should return 0 when no tracks active', () => {
-      editor.addAudioTrack({ type: 'bgm', path: '/audio/bgm.mp3', startTime: 5, duration: 10, volume: 0.5 });
+      editor.addAudioTrack({
+        type: 'bgm',
+        path: '/audio/bgm.mp3',
+        startTime: 5,
+        duration: 10,
+        volume: 0.5,
+      });
       expect(editor.getMixedAudioVolumeAtTime(0)).toBe(0);
     });
 
     it('should apply fade in effect', () => {
       editor.addAudioTrack({
-        type: 'bgm', path: '/audio/bgm.mp3', startTime: 0, duration: 10, volume: 0.5, fadeIn: 2
+        type: 'bgm',
+        path: '/audio/bgm.mp3',
+        startTime: 0,
+        duration: 10,
+        volume: 0.5,
+        fadeIn: 2,
       });
       const volAt0 = editor.getMixedAudioVolumeAtTime(0);
       const volAt1 = editor.getMixedAudioVolumeAtTime(1);
@@ -149,7 +198,12 @@ describe('VideoEditor', () => {
 
     it('should apply fade out effect', () => {
       editor.addAudioTrack({
-        type: 'bgm', path: '/audio/bgm.mp3', startTime: 0, duration: 10, volume: 0.5, fadeOut: 2
+        type: 'bgm',
+        path: '/audio/bgm.mp3',
+        startTime: 0,
+        duration: 10,
+        volume: 0.5,
+        fadeOut: 2,
       });
       const volAt7 = editor.getMixedAudioVolumeAtTime(7);
       const volAt9 = editor.getMixedAudioVolumeAtTime(9);
@@ -158,9 +212,27 @@ describe('VideoEditor', () => {
 
     it('should cap combined volume at 1.0', () => {
       editor.addClip({ id: 'c1', path: '/img/1.jpg', type: 'image', startTime: 0, duration: 5 });
-      editor.addAudioTrack({ type: 'dialogue', path: '/audio/d1.wav', startTime: 0, duration: 5, volume: 0.9 });
-      editor.addAudioTrack({ type: 'dialogue', path: '/audio/d2.wav', startTime: 0, duration: 5, volume: 0.9 });
-      editor.addAudioTrack({ type: 'bgm', path: '/audio/bgm.mp3', startTime: 0, duration: 5, volume: 0.5 });
+      editor.addAudioTrack({
+        type: 'dialogue',
+        path: '/audio/d1.wav',
+        startTime: 0,
+        duration: 5,
+        volume: 0.9,
+      });
+      editor.addAudioTrack({
+        type: 'dialogue',
+        path: '/audio/d2.wav',
+        startTime: 0,
+        duration: 5,
+        volume: 0.9,
+      });
+      editor.addAudioTrack({
+        type: 'bgm',
+        path: '/audio/bgm.mp3',
+        startTime: 0,
+        duration: 5,
+        volume: 0.5,
+      });
       // Combined could exceed 1.0, should be capped
       const vol = editor.getMixedAudioVolumeAtTime(2);
       expect(vol).toBeLessThanOrEqual(1.0);
@@ -209,7 +281,13 @@ describe('VideoEditor', () => {
       editor.addClip({ id: 'c1', path: '/img/1.jpg', type: 'image', startTime: 0, duration: 5 });
       editor.setTransition('c1', 'c2', { type: 'fade', duration: 0.5, easing: 'ease_in_out' });
       editor.addSubtitleTrack([{ startTime: 1, endTime: 3, text: 'Sub' }]);
-      editor.addAudioTrack({ type: 'bgm', path: '/bgm.mp3', startTime: 0, duration: 5, volume: 0.5 });
+      editor.addAudioTrack({
+        type: 'bgm',
+        path: '/bgm.mp3',
+        startTime: 0,
+        duration: 5,
+        volume: 0.5,
+      });
 
       const config = editor.exportConfig();
       expect(config.clips).toHaveLength(1);
@@ -223,20 +301,10 @@ describe('VideoEditor', () => {
 });
 
 describe('VideoEditingStep', () => {
-  // Mock context
-  const createMockContext = (variables: Map<string, unknown>) => ({
-    getVariable: <T>(key: string) => variables.get(key) as T | undefined,
-    setVariable: <T>(_key: string, _value: T) => {},
-    log: () => {},
-    getCheckpoint: () => undefined,
-    saveCheckpoint: () => {},
-    emit: () => {},
-  });
-
   describe('execute', () => {
     it('should fail when no rendered frames available', async () => {
       const step = new VideoEditingStep();
-      const context = createMockContext(new Map());
+      const context = createMockStepContext(new Map());
 
       const input = {
         workflowId: 'wf1',
@@ -262,7 +330,7 @@ describe('VideoEditingStep', () => {
       variables.set('generatedSubtitles', []);
       variables.set('transitions', []);
 
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -293,11 +361,9 @@ describe('VideoEditingStep', () => {
       variables.set('dialogueAudio', []);
       variables.set('selectedBgm', '');
       variables.set('generatedSubtitles', []);
-      variables.set('transitions', [
-        { from: 'f1', to: 'f2', type: 'dissolve', duration: 0.8 }
-      ]);
+      variables.set('transitions', [{ from: 'f1', to: 'f2', type: 'dissolve', duration: 0.8 }]);
 
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -313,9 +379,7 @@ describe('VideoEditingStep', () => {
     it('should mix dialogue audio and BGM tracks', async () => {
       const step = new VideoEditingStep();
       const variables = new Map<string, unknown>();
-      variables.set('renderedFrames', [
-        { frameId: 'f1', imageUrl: '/img/1.jpg' },
-      ]);
+      variables.set('renderedFrames', [{ frameId: 'f1', imageUrl: '/img/1.jpg' }]);
       variables.set('dialogueAudio', [
         { audioUrl: '/audio/d1.wav', duration: 4.5 },
         { audioUrl: '/audio/d2.wav', duration: 3.8 },
@@ -324,7 +388,7 @@ describe('VideoEditingStep', () => {
       variables.set('generatedSubtitles', []);
       variables.set('transitions', []);
 
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -340,9 +404,7 @@ describe('VideoEditingStep', () => {
     it('should include subtitles in output', async () => {
       const step = new VideoEditingStep();
       const variables = new Map<string, unknown>();
-      variables.set('renderedFrames', [
-        { frameId: 'f1', imageUrl: '/img/1.jpg' },
-      ]);
+      variables.set('renderedFrames', [{ frameId: 'f1', imageUrl: '/img/1.jpg' }]);
       variables.set('dialogueAudio', []);
       variables.set('selectedBgm', '');
       variables.set('generatedSubtitles', [
@@ -351,7 +413,7 @@ describe('VideoEditingStep', () => {
       ]);
       variables.set('transitions', []);
 
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -374,8 +436,10 @@ describe('VideoEditingStep', () => {
       variables.set('generatedSubtitles', []);
       variables.set('transitions', []);
 
-      const context = createMockContext(variables);
-      context.setVariable = <T>(key: string, value: T) => { savedVariables.set(key, value); };
+      const context = createMockStepContext(variables);
+      context.setVariable = <T>(key: string, value: T) => {
+        savedVariables.set(key, value);
+      };
 
       const input = {
         workflowId: 'wf1',

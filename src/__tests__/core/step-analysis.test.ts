@@ -1,17 +1,16 @@
-import { PipelineStepId, StepStatus, QualityGateDecision } from '../../core/pipeline/pipeline.types';
-import { AnalysisStep, createAnalysisStep, type ImportOutput } from '../../core/pipeline/step-analysis';
+import {
+  PipelineStepId,
+  StepStatus,
+  QualityGateDecision,
+} from '../../core/pipeline/pipeline.types';
+import {
+  AnalysisStep,
+  createAnalysisStep,
+  type ImportOutput,
+} from '../../core/pipeline/step-analysis';
+import { createMockStepContext } from '../utils/mock-context';
 
 describe('AnalysisStep', () => {
-  // Mock context factory
-  const createMockContext = (variables: Map<string, unknown>) => ({
-    getVariable: <T>(key: string) => variables.get(key) as T | undefined,
-    setVariable: <T>(_key: string, _value: T) => {},
-    log: () => {},
-    getCheckpoint: () => undefined,
-    saveCheckpoint: () => {},
-    emit: () => {},
-  });
-
   // Sample chapters data
   const mockChapters: ImportOutput['chapters'] = [
     {
@@ -72,7 +71,7 @@ describe('AnalysisStep', () => {
     it('should fail when no chapters available', async () => {
       const step = new AnalysisStep();
       const variables = new Map<string, unknown>();
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -89,7 +88,7 @@ describe('AnalysisStep', () => {
       const step = new AnalysisStep();
       const variables = new Map<string, unknown>();
       variables.set('chapters', []);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -107,7 +106,7 @@ describe('AnalysisStep', () => {
       const variables = new Map<string, unknown>();
       variables.set('chapters', mockChapters);
       variables.set('projectMetadata', mockMetadata);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -128,7 +127,7 @@ describe('AnalysisStep', () => {
       const variables = new Map<string, unknown>();
       variables.set('chapters', mockChapters);
       variables.set('projectMetadata', mockMetadata);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       let capturedKey = '';
       let capturedValue: any;
@@ -152,7 +151,7 @@ describe('AnalysisStep', () => {
       const step = new AnalysisStep();
       const variables = new Map<string, unknown>();
       variables.set('chapters', mockChapters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const progressEvents: Array<{ progress: number; message: string }> = [];
       step.onProgress = (event) => {
@@ -175,7 +174,7 @@ describe('AnalysisStep', () => {
       const step = new AnalysisStep();
       const variables = new Map<string, unknown>();
       variables.set('chapters', mockChapters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -196,7 +195,7 @@ describe('AnalysisStep', () => {
       const variables = new Map<string, unknown>();
       variables.set('chapters', mockChapters);
       // No projectMetadata set
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -216,7 +215,7 @@ describe('AnalysisStep', () => {
       const variables = new Map<string, unknown>();
       variables.set('chapters', mockChapters);
       variables.set('projectMetadata', mockMetadata);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -248,7 +247,7 @@ describe('AnalysisStep', () => {
       ];
       const variables = new Map<string, unknown>();
       variables.set('chapters', chapters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -274,7 +273,7 @@ describe('AnalysisStep', () => {
       ];
       const variables = new Map<string, unknown>();
       variables.set('chapters', chapters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -290,7 +289,8 @@ describe('AnalysisStep', () => {
     it('should cap at 20 characters', async () => {
       const step = new AnalysisStep();
       // Use distinct names that match the regex patterns
-      const names = '张三 李四 王五 赵六 孙七 周八 吴九 郑十 沈十 袁十 冯十 陈十 褚十 卫十 蒋十 沈十 韩十 杨十 朱十 秦十 尤十 许十 何十 吕十 施十';
+      const names =
+        '张三 李四 王五 赵六 孙七 周八 吴九 郑十 沈十 袁十 冯十 陈十 褚十 卫十 蒋十 沈十 韩十 杨十 朱十 秦十 尤十 许十 何十 吕十 施十';
       const chapters: ImportOutput['chapters'] = [
         {
           id: 'ch1',
@@ -301,7 +301,7 @@ describe('AnalysisStep', () => {
       ];
       const variables = new Map<string, unknown>();
       variables.set('chapters', chapters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -329,7 +329,7 @@ describe('AnalysisStep', () => {
       ];
       const variables = new Map<string, unknown>();
       variables.set('chapters', chapters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -355,7 +355,7 @@ describe('AnalysisStep', () => {
       ];
       const variables = new Map<string, unknown>();
       variables.set('chapters', chapters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -387,7 +387,7 @@ describe('AnalysisStep', () => {
       ];
       const variables = new Map<string, unknown>();
       variables.set('chapters', chapters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',

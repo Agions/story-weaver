@@ -19,18 +19,10 @@ jest.mock('@/core/services/ai/text/ai.service', () => ({
 
 import { aiService } from '@/core/services/ai/text/ai.service';
 
+import { createMockStepContext } from '../utils/mock-context';
+
 describe('ScriptStep', () => {
   const mockAiService = aiService as jest.Mocked<typeof aiService>;
-
-  // Mock context factory
-  const createMockContext = (variables: Map<string, unknown>) => ({
-    getVariable: <T>(key: string) => variables.get(key) as T | undefined,
-    setVariable: <T>(_key: string, _value: T) => {},
-    log: () => {},
-    getCheckpoint: () => undefined,
-    saveCheckpoint: () => {},
-    emit: () => {},
-  });
 
   // Sample chapters data
   const mockChapters: ImportOutput['chapters'] = [
@@ -105,7 +97,7 @@ describe('ScriptStep', () => {
     it('should fail when no chapters available', async () => {
       const step = new ScriptStep();
       const variables = new Map<string, unknown>();
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -122,7 +114,7 @@ describe('ScriptStep', () => {
       const step = new ScriptStep();
       const variables = new Map<string, unknown>();
       variables.set('chapters', []);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -140,7 +132,7 @@ describe('ScriptStep', () => {
       const variables = new Map<string, unknown>();
       variables.set('chapters', mockChapters);
       variables.set('analysisResult', { metadata: mockMetadata });
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       mockAiService.generate.mockResolvedValue(
         JSON.stringify({
@@ -177,7 +169,7 @@ describe('ScriptStep', () => {
       const variables = new Map<string, unknown>();
       variables.set('chapters', mockChapters);
       variables.set('analysisResult', { metadata: mockMetadata });
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       let capturedKey = '';
       let capturedValue: any;
@@ -210,7 +202,7 @@ describe('ScriptStep', () => {
       const variables = new Map<string, unknown>();
       variables.set('chapters', mockChapters);
       variables.set('analysisResult', { metadata: mockMetadata });
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       mockAiService.generate.mockResolvedValue(
         JSON.stringify({
@@ -237,7 +229,7 @@ describe('ScriptStep', () => {
       const step = new ScriptStep();
       const variables = new Map<string, unknown>();
       variables.set('chapters', mockChapters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const progressEvents: Array<{ progress: number; message: string }> = [];
       step.onProgress = (event) => {
@@ -268,7 +260,7 @@ describe('ScriptStep', () => {
       const step = new ScriptStep();
       const variables = new Map<string, unknown>();
       variables.set('chapters', mockChapters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       mockAiService.generate.mockResolvedValue(
         JSON.stringify({
@@ -295,7 +287,7 @@ describe('ScriptStep', () => {
       const step = new ScriptStep();
       const variables = new Map<string, unknown>();
       variables.set('chapters', mockChapters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       mockAiService.generate.mockRejectedValue(new Error('AI service unavailable'));
 
@@ -314,7 +306,7 @@ describe('ScriptStep', () => {
       const step = new ScriptStep();
       const variables = new Map<string, unknown>();
       variables.set('chapters', mockChapters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       mockAiService.generate.mockResolvedValue(
         JSON.stringify({
@@ -361,7 +353,7 @@ describe('ScriptStep', () => {
       const step = new ScriptStep();
       const variables = new Map<string, unknown>();
       variables.set('chapters', mockChapters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       // Return content that cannot be parsed as JSON but has colon separators
       mockAiService.generate.mockResolvedValue('场景一：这是描述\n场景二：另一个描述');
@@ -383,7 +375,7 @@ describe('ScriptStep', () => {
       const step = new ScriptStep();
       const variables = new Map<string, unknown>();
       variables.set('chapters', mockChapters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       mockAiService.generate.mockResolvedValue(
         JSON.stringify({
@@ -411,7 +403,7 @@ describe('ScriptStep', () => {
       const step = new ScriptStep();
       const variables = new Map<string, unknown>();
       variables.set('chapters', mockChapters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       mockAiService.generate.mockResolvedValue(
         JSON.stringify({

@@ -1,17 +1,8 @@
 import { PipelineStepId, StepStatus } from '../../core/pipeline/pipeline.types';
 import { RenderStep, createRenderStep, type RenderOutput } from '../../core/pipeline/step-render';
+import { createMockStepContext } from '../utils/mock-context';
 
 describe('RenderStep', () => {
-  // Mock context
-  const createMockContext = (variables: Map<string, unknown>) => ({
-    getVariable: <T>(key: string) => variables.get(key) as T | undefined,
-    setVariable: <T>(_key: string, _value: T) => {},
-    log: () => {},
-    getCheckpoint: () => undefined,
-    saveCheckpoint: () => {},
-    emit: () => {},
-  });
-
   describe('constructor', () => {
     it('should have correct default stepId', () => {
       const step = new RenderStep();
@@ -42,7 +33,7 @@ describe('RenderStep', () => {
     it('should fail when no frames available', async () => {
       const step = new RenderStep();
       const variables = new Map<string, unknown>();
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -58,11 +49,9 @@ describe('RenderStep', () => {
     it('should complete when frames are provided', async () => {
       const step = new RenderStep();
       const variables = new Map<string, unknown>();
-      variables.set('frames', [
-        { id: 'f1', prompt: 'Frame 1', sceneId: 's1' },
-      ]);
+      variables.set('frames', [{ id: 'f1', prompt: 'Frame 1', sceneId: 's1' }]);
 
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -114,9 +103,7 @@ describe('RenderOutput type', () => {
 
   it('should track partial failures', () => {
     const output: RenderOutput = {
-      renderedFrames: [
-        { frameId: 'f1', imageUrl: 'https://example.com/f1.jpg', renderTime: 1000 },
-      ],
+      renderedFrames: [{ frameId: 'f1', imageUrl: 'https://example.com/f1.jpg', renderTime: 1000 }],
       failedFrames: ['f2', 'f3'],
       totalFrames: 3,
       successRate: 1 / 3,
@@ -130,7 +117,12 @@ describe('RenderOutput type', () => {
   it('should include optional thumbnailUrl', () => {
     const output: RenderOutput = {
       renderedFrames: [
-        { frameId: 'f1', imageUrl: 'https://example.com/f1.jpg', thumbnailUrl: 'https://example.com/f1_thumb.jpg', renderTime: 1000 },
+        {
+          frameId: 'f1',
+          imageUrl: 'https://example.com/f1.jpg',
+          thumbnailUrl: 'https://example.com/f1_thumb.jpg',
+          renderTime: 1000,
+        },
       ],
       failedFrames: [],
       totalFrames: 1,
@@ -143,7 +135,12 @@ describe('RenderOutput type', () => {
   it('should include optional qualityScore', () => {
     const output: RenderOutput = {
       renderedFrames: [
-        { frameId: 'f1', imageUrl: 'https://example.com/f1.jpg', qualityScore: 0.92, renderTime: 1000 },
+        {
+          frameId: 'f1',
+          imageUrl: 'https://example.com/f1.jpg',
+          qualityScore: 0.92,
+          renderTime: 1000,
+        },
       ],
       failedFrames: [],
       totalFrames: 1,

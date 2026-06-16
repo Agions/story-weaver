@@ -1,17 +1,17 @@
-import { PipelineStepId, StepStatus, QualityGateDecision, PipelineExecutionMode } from '../../core/pipeline/pipeline.types';
-import { StoryboardStep, createStoryboardStep, type StoryboardOutput } from '../../core/pipeline/step-storyboard';
+import {
+  PipelineStepId,
+  StepStatus,
+  QualityGateDecision,
+  PipelineExecutionMode,
+} from '../../core/pipeline/pipeline.types';
+import {
+  StoryboardStep,
+  createStoryboardStep,
+  type StoryboardOutput,
+} from '../../core/pipeline/step-storyboard';
+import { createMockStepContext } from '../utils/mock-context';
 
 describe('StoryboardStep', () => {
-  // Mock context factory
-  const createMockContext = (variables: Map<string, unknown>) => ({
-    getVariable: <T>(key: string) => variables.get(key) as T | undefined,
-    setVariable: <T>(_key: string, _value: T) => {},
-    log: () => {},
-    getCheckpoint: () => undefined,
-    saveCheckpoint: () => {},
-    emit: () => {},
-  });
-
   // Sample scenes data
   const mockScenes = [
     { id: 'scene-1', title: '开场', description: '主角站在城市天际线上' },
@@ -64,7 +64,7 @@ describe('StoryboardStep', () => {
       const variables = new Map<string, unknown>();
       variables.set('scenes', mockScenes);
       variables.set('characters', mockCharacters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -85,7 +85,7 @@ describe('StoryboardStep', () => {
       const variables = new Map<string, unknown>();
       variables.set('scenes', mockScenes);
       variables.set('characters', mockCharacters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -95,7 +95,7 @@ describe('StoryboardStep', () => {
 
       const result = await step.execute(input);
       const data = result.data as StoryboardOutput;
-      
+
       // Each scene should have 2-4 frames
       expect(data.frames.length).toBeGreaterThanOrEqual(4); // 2 scenes * minimum 2 shots
       expect(data.frames.length).toBeLessThanOrEqual(8); // 2 scenes * maximum 4 shots
@@ -107,7 +107,7 @@ describe('StoryboardStep', () => {
       const variables = new Map<string, unknown>();
       variables.set('scenes', mockScenes);
       variables.set('characters', mockCharacters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const calls: Array<{ key: string; value: unknown }> = [];
       context.setVariable = <T>(key: string, value: T) => {
@@ -130,7 +130,7 @@ describe('StoryboardStep', () => {
       const variables = new Map<string, unknown>();
       variables.set('scenes', mockScenes);
       variables.set('characters', mockCharacters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const progressEvents: Array<{ progress: number; message: string }> = [];
       step.onProgress = (event) => {
@@ -154,7 +154,7 @@ describe('StoryboardStep', () => {
       const variables = new Map<string, unknown>();
       variables.set('scenes', mockScenes);
       variables.set('characters', mockCharacters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -176,7 +176,7 @@ describe('StoryboardStep', () => {
       const variables = new Map<string, unknown>();
       variables.set('scenes', []);
       variables.set('characters', mockCharacters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -196,7 +196,7 @@ describe('StoryboardStep', () => {
       const variables = new Map<string, unknown>();
       variables.set('scenes', mockScenes);
       // No characters set
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -215,7 +215,7 @@ describe('StoryboardStep', () => {
       const step = new StoryboardStep();
       const variables = new Map<string, unknown>();
       // Neither scenes nor characters set
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -234,7 +234,7 @@ describe('StoryboardStep', () => {
       const variables = new Map<string, unknown>();
       variables.set('scenes', mockScenes);
       variables.set('characters', mockCharacters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -267,7 +267,7 @@ describe('StoryboardStep', () => {
       const variables = new Map<string, unknown>();
       variables.set('scenes', mockScenes);
       variables.set('characters', mockCharacters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -288,7 +288,7 @@ describe('StoryboardStep', () => {
       const variables = new Map<string, unknown>();
       variables.set('scenes', mockScenes);
       variables.set('characters', mockCharacters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -300,9 +300,9 @@ describe('StoryboardStep', () => {
       const data = result.data as StoryboardOutput;
 
       // All frames from scene-1 should have sceneId = 'scene-1'
-      const scene1Frames = data.frames.filter(f => f.sceneId === 'scene-1');
-      const scene2Frames = data.frames.filter(f => f.sceneId === 'scene-2');
-      
+      const scene1Frames = data.frames.filter((f) => f.sceneId === 'scene-1');
+      const scene2Frames = data.frames.filter((f) => f.sceneId === 'scene-2');
+
       expect(scene1Frames.length).toBeGreaterThan(0);
       expect(scene2Frames.length).toBeGreaterThan(0);
     });
@@ -312,7 +312,7 @@ describe('StoryboardStep', () => {
       const variables = new Map<string, unknown>();
       variables.set('scenes', mockScenes);
       variables.set('characters', mockCharacters);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',

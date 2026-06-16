@@ -1,5 +1,14 @@
-import { PipelineStepId, StepStatus, QualityGateDecision } from '../../core/pipeline/pipeline.types';
-import { CharacterStep, createCharacterStep, type CharacterOutput } from '../../core/pipeline/step-character';
+import {
+  PipelineStepId,
+  StepStatus,
+  QualityGateDecision,
+} from '../../core/pipeline/pipeline.types';
+import {
+  CharacterStep,
+  createCharacterStep,
+  type CharacterOutput,
+} from '../../core/pipeline/step-character';
+import { createMockStepContext } from '../utils/mock-context';
 
 // Mock character service
 const mockCreate = jest.fn();
@@ -10,16 +19,6 @@ jest.mock('@/core/services/domain/character.service', () => ({
 }));
 
 describe('CharacterStep', () => {
-  // Mock context factory
-  const createMockContext = (variables: Map<string, unknown>) => ({
-    getVariable: <T>(key: string) => variables.get(key) as T | undefined,
-    setVariable: <T>(_key: string, _value: T) => {},
-    log: () => {},
-    getCheckpoint: () => undefined,
-    saveCheckpoint: () => {},
-    emit: () => {},
-  });
-
   beforeEach(() => {
     mockCreate.mockReset();
     mockCreate.mockImplementation((data: any) => ({
@@ -74,7 +73,7 @@ describe('CharacterStep', () => {
         { description: '张三和李四在教室里讨论问题' },
         { description: '王五来到公园散步' },
       ]);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -102,7 +101,7 @@ describe('CharacterStep', () => {
         { description: 'Alice和Bob在森林里相遇' },
         { description: 'Charlie也加入了他们' },
       ]);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -122,10 +121,8 @@ describe('CharacterStep', () => {
       const step = new CharacterStep();
       const variables = new Map<string, unknown>();
       variables.set('estimatedCharacters', 3);
-      variables.set('scenes', [
-        { description: '有一些人在那里' },
-      ]);
-      const context = createMockContext(variables);
+      variables.set('scenes', [{ description: '有一些人在那里' }]);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -145,10 +142,8 @@ describe('CharacterStep', () => {
       const step = new CharacterStep();
       const variables = new Map<string, unknown>();
       variables.set('estimatedCharacters', 2);
-      variables.set('scenes', [
-        { description: '张三和李四在教室里' },
-      ]);
-      const context = createMockContext(variables);
+      variables.set('scenes', [{ description: '张三和李四在教室里' }]);
+      const context = createMockStepContext(variables);
 
       let capturedKey = '';
       let capturedValue: any;
@@ -172,10 +167,8 @@ describe('CharacterStep', () => {
       const step = new CharacterStep();
       const variables = new Map<string, unknown>();
       variables.set('estimatedCharacters', 2);
-      variables.set('scenes', [
-        { description: '张三和李四在教室里' },
-      ]);
-      const context = createMockContext(variables);
+      variables.set('scenes', [{ description: '张三和李四在教室里' }]);
+      const context = createMockStepContext(variables);
 
       const progressEvents: Array<{ progress: number; message: string }> = [];
       step.onProgress = (event) => {
@@ -189,18 +182,18 @@ describe('CharacterStep', () => {
       };
 
       await step.execute(input);
-      expect(progressEvents.some(e => e.progress === 10 && e.message.includes('分析角色需求'))).toBe(true);
-      expect(progressEvents.some(e => e.message.includes('生成角色'))).toBe(true);
+      expect(
+        progressEvents.some((e) => e.progress === 10 && e.message.includes('分析角色需求'))
+      ).toBe(true);
+      expect(progressEvents.some((e) => e.message.includes('生成角色'))).toBe(true);
     });
 
     it('should return correct metrics', async () => {
       const step = new CharacterStep();
       const variables = new Map<string, unknown>();
       variables.set('estimatedCharacters', 1);
-      variables.set('scenes', [
-        { description: '张三在教室里' },
-      ]);
-      const context = createMockContext(variables);
+      variables.set('scenes', [{ description: '张三在教室里' }]);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -222,10 +215,8 @@ describe('CharacterStep', () => {
 
       const variables = new Map<string, unknown>();
       variables.set('estimatedCharacters', 1);
-      variables.set('scenes', [
-        { description: '张三在教室里' },
-      ]);
-      const context = createMockContext(variables);
+      variables.set('scenes', [{ description: '张三在教室里' }]);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -242,10 +233,8 @@ describe('CharacterStep', () => {
       const step = new CharacterStep();
       const variables = new Map<string, unknown>();
       // No estimatedCharacters set
-      variables.set('scenes', [
-        { description: '张三和李四在教室里讨论' },
-      ]);
-      const context = createMockContext(variables);
+      variables.set('scenes', [{ description: '张三和李四在教室里讨论' }]);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -261,10 +250,8 @@ describe('CharacterStep', () => {
       const step = new CharacterStep();
       const variables = new Map<string, unknown>();
       variables.set('estimatedCharacters', 2);
-      variables.set('scenes', [
-        { description: '张三和李四王五赵六孙七周八' },
-      ]);
-      const context = createMockContext(variables);
+      variables.set('scenes', [{ description: '张三和李四王五赵六孙七周八' }]);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -284,10 +271,8 @@ describe('CharacterStep', () => {
       const step = new CharacterStep();
       const variables = new Map<string, unknown>();
       variables.set('estimatedCharacters', 3);
-      variables.set('scenes', [
-        { description: '张三和李四在教室里' },
-      ]);
-      const context = createMockContext(variables);
+      variables.set('scenes', [{ description: '张三和李四在教室里' }]);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -316,10 +301,8 @@ describe('CharacterStep', () => {
 
       const variables = new Map<string, unknown>();
       variables.set('estimatedCharacters', 3);
-      variables.set('scenes', [
-        { description: '张三和李四王五在教室里' },
-      ]);
-      const context = createMockContext(variables);
+      variables.set('scenes', [{ description: '张三和李四王五在教室里' }]);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -348,7 +331,7 @@ describe('CharacterStep', () => {
         { description: 'Alice和Bob在教室里讨论' },
         { description: 'Charlie也来了' },
       ]);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
@@ -371,7 +354,7 @@ describe('CharacterStep', () => {
       variables.set('scenes', [
         { description: 'Alice Bob Charlie David Edward Frank George Henry Ivan James Karl Larry' },
       ]);
-      const context = createMockContext(variables);
+      const context = createMockStepContext(variables);
 
       const input = {
         workflowId: 'wf1',
