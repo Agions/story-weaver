@@ -9,6 +9,7 @@
 import type { AIProvider, ChatMessage } from '@/core/ai/providers/ai-provider.interface';
 import type { CharacterVideoRef } from '@/core/services/ai/image/image-generation/types';
 
+import { evaluateByPromptMatch } from './visual-consistency-heuristic';
 import {
   NO_REFERENCE_NOTE,
   VLM_FALLBACK_SCORE,
@@ -38,12 +39,12 @@ Character reference: __CHAR_DESC__
 Respond ONLY with a single integer between 0-100. No explanation.`;
 
 /** 构造 VLM 评估 prompt */
-export function buildVlmPrompt(characterDesc: string): string {
+function buildVlmPrompt(characterDesc: string): string {
   return VLM_PROMPT_TEMPLATE.replace('__CHAR_DESC__', characterDesc);
 }
 
 /** 从 VLM 文本响应中提取 0-100 整数（与原 parseInt + replace + clamp 字节级一致） */
-export function parseVlmScore(text: string): number {
+function parseVlmScore(text: string): number {
   const cleaned = text.trim().replace(/[^0-9]/g, '');
   const score = parseInt(cleaned, 10);
   if (isNaN(score)) return VLM_FALLBACK_SCORE;
@@ -138,7 +139,13 @@ export async function evaluateWithVLM(
     const frameScores: number[] = [];
     for (let i = 0; i < frameUrls.length; i++) {
       const frameUrl = frameUrls[i];
-      const frameScore = await compareFrameWithReference(provider, model, frameUrl, referenceUrls, charRef);
+      const frameScore = await compareFrameWithReference(
+        provider,
+        model,
+        frameUrl,
+        referenceUrls,
+        charRef
+      );
       frameScores.push(frameScore);
     }
 
@@ -167,7 +174,6 @@ export async function evaluateWithVLM(
 
 // 注：VLM 分支的"无参考图"走的是 evaluateByPromptMatch，但原代码接受 charRef 而非 prompt。
 // 这里内联一个简化版本以避免循环依赖（与原 evaluateByPromptMatch(frameUrls, charRef) 行为一致）。
-import { evaluateByPromptMatch } from './visual-consistency-heuristic';
 function evaluateByPromptMatchFallback(charRef: CharacterVideoRef): number {
   return evaluateByPromptMatch(charRef.referencePrompt ?? '');
 }

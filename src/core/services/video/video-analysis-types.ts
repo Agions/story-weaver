@@ -68,7 +68,7 @@ export const UNKNOWN_SCENE_DESCRIPTION = '未知场景类型';
 
 /** 情感标签表（与原 analyzeEmotions 内联 emotionsList 字节级一致） */
 export const EMOTION_LABELS = ['neutral', 'happy', 'sad', 'angry', 'surprised', 'fear'] as const;
-export type EmotionLabel = (typeof EMOTION_LABELS)[number];
+type EmotionLabel = (typeof EMOTION_LABELS)[number];
 
 /** 物体类别表（与原 detectObjects 内联 objectCategories 字节级一致） */
 export const OBJECT_CATEGORIES = ['人物', '物品', '文字', '背景', '动物', '车辆'] as const;
@@ -92,29 +92,18 @@ export const COMMON_OBJECTS = [
 /** 场景检测平均时长（与原 detectScenes 内联 avgSceneDuration = 30 一致） */
 export const SCENE_AVG_DURATION_SECONDS = 30;
 
-/** 物体检测置信度基础（与原 detectObjects 内联 0.5 + 0.5 范围一致） */
-export const OBJECT_CONFIDENCE_BASE = 0.5;
-/** 物体检测置信度浮动范围 */
-export const OBJECT_CONFIDENCE_RANGE = 0.5;
-/** bbox 位置最大值（保留 0.2 边距，与原 0.8 一致） */
-export const BBOX_POSITION_MAX = 0.8;
-/** bbox 尺寸基础值 */
-export const BBOX_SIZE_BASE = 0.1;
-/** bbox 尺寸浮动范围 */
-export const BBOX_SIZE_RANGE = 0.3;
-
-/** 物体检测置信度随机生成 */
+/** 物体检测置信度随机生成（与原 detectObjects 内联 0.5 + 0.5 一致） */
 export function generateObjectConfidence(): number {
-  return OBJECT_CONFIDENCE_BASE + Math.random() * OBJECT_CONFIDENCE_RANGE;
+  return 0.5 + Math.random() * 0.5;
 }
 
 /** 物体检测随机 bbox 生成（与原 detectObjects 内联 bbox 字节级一致） */
 export function generateRandomBbox(): { x: number; y: number; width: number; height: number } {
   return {
-    x: Math.random() * BBOX_POSITION_MAX,
-    y: Math.random() * BBOX_POSITION_MAX,
-    width: BBOX_SIZE_BASE + Math.random() * BBOX_SIZE_RANGE,
-    height: BBOX_SIZE_BASE + Math.random() * BBOX_SIZE_RANGE,
+    x: Math.random() * 0.8,
+    y: Math.random() * 0.8,
+    width: 0.1 + Math.random() * 0.3,
+    height: 0.1 + Math.random() * 0.3,
   };
 }
 
@@ -124,7 +113,10 @@ export function generateSceneConfidence(): number {
 }
 
 /** 场景类型从数组中按 index 循环取样（与原 detectScenes 内联一致） */
-export function pickSceneTypeByIndex(index: number, samples: readonly SceneType[] = SCENE_TYPES.slice(0, 5)): SceneType {
+export function pickSceneTypeByIndex(
+  index: number,
+  samples: readonly SceneType[] = SCENE_TYPES.slice(0, 5)
+): SceneType {
   return samples[index % samples.length] as SceneType;
 }
 
