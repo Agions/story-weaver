@@ -2,8 +2,11 @@
  * Unit Tests — EventBus (事件总线消息格式)
  */
 
+import {
+  StepStartedEvent,
+  StepCompletedEvent,
+} from '@/core/services/domain/shared/events/domain-events';
 import { EventBus } from '@/infrastructure/queue/event-bus';
-import { StepStartedEvent, StepCompletedEvent } from '@/domain/shared/events/domain-events';
 
 describe('EventBus', () => {
   let bus: EventBus;
