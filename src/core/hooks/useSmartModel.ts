@@ -214,35 +214,6 @@ export function useSmartModel() {
     [generate]
   );
 
-  // 获取使用统计
-  const _getStats = useCallback((): UsageStats => {
-    const costStats = costService.getStats();
-
-    const totalCalls = Object.values(costStats.byModel).reduce((sum, cost) => {
-      // 估算调用次数（假设平均每次 $0.001）
-      return sum + Math.round(cost / 0.001);
-    }, 0);
-
-    const cacheHits = Array.from(responseCache.values()).filter(
-      (item) => Date.now() - item.timestamp < CACHE_TTL
-    ).length;
-    const totalCacheRequests = totalCalls + cacheHits;
-    const cacheHitRate = totalCacheRequests > 0 ? cacheHits / totalCacheRequests : 0;
-
-    return {
-      totalCalls,
-      totalCost: costStats.total,
-      avgCost: totalCalls > 0 ? costStats.total / totalCalls : 0,
-      cacheHitRate,
-      modelDistribution: costStats.byModel,
-    };
-  }, []);
-
-  // 获取优化建议
-  const _getSuggestions = useCallback((): string[] => {
-    return costService.getOptimizationSuggestions();
-  }, []);
-
   // 清空缓存
   const clearCache = useCallback((): void => {
     responseCache.clear();

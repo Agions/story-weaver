@@ -17,7 +17,7 @@
 import { secureStorage } from '@/core/services/project/secure-storage.service';
 import { logger } from '@/core/utils/logger';
 
-import { buildBudgetStatus, evaluateBudgetAlerts, BUDGET_ALERT_COOLDOWN_MS } from './cost-budget';
+import { buildBudgetStatus, evaluateBudgetAlerts } from './cost-budget';
 import {
   buildAudioCostRecord,
   buildLLMCostRecord,

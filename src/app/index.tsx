@@ -7,14 +7,14 @@ import React, { useEffect, useState, Suspense, lazy } from 'react';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { Toaster } from 'sonner';
 
+import ErrorBoundary from '@/app/components/ErrorBoundary';
+import AppProvider from '@/app/providers/AppProvider';
 import { getPageImporters, preloadPage } from '@/app/router/page-preload';
 import { runWhenIdle } from '@/core/utils/idle';
 import { logger } from '@/core/utils/logger';
 import { tauriService } from '@/infrastructure/tauri-bridge/commands';
-import { toast, notify } from '@/shared/components/ui/Toast';
-import ErrorBoundary from '@/app/components/ErrorBoundary';
-import AppProvider from '@/app/providers/AppProvider';
 import { AppLayout } from '@/shared/components/layout';
+import { toast, notify } from '@/shared/components/ui/toast';
 
 const importers = getPageImporters();
 // 懒加载页面组件

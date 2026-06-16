@@ -5,7 +5,7 @@ import {
   useConfirm,
   ConfirmDialogProps,
   UseConfirmOptions,
-} from '@/shared/components/ui/ConfirmDialog';
+} from '@/shared/components/ui/confirm-dialog';
 
 export type UseModalConfirmOptions = UseConfirmOptions;
 

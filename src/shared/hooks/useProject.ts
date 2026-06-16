@@ -4,13 +4,12 @@
  */
 
 import { useState, useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { tauriService } from '@/core/services';
 import type { EvaluationScores } from '@/core/services';
 import type { AudioTrackConfig } from '@/features/audio/components/AudioEditor';
 import type { NovelMetadata } from '@/features/script/components/NovelImporter';
-import { toast } from '@/shared/components/ui/Toast';
+import { toast } from '@/shared/components/ui/toast';
 import type {
   StoryAnalysis,
   StoryboardFrame,
@@ -56,7 +55,6 @@ export interface UseProjectReturn {
 }
 
 export function useProject(_projectId?: string): UseProjectReturn {
-  const _navigate = useNavigate();
   const [project, setProject] = useState<ProjectData | null>(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);

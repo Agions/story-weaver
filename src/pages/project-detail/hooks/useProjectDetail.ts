@@ -13,7 +13,7 @@ import type { EvaluationScores, FrameComment, StoryboardVersion } from '@/core/s
 import { collaborationService, tauriService } from '@/core/services';
 import type { NovelMetadata } from '@/features/script/components/NovelImporter';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
-import { toast } from '@/shared/components/ui/Toast';
+import { toast } from '@/shared/components/ui/toast';
 import { useProjectStore } from '@/shared/stores';
 import type { ProjectData } from '@/shared/types';
 import type { Script, VideoSegment } from '@/shared/types/script';

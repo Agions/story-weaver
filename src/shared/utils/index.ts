@@ -19,8 +19,7 @@ export * from './motion';
 
 // Platform Utilities
 
-// i18n
-export * from './i18n';
+// i18n removed (useTranslation is dead export; Language type has 0 consumers)
 
 // React Hooks Re-exports
 export * from './hooks';
@@ -34,5 +33,4 @@ export * from './async';
 
 // Re-export types that may be needed
 export type { FormatTimeOptions } from './format';
-export type { Language } from './i18n';
 export type { RetryOptions } from './request';

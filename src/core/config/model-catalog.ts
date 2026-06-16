@@ -282,5 +282,3 @@ export const AI_MODELS: AIModel[] = [
     pricing: { input: 0.05, output: 0.2, unit: '1K tokens' },
   },
 ];
-
-// 模型推荐配置

@@ -89,22 +89,3 @@ export function formatDateShort(date: Date | string | number): string {
   const day = d.getDate();
   return `${month}月${day}日`;
 }
-
-/**
- * Format relative time (e.g., "刚刚", "5分钟前", "2小时前")
- */
-export function formatRelativeTime(date: Date | string | number): string {
-  const now = Date.now();
-  const d = new Date(date).getTime();
-  const diff = now - d;
-
-  if (diff < 60000) return '刚刚';
-  if (diff < 3600000) return `${Math.floor(diff / 60000)}分钟前`;
-  if (diff < 86400000) return `${Math.floor(diff / 3600000)}小时前`;
-  if (diff < 604800000) return `${Math.floor(diff / 86400000)}天前`;
-  const d2 = new Date(d);
-  const y = d2.getFullYear();
-  const m = String(d2.getMonth() + 1).padStart(2, '0');
-  const day = String(d2.getDate()).padStart(2, '0');
-  return `${y}-${m}-${day}`;
-}

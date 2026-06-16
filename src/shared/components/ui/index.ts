@@ -6,8 +6,8 @@
 export { Button as SharedButton } from './button';
 export { Card as SharedCard } from './card';
 export * from './confirm-dialog';
-export * from './Empty';
-export { default as Loading, PageSkeleton as LoadingSpinner } from './Loading';
-export { default as Skeleton, SkeletonComponent } from './Skeleton';
-export * from './Toast';
-export { EmptyState } from './Empty';
+export * from './empty';
+export { default as Loading, PageSkeleton as LoadingSpinner } from './loading';
+export { default as Skeleton, SkeletonComponent } from './skeleton';
+export * from './toast';
+export { EmptyState } from './empty';

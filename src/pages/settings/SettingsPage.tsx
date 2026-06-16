@@ -16,7 +16,7 @@ import {
 import React, { useState } from 'react';
 
 import { useTheme } from '@/app/providers/ThemeContext';
-import { theme } from '@/styles/theme';
+import { logger } from '@/core/utils/logger';
 import { Alert, AlertDescription } from '@/shared/components/ui/alert';
 import { Avatar, AvatarFallback } from '@/shared/components/ui/avatar';
 import { Badge } from '@/shared/components/ui/badge';
@@ -35,8 +35,8 @@ import {
 import { Separator } from '@/shared/components/ui/separator';
 import { Switch } from '@/shared/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/components/ui/tabs';
-import { logger } from '@/core/utils/logger';
-import { toast } from '@/shared/components/ui/Toast';
+import { toast } from '@/shared/components/ui/toast';
+import { theme } from '@/styles/theme';
 
 import styles from './Settings.module.less';
 

@@ -3,8 +3,8 @@
  * 服务间通信改为异步事件驱动，支持订阅/发布/once/cross-tab广播
  */
 
+import type { DomainEvent } from '@/core/services/domain/shared/events/domain-events';
 import { logger } from '@/core/utils/logger';
-import type { DomainEvent } from '@/domain/shared/events/domain-events';
 
 interface Subscription {
   handler: (event: DomainEvent) => void | Promise<void>;

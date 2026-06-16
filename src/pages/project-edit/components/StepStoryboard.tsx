@@ -4,11 +4,11 @@
 import { Image } from 'lucide-react';
 import React, { lazy } from 'react';
 
-import { Button } from '@/shared/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import type { StoryboardVersion, VersionDiffSummary } from '@/core/services';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
-import { toast } from '@/shared/components/ui/Toast';
+import { Button } from '@/shared/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
+import { toast } from '@/shared/components/ui/toast';
 import type { StoryAnalysis } from '@/shared/types';
 
 import styles from '../ProjectEdit.module.less';

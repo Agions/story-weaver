@@ -16,7 +16,7 @@ import {
 } from '@/core/services';
 import { logger } from '@/core/utils/logger';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
-import { toast } from '@/shared/components/ui/Toast';
+import { toast } from '@/shared/components/ui/toast';
 import type { ProjectData } from '@/shared/types';
 import type { Script, ScriptSegment, VideoSegment } from '@/shared/types/script';
 import { handleAsyncError } from '@/shared/utils/async';

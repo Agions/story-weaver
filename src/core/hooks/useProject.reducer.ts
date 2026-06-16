@@ -12,7 +12,7 @@
  * 对外 API 不变: 7 setXxx 名字 + signature 保持兼容, 调用方 0 改动.
  */
 
-import type { ProjectData, TaskStatus } from '@/shared/types';
+import type { ProjectData } from '@/shared/types';
 
 // ─── 状态类型 ──────────────────────────────────────────────────────────────
 
@@ -23,9 +23,6 @@ export interface ProjectState {
   isSaving: boolean;
   error: string | null;
   hasUnsavedChanges: boolean;
-  // taskStatus 是接口契约 (L209 return 暴露), 但实际从未被 setter 改过
-  // 保留为常量 null 以满足 UseProjectReturn 类型
-  _taskStatus: TaskStatus | null;
 }
 
 // ─── Action 类型 ───────────────────────────────────────────────────────────
@@ -43,7 +40,6 @@ export const initialProjectState: ProjectState = {
   isSaving: false,
   error: null,
   hasUnsavedChanges: false,
-  _taskStatus: null,
 };
 
 // ─── Reducer ───────────────────────────────────────────────────────────────
@@ -89,8 +85,6 @@ export interface ProjectSetter {
   setIsSaving: (v: Updater<boolean>) => void;
   setError: (v: Updater<string | null>) => void;
   setHasUnsavedChanges: (v: Updater<boolean>) => void;
-  // setTaskStatus 仅满足 interface 契约, 实际不会改值 (_taskStatus 是死代码 const null)
-  setTaskStatus: (v: Updater<TaskStatus | null>) => void;
 }
 
 export function createProjectSetters(dispatch: (action: ProjectAction) => void): ProjectSetter {
@@ -101,6 +95,5 @@ export function createProjectSetters(dispatch: (action: ProjectAction) => void):
     setIsSaving: makeSetter(dispatch, 'isSaving'),
     setError: makeSetter(dispatch, 'error'),
     setHasUnsavedChanges: makeSetter(dispatch, 'hasUnsavedChanges'),
-    setTaskStatus: makeSetter(dispatch, '_taskStatus'),
   };
 }

@@ -4,8 +4,9 @@
  * 所有与视频剪辑合成相关的类型、接口、配置常量。
  */
 
-import type { PipelineStep } from '@/core/pipeline/step.interface';
 import type { RetryPolicy } from '@/core/pipeline/pipeline.types';
+import type { PipelineStep } from '@/core/pipeline/step.interface';
+import type { SubtitleRenderStyle } from '@/shared/types/video-composition.types';
 
 // ========== 核心类型 ==========
 
@@ -25,21 +26,18 @@ export interface Transition {
   easing: 'linear' | 'ease_in' | 'ease_out' | 'ease_in_out';
 }
 
+/**
+ * 视频编辑 Step 的字幕样式 — alias 到 SubtitleRenderStyle 并扩展 bold 字段
+ * 单一来源：原 inline SubtitleStyle 已删除，类型从 shared/types 统一引用
+ */
+export type SubtitleStyle = SubtitleRenderStyle & { bold?: boolean };
+
+/** Step 内部字幕块，style 字段使用 SubtitleStyle（含 bold 扩展） */
 export interface SubtitleBlock {
   startTime: number;
   endTime: number;
   text: string;
   style?: SubtitleStyle;
-}
-
-export interface SubtitleStyle {
-  fontFamily?: string;
-  fontSize?: number;
-  color?: string;
-  backgroundColor?: string;
-  bold?: boolean;
-  position?: 'top' | 'center' | 'bottom';
-  margin?: number;
 }
 
 export interface AudioTrack {

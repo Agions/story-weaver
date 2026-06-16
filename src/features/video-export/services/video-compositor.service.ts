@@ -11,7 +11,7 @@ import type {
   Scene,
   SceneEffect,
   Subtitle,
-  SubtitleStyle,
+  SubtitleRenderStyle,
   BackgroundMusic,
   CompositionOptions,
   CompositionResult,
@@ -23,7 +23,7 @@ export type {
   Scene,
   SceneEffect,
   Subtitle,
-  SubtitleStyle,
+  SubtitleRenderStyle,
   BackgroundMusic,
   CompositionOptions,
   CompositionResult,
@@ -82,7 +82,7 @@ export async function composeVideo(
 export async function addSubtitles(
   _videoPath: string,
   _subtitles: SubtitleTrack,
-  _style: SubtitleStyle = {},
+  _style: SubtitleRenderStyle = {},
   _outputPath?: string
 ): Promise<CompositionResult> {
   if (isTauri()) {
@@ -200,9 +200,7 @@ export async function extractFrames(
   return [];
 }
 
-export async function getVideoInfo(
-  _videoPath: string
-): Promise<{
+export async function getVideoInfo(_videoPath: string): Promise<{
   duration: number;
   width: number;
   height: number;

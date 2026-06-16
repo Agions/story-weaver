@@ -26,16 +26,19 @@ export interface LoggerOptions {
 }
 
 // 统一日志级别设置（兼容 Vite dev/build 和 Jest test 环境）
-const DEFAULT_LEVEL = (typeof process !== 'undefined' && process.env?.NODE_ENV === 'production') ? LogLevel.INFO : LogLevel.DEBUG;
+const DEFAULT_LEVEL =
+  typeof process !== 'undefined' && process.env?.NODE_ENV === 'production'
+    ? LogLevel.INFO
+    : LogLevel.DEBUG;
 
 function getColorCode(color: string): string {
   const colors: Record<string, string> = {
     reset: '\x1b[0m',
     dim: '\x1b[2m',
-    info: '\x1b[36m',    // cyan
-    warn: '\x1b[33m',    // yellow
-    error: '\x1b[31m',   // red
-    debug: '\x1b[90m',   // gray
+    info: '\x1b[36m', // cyan
+    warn: '\x1b[33m', // yellow
+    error: '\x1b[31m', // red
+    debug: '\x1b[90m', // gray
     success: '\x1b[32m', // green
   };
   return colors[color] || colors.reset;
@@ -60,9 +63,7 @@ class Logger {
 
   private formatMessage(level: LogLevel, message: string, data?: unknown): string[] {
     const parts: string[] = [];
-    const timestamp = this.enableTimestamp
-      ? `[${new Date().toISOString().slice(11, 19)}]`
-      : '';
+    const timestamp = this.enableTimestamp ? `[${new Date().toISOString().slice(11, 19)}]` : '';
 
     const levelTagMap: Record<number, string> = {
       [LogLevel.DEBUG]: 'DEBUG',
@@ -76,7 +77,18 @@ class Logger {
     const colorFn = (text: string, color: string) =>
       this.enableColor ? `${getColorCode(color)}${text}${getColorCode('reset')}` : text;
 
-    parts.push(colorFn(`${this.prefix} ${timestamp} ${levelTag}`, level === LogLevel.ERROR ? 'error' : level === LogLevel.WARN ? 'warn' : level === LogLevel.DEBUG ? 'debug' : 'info'));
+    parts.push(
+      colorFn(
+        `${this.prefix} ${timestamp} ${levelTag}`,
+        level === LogLevel.ERROR
+          ? 'error'
+          : level === LogLevel.WARN
+            ? 'warn'
+            : level === LogLevel.DEBUG
+              ? 'debug'
+              : 'info'
+      )
+    );
     parts.push(message);
 
     if (data !== undefined) {
@@ -145,17 +157,5 @@ export const logger = new Logger({
   enableTimestamp: true,
   enableColor: true,
 });
-
-// 便捷函数
-export const createLogger = (options: LoggerOptions) => new Logger(options);
-
-// 快速替换 console 的兼容层
-export const consoleLogger = {
-  log: (...args: unknown[]) => logger.info(String(args[0]), args.slice(1)),
-  warn: (...args: unknown[]) => logger.warn(String(args[0]), args.slice(1)),
-  error: (...args: unknown[]) => logger.error(String(args[0]), args.slice(1)),
-  info: (...args: unknown[]) => logger.info(String(args[0]), args.slice(1)),
-  debug: (...args: unknown[]) => logger.debug(String(args[0]), args.slice(1)),
-};
 
 export default logger;

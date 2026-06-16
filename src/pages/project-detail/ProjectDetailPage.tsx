@@ -19,19 +19,19 @@ import {
 import React, { Suspense, lazy, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import { Tabs, TabPane } from '@/shared/components/ui/tabs';
-import { Title, Text, Paragraph } from '@/shared/components/ui/typography';
-import { Modal } from '@/shared/components/ui/modal';
-import { Spin } from '@/shared/components/ui/spin';
-import { Space } from '@/shared/components/ui/space';
-import Empty from '@/shared/components/ui/Empty';
-import { Button } from '@/shared/components/ui/button';
-import { Card } from '@/shared/components/ui/card';
 import { AudioEditorPanel } from '@/features/audio/components/AudioEditorPanel';
 import { CostPanel } from '@/features/cost/components/CostPanel';
 import { ExportPanel } from '@/features/export/components/ExportPanel';
 import { StoryboardCollaborationPanel } from '@/features/storyboard';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
+import { Button } from '@/shared/components/ui/button';
+import { Card } from '@/shared/components/ui/card';
+import Empty from '@/shared/components/ui/empty';
+import { Modal } from '@/shared/components/ui/modal';
+import { Space } from '@/shared/components/ui/space';
+import { Spin } from '@/shared/components/ui/spin';
+import { Tabs, TabPane } from '@/shared/components/ui/tabs';
+import { Title, Text, Paragraph } from '@/shared/components/ui/typography';
 
 import { useProjectDetail } from './hooks/useProjectDetail';
 import styles from './ProjectDetail.module.less';
@@ -136,7 +136,7 @@ const ProjectDetail = () => {
     if (!confirmed) return;
 
     void handleDeleteProject();
-    const { toast } = await import('@/shared/components/ui/Toast');
+    const { toast } = await import('@/shared/components/ui/toast');
     toast.success('项目已删除');
     navigate('/projects');
   };

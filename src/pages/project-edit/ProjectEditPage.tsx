@@ -43,7 +43,7 @@ import CostDashboard from '@/shared/components/business/CostDashboard';
 import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
 import { Input } from '@/shared/components/ui/input';
-import { toast } from '@/shared/components/ui/Toast';
+import { toast } from '@/shared/components/ui/toast';
 import { useProject } from '@/shared/hooks/useProject';
 import { useStoryboard } from '@/shared/hooks/useStoryboard';
 import type { StoryAnalysis, Character, CompositionProject } from '@/shared/types';

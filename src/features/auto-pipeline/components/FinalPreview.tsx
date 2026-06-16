@@ -8,19 +8,7 @@
  * - 分享链接
  */
 
-import {
-  Play,
-  Download,
-  Share2,
-  Copy,
-  Check,
-  Film,
-  Clock,
-  HardDrive,
-  Layers,
-  User,
-  Image,
-} from 'lucide-react';
+import { Download, Share2, Check, Film, Clock, HardDrive, Layers, User, Image } from 'lucide-react';
 import React, { useState } from 'react';
 
 import { Button } from '@/shared/components/ui/button';

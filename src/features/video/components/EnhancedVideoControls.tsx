@@ -118,8 +118,6 @@ export function VideoControls({
     onVolumeChange((Array.isArray(value) ? value[0] : value) / 100);
   };
 
-  const _progress = duration > 0 ? (currentTime / duration) * 100 : 0;
-
   return (
     <div className={`${styles.controls} ${className || ''}`}>
       {/* 进度条 */}

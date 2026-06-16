@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from '@/shared/components/ui/Toast';
 
+import { toast } from '@/shared/components/ui/toast';
 import type { ProjectData } from '@/shared/types';
 
 import styles from './ProjectForm.module.less';

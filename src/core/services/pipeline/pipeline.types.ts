@@ -1,6 +1,11 @@
 /**
  * Pipeline Service - 类型定义
  * 拆出 types 以减小 pipeline.service.ts 体积
+ *
+ * 注: PipelineStep 在两处定义 (service 层 / core pipeline 层) 签名不同
+ *   - service 层: execute(input, context) 显式 context 传参
+ *   - core 层:    execute(input) context 通过 closure 注入
+ * 故保留两套独立类型, 不做硬合并, 仅对齐字段语义.
  */
 
 export type PipelineStepId =

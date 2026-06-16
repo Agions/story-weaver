@@ -14,10 +14,7 @@
  */
 
 // 图像/视频生成服务
-export {
-  imageGenerationService,
-  default as ImageGenerationService,
-} from './ai/image/image-generation.service';
+export { imageGenerationService } from './ai/image/image-generation.service';
 export type {
   ImageGenerationOptions,
   ImageGenerationResult,
@@ -27,7 +24,7 @@ export type {
 } from './ai/image/image-generation.service';
 
 // 唇同步服务
-export { lipSyncService, default as LipSyncService } from './audio/lip-sync.service';
+export { lipSyncService } from './audio/lip-sync.service';
 export type {
   LipSyncOptions,
   LipSyncResult,
@@ -36,10 +33,7 @@ export type {
 } from './audio/lip-sync.service';
 
 // 视频合成服务
-export {
-  videoCompositorService,
-  default as VideoCompositorService,
-} from './video/video-compositor.service';
+export { videoCompositorService } from './video/video-compositor.service';
 export type {
   Scene,
   SubtitleTrack as VideoSubtitleTrack,
@@ -51,12 +45,7 @@ export type {
 } from './video/ffmpeg-wasm.service';
 
 // FFmpeg.wasm 服务
-export {
-  ffmpegWasmService,
-  default as FFmpegWasmService,
-  loadFFmpeg,
-  isFFmpegWasmAvailable,
-} from './video/ffmpeg-wasm.service';
+export { ffmpegWasmService, loadFFmpeg, isFFmpegWasmAvailable } from './video/ffmpeg-wasm.service';
 export type {
   CompositionOptions as FFmpegCompositionOptions,
   CompositionResult as FFmpegCompositionResult,
@@ -64,10 +53,7 @@ export type {
 } from './video/ffmpeg-wasm.service';
 
 // 视频脚本流水线服务
-export {
-  mangaPipelineService,
-  default as MangaPipelineService,
-} from './domain/manga-pipeline.service';
+export { mangaPipelineService } from './domain/manga-pipeline.service';
 export type {
   PipelineConfig as MangaPipelineConfig,
   PipelineScene,
@@ -77,39 +63,24 @@ export type {
 
 // 核心服务
 export { aiService, type AIResponse, type RequestConfig } from './ai/text/ai.service';
-export { novelService, default as NovelService } from './ai/text/novel.service';
-export { novelAnalyzer, default as NovelAnalyzer } from './ai/text/novel-analyze.service';
-export {
-  scriptImportService,
-  default as ScriptImportService,
-} from './ai/text/script-import.service';
-export {
-  storyAnalysisService,
-  default as StoryAnalysisService,
-} from './ai/text/story-analysis.service';
+export { novelService } from './ai/text/novel.service';
+export { novelAnalyzer } from './ai/text/novel-analyze.service';
+export { scriptImportService } from './ai/text/script-import.service';
+export { storyAnalysisService } from './ai/text/story-analysis.service';
 export {
   getStoryboardService,
   resetStoryboardService,
   type StoryboardServiceOptions,
 } from './storyboard.service';
-export { renderQueueService, default as RenderQueueService } from './project/render-queue.service';
-export {
-  audioPipelineService,
-  default as AudioPipelineService,
-} from './audio/audio-pipeline.service';
-export { evaluationService, default as EvaluationService } from './project/evaluation.service';
-export { qualityGateService, default as QualityGateService } from './pipeline/quality-gate.service';
-export {
-  collaborationService,
-  default as CollaborationService,
-} from './domain/collaboration.service';
-export {
-  reviewExportService,
-  default as ReviewExportService,
-} from './pipeline/review-export.service';
+export { renderQueueService } from './project/render-queue.service';
+export { audioPipelineService } from './audio/audio-pipeline.service';
+export { evaluationService } from './project/evaluation.service';
+export { qualityGateService } from './pipeline/quality-gate.service';
+export { collaborationService } from './domain/collaboration.service';
+export { reviewExportService } from './pipeline/review-export.service';
 export { videoService } from './video/video.service';
 export { storageService } from '@/shared/services/storage';
-export { costService, default as CostService } from './project/cost.service';
+export { costService } from './project/cost.service';
 export { ttsService, DEFAULT_TTS_CONFIG, TTS_VOICES } from './audio/tts.service';
 export {
   videoAnalysisService,
@@ -143,10 +114,8 @@ export type {
   WindowState,
 } from './desktop-app.service';
 
-// 增强服务
-
 // Tauri 服务
-export { default as TauriService, tauriService } from '@/infrastructure/tauri-bridge/commands';
+export { tauriService } from '@/infrastructure/tauri-bridge/commands';
 export type {
   OpenFileOptions,
   SaveFileOptions,

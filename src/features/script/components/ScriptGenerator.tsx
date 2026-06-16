@@ -16,23 +16,23 @@ import {
   Settings,
 } from 'lucide-react';
 import React, { useState, useCallback } from 'react';
-import { toast } from '@/shared/components/ui/Toast';
 
+import { useModel, useModelCost } from '@/core/hooks/useModel';
+import { useProject } from '@/core/hooks/useProject';
+import ModelSelector from '@/features/ai/components/ModelSelector';
 import { Alert } from '@/shared/components/ui/alert';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import { Card as CardBase } from '@/shared/components/ui/card';
+import { Divider } from '@/shared/components/ui/divider';
 import { Input } from '@/shared/components/ui/input';
 import { Progress } from '@/shared/components/ui/progress';
-import { Tag } from '@/shared/components/ui/tag';
-import { Text, Title, Paragraph } from '@/shared/components/ui/typography';
+import { RadioGroup, Radio, RadioButton } from '@/shared/components/ui/radio-group';
 import { AntDSelect as Select } from '@/shared/components/ui/select';
 import { Space } from '@/shared/components/ui/space';
-import { Divider } from '@/shared/components/ui/divider';
-import { RadioGroup, Radio, RadioButton } from '@/shared/components/ui/radio-group';
-import { useModel, useModelCost } from '@/core/hooks/useModel';
-import { useProject } from '@/core/hooks/useProject';
-import ModelSelector from '@/features/ai/components/ModelSelector';
+import { Tag } from '@/shared/components/ui/tag';
+import { toast } from '@/shared/components/ui/toast';
+import { Text, Title, Paragraph } from '@/shared/components/ui/typography';
 import type { Script, ScriptSegment } from '@/shared/types';
 import { delay } from '@/shared/utils';
 

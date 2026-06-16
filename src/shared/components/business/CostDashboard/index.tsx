@@ -1,6 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { toast } from '@/shared/components/ui/Toast';
 
+import {
+  costService,
+  reviewExportService,
+  type CostBudget,
+  type CostRecord,
+  type CostStats,
+  type BudgetStatus,
+  type CostAlert,
+  type ReviewExportActivity,
+  type ReviewExportStatus,
+} from '@/core/services';
 import { Alert } from '@/shared/components/ui/alert';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
@@ -14,17 +24,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/shared/components/ui/table';
-import {
-  costService,
-  reviewExportService,
-  type CostBudget,
-  type CostRecord,
-  type CostStats,
-  type BudgetStatus,
-  type CostAlert,
-  type ReviewExportActivity,
-  type ReviewExportStatus,
-} from '@/core/services';
+import { toast } from '@/shared/components/ui/toast';
 
 import styles from './index.module.less';
 
@@ -204,7 +204,13 @@ function CostDashboard({ projectId }: CostDashboardProps) {
       },
     },
     { title: 'Provider', dataIndex: 'provider', key: 'provider', width: 100 },
-    { title: '模型', dataIndex: 'model', key: 'model', width: 120, render: (v) => (v as string | undefined) ?? '-' },
+    {
+      title: '模型',
+      dataIndex: 'model',
+      key: 'model',
+      width: 120,
+      render: (v) => (v as string | undefined) ?? '-',
+    },
     { title: '成本', dataIndex: 'cost', key: 'cost', width: 100, render: (v) => fmt(v as number) },
   ];
 

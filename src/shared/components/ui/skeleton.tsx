@@ -5,7 +5,7 @@
 
 import React from 'react';
 
-import BaseSkeleton from '@/shared/components/ui/Skeleton';
+import BaseSkeleton from '@/shared/components/ui/skeleton';
 
 // Local Skeleton wrapper with antd-style variant support
 function Skeleton({

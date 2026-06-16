@@ -6,7 +6,7 @@ import { Upload, PlayCircle, PauseCircle, MicOff } from 'lucide-react';
 import React from 'react';
 
 import { Button } from '@/shared/components/ui/button';
-import Empty from '@/shared/components/ui/Empty';
+import Empty from '@/shared/components/ui/empty';
 import { Slider } from '@/shared/components/ui/slider';
 import { Space } from '@/shared/components/ui/space';
 import { Tag } from '@/shared/components/ui/tag';

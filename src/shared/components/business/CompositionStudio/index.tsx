@@ -15,7 +15,7 @@ import React, { useMemo } from 'react';
 import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
 import { Divider } from '@/shared/components/ui/divider';
-import Empty from '@/shared/components/ui/Empty';
+import Empty from '@/shared/components/ui/empty';
 import { Row, Col } from '@/shared/components/ui/grid';
 import { InputNumber } from '@/shared/components/ui/input-number';
 import { Modal } from '@/shared/components/ui/modal';
@@ -32,7 +32,7 @@ import {
 } from '@/shared/components/ui/table';
 import { Tag } from '@/shared/components/ui/tag';
 import { Timeline, TimelineItem } from '@/shared/components/ui/timeline';
-import { toast } from '@/shared/components/ui/Toast';
+import { toast } from '@/shared/components/ui/toast';
 import {
   Tooltip,
   TooltipTrigger,

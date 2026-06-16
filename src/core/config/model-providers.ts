@@ -111,5 +111,3 @@ export const MODEL_PROVIDERS: Record<
     keyPlaceholder: 'xxxxxxxxxxxxxxxx',
   },
 };
-
-// 模型列表配置

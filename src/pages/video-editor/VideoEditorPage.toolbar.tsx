@@ -4,11 +4,10 @@
 import { Upload, Undo, Redo, Download, Plus } from 'lucide-react';
 
 import { Button } from '@/shared/components/ui/button';
-import { Card } from '@/shared/components/ui/card';
 import { Dropdown } from '@/shared/components/ui/dropdown';
 import { Modal } from '@/shared/components/ui/modal';
 import { Progress } from '@/shared/components/ui/progress';
-import { Title, Text } from '@/shared/components/ui/typography';
+import { Text } from '@/shared/components/ui/typography';
 
 import styles from '../VideoEditorPage.module.less';
 

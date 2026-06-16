@@ -4,11 +4,11 @@
 import { Download } from 'lucide-react';
 import React, { lazy } from 'react';
 
+import type { QualityGateIssue } from '@/core/services';
+import type { ExportSettings } from '@/features/video/components/VideoExporter';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
-import type { QualityGateIssue } from '@/core/services';
-import { toast } from '@/shared/components/ui/Toast';
-import type { ExportSettings } from '@/features/video/components/VideoExporter';
+import { toast } from '@/shared/components/ui/toast';
 
 import styles from '../ProjectEdit.module.less';
 

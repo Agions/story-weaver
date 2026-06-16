@@ -20,9 +20,18 @@ export interface EmptyStateProps {
   type?: 'default' | 'project' | 'file';
 }
 
-const EmptyState = ({ title, description, action, image, children, className, type = 'default' }: EmptyStateProps) => {
+const EmptyState = ({
+  title,
+  description,
+  action,
+  image,
+  children,
+  className,
+  type = 'default',
+}: EmptyStateProps) => {
   return (
-    <div className={`flex flex-col items-center justify-center py-12 gap-3 ${className || ''}`}>{image}
+    <div className={`flex flex-col items-center justify-center py-12 gap-3 ${className || ''}`}>
+      {image}
       {type === 'project' && <FolderOpen className="h-12 w-12 text-muted-foreground" />}
       {type === 'file' && <File className="h-12 w-12 text-muted-foreground" />}
       <div className="text-center">

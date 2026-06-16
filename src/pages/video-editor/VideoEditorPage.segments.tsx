@@ -5,7 +5,7 @@ import { Trash2, Plus } from 'lucide-react';
 
 import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
-import Empty from '@/shared/components/ui/Empty';
+import Empty from '@/shared/components/ui/empty';
 import { Space } from '@/shared/components/ui/space';
 import { Tag } from '@/shared/components/ui/tag';
 import { Tooltip } from '@/shared/components/ui/tooltip';

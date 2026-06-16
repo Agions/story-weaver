@@ -3,11 +3,11 @@ import React from 'react';
 
 import { Button } from '@/shared/components/ui/button';
 import { Collapse } from '@/shared/components/ui/collapse';
-import { Popconfirm } from '@/shared/components/ui/popconfirm';
 import { Divider } from '@/shared/components/ui/divider';
-import Empty from '@/shared/components/ui/Empty';
+import Empty from '@/shared/components/ui/empty';
 import { Row, Col } from '@/shared/components/ui/grid';
 import { Input } from '@/shared/components/ui/input';
+import { Popconfirm } from '@/shared/components/ui/popconfirm';
 import { AntDSelect } from '@/shared/components/ui/select';
 import { Slider } from '@/shared/components/ui/slider';
 import { Space } from '@/shared/components/ui/space';

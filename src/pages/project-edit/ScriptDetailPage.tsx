@@ -2,15 +2,15 @@ import { ArrowLeft, Save, Trash2, Download, Bot } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
-import { Badge } from '@/shared/components/ui/badge';
-import { Button } from '@/shared/components/ui/button';
-import { Card } from '@/shared/components/ui/card';
-import { Separator } from '@/shared/components/ui/separator';
 import { tauriService } from '@/core/services';
 import { logger } from '@/core/utils/logger';
 import ScriptEditor from '@/features/script/components/ScriptEditor';
-import { ConfirmDialog } from '@/shared/components/ui/ConfirmDialog';
-import { toast } from '@/shared/components/ui/Toast';
+import { Badge } from '@/shared/components/ui/badge';
+import { Button } from '@/shared/components/ui/button';
+import { Card } from '@/shared/components/ui/card';
+import { ConfirmDialog } from '@/shared/components/ui/confirm-dialog';
+import { Separator } from '@/shared/components/ui/separator';
+import { toast } from '@/shared/components/ui/toast';
 import { useProjectStore } from '@/shared/stores';
 import type { ProjectData } from '@/shared/types';
 import type { Script, ScriptSegment } from '@/shared/types/script';
@@ -231,11 +231,7 @@ const ScriptDetail = () => {
           <p className="text-sm">片段数量: {segments.length}</p>
           <p className="text-sm">
             总时长:{' '}
-            {segments.reduce(
-              (total, seg) => total + ((seg.end || 0) - (seg.start || 0)),
-              0
-            )}{' '}
-            秒
+            {segments.reduce((total, seg) => total + ((seg.end || 0) - (seg.start || 0)), 0)} 秒
           </p>
         </div>
       </Card>

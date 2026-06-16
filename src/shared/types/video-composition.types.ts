@@ -1,9 +1,12 @@
 /**
  * 视频合成共享类型 — FFmpeg.wasm / 字幕服务共用
  * 单一来源：原 core/services/video/video-composition.types.ts 已删除，类型统一在此维护
+ *
+ * SubtitleRenderStyle：渲染时用的扁平可选字段（FFmpeg / 合成管线用）
+ * 与 features/subtitle 的 SubtitleStyle (UI 编辑用, 全 required) 区别开。
  */
 
-export interface SubtitleStyle {
+export interface SubtitleRenderStyle {
   font?: string;
   fontSize?: number;
   color?: string;
@@ -17,7 +20,7 @@ export interface SubtitleItem {
   startTime: number;
   endTime: number;
   text: string;
-  style?: SubtitleStyle;
+  style?: SubtitleRenderStyle;
 }
 
 export interface SubtitleTrack {
@@ -27,7 +30,8 @@ export interface SubtitleTrack {
   subtitles: SubtitleItem[];
 }
 
-export type SubtitleFormat = 'srt' | 'vtt' | 'ass' | 'txt';
+// SubtitleFormat: re-export from canonical source (core/services/video/subtitle/types)
+export type { SubtitleFormat } from '@/core/services/video/subtitle/types';
 
 export interface SceneEffect {
   type: 'fade_in' | 'fade_out' | 'zoom' | 'slide' | 'blur';

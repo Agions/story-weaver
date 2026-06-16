@@ -1,7 +1,7 @@
 import { Download, Video, Settings, CheckCircle } from 'lucide-react';
 import React, { useState, useCallback } from 'react';
-import { toast } from '@/shared/components/ui/Toast';
 
+import { logger } from '@/core/utils/logger';
 import { Alert, AlertDescription } from '@/shared/components/ui/alert';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from '@/shared/components/ui/select';
 import { Separator } from '@/shared/components/ui/separator';
-import { logger } from '@/core/utils/logger';
+import { toast } from '@/shared/components/ui/toast';
 import {
   EXPORT_FORMATS,
   RESOLUTIONS,

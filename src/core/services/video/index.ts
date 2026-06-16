@@ -34,8 +34,11 @@ export type {
   ProgressCallback,
   Scene,
   SceneEffect,
-  SubtitleStyle,
+  SubtitleRenderStyle,
   SubtitleTrack,
   SubtitleItem,
   SubtitleFormat,
 } from '@/shared/types/video-composition.types';
+
+// Backward compat alias — 老代码 import SubtitleStyle 仍能用
+export type { SubtitleRenderStyle as SubtitleStyle } from '@/shared/types/video-composition.types';

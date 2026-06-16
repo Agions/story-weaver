@@ -82,6 +82,9 @@ export type ExportFormat = 'json' | 'zip';
 
 // ProjectData in this file is the local 'import/export' variant
 // (differs from shared/types/project.ts ProjectData which is the 'studio project' entity)
+// 注: 与 core/services/project/project-import-export-types.ProjectExportData 字段一致
+// 但 project 字段引用的 ProjectData 是 features 层的 import/export 业务变体
+// 故保留独立定义, 字段相同但语义分层.
 export interface ProjectExportData {
   version: string;
   exportedAt: string;

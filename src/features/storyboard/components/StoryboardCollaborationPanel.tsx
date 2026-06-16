@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from '@/shared/components/ui/select';
 import { Separator } from '@/shared/components/ui/separator';
-import { toast } from '@/shared/components/ui/Toast';
+import { toast } from '@/shared/components/ui/toast';
 
 import styles from './StoryboardCollaborationPanel.module.less';
 

@@ -40,7 +40,7 @@ jest.mock('@/shared/components/ui', () => ({
 }));
 
 // Mock useConfirm
-jest.mock('@/shared/components/ui/ConfirmDialog', () => ({
+jest.mock('@/shared/components/ui/confirm-dialog', () => ({
   useConfirm: jest.fn(() => ({
     confirm: jest.fn(() => Promise.resolve(true)),
     ConfirmDialog: jest.fn().mockReturnValue(null),
@@ -104,18 +104,14 @@ describe('useInteraction Hooks', () => {
 
   describe('useAsync', () => {
     it('应该返回初始状态', () => {
-      const { result } = renderHook(() =>
-        useAsync(() => Promise.resolve('data'))
-      );
+      const { result } = renderHook(() => useAsync(() => Promise.resolve('data')));
       expect(result.current.data).toBeUndefined();
       expect(result.current.loading).toBe(false);
       expect(result.current.error).toBeNull();
     });
 
     it('应该能够执行异步函数', async () => {
-      const { result } = renderHook(() =>
-        useAsync(() => Promise.resolve('test-data'))
-      );
+      const { result } = renderHook(() => useAsync(() => Promise.resolve('test-data')));
 
       await act(async () => {
         await result.current.execute();
@@ -127,9 +123,7 @@ describe('useInteraction Hooks', () => {
     });
 
     it('应该处理异步错误', async () => {
-      const { result } = renderHook(() =>
-        useAsync(() => Promise.reject(new Error('test error')))
-      );
+      const { result } = renderHook(() => useAsync(() => Promise.reject(new Error('test error'))));
 
       await act(async () => {
         await result.current.execute();
@@ -187,9 +181,7 @@ describe('useInteraction Hooks', () => {
     });
 
     it('应该处理非 Error 类型的错误', async () => {
-      const { result } = renderHook(() =>
-        useAsync(() => Promise.reject('string error'))
-      );
+      const { result } = renderHook(() => useAsync(() => Promise.reject('string error')));
 
       await act(async () => {
         await result.current.execute();
@@ -210,9 +202,7 @@ describe('useInteraction Hooks', () => {
     });
 
     it('应该返回初始状态 isPolling 为 true 当 immediate 为 true', () => {
-      const { result } = renderHook(() =>
-        usePolling(jest.fn().mockResolvedValue('data'))
-      );
+      const { result } = renderHook(() => usePolling(jest.fn().mockResolvedValue('data')));
       expect(result.current.isPolling).toBe(true);
     });
 
@@ -307,7 +297,7 @@ describe('useInteraction Hooks', () => {
 
     it('confirm 应该返回一个 Promise', async () => {
       const { result } = renderHook(() => useModalConfirm());
-      const { useConfirm } = require('@/shared/components/ui/ConfirmDialog');
+      const { useConfirm } = require('@/shared/components/ui/confirm-dialog');
 
       // Mock confirm to resolve true
       (useConfirm as jest.Mock).mockReturnValue({

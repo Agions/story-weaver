@@ -125,7 +125,6 @@ export function useVideo(): UseVideoReturn {
     setAnalysisProgress,
     setTaskStatus,
     setError,
-    setIsLoading,
   } = createVideoSetters(dispatch);
 
   const {

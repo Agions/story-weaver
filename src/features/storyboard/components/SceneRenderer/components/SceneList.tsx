@@ -2,7 +2,7 @@ import { Plus, Edit, Copy, Trash2 } from 'lucide-react';
 import React from 'react';
 
 import { Button } from '@/shared/components/ui/button';
-import Empty from '@/shared/components/ui/Empty';
+import Empty from '@/shared/components/ui/empty';
 import { List } from '@/shared/components/ui/list';
 import { Popconfirm } from '@/shared/components/ui/popconfirm';
 import { Tag } from '@/shared/components/ui/tag';

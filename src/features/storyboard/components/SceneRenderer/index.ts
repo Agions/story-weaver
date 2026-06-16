@@ -23,7 +23,9 @@ export {
 export { useSceneRenderer } from './hooks/useSceneRenderer';
 
 // Re-export components
-export { SceneList, ScenePreview, SceneEditor } from './components';
+export { SceneList } from './components/SceneList';
+export { ScenePreview } from './components/ScenePreview';
+export { SceneEditor } from './components/SceneEditor';
 
 // Re-export main component
 export { default } from './SceneRenderer';
