@@ -68,7 +68,6 @@ export const UNKNOWN_SCENE_DESCRIPTION = '未知场景类型';
 
 /** 情感标签表（与原 analyzeEmotions 内联 emotionsList 字节级一致） */
 export const EMOTION_LABELS = ['neutral', 'happy', 'sad', 'angry', 'surprised', 'fear'] as const;
-type EmotionLabel = (typeof EMOTION_LABELS)[number];
 
 /** 物体类别表（与原 detectObjects 内联 objectCategories 字节级一致） */
 export const OBJECT_CATEGORIES = ['人物', '物品', '文字', '背景', '动物', '车辆'] as const;

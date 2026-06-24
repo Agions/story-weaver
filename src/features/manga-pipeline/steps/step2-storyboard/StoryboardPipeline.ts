@@ -15,7 +15,6 @@ import { composeStoryboard, type Storyboard, type StoryboardOptions } from './co
 import {
   type CharacterIllustration,
   type EnhancedCharacterConstraint,
-  type CharacterIllustration as CharacterIllustration2,
 } from './description/char-illustrator';
 
 export interface StoryboardGenerationResult {

@@ -43,13 +43,6 @@ const Loading = ({
 };
 
 // 骨架屏加载
-interface PageSkeletonProps {
-  active?: boolean;
-  avatar?: boolean;
-  title?: boolean;
-  paragraph?: boolean | { rows?: number };
-}
-
 export const PageSkeleton = (): JSX.Element => (
   <div className="space-y-4 animate-pulse">
     <div className="h-4 w-32 bg-muted rounded" />
