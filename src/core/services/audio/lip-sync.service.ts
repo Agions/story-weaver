@@ -5,6 +5,8 @@
 
 import axios from 'axios';
 
+import { getAPIKey } from '@/core/services/ai/image/image-generation/utils';
+
 // ========== 类型定义 ==========
 
 export type LipSyncModel = 'lipsync-2' | 'wav2lip';
@@ -76,23 +78,6 @@ export interface TalkingFaceResult {
   taskId?: string;
   /** 状态 */
   status: 'processing' | 'completed' | 'failed';
-}
-
-// ========== 工具函数 ==========
-
-/**
- * 获取 API Key
- */
-async function getAPIKey(service: string): Promise<string> {
-  const { storageService } = await import('@/shared/services/storage');
-  const keys = await storageService.get('api_keys');
-
-  if (keys && typeof keys === 'object') {
-    const keyObj = keys as Record<string, string>;
-    return keyObj[service] || keyObj[`${service}_api_key`] || '';
-  }
-
-  return '';
 }
 
 // ========== Sync.so API ==========
