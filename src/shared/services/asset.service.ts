@@ -5,6 +5,18 @@
 
 import { logger } from '@/core/utils/logger';
 
+/**
+ * 生成带 id/createdAt 的 Asset 记录。
+ * 内部 helper — 消除 add() 与 addMany() 中重复的对象构造代码。
+ */
+function createAssetRecord(asset: Omit<Asset, 'id' | 'createdAt'>): Asset {
+  return {
+    ...asset,
+    id: `asset_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
+    createdAt: new Date().toISOString(),
+  };
+}
+
 export interface Asset {
   id: string;
   name: string;
@@ -54,7 +66,7 @@ class AssetService {
   getAll(projectId?: string): Asset[] {
     const assets = this.loadFromStorage();
     if (projectId) {
-      return assets.filter(a => a.projectId === projectId);
+      return assets.filter((a) => a.projectId === projectId);
     }
     return assets;
   }
@@ -67,7 +79,7 @@ class AssetService {
       return this.cache.get(id)!;
     }
     const assets = this.loadFromStorage();
-    const asset = assets.find(a => a.id === id) || null;
+    const asset = assets.find((a) => a.id === id) || null;
     if (asset) {
       this.cache.set(id, asset);
     }
@@ -78,17 +90,13 @@ class AssetService {
    * 添加资产
    */
   add(asset: Omit<Asset, 'id' | 'createdAt'>): Asset {
-    const newAsset: Asset = {
-      ...asset,
-      id: `asset_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
-      createdAt: new Date().toISOString()
-    };
+    const newAsset = createAssetRecord(asset);
 
     const assets = this.loadFromStorage();
     assets.push(newAsset);
     this.saveToStorage(assets);
     this.cache.set(newAsset.id, newAsset);
-    
+
     logger.info('Asset added', newAsset.name);
     return newAsset;
   }
@@ -101,11 +109,7 @@ class AssetService {
     const created: Asset[] = [];
 
     for (const asset of newAssets) {
-      const newAsset: Asset = {
-        ...asset,
-        id: `asset_${Date.now()}_${Math.random().toString(36).slice(2, 9)}`,
-        createdAt: new Date().toISOString()
-      };
+      const newAsset = createAssetRecord(asset);
       assets.push(newAsset);
       this.cache.set(newAsset.id, newAsset);
       created.push(newAsset);
@@ -121,14 +125,14 @@ class AssetService {
    */
   update(id: string, updates: Partial<Asset>): Asset | null {
     const assets = this.loadFromStorage();
-    const index = assets.findIndex(a => a.id === id);
-    
+    const index = assets.findIndex((a) => a.id === id);
+
     if (index < 0) return null;
 
     assets[index] = { ...assets[index], ...updates };
     this.saveToStorage(assets);
     this.cache.set(id, assets[index]);
-    
+
     return assets[index];
   }
 
@@ -137,10 +141,10 @@ class AssetService {
    */
   delete(id: string): boolean {
     const assets = this.loadFromStorage();
-    const filtered = assets.filter(a => a.id !== id);
-    
+    const filtered = assets.filter((a) => a.id !== id);
+
     if (filtered.length === assets.length) return false;
-    
+
     this.saveToStorage(filtered);
     this.cache.delete(id);
     logger.info('Asset deleted', id);
@@ -154,11 +158,11 @@ class AssetService {
     const assets = this.loadFromStorage();
     const lowerQuery = query.toLowerCase();
 
-    return assets.filter(a => {
+    return assets.filter((a) => {
       if (type && a.type !== type) return false;
       return (
         a.name.toLowerCase().includes(lowerQuery) ||
-        a.tags.some(tag => tag.toLowerCase().includes(lowerQuery))
+        a.tags.some((tag) => tag.toLowerCase().includes(lowerQuery))
       );
     });
   }
@@ -168,7 +172,7 @@ class AssetService {
    */
   getByType(type: Asset['type'], projectId?: string): Asset[] {
     const assets = this.loadFromStorage();
-    return assets.filter(a => {
+    return assets.filter((a) => {
       if (a.type !== type) return false;
       if (projectId && a.projectId !== projectId) return false;
       return true;
@@ -184,7 +188,7 @@ class AssetService {
       video: 0,
       audio: 0,
       image: 0,
-      text: 0
+      text: 0,
     };
 
     for (const asset of assets) {

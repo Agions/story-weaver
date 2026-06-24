@@ -223,31 +223,31 @@ export const StoryboardCollaborationPanel: React.FC<StoryboardCollaborationPanel
           <Separator />
 
           <div className="flex flex-wrap gap-2">
-            <Select value={compareLeftVersionId} onValueChange={setCompareLeftVersionId}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="选择版本A" />
-              </SelectTrigger>
-              <SelectContent>
-                {storyboardVersions.map((v) => (
-                  <SelectItem key={v.id} value={v.id}>
-                    {v.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            <Select value={compareRightVersionId} onValueChange={setCompareRightVersionId}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="选择版本B" />
-              </SelectTrigger>
-              <SelectContent>
-                {storyboardVersions.map((v) => (
-                  <SelectItem key={v.id} value={v.id}>
-                    {v.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            {[
+              {
+                value: compareLeftVersionId,
+                onChange: setCompareLeftVersionId,
+                placeholder: '选择版本A',
+              },
+              {
+                value: compareRightVersionId,
+                onChange: setCompareRightVersionId,
+                placeholder: '选择版本B',
+              },
+            ].map(({ value, onChange, placeholder }) => (
+              <Select key={placeholder} value={value} onValueChange={onChange}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder={placeholder} />
+                </SelectTrigger>
+                <SelectContent>
+                  {storyboardVersions.map((v) => (
+                    <SelectItem key={v.id} value={v.id}>
+                      {v.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            ))}
 
             <Button variant="outline" onClick={handleCompareVersions}>
               <GitCompare className="h-4 w-4 mr-2" />
