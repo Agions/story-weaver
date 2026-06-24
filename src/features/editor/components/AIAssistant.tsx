@@ -37,13 +37,19 @@ import { Slider } from '@/shared/components/ui/slider';
 import { Switch } from '@/shared/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/components/ui/tabs';
 import { Textarea } from '@/shared/components/ui/textarea';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/components/ui/tooltip';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/shared/components/ui/tooltip';
 import { Text, Title, Paragraph } from '@/shared/components/ui/typography';
 
 import type { ChatMessage } from '../types/ai-assistant.entities';
 
 import styles from './AIAssistant.module.less';
 import { useAIAssistant } from './hooks/useAIAssistant';
+import { OptionSlider } from './OptionSlider';
 
 // ========== 子组件 ==========
 
@@ -324,21 +330,12 @@ function AIAssistant() {
 
               <Collapsible header="高级选项" ghost className={styles.extraOptions}>
                 <div className={styles.advancedOptions}>
-                  <div className={styles.optionItem}>
-                    <Text>识别精度</Text>
-                    <Slider
-                      value={precision}
-                      onValueChange={(v) => setPrecision(Array.isArray(v) ? v[0] : v)}
-                      max={100}
-                      min={0}
-                      step={1}
-                    />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>快速</span>
-                      <span>标准</span>
-                      <span>高精度</span>
-                    </div>
-                  </div>
+                  <OptionSlider
+                    label="识别精度"
+                    value={precision}
+                    onValueChange={setPrecision}
+                    scaleLabels={['快速', '标准', '高精度']}
+                  />
 
                   <div className={styles.optionItem}>
                     <Text>翻译字幕</Text>
@@ -467,37 +464,19 @@ function AIAssistant() {
 
               <Collapsible header="高级选项" ghost className={styles.extraOptions}>
                 <div className={styles.advancedOptions}>
-                  <div className={styles.optionItem}>
-                    <Text>关键内容优先级</Text>
-                    <Slider
-                      value={keyContentPriority}
-                      onValueChange={(v) => setKeyContentPriority(Array.isArray(v) ? v[0] : v)}
-                      max={100}
-                      min={0}
-                      step={1}
-                    />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>低</span>
-                      <span>中</span>
-                      <span>高</span>
-                    </div>
-                  </div>
+                  <OptionSlider
+                    label="关键内容优先级"
+                    value={keyContentPriority}
+                    onValueChange={setKeyContentPriority}
+                    scaleLabels={['低', '中', '高']}
+                  />
 
-                  <div className={styles.optionItem}>
-                    <Text>场景检测灵敏度</Text>
-                    <Slider
-                      value={sceneSensitivity}
-                      onValueChange={(v) => setSceneSensitivity(Array.isArray(v) ? v[0] : v)}
-                      max={100}
-                      min={0}
-                      step={1}
-                    />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>低</span>
-                      <span>中</span>
-                      <span>高</span>
-                    </div>
-                  </div>
+                  <OptionSlider
+                    label="场景检测灵敏度"
+                    value={sceneSensitivity}
+                    onValueChange={setSceneSensitivity}
+                    scaleLabels={['低', '中', '高']}
+                  />
                 </div>
               </Collapsible>
             </div>
