@@ -70,37 +70,10 @@ export async function readFromClipboard(): Promise<string> {
   }
 }
 
+import { FILE_TYPE_MAP } from '@/core/constants';
+
 /** 根据文件扩展名检测文件类型 */
 export function detectFileType(filename: string): string {
   const ext = filename.split('.').pop()?.toLowerCase() || '';
-  const typeMap: Record<string, string> = {
-    mp4: 'video',
-    mov: 'video',
-    avi: 'video',
-    mkv: 'video',
-    webm: 'video',
-    flv: 'video',
-    wmv: 'video',
-    mp3: 'audio',
-    wav: 'audio',
-    flac: 'audio',
-    aac: 'audio',
-    jpg: 'image',
-    jpeg: 'image',
-    png: 'image',
-    gif: 'image',
-    webp: 'image',
-    svg: 'image',
-    pdf: 'document',
-    doc: 'document',
-    docx: 'document',
-    txt: 'text',
-    json: 'code',
-    js: 'code',
-    ts: 'code',
-    srt: 'subtitle',
-    vtt: 'subtitle',
-    ass: 'subtitle',
-  };
-  return typeMap[ext] || 'unknown';
+  return FILE_TYPE_MAP[ext] || 'unknown';
 }
