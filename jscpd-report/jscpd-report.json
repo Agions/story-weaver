@@ -6338,78 +6338,6 @@
     },
     {
       "firstFile": {
-        "end": 90,
-        "endLoc": {
-          "column": 32,
-          "line": 90,
-          "position": 2616
-        },
-        "name": "core/hooks/useVideo.ts",
-        "start": 82,
-        "startLoc": {
-          "column": 88,
-          "line": 82,
-          "position": 2354
-        }
-      },
-      "format": "typescript",
-      "fragment": "",
-      "lines": 9,
-      "secondFile": {
-        "end": 29,
-        "endLoc": {
-          "column": 32,
-          "line": 29,
-          "position": 963
-        },
-        "name": "features/video-export/services/thumbnail-capture.ts",
-        "start": 21,
-        "startLoc": {
-          "column": 19,
-          "line": 21,
-          "position": 701
-        }
-      },
-      "tokens": 56
-    },
-    {
-      "firstFile": {
-        "end": 100,
-        "endLoc": {
-          "column": 56,
-          "line": 100,
-          "position": 2910
-        },
-        "name": "core/hooks/useVideo.ts",
-        "start": 92,
-        "startLoc": {
-          "column": 39,
-          "line": 92,
-          "position": 2695
-        }
-      },
-      "format": "typescript",
-      "fragment": "",
-      "lines": 9,
-      "secondFile": {
-        "end": 40,
-        "endLoc": {
-          "column": 56,
-          "line": 40,
-          "position": 1324
-        },
-        "name": "features/video-export/services/thumbnail-capture.ts",
-        "start": 32,
-        "startLoc": {
-          "column": 53,
-          "line": 32,
-          "position": 1109
-        }
-      },
-      "tokens": 50
-    },
-    {
-      "firstFile": {
         "end": 52,
         "endLoc": {
           "column": 12,
@@ -7166,7 +7094,7 @@
     }
   ],
   "statistics": {
-    "detectionDate": "2026-06-24T08:47:06.083Z",
+    "detectionDate": "2026-06-24T08:52:54.045Z",
     "formats": {
       "css": {
         "clones": 0,
@@ -7217,29 +7145,29 @@
         "tokens": 153993
       },
       "typescript": {
-        "clones": 157,
-        "duplicatedLines": 1791,
-        "duplicatedTokens": 10635,
-        "lines": 64171,
+        "clones": 155,
+        "duplicatedLines": 1775,
+        "duplicatedTokens": 10529,
+        "lines": 64138,
         "newClones": 0,
         "newDuplicatedLines": 0,
-        "percentage": 2.790980349379003,
-        "percentageTokens": 3.4043765525365566,
+        "percentage": 2.767470142505223,
+        "percentageTokens": 3.3724636056437274,
         "sources": 504,
-        "tokens": 312392
+        "tokens": 312205
       }
     },
     "total": {
-      "clones": 199,
-      "duplicatedLines": 2148,
-      "duplicatedTokens": 13358,
-      "lines": 91268,
+      "clones": 197,
+      "duplicatedLines": 2132,
+      "duplicatedTokens": 13252,
+      "lines": 91235,
       "newClones": 0,
       "newDuplicatedLines": 0,
-      "percentage": 2.353508349037998,
-      "percentageTokens": 2.8304865309270597,
+      "percentage": 2.336822491368444,
+      "percentageTokens": 2.8091388162273767,
       "sources": 661,
-      "tokens": 471933
+      "tokens": 471746
     }
   }
 }

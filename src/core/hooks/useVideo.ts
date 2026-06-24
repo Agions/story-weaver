@@ -6,6 +6,7 @@
 import { useReducer, useCallback, useRef } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
+import { captureVideoFrameAsDataURL } from '@/features/video-export/services/thumbnail-capture';
 import type { VideoInfo, VideoAnalysis, TaskStatus } from '@/shared/types';
 import { formatDurationShort } from '@/shared/utils';
 import { delay } from '@/shared/utils/timing';
@@ -78,40 +79,6 @@ const getVideoInfo = (file: File): Promise<VideoInfo> => {
   });
 };
 
-// 生成缩略图
-const generateThumbnail = (videoUrl: string, timestamp: number = 0): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const video = document.createElement('video');
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-
-    video.crossOrigin = 'anonymous';
-
-    video.onloadeddata = () => {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-
-      video.currentTime = timestamp;
-    };
-
-    video.onseeked = () => {
-      if (ctx) {
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const thumbnail = canvas.toDataURL('image/jpeg', 0.8);
-        resolve(thumbnail);
-      } else {
-        reject(new Error('无法创建画布上下文'));
-      }
-    };
-
-    video.onerror = () => {
-      reject(new Error('无法加载视频'));
-    };
-
-    video.src = videoUrl;
-  });
-};
-
 export function useVideo(): UseVideoReturn {
   // ── 8 useState 已迁移到 useReducer 状态机 (2026-06-11) ──
   // 死代码清理: 原 L121 isLoading setter 从未使用, 已删除.
@@ -176,7 +143,7 @@ export function useVideo(): UseVideoReturn {
 
         // 生成缩略图
         if (info.path) {
-          const thumbnail = await generateThumbnail(info.path);
+          const thumbnail = await captureVideoFrameAsDataURL(info.path);
           info.thumbnail = thumbnail;
         }
 
@@ -306,7 +273,7 @@ export function useVideo(): UseVideoReturn {
       if (!video) return null;
 
       try {
-        return await generateThumbnail(video.path!, timestamp);
+        return await captureVideoFrameAsDataURL(video.path!, timestamp);
       } catch {
         setError('提取缩略图失败');
         return null;
