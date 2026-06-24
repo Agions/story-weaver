@@ -324,10 +324,8 @@ function AIAssistant() {
                         '生成字幕文件...',
                         '完成中...',
                       ]}
-                      className={{
-                        progressContainer: styles.progressContainer,
-                        progressStatus: styles.progressStatus,
-                      }}
+                      containerClass={styles.progressContainer}
+                      statusClass={styles.progressStatus}
                     />
                   )}
                 </CardContent>
@@ -457,10 +455,8 @@ function AIAssistant() {
                     <ProgressStatus
                       progress={progress}
                       stages={['分析视频内容...', '识别关键片段...', '优化剪辑点...', '完成中...']}
-                      className={{
-                        progressContainer: styles.progressContainer,
-                        progressStatus: styles.progressStatus,
-                      }}
+                      containerClass={styles.progressContainer}
+                      statusClass={styles.progressStatus}
                     />
                   )}
                 </CardContent>
