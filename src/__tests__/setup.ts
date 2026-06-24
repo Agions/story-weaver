@@ -1,40 +1,33 @@
 import '@testing-library/jest-dom';
 import { TextEncoder, TextDecoder } from 'util';
 
-// Mock localStorage
-const localStorageMock = (() => {
+function createStorageMock(): Storage {
   let store: Record<string, string> = {};
   return {
     getItem: (key: string) => store[key] || null,
-    setItem: (key: string, value: string) => { store[key] = value; },
-    removeItem: (key: string) => { delete store[key]; },
-    clear: () => { store = {}; },
-    get length() { return Object.keys(store).length; },
+    setItem: (key: string, value: string) => {
+      store[key] = value;
+    },
+    removeItem: (key: string) => {
+      delete store[key];
+    },
+    clear: () => {
+      store = {};
+    },
+    get length() {
+      return Object.keys(store).length;
+    },
     key: (i: number) => Object.keys(store)[i] || null,
   };
-})();
+}
 
-Object.defineProperty(window, 'localStorage', { value: localStorageMock });
-
-// Mock sessionStorage
-const sessionStorageMock = (() => {
-  let store: Record<string, string> = {};
-  return {
-    getItem: (key: string) => store[key] || null,
-    setItem: (key: string, value: string) => { store[key] = value; },
-    removeItem: (key: string) => { delete store[key]; },
-    clear: () => { store = {}; },
-    get length() { return Object.keys(store).length; },
-    key: (i: number) => Object.keys(store)[i] || null,
-  };
-})();
-
-Object.defineProperty(window, 'sessionStorage', { value: sessionStorageMock });
+Object.defineProperty(window, 'localStorage', { value: createStorageMock() });
+Object.defineProperty(window, 'sessionStorage', { value: createStorageMock() });
 
 // Mock window.matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation(query => ({
+  value: jest.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
@@ -137,11 +130,9 @@ beforeAll(() => {
   console.error = (...args: unknown[]) => {
     if (
       typeof args[0] === 'string' &&
-      (
-        args[0].includes('Warning:') ||
+      (args[0].includes('Warning:') ||
         args[0].includes('ReactDOM') ||
-        args[0].includes('Template not found:')
-      )
+        args[0].includes('Template not found:'))
     ) {
       return;
     }
@@ -156,8 +147,8 @@ beforeAll(() => {
       'Could not find "window.__TAURI_METADATA__"',
       '预算告警',
     ];
-    const shouldIgnore = ignorePatterns.some(pattern =>
-      typeof args[0] === 'string' && args[0].includes(pattern)
+    const shouldIgnore = ignorePatterns.some(
+      (pattern) => typeof args[0] === 'string' && args[0].includes(pattern)
     );
     if (!shouldIgnore) {
       originalWarn.call(console, ...args);
