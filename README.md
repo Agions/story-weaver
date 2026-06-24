@@ -29,7 +29,7 @@
 **frame-fab** 是一款**桌面端 AI 漫剧创作平台**，基于 Tauri 2.1 + Rust 构建，集成多模型 AI（智谱 GLM-5 / MiniMax M2.5 / 月之暗面 Kimi / 字节 Seedream / 快手 Kling / Edge TTS）实现从**小说/剧本**到**漫剧成片**的端到端自动化。提供：
 
 - 🎬 **Manual 模式**：七步半自动工作流（导入→分析→脚本→分镜→角色→渲染→导出），逐步审批
-- 🤖 **Autonomous 模式**：10 步全自主 + Self-Review Loop + Quality Gate 质量门禁
+- 🤖 **Autonomous 模式**：5 步 Pipeline（script-generation → storyboard → material-matching → voice-synthesis → keyframe）+ Self-Review Loop + Quality Gate
 - 🔄 **Checkpoint 断点续传**：30 秒自动保存，崩溃后可恢复
 - 🧠 **ProviderRegistry**：Strategy 模式 + Fallback Chain，6+ 文字模型 / 4+ 图像模型 / 3+ TTS 自动切换
 
@@ -41,7 +41,7 @@
 
 |                    🎬 双模式工作流                    |                  🧠 多模型编排                  |               🎙️ 一站式音视频                |
 | :---------------------------------------------------: | :---------------------------------------------: | :------------------------------------------: |
-|       Manual 七步半自动 + Autonomous 十步全自主       | Strategy ProviderRegistry + 完整 Fallback Chain | Edge TTS + 唇形同步 + 字幕嵌入 + FFmpeg 合成 |
+|     Manual 七步半自动 + Autonomous 五步 Pipeline      | Strategy ProviderRegistry + 完整 Fallback Chain | Edge TTS + 唇形同步 + 字幕嵌入 + FFmpeg 合成 |
 |                  **🦀 Rust 高性能**                   |                 **🔄 断点续传**                 |               **🏗️ 桌面优先**                |
 | Tauri 2.1 + FFmpeg 子进程 · 30MB 包体积 · 冷启动 < 1s |     30s 自动 Checkpoint · 自审循环自动修复      | 全局快捷键 / 系统托盘 / 原生菜单 / 三端一致  |
 
@@ -96,18 +96,18 @@ VITE_KLING_API_KEY=your_key_here     # 快手 Kling（图像，可选）
                        │  tauri::invoke()  IPC
 ┌──────────────────────┴───────────────────────────────────────┐
 │  Desktop Container (Tauri 2.1 — Rust)                        │
-│  ┌─────────── commands/ ──────────┐  ┌────── services/ ───┐  │
-│  │ video · app · file · shortcuts  │  │ ffmpeg · video ·   │  │
-│  │   21 Tauri Commands 按域路由    │  │   config           │  │
-│  └────────────────────────────────┘  └────────────────────┘  │
-│  ┌────────────── 10 步 Pipeline ──────────────────────────┐  │
-│  │ import → analysis → script → character → scene →      │  │
-│  │ storyboard → render → video-editing → audio → export  │  │
+│  ┌────── src-tauri/commands/ (22) ──┐  ┌─── src-tauri/ ───┐ │
+│  │ video · app · file · shortcuts   │  │  services/        │ │
+│  │   22 Tauri Commands 按域路由      │  │  models/ · utils/ │ │
+│  └──────────────────────────────────┘  └────────────────────┘ │
+│  ┌────── 5 步 Pipeline (Autonomous) ──────────────────────┐  │
+│  │ step1-script → step2-storyboard → step3-material →    │  │
+│  │ step4-voice → step5-keyframe                          │  │
 │  └────────────────────────────────────────────────────────┘  │
 │  ┌────── Autonomous Layer ───────────────────────────────┐   │
 │  │ AutoPipelineEngine · QualityGate · SelfReviewLoop ·   │   │
 │  │   Checkpoint (30s auto-save)                          │   │
-│  └────────────────────────────────────────────────────────┘  │
+│  └────────────────────────────────────────────────────────┘   │
 └──────────────────────────────────────────────────────────────┘
                        │
                        ▼
@@ -128,19 +128,19 @@ VITE_KLING_API_KEY=your_key_here     # 快手 Kling（图像，可选）
 frame-fab/
 ├── src/                          # 前端 UI 层（React + Tauri API 包装）
 │   ├── features/                 # 14 个 Feature 模块（DDD 风格）
-│   ├── shared/                   # 跨域共享（components/hooks/stores/utils）
-│   ├── core/                     # 核心服务（pipeline + services）
+│   ├── shared/                   # 跨域共享（components/hooks/stores/utils/constants）
+│   ├── core/                     # 核心服务（pipeline + services 21 个）
 │   └── pages/                    # 路由级页面
 ├── packages/                     # Monorepo 子包
 │   ├── core/                     # 领域核心（pipeline/autonomous/types）
 │   └── common/                   # 基础类型/工具（无副作用）
 ├── src-tauri/                    # Tauri 桌面端（Rust 第一公民）
-│   ├── src/commands/             # 21 个 Tauri Commands（按域路由）
+│   ├── src/commands/             # 22 个 Tauri Commands（按域路由）
 │   ├── src/services/             # FFmpeg/视频/配置业务逻辑
 │   ├── src/utils/                # 路径验证/ID 生成/FFPS 解析
-│   └── src/constants/            # 允许目录白名单
+│   └── src/models/               # 领域模型（app_settings/video_metadata/shortcut）
 ├── docs/                         # VitePress 文档站
-│   ├── adr/                      # 架构决策记录
+│   ├── adr/                      # 架构决策记录（6 篇）
 │   ├── api/                      # API 参考
 │   ├── performance/              # 性能基准报告
 │   ├── developer-guide/          # 架构/项目结构/服务
@@ -162,7 +162,7 @@ frame-fab/
 | 桌面端   | Tauri 2.1 (Rust)                                                      |
 | 动画     | Framer Motion                                                         |
 | 国际化   | i18next                                                               |
-| 测试     | Jest · React Testing Library · 79 suites / 1375 pass                  |
+| 测试     | Jest · React Testing Library · 80 suites / 1381 tests                 |
 | CI/CD    | GitHub Actions（lint + typecheck + test + e2e + build + docs deploy） |
 
 ---
@@ -174,7 +174,7 @@ frame-fab/
 | **文字生成** | GLM-5（智谱）· M2.5（MiniMax）· Kimi K2.5（月之暗面）· Doubao 2.0（字节）· Qwen 2.5（阿里）· ERNIE 4.0（百度） |
 | **图像生成** | Seedream 5.0（字节，推荐）· Kling 1.6（快手）· Vidu 2.0（生数）                                                |
 | **视频生成** | Seedance 2.0（字节）· 配合 Image-to-Video 工作流                                                               |
-| **语音合成** | Edge TTS（免费）· CosyVoice 2.0（阿里）· KAN-TTS（阿里）                                                       |
+| **语音合成** | Edge TTS（免费）· CosyVoice 2.0（阿里）                                                                        |
 
 ---
 
@@ -189,7 +189,7 @@ frame-fab/
 | 开发     | [项目结构](./docs/developer-guide/project-structure.md)    | 目录说明                     |
 | 开发     | [模块系统](./docs/developer-guide/module-system.md)        | DDD 分层                     |
 | 开发     | [平台适配层](./docs/developer-guide/platform-layer.md)     | Web/Desktop 抽象             |
-| 开发     | [服务清单](./docs/developer-guide/services.md)             | 13 个核心服务                |
+| 开发     | [服务清单](./docs/developer-guide/services.md)             | 21 个核心服务                |
 | **API**  | [服务参考](./docs/api/)                                    | AI/图像/视频/TTS/字幕/流水线 |
 | **决策** | [ADR 索引](./docs/adr/)                                    | 6 篇架构决策记录             |
 | **品牌** | [品牌设计指南](./docs/BRAND_GUIDELINES.md)                 | Logo/色彩/字体规范           |
@@ -203,8 +203,12 @@ frame-fab/
 - [x] **v2.1**：8-Phase 架构重构 + Rust 模块化 + 服务重组 + 5 个 Store 收敛
 - [x] **v2.2**：仓库改名 frame-fab · 描述中文化 · 自主流水线正式化 · ADR 决策记录 · 性能基准
 - [x] **v2.3**：manga-pipeline 测试提速（11s → 4s）· 44 个大文件拆分重构（195+ 子模块）
-- [ ] **v2.4**：协同编辑（CRDT/Y.js）· 角色一致性 v2（基于 IP-Adapter）· 模板市场
-- [ ] **v3.0**：多模态融合（视频+音乐+音效 AI 生成）· 跨设备同步 · 移动端预览
+- [x] **v2.4**：性能优化（terser → esbuild，30.1s → 14.6s）· 沙箱化与安全强化（Tauri Capability 11 个 permission 移除 + CSP 收紧 + 3 套安全测试）
+- [x] **v3.0**：代码审查（ESLint 0 + Zustand 5 slice 类型收窄 + 清 12 处误导性 TODO）+ 死代码清理（-282 行跨 14 文件）
+- [ ] **v3.4**：多模态融合（音乐 AI / 音效 AI / 视频背景音乐智能匹配）+ 移动端预览 App
+- [ ] **v4.0**：全自动漫剧工坊（Agent 化 / 风格迁移 / 国际化 2.0 / 数据看板）
+
+完整路线图 → [ROADMAP.md](./ROADMAP.md)
 
 ---
 
