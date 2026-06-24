@@ -2,7 +2,7 @@
  * Step 2: 编辑剧本
  */
 import { Edit } from 'lucide-react';
-import React, { lazy } from 'react';
+import { lazy } from 'react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 

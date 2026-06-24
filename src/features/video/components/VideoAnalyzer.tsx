@@ -1,6 +1,6 @@
 import { invoke } from '@tauri-apps/api/core';
 import { Video } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import { logger } from '@/core/utils/logger';

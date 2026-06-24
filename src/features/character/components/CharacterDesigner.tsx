@@ -4,7 +4,7 @@
  */
 
 import { Plus, Trash2, Save, Wand2 } from 'lucide-react';
-import React, { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 
 import { logger } from '@/core/utils/logger';
 import { Button } from '@/shared/components/ui/button';

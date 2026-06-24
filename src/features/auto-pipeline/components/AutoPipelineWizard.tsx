@@ -9,10 +9,11 @@
  * 之后全部交给 AI 自主完成！
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
+
+import type { MangaStyle, QualityLevel } from '@/core/autonomous/types/autonomous.types';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
-import { Textarea } from '@/shared/components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -20,8 +21,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/components/ui/select';
+import { Textarea } from '@/shared/components/ui/textarea';
+
 import { useAutoPipeline } from '../hooks/useAutoPipeline';
-import type { MangaStyle, QualityLevel } from '@/core/autonomous/types/autonomous.types';
 
 export function AutoPipelineWizard() {
   const [content, setContent] = useState('');
@@ -85,9 +87,7 @@ export function AutoPipelineWizard() {
               className="font-mono text-sm"
               disabled={isRunning}
             />
-            <p className="text-xs text-muted-foreground">
-              字数：{content.length} 字符
-            </p>
+            <p className="text-xs text-muted-foreground">字数：{content.length} 字符</p>
           </div>
         </CardContent>
       </Card>

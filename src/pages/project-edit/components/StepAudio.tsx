@@ -2,7 +2,7 @@
  * Step 7: 配音配乐
  */
 import { Volume2 } from 'lucide-react';
-import React, { lazy } from 'react';
+import { lazy } from 'react';
 
 import type { AudioTrackConfig } from '@/features/audio/components/AudioEditor';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';

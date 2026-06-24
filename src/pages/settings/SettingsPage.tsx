@@ -13,7 +13,7 @@ import {
   Edit,
   Lightbulb,
 } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { useTheme } from '@/app/providers/ThemeContext';
 import { logger } from '@/core/utils/logger';

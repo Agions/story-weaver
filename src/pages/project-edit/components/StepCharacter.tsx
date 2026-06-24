@@ -2,7 +2,7 @@
  * Step 4: 角色设计
  */
 import { User } from 'lucide-react';
-import React, { lazy } from 'react';
+import { lazy } from 'react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
 import type { Character } from '@/shared/types';

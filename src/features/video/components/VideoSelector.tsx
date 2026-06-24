@@ -1,13 +1,13 @@
 import { invoke, convertFileSrc } from '@tauri-apps/api/core';
 import { open } from '@tauri-apps/plugin-dialog';
 import { Upload, Trash2, PlayCircle } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
+import { tauriService } from '@/core/services';
+import { logger } from '@/core/utils/logger';
 import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
 import { toast } from '@/shared/components/ui/sonner';
-import { tauriService } from '@/core/services';
-import { logger } from '@/core/utils/logger';
 import { VideoMetadata } from '@/shared/types';
 import { formatDurationShort } from '@/shared/utils';
 

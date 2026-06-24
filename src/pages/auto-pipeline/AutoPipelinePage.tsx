@@ -6,7 +6,8 @@
  * - AutonomousProgress：流水线执行进度监控
  */
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+
 import { AutoPipelineWizard, AutonomousProgress } from '@/features/auto-pipeline';
 import { useAutoPipelineStore } from '@/features/auto-pipeline/stores/autoPipelineStore';
 
@@ -24,9 +25,7 @@ export default function AutoPipelinePage() {
   return (
     <div className="container mx-auto py-8 px-4">
       {/* 流水线未运行或用户主动切换：显示向导 */}
-      {(!showProgress || mode === 'idle') && (
-        <AutoPipelineWizard />
-      )}
+      {(!showProgress || mode === 'idle') && <AutoPipelineWizard />}
 
       {/* 流水线运行中/完成/失败：显示进度 */}
       {showProgress && mode !== 'idle' && (

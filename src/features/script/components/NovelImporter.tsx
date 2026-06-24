@@ -1,5 +1,5 @@
 import { Upload, FileText, Trash2 } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { scriptImportService, tauriService } from '@/core/services';

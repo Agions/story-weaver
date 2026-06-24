@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { Alert } from '@/shared/components/ui/alert';
 import { Card } from '@/shared/components/ui/card';

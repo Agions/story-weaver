@@ -1,12 +1,12 @@
 import { Plus, Edit, Trash2, FolderOpen } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { logger } from '@/core/utils/logger';
+import { EmptyState, Skeleton } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent } from '@/shared/components/ui/card';
 import { toast } from '@/shared/components/ui/sonner';
-import { logger } from '@/core/utils/logger';
-import { EmptyState, Skeleton } from '@/shared/components/ui';
 import { useProjectStore } from '@/shared/stores/project.store';
 import type { ProjectData } from '@/shared/types';
 import { formatDate } from '@/shared/utils/format-ui';

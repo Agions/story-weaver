@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useEffect, ReactNode } from 'react';
 
 import { useSettingsStore, AppSettings } from '@/shared/hooks/useSettings';
 

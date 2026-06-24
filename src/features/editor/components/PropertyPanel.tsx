@@ -1,5 +1,5 @@
 import { Type, Volume2, Image, Save, Download } from 'lucide-react';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { Button } from '@/shared/components/ui/button';
 import {

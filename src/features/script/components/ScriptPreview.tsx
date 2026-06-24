@@ -1,5 +1,5 @@
 import { FileDown, Copy, FileText, Clock, ListOrdered, Calendar } from 'lucide-react';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { logger } from '@/core/utils/logger';
 import { Badge } from '@/shared/components/ui/badge';

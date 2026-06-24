@@ -8,7 +8,7 @@ import {
   Crosshair,
   ArrowLeftRight,
 } from 'lucide-react';
-import React, { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';

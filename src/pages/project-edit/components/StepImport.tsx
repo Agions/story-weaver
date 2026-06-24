@@ -2,7 +2,7 @@
  * Step 0: 导入小说/剧本
  */
 import { FileText } from 'lucide-react';
-import React, { lazy } from 'react';
+import { lazy } from 'react';
 
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';

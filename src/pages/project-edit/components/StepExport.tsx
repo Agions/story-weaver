@@ -2,7 +2,7 @@
  * Step 8: 视频导出
  */
 import { Download } from 'lucide-react';
-import React, { lazy } from 'react';
+import { lazy } from 'react';
 
 import type { QualityGateIssue } from '@/core/services';
 import type { ExportSettings } from '@/features/video/components/VideoExporter';

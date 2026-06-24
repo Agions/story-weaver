@@ -1,5 +1,5 @@
 import { convertFileSrc } from '@tauri-apps/api/core';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { Card } from '@/shared/components/ui/card';
 import type { VideoAnalysis } from '@/shared/types/video';
@@ -77,7 +77,14 @@ const VideoEditorView = () => {
                 name={selectedVideo?.split('/').pop() || 'video'}
                 duration={videoInfo?.duration || 0}
                 path={selectedVideo || ''}
-                metadata={videoInfo as unknown as { width?: number; height?: number; fps?: number; codec?: string; }}
+                metadata={
+                  videoInfo as unknown as {
+                    width?: number;
+                    height?: number;
+                    fps?: number;
+                    codec?: string;
+                  }
+                }
               />
             </Card>
           )}

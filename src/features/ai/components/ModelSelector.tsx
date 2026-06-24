@@ -5,7 +5,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, CheckCircle, Loader, Zap, Star, DollarSign, Settings, Search } from 'lucide-react';
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 
 import { MODEL_PROVIDERS } from '@/core/config/models.config';
 import { LLM_MODELS, type LLMModelConfig } from '@/core/constants';

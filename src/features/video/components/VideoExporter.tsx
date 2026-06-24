@@ -1,5 +1,5 @@
 import { Download, Video, Settings, CheckCircle } from 'lucide-react';
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 
 import { logger } from '@/core/utils/logger';
 import { Alert, AlertDescription } from '@/shared/components/ui/alert';

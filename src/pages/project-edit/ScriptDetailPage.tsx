@@ -1,5 +1,5 @@
 import { ArrowLeft, Save, Trash2, Download, Bot } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 import { tauriService } from '@/core/services';

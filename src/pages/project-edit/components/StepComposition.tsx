@@ -2,7 +2,7 @@
  * Step 6: 动态合成
  */
 import { PlayCircle } from 'lucide-react';
-import React, { lazy } from 'react';
+import { lazy } from 'react';
 
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';

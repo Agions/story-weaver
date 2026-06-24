@@ -15,7 +15,7 @@ import {
   Loader,
   Settings,
 } from 'lucide-react';
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 
 import { useModel, useModelCost } from '@/core/hooks/useModel';
 import { useProject } from '@/core/hooks/useProject';

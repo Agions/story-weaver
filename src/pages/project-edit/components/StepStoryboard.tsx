@@ -2,7 +2,7 @@
  * Step 3: 分镜设计
  */
 import { Image } from 'lucide-react';
-import React, { lazy } from 'react';
+import { lazy } from 'react';
 
 import type { StoryboardVersion, VersionDiffSummary } from '@/core/services';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
