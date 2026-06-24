@@ -6770,111 +6770,39 @@
     },
     {
       "firstFile": {
-        "end": 329,
+        "end": 335,
         "endLoc": {
           "column": 26,
-          "line": 329,
-          "position": 11659
+          "line": 335,
+          "position": 11725
         },
         "name": "features/editor/components/AIAssistant.tsx",
-        "start": 318,
+        "start": 324,
         "startLoc": {
           "column": 83,
-          "line": 318,
-          "position": 11264
+          "line": 324,
+          "position": 11330
         }
       },
       "format": "tsx",
       "fragment": "",
       "lines": 12,
       "secondFile": {
-        "end": 463,
+        "end": 469,
         "endLoc": {
           "column": 26,
-          "line": 463,
-          "position": 17740
+          "line": 469,
+          "position": 17806
         },
         "name": "features/editor/components/AIAssistant.tsx",
-        "start": 452,
+        "start": 458,
         "startLoc": {
           "column": 80,
-          "line": 452,
-          "position": 17345
+          "line": 458,
+          "position": 17411
         }
       },
       "tokens": 62
-    },
-    {
-      "firstFile": {
-        "end": 505,
-        "endLoc": {
-          "column": 25,
-          "line": 505,
-          "position": 19515
-        },
-        "name": "features/editor/components/AIAssistant.tsx",
-        "start": 496,
-        "startLoc": {
-          "column": 84,
-          "line": 496,
-          "position": 19163
-        }
-      },
-      "format": "tsx",
-      "fragment": "",
-      "lines": 10,
-      "secondFile": {
-        "end": 516,
-        "endLoc": {
-          "column": 25,
-          "line": 516,
-          "position": 20078
-        },
-        "name": "features/editor/components/AIAssistant.tsx",
-        "start": 507,
-        "startLoc": {
-          "column": 87,
-          "line": 507,
-          "position": 19726
-        }
-      },
-      "tokens": 57
-    },
-    {
-      "firstFile": {
-        "end": 505,
-        "endLoc": {
-          "column": 25,
-          "line": 505,
-          "position": 19515
-        },
-        "name": "features/editor/components/AIAssistant.tsx",
-        "start": 496,
-        "startLoc": {
-          "column": 84,
-          "line": 496,
-          "position": 19163
-        }
-      },
-      "format": "tsx",
-      "fragment": "",
-      "lines": 10,
-      "secondFile": {
-        "end": 527,
-        "endLoc": {
-          "column": 25,
-          "line": 527,
-          "position": 20628
-        },
-        "name": "features/editor/components/AIAssistant.tsx",
-        "start": 518,
-        "startLoc": {
-          "column": 78,
-          "line": 518,
-          "position": 20276
-        }
-      },
-      "tokens": 57
     },
     {
       "firstFile": {
@@ -6986,7 +6914,7 @@
     }
   ],
   "statistics": {
-    "detectionDate": "2026-06-24T08:59:16.470Z",
+    "detectionDate": "2026-06-24T10:42:39.767Z",
     "formats": {
       "css": {
         "clones": 0,
@@ -7025,16 +6953,16 @@
         "tokens": 521
       },
       "tsx": {
-        "clones": 41,
-        "duplicatedLines": 347,
-        "duplicatedTokens": 2636,
-        "lines": 26487,
+        "clones": 39,
+        "duplicatedLines": 329,
+        "duplicatedTokens": 2522,
+        "lines": 26509,
         "newClones": 0,
         "newDuplicatedLines": 0,
-        "percentage": 1.3100766413712388,
-        "percentageTokens": 1.7117438877885645,
-        "sources": 152,
-        "tokens": 153995
+        "percentage": 1.241087932400317,
+        "percentageTokens": 1.639205745669624,
+        "sources": 153,
+        "tokens": 153855
       },
       "typescript": {
         "clones": 153,
@@ -7050,16 +6978,16 @@
       }
     },
     "total": {
-      "clones": 194,
-      "duplicatedLines": 2103,
-      "duplicatedTokens": 13047,
-      "lines": 91197,
+      "clones": 192,
+      "duplicatedLines": 2085,
+      "duplicatedTokens": 12933,
+      "lines": 91219,
       "newClones": 0,
       "newDuplicatedLines": 0,
-      "percentage": 2.30599690779302,
-      "percentageTokens": 2.7677073234889193,
-      "sources": 662,
-      "tokens": 471401
+      "percentage": 2.2857080213552,
+      "percentageTokens": 2.7443391241795947,
+      "sources": 663,
+      "tokens": 471261
     }
   }
 }

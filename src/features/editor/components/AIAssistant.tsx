@@ -48,6 +48,7 @@ import { Text, Title, Paragraph } from '@/shared/components/ui/typography';
 import type { ChatMessage } from '../types/ai-assistant.entities';
 
 import styles from './AIAssistant.module.less';
+import { EnhanceOptionCard } from './EnhanceOptionCard';
 import { useAIAssistant } from './hooks/useAIAssistant';
 import { OptionSlider } from './OptionSlider';
 
@@ -494,49 +495,26 @@ function AIAssistant() {
                   </Paragraph>
 
                   <div className={styles.enhanceOptions}>
-                    <div className={styles.enhanceOption}>
-                      <Card className={styles.enhanceCard}>
-                        <Zap className={styles.enhanceIcon} />
-                        <div className={styles.enhanceTitle}>画质提升</div>
-                        <div className={styles.enhanceDesc}>提升清晰度和细节</div>
-                        <Button size="sm" className={styles.enhanceButton}>
-                          应用
-                        </Button>
-                      </Card>
-                    </div>
-
-                    <div className={styles.enhanceOption}>
-                      <Card className={styles.enhanceCard}>
-                        <Lightbulb className={styles.enhanceIcon} />
-                        <div className={styles.enhanceTitle}>色彩优化</div>
-                        <div className={styles.enhanceDesc}>改善对比度和饱和度</div>
-                        <Button size="sm" className={styles.enhanceButton}>
-                          应用
-                        </Button>
-                      </Card>
-                    </div>
-
-                    <div className={styles.enhanceOption}>
-                      <Card className={styles.enhanceCard}>
-                        <Radio className={styles.enhanceIcon} />
-                        <div className={styles.enhanceTitle}>音频降噪</div>
-                        <div className={styles.enhanceDesc}>移除背景噪音</div>
-                        <Button size="sm" className={styles.enhanceButton}>
-                          应用
-                        </Button>
-                      </Card>
-                    </div>
-
-                    <div className={styles.enhanceOption}>
-                      <Card className={styles.enhanceCard}>
-                        <FlaskConical className={styles.enhanceIcon} />
-                        <div className={styles.enhanceTitle}>智能特效</div>
-                        <div className={styles.enhanceDesc}>应用AI生成的特效</div>
-                        <Button size="sm" className={styles.enhanceButton}>
-                          应用
-                        </Button>
-                      </Card>
-                    </div>
+                    <EnhanceOptionCard
+                      icon={<Zap />}
+                      title="画质提升"
+                      description="提升清晰度和细节"
+                    />
+                    <EnhanceOptionCard
+                      icon={<Lightbulb />}
+                      title="色彩优化"
+                      description="改善对比度和饱和度"
+                    />
+                    <EnhanceOptionCard
+                      icon={<Radio />}
+                      title="音频降噪"
+                      description="移除背景噪音"
+                    />
+                    <EnhanceOptionCard
+                      icon={<FlaskConical />}
+                      title="智能特效"
+                      description="应用AI生成的特效"
+                    />
                   </div>
                 </CardContent>
               </Card>
