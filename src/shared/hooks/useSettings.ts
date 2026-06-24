@@ -107,67 +107,6 @@ export const useOpenAIAPIKey = createApiKeyHook('openai');
 /** Claude API密钥 */
 export const useClaudeAPIKey = createApiKeyHook('anthropic');
 
-// ========== 通用API密钥设置钩子 ==========
-
-export const useApiKey = (provider: string) => {
-  const storageKey = `${provider}_api_key`;
-
-  const [apiKey, setApiKey] = useState<ApiKeyState>({
-    value: '',
-    isValid: null,
-    isTesting: false,
-  });
-
-  useEffect(() => {
-    getSecureStoredApiKey(storageKey)
-      .then(setApiKey)
-      .catch((err) => logger.error(`[useSettings] 加载 ${storageKey} 失败:`, err));
-  }, [storageKey]);
-
-  const updateApiKey = useCallback(
-    async (newApiKey: Partial<ApiKeyState>) => {
-      setApiKey((prev) => {
-        const updated = { ...prev, ...newApiKey };
-        setSecureStoredApiKey(storageKey, updated);
-        return updated;
-      });
-    },
-    [storageKey]
-  );
-
-  const validateApiKey = useCallback(async () => {
-    if (!apiKey.value) {
-      updateApiKey({ isValid: false });
-      return false;
-    }
-
-    updateApiKey({ isTesting: true });
-
-    try {
-      const valid = await new Promise<boolean>((resolve) => {
-        setTimeout(() => {
-          if (provider === 'openai' && !apiKey.value.startsWith('sk-')) {
-            resolve(false);
-          } else if (provider === 'anthropic' && !apiKey.value.startsWith('sk-ant-')) {
-            resolve(false);
-          } else {
-            resolve(apiKey.value.length >= 10);
-          }
-        }, 800);
-      });
-
-      updateApiKey({ isValid: valid, isTesting: false });
-      return valid;
-    } catch (error) {
-      logger.error(`[useSettings] 验证${provider} API密钥时发生错误:`, error);
-      updateApiKey({ isValid: false, isTesting: false });
-      return false;
-    }
-  }, [apiKey.value, provider, updateApiKey]);
-
-  return { apiKey, updateApiKey, validateApiKey };
-};
-
 // ========== 设置子钩子 ==========
 
 export const useAutoSave = () => {

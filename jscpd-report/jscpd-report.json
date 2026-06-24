@@ -7019,82 +7019,10 @@
         }
       },
       "tokens": 65
-    },
-    {
-      "firstFile": {
-        "end": 46,
-        "endLoc": {
-          "column": 8,
-          "line": 46,
-          "position": 1315
-        },
-        "name": "shared/hooks/settings-api-key-factory.ts",
-        "start": 35,
-        "startLoc": {
-          "column": 4,
-          "line": 35,
-          "position": 966
-        }
-      },
-      "format": "typescript",
-      "fragment": "",
-      "lines": 12,
-      "secondFile": {
-        "end": 125,
-        "endLoc": {
-          "column": 6,
-          "line": 125,
-          "position": 3641
-        },
-        "name": "shared/hooks/useSettings.ts",
-        "start": 115,
-        "startLoc": {
-          "column": 2,
-          "line": 115,
-          "position": 3351
-        }
-      },
-      "tokens": 65
-    },
-    {
-      "firstFile": {
-        "end": 54,
-        "endLoc": {
-          "column": 8,
-          "line": 54,
-          "position": 1575
-        },
-        "name": "shared/hooks/settings-api-key-factory.ts",
-        "start": 46,
-        "startLoc": {
-          "column": 8,
-          "line": 46,
-          "position": 1315
-        }
-      },
-      "format": "typescript",
-      "fragment": "",
-      "lines": 9,
-      "secondFile": {
-        "end": 135,
-        "endLoc": {
-          "column": 5,
-          "line": 135,
-          "position": 3918
-        },
-        "name": "shared/hooks/useSettings.ts",
-        "start": 125,
-        "startLoc": {
-          "column": 16,
-          "line": 125,
-          "position": 3651
-        }
-      },
-      "tokens": 53
     }
   ],
   "statistics": {
-    "detectionDate": "2026-06-24T08:52:54.045Z",
+    "detectionDate": "2026-06-24T08:55:28.017Z",
     "formats": {
       "css": {
         "clones": 0,
@@ -7145,29 +7073,29 @@
         "tokens": 153993
       },
       "typescript": {
-        "clones": 155,
-        "duplicatedLines": 1775,
-        "duplicatedTokens": 10529,
-        "lines": 64138,
+        "clones": 153,
+        "duplicatedLines": 1756,
+        "duplicatedTokens": 10411,
+        "lines": 64077,
         "newClones": 0,
         "newDuplicatedLines": 0,
-        "percentage": 2.767470142505223,
-        "percentageTokens": 3.3724636056437274,
+        "percentage": 2.740452892613574,
+        "percentageTokens": 3.3383783645120535,
         "sources": 504,
-        "tokens": 312205
+        "tokens": 311858
       }
     },
     "total": {
-      "clones": 197,
-      "duplicatedLines": 2132,
-      "duplicatedTokens": 13252,
-      "lines": 91235,
+      "clones": 195,
+      "duplicatedLines": 2113,
+      "duplicatedTokens": 13134,
+      "lines": 91174,
       "newClones": 0,
       "newDuplicatedLines": 0,
-      "percentage": 2.336822491368444,
-      "percentageTokens": 2.8091388162273767,
+      "percentage": 2.317546669006515,
+      "percentageTokens": 2.78617476914461,
       "sources": 661,
-      "tokens": 471746
+      "tokens": 471399
     }
   }
 }
