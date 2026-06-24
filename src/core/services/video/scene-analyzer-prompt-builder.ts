@@ -5,7 +5,6 @@
  * 提取自原 SceneAnalyzer 内联 prompt 字面量（角色提取 + 场景描述）。
  */
 
-import { generateDefaultPrompt } from '@/core/services/ai/text/novel-helpers';
 import { type NovelScene } from '@/shared/types';
 
 import {

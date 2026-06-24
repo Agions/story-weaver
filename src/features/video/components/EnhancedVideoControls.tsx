@@ -13,7 +13,6 @@ import {
   Volume2,
   VolumeX,
 } from 'lucide-react';
-import React from 'react';
 
 import { Button } from '@/shared/components/ui/button';
 import {

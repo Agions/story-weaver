@@ -2,7 +2,6 @@
  * 协作面板：镜头评论 + 版本管理
  * 用于 Step 3 分镜设计
  */
-import React from 'react';
 
 import type { FrameComment, StoryboardVersion, VersionDiffSummary } from '@/core/services';
 import { collaborationService } from '@/core/services';

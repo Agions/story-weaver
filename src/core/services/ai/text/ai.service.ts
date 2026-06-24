@@ -16,7 +16,7 @@
  * 19 个调用方无需修改。
  */
 
-import { providerRegistry, mockStrategy } from '@/core/ai/providers';
+import { mockStrategy } from '@/core/ai/providers';
 import { getModelById } from '@/core/config/models.config';
 import { LLM_MODELS, DEFAULT_LLM_MODEL, MODEL_RECOMMENDATIONS } from '@/core/constants';
 import { promptBuilderService } from '@/core/domains/ai/services/prompt-builder.service';

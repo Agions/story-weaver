@@ -21,7 +21,7 @@
 
 import { logger } from '@/core/utils/logger';
 
-import { QualityGate, createQualityGate } from './evaluator/quality-gate';
+import { createQualityGate } from './evaluator/quality-gate';
 import { SelfReviewLoop, createSelfReviewLoop } from './evaluator/self-review-loop';
 import {
   buildCheckpointSnapshot,
@@ -37,7 +37,7 @@ import {
   collectStepDurations,
   computeProgressPercent,
 } from './pipeline-step-state';
-import type { PipelineStep, StepInput } from './pipeline-types';
+import type { PipelineStep } from './pipeline-types';
 import type {
   AutoPipelineInput,
   AutoPipelineResult,

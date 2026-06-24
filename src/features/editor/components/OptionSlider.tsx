@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Slider } from '@/shared/components/ui/slider';
 import { Text } from '@/shared/components/ui/typography';
 

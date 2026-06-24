@@ -1,5 +1,4 @@
 import { Plus } from 'lucide-react';
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useTheme } from '@/app/providers/ThemeContext';

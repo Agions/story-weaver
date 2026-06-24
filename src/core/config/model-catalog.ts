@@ -1,7 +1,7 @@
 /**
  * AI 模型目录
  */
-import type { AIModel, ModelProvider, ModelCategory } from '@/shared/types';
+import type { AIModel } from '@/shared/types';
 
 export const AI_MODELS: AIModel[] = [
   // OpenAI GPT-4.5 (2025)

@@ -7,7 +7,7 @@
 import type { UserPreferences } from '@/shared/types';
 
 import { DEFAULT_USER_PREFERENCES } from './storage-defaults';
-import { safeJsonGet, safeJsonSet, safeRemove } from './storage-helpers';
+import { safeJsonSet, safeRemove } from './storage-helpers';
 import { STORAGE_KEYS } from './storage-keys';
 
 /** 读用户偏好 (与默认值浅合并) */

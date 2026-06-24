@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Separator } from '@/shared/components/ui/separator';
 import { useProjectStore } from '@/shared/stores/project.store';
 

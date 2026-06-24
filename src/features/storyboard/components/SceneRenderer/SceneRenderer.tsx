@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { SceneEditor } from './components/SceneEditor';
 import { SceneList } from './components/SceneList';
 import { ScenePreview } from './components/ScenePreview';

@@ -1,10 +1,9 @@
 import { Video, Star, Flame } from 'lucide-react';
-import React from 'react';
-import { theme } from '@/styles/theme';
 
 import { useTheme } from '@/app/providers/ThemeContext';
 import { Card } from '@/shared/components/ui/card';
 import type { ProjectData } from '@/shared/types';
+import { theme } from '@/styles/theme';
 
 import styles from './StatsCards.module.less';
 

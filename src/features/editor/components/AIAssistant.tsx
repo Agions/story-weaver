@@ -32,7 +32,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/components/ui/select';
-import { Slider } from '@/shared/components/ui/slider';
 import { Switch } from '@/shared/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/components/ui/tabs';
 import { Textarea } from '@/shared/components/ui/textarea';

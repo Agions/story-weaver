@@ -7,7 +7,6 @@ import React, { Suspense } from 'react';
 
 import { tauriService } from '@/core/services';
 import { AudioEditor as AudioEditorComponent } from '@/features/audio';
-import Empty from '@/shared/components/ui/empty';
 import { Spin } from '@/shared/components/ui/spin';
 import type { ProjectData } from '@/shared/types';
 

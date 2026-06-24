@@ -8,17 +8,11 @@
  * - 预计剩余时间
  */
 
-import React from 'react';
-import { useAutoPipelineStore, selectAllSteps } from '../stores/autoPipelineStore';
+import { CheckCircle, Circle, Loader2, AlertCircle, RefreshCw, SkipForward } from 'lucide-react';
+
 import { cn } from '@/shared/utils/class-names';
-import {
-  CheckCircle,
-  Circle,
-  Loader2,
-  AlertCircle,
-  RefreshCw,
-  SkipForward,
-} from 'lucide-react';
+
+import { useAutoPipelineStore, selectAllSteps } from '../stores/autoPipelineStore';
 
 const STEP_LABELS: Record<string, string> = {
   step_import: '📥 导入解析',
@@ -51,10 +45,10 @@ export function AutonomousProgress() {
             {mode === 'running' && currentStepId
               ? `正在：${STEP_LABELS[currentStepId] ?? currentStepId}`
               : mode === 'paused'
-              ? '⏸️ 已暂停'
-              : mode === 'completed'
-              ? '✅ 制作完成'
-              : '❌ 制作失败'}
+                ? '⏸️ 已暂停'
+                : mode === 'completed'
+                  ? '✅ 制作完成'
+                  : '❌ 制作失败'}
           </span>
           <span className="text-muted-foreground">{progress}%</span>
         </div>
@@ -62,7 +56,7 @@ export function AutonomousProgress() {
           <div
             className={cn(
               'h-full transition-all duration-500',
-              mode === 'completed' ? 'bg-green-500' : 'bg-primary',
+              mode === 'completed' ? 'bg-green-500' : 'bg-primary'
             )}
             style={{ width: `${progress}%` }}
           />
@@ -85,7 +79,7 @@ export function AutonomousProgress() {
                 status === 'running' && 'bg-blue-50 border-blue-200',
                 status === 'reviewing' && 'bg-yellow-50 border-yellow-200',
                 status === 'failed' && 'bg-red-50 border-red-200',
-                status === 'pending' && 'bg-muted/30 border-muted',
+                status === 'pending' && 'bg-muted/30 border-muted'
               )}
             >
               {/* 状态图标 */}
@@ -116,7 +110,7 @@ export function AutonomousProgress() {
                   status === 'running' && 'text-blue-700 font-medium',
                   status === 'reviewing' && 'text-yellow-700',
                   status === 'failed' && 'text-red-700',
-                  status === 'pending' && 'text-muted-foreground',
+                  status === 'pending' && 'text-muted-foreground'
                 )}
               >
                 {label}
@@ -129,9 +123,7 @@ export function AutonomousProgress() {
 
               {/* 自审次数 */}
               {reviewCount > 0 && (
-                <span className="text-xs text-yellow-600">
-                  自审 ×{reviewCount}
-                </span>
+                <span className="text-xs text-yellow-600">自审 ×{reviewCount}</span>
               )}
 
               {/* 完成时间 */}

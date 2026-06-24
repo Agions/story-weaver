@@ -20,7 +20,6 @@ import { Row, Col } from '@/shared/components/ui/grid';
 import { InputNumber } from '@/shared/components/ui/input-number';
 import { Modal } from '@/shared/components/ui/modal';
 import { SelectItem, AntDSelect as Select } from '@/shared/components/ui/select';
-import { Slider } from '@/shared/components/ui/slider';
 import { Space } from '@/shared/components/ui/space';
 import {
   Table,
@@ -32,7 +31,6 @@ import {
 } from '@/shared/components/ui/table';
 import { Tag } from '@/shared/components/ui/tag';
 import { Timeline, TimelineItem } from '@/shared/components/ui/timeline';
-import { toast } from '@/shared/components/ui/toast';
 import {
   Tooltip,
   TooltipTrigger,

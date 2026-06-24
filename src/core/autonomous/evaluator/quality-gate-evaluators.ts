@@ -7,7 +7,7 @@
  * 抽成纯函数，QualityGate 类内部再调用。
  * 单一职责：评估逻辑，不含配置。
  */
-import type { StepOutput, ReviewCriteria, QualityGateResult } from '../types/autonomous.types';
+import type { StepOutput, QualityGateResult } from '../types/autonomous.types';
 
 // ============================================================================
 // 基础检查

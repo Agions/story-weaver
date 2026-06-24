@@ -1,11 +1,10 @@
 /**
  * 质量闸门提示组件
  */
-import React from 'react';
 
+import type { QualityGateIssue } from '@/core/services';
 import { Alert, AlertDescription } from '@/shared/components/ui/alert';
 import { Button } from '@/shared/components/ui/button';
-import type { QualityGateIssue } from '@/core/services';
 
 export interface QualityGateAlertProps {
   issues: QualityGateIssue[];

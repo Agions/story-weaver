@@ -1,5 +1,4 @@
 import { Trash2 } from 'lucide-react';
-import React from 'react';
 import { Virtuoso } from 'react-virtuoso';
 
 import { Button } from '@/shared/components/ui/button';

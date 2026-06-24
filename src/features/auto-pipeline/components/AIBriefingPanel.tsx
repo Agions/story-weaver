@@ -8,9 +8,9 @@
  * - 预计耗时
  */
 
-import React from 'react';
-import { cn } from '@/shared/utils/class-names';
 import { Bot, Brain, Zap, Clock } from 'lucide-react';
+
+import { cn } from '@/shared/utils/class-names';
 
 interface AIBriefingPanelProps {
   stepId: string;
@@ -21,12 +21,15 @@ interface AIBriefingPanelProps {
   className?: string;
 }
 
-const STEP_BRIEFINGS: Record<string, {
-  goal: string;
-  reason: string;
-  model: string;
-  defaultTime: number;
-}> = {
+const STEP_BRIEFINGS: Record<
+  string,
+  {
+    goal: string;
+    reason: string;
+    model: string;
+    defaultTime: number;
+  }
+> = {
   step_import: {
     goal: '解析原材料',
     reason: '自动识别小说/剧本格式，智能切分章节',
@@ -117,7 +120,7 @@ export function AIBriefingPanel({
     <div
       className={cn(
         'flex flex-col gap-3 p-4 rounded-lg border bg-gradient-to-r from-blue-50 to-purple-50',
-        className,
+        className
       )}
     >
       {/* 头部 */}

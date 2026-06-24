@@ -1,5 +1,4 @@
 import { Plus, Sparkles } from 'lucide-react';
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/shared/components/ui/button';

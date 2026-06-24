@@ -9,7 +9,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 
 import { logger } from '@/core/utils/logger';
-import { telemetry, TelemetryEvent } from '@/infrastructure/telemetry/telemetry';
+import { telemetry } from '@/infrastructure/telemetry/telemetry';
 
 interface ErrorBoundaryProps {
   children: ReactNode;

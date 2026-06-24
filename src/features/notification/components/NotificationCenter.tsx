@@ -1,9 +1,8 @@
 import { Bell } from 'lucide-react';
-import React from 'react';
 
+import { EmptyState } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/shared/components/ui/sheet';
-import { EmptyState } from '@/shared/components/ui';
 import { useAppStore } from '@/shared/stores';
 
 import styles from './NotificationCenter.module.less';

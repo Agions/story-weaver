@@ -12,7 +12,7 @@ import { Button } from '@/shared/components/ui/button';
 import { Divider } from '@/shared/components/ui/divider';
 import { Row, Col } from '@/shared/components/ui/grid';
 import { InputNumber } from '@/shared/components/ui/input-number';
-import { SelectItem, AntDSelect as Select } from '@/shared/components/ui/select';
+import { AntDSelect as Select } from '@/shared/components/ui/select';
 import { Slider } from '@/shared/components/ui/slider';
 import type { CameraMotionConfig, FrameAnimation } from '@/shared/types/composition';
 

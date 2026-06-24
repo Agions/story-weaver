@@ -13,10 +13,9 @@
  *           └── seedance  → SeedanceAdapter
  */
 
-import axios from 'axios';
-
 import { logger } from '@/core/utils/logger';
 import { retryRequest } from '@/shared/utils';
+
 import { isNetworkError } from '../image-generation.service';
 
 import type { CharacterVideoRef, ImageSize } from './types';

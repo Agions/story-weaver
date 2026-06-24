@@ -21,7 +21,7 @@ import {
   createVideoEditorSetters,
 } from './useVideoEditor.reducer';
 import { useVideoExport } from './video-editor-export';
-import type { OutputFormat, VideoQuality, VideoSegment } from './video-editor-types';
+import type { VideoSegment } from './video-editor-types';
 
 // Re-export types 保持向后兼容
 export type { VideoSegment, OutputFormat, VideoQuality } from './video-editor-types';

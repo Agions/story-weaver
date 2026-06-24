@@ -10,7 +10,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import type { EvaluationScores, FrameComment, StoryboardVersion } from '@/core/services';
-import { collaborationService, tauriService } from '@/core/services';
+import { collaborationService } from '@/core/services';
 import type { NovelMetadata } from '@/features/script/components/NovelImporter';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
 import { toast } from '@/shared/components/ui/toast';

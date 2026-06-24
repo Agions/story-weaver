@@ -1,5 +1,3 @@
-import React from 'react';
-
 import AudioEditor from './AudioEditor';
 import styles from './AudioEditorView.module.less';
 

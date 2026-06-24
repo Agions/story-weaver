@@ -3,7 +3,6 @@
  */
 
 import { Upload, Trash2, PlayCircle, PauseCircle } from 'lucide-react';
-import React from 'react';
 
 import { Button } from '@/shared/components/ui/button';
 import Empty from '@/shared/components/ui/empty';

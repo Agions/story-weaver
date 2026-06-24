@@ -1,5 +1,3 @@
-import React from 'react';
-
 import AIAssistant from './AIAssistant';
 import AIFeaturePanel from './AIFeaturePanel';
 import AssetPanel from './AssetPanel';

@@ -9,7 +9,6 @@
  */
 
 import { Volume2, Headphones, Music, Settings } from 'lucide-react';
-import React from 'react';
 
 import { Card } from '@/shared/components/ui/card';
 import { Slider } from '@/shared/components/ui/slider';

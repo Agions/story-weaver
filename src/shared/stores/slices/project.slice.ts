@@ -9,7 +9,6 @@
 
 import { v4 as uuid } from 'uuid';
 
-import { storageService } from '@/core/services';
 import type { ProjectData } from '@/shared/types/project';
 
 /** slice 自身关注的 state 字段（与 ProjectState 保持同步） */

@@ -1,5 +1,3 @@
-import React from 'react';
-
 export interface PipelineProgressProps {
   progress: number;
   stepName?: string;

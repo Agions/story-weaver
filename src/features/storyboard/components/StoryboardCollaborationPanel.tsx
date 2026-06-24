@@ -25,8 +25,6 @@ import {
 import { Separator } from '@/shared/components/ui/separator';
 import { toast } from '@/shared/components/ui/toast';
 
-import styles from './StoryboardCollaborationPanel.module.less';
-
 export interface StoryboardCollaborationPanelProps {
   projectId: string;
   storyboardFrames: StoryboardFrame[];

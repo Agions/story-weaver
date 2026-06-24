@@ -1,5 +1,3 @@
-import React from 'react';
-
 import NotificationCenter from './NotificationCenter';
 import styles from './NotificationCenterView.module.less';
 

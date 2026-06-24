@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { SubtitleEditor } from './SubtitleEditor';
 import styles from './SubtitleEditorView.module.less';
 

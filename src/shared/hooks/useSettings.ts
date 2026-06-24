@@ -9,7 +9,7 @@
  * - ApiKeyState 类型 → settings-api-key-storage.ts
  * - 主 hook useSettingsStore + 子 hooks 保持不变
  */
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 
 import { logger } from '@/core/utils/logger';
 

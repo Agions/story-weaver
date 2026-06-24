@@ -3,7 +3,6 @@
  * 提供字幕文本编辑、样式配置、预览等功能
  */
 import { AlignLeft, AlignCenter, AlignRight, Copy, Plus, Trash2 } from 'lucide-react';
-import React from 'react';
 
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
@@ -29,7 +28,7 @@ import { formatTime } from '@/shared/utils';
 
 import { useSubtitleEditor } from './hooks/useSubtitleEditor';
 import styles from './SubtitleEditor.module.less';
-import type { SubtitleItem, SubtitleStyle } from './types/subtitle.entities';
+import type { SubtitleItem } from './types/subtitle.entities';
 import {
   ALIGNMENT_OPTIONS,
   DEFAULT_SUBTITLE_STYLE,
