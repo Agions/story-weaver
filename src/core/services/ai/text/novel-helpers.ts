@@ -111,6 +111,25 @@ export const CHAPTER_PATTERNS: RegExp[] = [
 ];
 
 /**
+ * 构造 NovelScene 对象。
+ * 内部 helper — 消除 ruleBasedSegmentation 内 15L scenes.push({...}) 模板重复。
+ */
+function createScene(chapterId: string, sceneNumber: number, content: string): NovelScene {
+  return {
+    id: `scene_${chapterId}_${sceneNumber}`,
+    chapterId,
+    sceneNumber,
+    content: content.trim(),
+    characters: extractCharacterNames(content),
+    startPosition: 0,
+    endPosition: content.length,
+    dialogues: [],
+    emotions: [],
+    tags: [],
+  };
+}
+
+/**
  * 基于规则的场景分割（备用方案）
  */
 export function ruleBasedSegmentation(
@@ -133,18 +152,7 @@ export function ruleBasedSegmentation(
       (paragraph.includes('。') || paragraph.includes('！') || paragraph.includes('？'))
     ) {
       sceneNumber++;
-      scenes.push({
-        id: `scene_${chapter.id}_${sceneNumber}`,
-        chapterId: chapter.id,
-        sceneNumber,
-        content: currentSceneContent.trim(),
-        characters: extractCharacterNames(currentSceneContent),
-        startPosition: 0,
-        endPosition: currentSceneContent.length,
-        dialogues: [],
-        emotions: [],
-        tags: [],
-      });
+      scenes.push(createScene(chapter.id, sceneNumber, currentSceneContent));
       currentSceneContent = '';
     }
   }
@@ -152,18 +160,7 @@ export function ruleBasedSegmentation(
   // 处理剩余内容
   if (currentSceneContent.trim()) {
     sceneNumber++;
-    scenes.push({
-      id: `scene_${chapter.id}_${sceneNumber}`,
-      chapterId: chapter.id,
-      sceneNumber,
-      content: currentSceneContent.trim(),
-      characters: extractCharacterNames(currentSceneContent),
-      startPosition: 0,
-      endPosition: currentSceneContent.length,
-      dialogues: [],
-      emotions: [],
-      tags: [],
-    });
+    scenes.push(createScene(chapter.id, sceneNumber, currentSceneContent));
   }
 
   return scenes;
