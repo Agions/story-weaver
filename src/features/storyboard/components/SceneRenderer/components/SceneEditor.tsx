@@ -247,38 +247,24 @@ export const SceneEditor: React.FC<SceneEditorProps> = ({
                   </div>
 
                   <Row gutter={8}>
-                    <Col span={8}>
-                      <div className={styles.formGroup}>
-                        <Text type="secondary">X</Text>
-                        <Slider
-                          value={prop.position.x}
-                          onChange={(value) =>
-                            onUpdateProp(scene.id, prop.id, 'position', {
-                              ...prop.position,
-                              x: value,
-                            })
-                          }
-                          min={0}
-                          max={100}
-                        />
-                      </div>
-                    </Col>
-                    <Col span={8}>
-                      <div className={styles.formGroup}>
-                        <Text type="secondary">Y</Text>
-                        <Slider
-                          value={prop.position.y}
-                          onChange={(value) =>
-                            onUpdateProp(scene.id, prop.id, 'position', {
-                              ...prop.position,
-                              y: value,
-                            })
-                          }
-                          min={0}
-                          max={100}
-                        />
-                      </div>
-                    </Col>
+                    {(['x', 'y'] as const).map((axis) => (
+                      <Col key={axis} span={8}>
+                        <div className={styles.formGroup}>
+                          <Text type="secondary">{axis.toUpperCase()}</Text>
+                          <Slider
+                            value={prop.position[axis]}
+                            onChange={(value) =>
+                              onUpdateProp(scene.id, prop.id, 'position', {
+                                ...prop.position,
+                                [axis]: value,
+                              })
+                            }
+                            min={0}
+                            max={100}
+                          />
+                        </div>
+                      </Col>
+                    ))}
                     <Col span={8}>
                       <div className={styles.formGroup}>
                         <Text type="secondary">Z</Text>

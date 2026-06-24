@@ -84,6 +84,27 @@ class TelemetryService {
     }
   }
 
+  /**
+   * 构造 telemetry 事件基础 payload。
+   * 内部 helper — 消除 trackPipeline / trackStep / trackError 重复字段。
+   */
+  private buildBasePayload(params: {
+    event: TelemetryEvent;
+    projectId?: string;
+    duration?: number;
+    error?: string;
+    metadata?: Record<string, unknown>;
+  }) {
+    return {
+      event: params.event,
+      timestamp: Date.now(),
+      projectId: params.projectId,
+      duration: params.duration,
+      error: params.error,
+      metadata: params.metadata,
+    };
+  }
+
   trackPipeline(params: {
     event: TelemetryEvent;
     projectId: string;
@@ -91,14 +112,7 @@ class TelemetryService {
     error?: string;
     metadata?: Record<string, unknown>;
   }): void {
-    this.track({
-      event: params.event,
-      timestamp: Date.now(),
-      projectId: params.projectId,
-      duration: params.duration,
-      error: params.error,
-      metadata: params.metadata,
-    });
+    this.track(this.buildBasePayload(params));
   }
 
   trackStep(params: {
@@ -110,13 +124,8 @@ class TelemetryService {
     metadata?: Record<string, unknown>;
   }): void {
     this.track({
-      event: params.event,
-      timestamp: Date.now(),
-      projectId: params.projectId,
+      ...this.buildBasePayload(params),
       stepId: params.stepId,
-      duration: params.duration,
-      error: params.error,
-      metadata: params.metadata,
     });
   }
 

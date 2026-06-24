@@ -18,6 +18,7 @@ import {
 } from '@tauri-apps/plugin-notification';
 
 import { logger } from '@/core/utils/logger';
+
 import type {
   OpenFileOptions,
   SaveFileOptions,
@@ -40,6 +41,20 @@ export type {
   ExportProgressCallback,
   DirInfo,
 } from './commands.types';
+
+/**
+ * 将 Tauri 事件 payload 转成 ExportProgressCallback 期望的格式。
+ * 内部 helper — 消除 exportVideo 内联事件处理 + onExportProgress 重复字段映射。
+ */
+function toExportProgress(payload: ExportProgress): ExportProgress {
+  return {
+    exportId: payload.exportId,
+    stage: payload.stage as ExportProgress['stage'],
+    progress: payload.progress,
+    message: payload.message,
+    error: payload.error,
+  };
+}
 
 // ========== 服务类 ==========
 
@@ -302,13 +317,7 @@ class TauriService {
     if (onProgress) {
       unlisten = await listen<ExportProgress>('export-progress', (event) => {
         if (event.payload.exportId === exportId) {
-          onProgress({
-            exportId: event.payload.exportId,
-            stage: event.payload.stage as ExportProgress['stage'],
-            progress: event.payload.progress,
-            message: event.payload.message,
-            error: event.payload.error,
-          });
+          onProgress(toExportProgress(event.payload));
         }
       });
     }
@@ -331,13 +340,7 @@ class TauriService {
    */
   async onExportProgress(callback: ExportProgressCallback): Promise<UnlistenFn> {
     return listen<ExportProgress>('export-progress', (event) => {
-      callback({
-        exportId: event.payload.exportId,
-        stage: event.payload.stage as ExportProgress['stage'],
-        progress: event.payload.progress,
-        message: event.payload.message,
-        error: event.payload.error,
-      });
+      callback(toExportProgress(event.payload));
     });
   }
 
