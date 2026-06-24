@@ -50,11 +50,8 @@ export const BasicSkeleton = ({ width, height, className }: BasicSkeletonProps) 
 // 卡片骨架屏
 // ============================================
 
-export interface CardSkeletonProps {
-  title?: boolean | string;
-  avatar?: boolean;
-  cover?: boolean;
-  actions?: boolean;
+/** 4 个骨架屏 interface 共享的 6 字段基类型。 */
+export interface BaseSkeletonProps {
   active?: boolean;
   [key: string]: unknown;
   width?: string | number;
@@ -62,6 +59,13 @@ export interface CardSkeletonProps {
   style?: React.CSSProperties;
   className?: string;
 }
+
+export type CardSkeletonProps = BaseSkeletonProps & {
+  title?: boolean | string;
+  avatar?: boolean;
+  cover?: boolean;
+  actions?: boolean;
+};
 
 export const CardSkeleton = ({
   title = true,
@@ -86,18 +90,12 @@ export const CardSkeleton = ({
 // 列表骨架屏
 // ============================================
 
-export interface ListSkeletonProps {
+export type ListSkeletonProps = BaseSkeletonProps & {
   count?: number;
   avatar?: boolean;
   cover?: boolean;
   actions?: boolean;
-  active?: boolean;
-  [key: string]: unknown;
-  width?: string | number;
-  height?: string | number;
-  style?: React.CSSProperties;
-  className?: string;
-}
+};
 
 export const ListSkeleton = ({
   count = 3,
@@ -121,17 +119,11 @@ export const ListSkeleton = ({
 };
 // ============================================
 
-export interface FormSkeletonProps {
+export type FormSkeletonProps = BaseSkeletonProps & {
   count?: number;
   labels?: boolean;
   button?: boolean;
-  active?: boolean;
-  [key: string]: unknown;
-  width?: string | number;
-  height?: string | number;
-  style?: React.CSSProperties;
-  className?: string;
-}
+};
 
 export const FormSkeleton = ({
   count = 4,
@@ -161,18 +153,12 @@ export const FormSkeleton = ({
 // 统计卡片骨架屏
 // ============================================
 
-export interface StatisticSkeletonProps {
+export type StatisticSkeletonProps = BaseSkeletonProps & {
   count?: number;
   icon?: boolean;
   title?: boolean | string;
   value?: boolean;
-  active?: boolean;
-  [key: string]: unknown;
-  width?: string | number;
-  height?: string | number;
-  style?: React.CSSProperties;
-  className?: string;
-}
+};
 
 export const StatisticSkeleton = ({
   count = 4,
