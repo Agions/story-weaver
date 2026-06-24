@@ -16,7 +16,7 @@ import { SelectItem, AntDSelect as Select } from '@/shared/components/ui/select'
 import { Slider } from '@/shared/components/ui/slider';
 import type { CameraMotionConfig, FrameAnimation } from '@/shared/types/composition';
 
-import { CAMERA_MOTION_OPTIONS } from './constants';
+import { CAMERA_MOTION_OPTIONS, renderOptionItems } from './constants';
 
 interface FrameEditFormProps {
   frameId: string;
@@ -77,11 +77,7 @@ const FrameEditForm = ({
             }}
             placeholder="选择镜头运动"
           >
-            {CAMERA_MOTION_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
-              </SelectItem>
-            ))}
+            {renderOptionItems(CAMERA_MOTION_OPTIONS)}
           </Select>
         </Col>
         <Col span={12}>

@@ -28,7 +28,7 @@ interface GlobalSettingsFormProps {
   }) => void;
 }
 
-import { TRANSITION_OPTIONS } from './constants';
+import { TRANSITION_OPTIONS, renderOptionItems } from './constants';
 
 function GlobalSettingsForm({ initialValues, onSave }: GlobalSettingsFormProps) {
   const [frameDuration, setFrameDuration] = useState<number>(initialValues.frameDuration);
@@ -63,11 +63,7 @@ function GlobalSettingsForm({ initialValues, onSave }: GlobalSettingsFormProps) 
         <Col span={12}>
           <label className="block text-sm font-medium mb-1">转场效果</label>
           <Select value={effect} onChange={(v) => setEffect(v as TransitionEffect)}>
-            {TRANSITION_OPTIONS.map((opt) => (
-              <SelectItem key={opt.value} value={opt.value}>
-                {opt.label}
-              </SelectItem>
-            ))}
+            {renderOptionItems(TRANSITION_OPTIONS)}
           </Select>
         </Col>
         <Col span={12}>

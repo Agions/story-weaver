@@ -1,6 +1,10 @@
 /**
- * CompositionStudio 共享常量
+ * CompositionStudio 共享常量 + 工具
  */
+
+import React from 'react';
+
+import { SelectItem } from '@/shared/components/ui/select';
 
 export const TRANSITION_OPTIONS = [
   { value: 'none', label: '无' },
@@ -29,3 +33,20 @@ export const CAMERA_MOTION_OPTIONS = [
   { value: 'zoom-out', label: '缩小' },
   { value: 'shake', label: '抖动' },
 ] as const;
+
+export interface LabeledOption {
+  value: string;
+  label: string;
+}
+
+/**
+ * 把 options 数组映射为 <SelectItem> 列表。
+ * 用于 SELECT 中渲染 TRANSITION_OPTIONS / CAMERA_MOTION_OPTIONS 等。
+ */
+export function renderOptionItems(options: readonly LabeledOption[]): React.ReactElement[] {
+  return options.map((opt) => (
+    <SelectItem key={opt.value} value={opt.value}>
+      {opt.label}
+    </SelectItem>
+  ));
+}
