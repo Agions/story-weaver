@@ -5,6 +5,7 @@
  * 共享 ffmpeg-pipeline 工具，仅参数构造不同。
  */
 
+import type { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile } from '@ffmpeg/util';
 
 import { getFFmpegInstance, setActiveProgressCallback } from './ffmpeg-instance';
@@ -17,6 +18,31 @@ import type { ProgressCallback, SubtitleStyle, SubtitleTrack } from './types';
  */
 const DEFAULT_BURNED_SUBTITLE_STYLE =
   'FontName=Arial,FontSize=24,PrimaryColour=&HFFFFFF,OutlineColour=&H000000,Outline=2';
+
+/**
+ * 视频导出流程的"收尾步骤"——消除 3 个 export 函数尾部 11L 模板重复。
+ * 内部 helper — 收 progress 通知 + 读取输出 + 清理临时文件 + 关闭 progress 回调。
+ */
+async function finalizeOutput(
+  ff: FFmpeg,
+  outputPath: string,
+  outputFormat: 'mp4' | 'webm',
+  cleanupFiles: string[],
+  progressCallback?: ProgressCallback
+): Promise<{ resultBlob: Blob; outputPath: string }> {
+  progressCallback?.({
+    progress: 90,
+    status: 'encoding',
+    message: '生成输出文件...',
+  });
+
+  const { blob: resultBlob } = await readOutputAsBlob(ff, outputPath, `video/${outputFormat}`);
+
+  await safeDeleteFiles(ff, cleanupFiles);
+
+  setActiveProgressCallback(null);
+  return { resultBlob, outputPath };
+}
 
 /** 把字幕烧录到视频中（保留原 addSubtitlesWithFFmpeg 签名与行为）。 */
 export async function addSubtitlesWithFFmpeg(
@@ -59,18 +85,13 @@ export async function addSubtitlesWithFFmpeg(
     outputPath,
   ]);
 
-  progressCallback?.({
-    progress: 90,
-    status: 'encoding',
-    message: '生成输出文件...',
-  });
-
-  const { blob: resultBlob } = await readOutputAsBlob(ff, outputPath, `video/${outputFormat}`);
-
-  await safeDeleteFiles(ff, ['input_video', 'subtitles.srt', outputPath]);
-
-  setActiveProgressCallback(null);
-  return { resultBlob, outputPath };
+  return finalizeOutput(
+    ff,
+    outputPath,
+    outputFormat,
+    ['input_video', 'subtitles.srt', outputPath],
+    progressCallback
+  );
 }
 
 /** 添加背景音乐（保留原 addBackgroundMusicWithFFmpeg 签名与行为）。 */
@@ -132,18 +153,13 @@ export async function addBackgroundMusicWithFFmpeg(
     outputPath,
   ]);
 
-  progressCallback?.({
-    progress: 90,
-    status: 'encoding',
-    message: '生成输出文件...',
-  });
-
-  const { blob: resultBlob } = await readOutputAsBlob(ff, outputPath, `video/${outputFormat}`);
-
-  await safeDeleteFiles(ff, ['input_video', musicFileName, outputPath]);
-
-  setActiveProgressCallback(null);
-  return { resultBlob, outputPath };
+  return finalizeOutput(
+    ff,
+    outputPath,
+    outputFormat,
+    ['input_video', musicFileName, outputPath],
+    progressCallback
+  );
 }
 
 /**
@@ -275,16 +291,11 @@ export async function concatenateVideosWithFFmpeg(
     outputPath,
   ]);
 
-  progressCallback?.({
-    progress: 90,
-    status: 'encoding',
-    message: '生成输出文件...',
-  });
-
-  const { blob: resultBlob } = await readOutputAsBlob(ff, outputPath, `video/${outputFormat}`);
-
-  await safeDeleteFiles(ff, [...inputNames, 'concat.txt', outputPath]);
-
-  setActiveProgressCallback(null);
-  return { resultBlob, outputPath };
+  return finalizeOutput(
+    ff,
+    outputPath,
+    outputFormat,
+    [...inputNames, 'concat.txt', outputPath],
+    progressCallback
+  );
 }
