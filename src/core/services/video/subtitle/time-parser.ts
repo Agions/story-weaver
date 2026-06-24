@@ -6,10 +6,11 @@
  */
 
 /**
- * 解析 SRT 时间：HH:MM:SS,mmm → 秒
+ * 解析 HH:MM:SS,mmm / HH:MM:SS.mmm 格式（24h 时分秒 + 毫秒）
  * 无法匹配时返回 0（与原行为一致）。
+ * SRT 与 VTT 长格式共用此逻辑 — 提取为内部 helper 消除重复。
  */
-export function parseSRTTime(time: string): number {
+function parseTimeHMS(time: string): number {
   const match = time.match(/(\d{2}):(\d{2}):(\d{2})[,.](\d{3})/);
   if (!match) {
     return 0;
@@ -21,6 +22,13 @@ export function parseSRTTime(time: string): number {
   const milliseconds = parseInt(match[4], 10);
 
   return hours * 3600 + minutes * 60 + seconds + milliseconds / 1000;
+}
+
+/**
+ * 解析 SRT 时间：HH:MM:SS,mmm → 秒
+ */
+export function parseSRTTime(time: string): number {
+  return parseTimeHMS(time);
 }
 
 /**
@@ -36,15 +44,5 @@ export function parseVTTTime(time: string): number {
     }
   }
 
-  const match = time.match(/(\d{2}):(\d{2}):(\d{2})[,.](\d{3})/);
-  if (!match) {
-    return 0;
-  }
-
-  const hours = parseInt(match[1], 10);
-  const minutes = parseInt(match[2], 10);
-  const seconds = parseInt(match[3], 10);
-  const milliseconds = parseInt(match[4], 10);
-
-  return hours * 3600 + minutes * 60 + seconds + milliseconds / 1000;
+  return parseTimeHMS(time);
 }

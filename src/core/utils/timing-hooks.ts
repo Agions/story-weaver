@@ -7,26 +7,13 @@ import { debounce, throttle } from '@/shared/utils';
 
 type GenericFunction = (...args: unknown[]) => unknown;
 
-/** 防抖 Hook */
-export function useDebounce<T extends GenericFunction>(
+/**
+ * 通用包装 hook 工厂：用 ref 持有最新 callback，返回 useCallback 包装的限流/防抖版本。
+ * 内部 helper — 消除 useDebounce/useThrottle 重复结构。
+ */
+function useRateLimited<T extends GenericFunction>(
   callback: T,
-  delay: number
-): (...args: Parameters<T>) => void {
-  const callbackRef = useRef<T>(callback);
-
-  useEffect(() => {
-    callbackRef.current = callback;
-  }, [callback]);
-
-  return useCallback(
-    (...args: Parameters<T>) => debounce(callbackRef.current as GenericFunction, delay)(...args),
-    [delay]
-  );
-}
-
-/** 节流 Hook */
-export function useThrottle<T extends GenericFunction>(
-  callback: T,
+  limiter: (fn: GenericFunction, limit: number) => GenericFunction,
   limit: number
 ): (...args: Parameters<T>) => void {
   const callbackRef = useRef<T>(callback);
@@ -36,9 +23,25 @@ export function useThrottle<T extends GenericFunction>(
   }, [callback]);
 
   return useCallback(
-    (...args: Parameters<T>) => throttle(callbackRef.current as GenericFunction, limit)(...args),
+    (...args: Parameters<T>) => limiter(callbackRef.current as GenericFunction, limit)(...args),
     [limit]
   );
+}
+
+/** 防抖 Hook */
+export function useDebounce<T extends GenericFunction>(
+  callback: T,
+  delay: number
+): (...args: Parameters<T>) => void {
+  return useRateLimited(callback, debounce, delay);
+}
+
+/** 节流 Hook */
+export function useThrottle<T extends GenericFunction>(
+  callback: T,
+  limit: number
+): (...args: Parameters<T>) => void {
+  return useRateLimited(callback, throttle, limit);
 }
 
 type CountdownReturn = [number, () => void, () => void, () => void];

@@ -16,24 +16,31 @@ export function downloadFile(content: string | Blob, filename: string, type?: st
   URL.revokeObjectURL(url);
 }
 
-/** 读取文件为 Data URL */
-export function readFileAsDataURL(file: File): Promise<string> {
+/**
+ * 通用 FileReader Promise 包装：根据 encoding 调用对应 readAs* 方法。
+ * 内部 helper — 消除 readFileAsDataURL 与 readFileAsText 重复结构。
+ */
+function readFileAs(file: File, encoding: 'data-url' | 'text'): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => resolve(reader.result as string);
     reader.onerror = reject;
-    reader.readAsDataURL(file);
+    if (encoding === 'data-url') {
+      reader.readAsDataURL(file);
+    } else {
+      reader.readAsText(file);
+    }
   });
+}
+
+/** 读取文件为 Data URL */
+export function readFileAsDataURL(file: File): Promise<string> {
+  return readFileAs(file, 'data-url');
 }
 
 /** 读取文件为文本 */
 export function readFileAsText(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsText(file);
-  });
+  return readFileAs(file, 'text');
 }
 
 /** 复制到剪贴板（Clipboard API + execCommand fallback） */
