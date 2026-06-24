@@ -65,8 +65,6 @@ const ScriptEditor = lazy(importScriptEditor);
 const RenderCenter = lazy(importRenderCenter);
 const CharacterDesigner = lazy(importCharacterDesigner);
 const CompositionStudio = lazy(importCompositionStudio);
-const AudioEditor = lazy(importAudioEditor);
-const CostDashboard = lazy(importCostDashboard);
 
 const ProjectDetail = () => {
   const { id } = useParams<{ id: string }>();
