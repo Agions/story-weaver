@@ -4,6 +4,9 @@
  */
 import React from 'react';
 
+import type { FrameComment, StoryboardVersion, VersionDiffSummary } from '@/core/services';
+import { collaborationService } from '@/core/services';
+import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
 import { Alert } from '@/shared/components/ui/alert';
 import { Button } from '@/shared/components/ui/button';
 import { Input } from '@/shared/components/ui/input';
@@ -14,9 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/components/ui/select';
-import type { FrameComment, StoryboardVersion, VersionDiffSummary } from '@/core/services';
-import { collaborationService } from '@/core/services';
-import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
 
 import styles from '../ProjectEdit.module.less';
 
@@ -37,6 +37,36 @@ export interface CollaborationPanelProps {
   onLeftVersionChange: (v: string | undefined) => void;
   onRightVersionChange: (v: string | undefined) => void;
   onVersionLabelChange: (v: string) => void;
+}
+
+/**
+ * 通用版本 Select — 消除 CollaborationPanel 内版本 A/B 两个 Select 的 11L 模板重复。
+ */
+function VersionSelect({
+  value,
+  onValueChange,
+  placeholder,
+  versions,
+}: {
+  value: string | undefined;
+  onValueChange: (v: string) => void;
+  placeholder: string;
+  versions: ReadonlyArray<{ id: string; label: string }>;
+}) {
+  return (
+    <Select value={value} onValueChange={onValueChange}>
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder={placeholder} />
+      </SelectTrigger>
+      <SelectContent>
+        {versions.map((v) => (
+          <SelectItem key={v.id} value={v.id}>
+            {v.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+  );
 }
 
 function CollaborationPanel({
@@ -111,30 +141,18 @@ function CollaborationPanel({
           </Button>
         </div>
         <div className="flex gap-2 mb-3 flex-wrap">
-          <Select value={compareLeftVersionId} onValueChange={(v) => onLeftVersionChange(v)}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="选择版本A" />
-            </SelectTrigger>
-            <SelectContent>
-              {storyboardVersions.map((v) => (
-                <SelectItem key={v.id} value={v.id}>
-                  {v.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={compareRightVersionId} onValueChange={(v) => onRightVersionChange(v)}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="选择版本B" />
-            </SelectTrigger>
-            <SelectContent>
-              {storyboardVersions.map((v) => (
-                <SelectItem key={v.id} value={v.id}>
-                  {v.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <VersionSelect
+            value={compareLeftVersionId}
+            onValueChange={(v) => onLeftVersionChange(v)}
+            placeholder="选择版本A"
+            versions={storyboardVersions}
+          />
+          <VersionSelect
+            value={compareRightVersionId}
+            onValueChange={(v) => onRightVersionChange(v)}
+            placeholder="选择版本B"
+            versions={storyboardVersions}
+          />
           <Button variant="outline" onClick={onCompareVersions}>
             版本差异
           </Button>
