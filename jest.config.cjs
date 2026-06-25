@@ -24,6 +24,7 @@ module.exports = {
     '<rootDir>/src/__tests__/setup.ts',
     '<rootDir>/src/__tests__/utils/test-utils.tsx',
     '<rootDir>/src/__tests__/utils/mock-context.ts',
+    '<rootDir>/src/__tests__/fixtures/',
     '<rootDir>/src/__tests__/__mocks__/@tauri-apps/api-tauri.ts',
     '<rootDir>/src/__tests__/__mocks__/@tauri-apps/api-core.ts',
     // ProjectEdit/ProjectDetail page tests skipped: useForm() in ProjectEditPage
@@ -50,10 +51,9 @@ module.exports = {
     '^@tauri-apps/plugin-fs$': '<rootDir>/src/__mocks__/@tauri-apps/api/fs.ts',
     '^@tauri-apps/plugin-dialog$': '<rootDir>/src/__mocks__/@tauri-apps/api/dialog.ts',
     '^@tauri-apps/plugin-notification$': '<rootDir>/src/__mocks__/@tauri-apps/api/notification.ts',
-    '^jspdf$': '<rootDir>/src/__tests__/__mocks__/jspdf.js',
-    '^jspdf-autotable$': '<rootDir>/src/__tests__/__mocks__/jspdf-autotable.js',
+    // jspdf/jspdf-autotable mock removed (v3.0 dead config — 0 test imports)
     '^uuid$': '<rootDir>/src/__tests__/__mocks__/uuid.js',
-    '^@frame-fab/common/(.*)$': '<rootDir>/packages/common/src/$1',
+    // @frame-fab/common path removed (v3.0 dead config — packages/common dir missing)
     '^@ffmpeg/ffmpeg$': '<rootDir>/src/__tests__/__mocks__/@ffmpeg/ffmpeg.js',
     '^@ffmpeg/util$': '<rootDir>/src/__tests__/__mocks__/@ffmpeg/util.js',
   },
