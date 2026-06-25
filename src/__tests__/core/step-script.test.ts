@@ -18,8 +18,7 @@ jest.mock('@/core/services/ai/text/ai.service', () => ({
 }));
 
 import { aiService } from '@/core/services/ai/text/ai.service';
-
-import { createMockStepContext } from '../utils/mock-context';
+import { createMockStepContext } from '@/__tests__/fixtures';
 
 describe('ScriptStep', () => {
   const mockAiService = aiService as jest.Mocked<typeof aiService>;

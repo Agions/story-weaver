@@ -1,3 +1,5 @@
+import { createMockStepContext } from '@/__tests__/fixtures';
+
 import {
   PipelineStepId,
   StepStatus,
@@ -9,7 +11,6 @@ import {
   createStoryboardStep,
   type StoryboardOutput,
 } from '../../core/pipeline/step-storyboard';
-import { createMockStepContext } from '../utils/mock-context';
 
 describe('StoryboardStep', () => {
   // Sample scenes data

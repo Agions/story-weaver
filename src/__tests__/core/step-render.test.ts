@@ -1,6 +1,7 @@
+import { createMockStepContext } from '@/__tests__/fixtures';
+
 import { PipelineStepId, StepStatus } from '../../core/pipeline/pipeline.types';
 import { RenderStep, createRenderStep, type RenderOutput } from '../../core/pipeline/step-render';
-import { createMockStepContext } from '../utils/mock-context';
 
 describe('RenderStep', () => {
   describe('constructor', () => {

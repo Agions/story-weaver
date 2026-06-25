@@ -1,3 +1,5 @@
+import { createMockStepContext } from '@/__tests__/fixtures';
+
 import {
   VideoEditor,
   VideoEditingStep,
@@ -6,7 +8,6 @@ import {
   type AudioTrack,
   type Transition,
 } from '../../core/pipeline/step-video-editing';
-import { createMockStepContext } from '../utils/mock-context';
 
 describe('VideoEditor', () => {
   let editor: VideoEditor;

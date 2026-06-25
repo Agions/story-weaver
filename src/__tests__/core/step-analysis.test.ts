@@ -1,3 +1,5 @@
+import { createMockStepContext } from '@/__tests__/fixtures';
+
 import {
   PipelineStepId,
   StepStatus,
@@ -8,7 +10,6 @@ import {
   createAnalysisStep,
   type ImportOutput,
 } from '../../core/pipeline/step-analysis';
-import { createMockStepContext } from '../utils/mock-context';
 
 describe('AnalysisStep', () => {
   // Sample chapters data

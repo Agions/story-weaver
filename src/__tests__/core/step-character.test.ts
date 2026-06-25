@@ -1,3 +1,5 @@
+import { createMockStepContext } from '@/__tests__/fixtures';
+
 import {
   PipelineStepId,
   StepStatus,
@@ -8,7 +10,6 @@ import {
   createCharacterStep,
   type CharacterOutput,
 } from '../../core/pipeline/step-character';
-import { createMockStepContext } from '../utils/mock-context';
 
 // Mock character service
 const mockCreate = jest.fn();
