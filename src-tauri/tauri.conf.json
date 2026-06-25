@@ -70,17 +70,7 @@
   },
   "plugins": {
     "fs": {
-      "scope": {
-        "allow": [
-          "$APPDATA/**",
-          "$APPCONFIG/**",
-          "$TEMP/**",
-          "$RESOURCE/**",
-          "$DOWNLOAD/**",
-          "$DOCUMENT/**",
-          "$VIDEO/**"
-        ]
-      }
+      "requireLiteralLeadingDot": false
     },
     "dialog": {
       "all": true
