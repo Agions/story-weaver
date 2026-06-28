@@ -153,4 +153,3 @@ __tests__/
 - [架构设计总览](/developer-guide/architecture)
 - [平台适配层](/developer-guide/platform-layer)
 - [Pipeline 引擎 API](/developer-guide/pipeline-api)
-- [ADR-0002: 前端分层架构](/adr/0002-frontend-monorepo-ddd.md)

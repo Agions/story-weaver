@@ -78,7 +78,6 @@ export default defineConfig({
       { text: '用户手册', link: '/user-guide/' },
       { text: 'API 文档', link: '/api/overview' },
       { text: '开发者', link: '/developer-guide/architecture' },
-      { text: '架构决策', link: '/adr/' },
       {
         text: '更多',
         items: [
@@ -156,19 +155,6 @@ export default defineConfig({
             { text: '构建与发布', link: '/deployment/build' },
             { text: '环境变量', link: '/deployment/environment' },
             { text: 'Docker 开发环境', link: '/deployment/docker' },
-          ],
-        },
-      ],
-      '/adr/': [
-        {
-          text: '架构决策记录',
-          items: [
-            { text: 'ADR 索引', link: '/adr/' },
-            { text: '0001 · Tauri 桌面端架构', link: '/adr/0001-tauri-desktop-architecture' },
-            { text: '0002 · 前端分层 (DDD)', link: '/adr/0002-frontend-monorepo-ddd' },
-            { text: '0003 · Platform Adapter', link: '/adr/0003-platform-adapter' },
-            { text: '0004 · 品牌重新设计', link: '/adr/0004-brand-redesign' },
-            { text: '0006 · Pipeline Engine', link: '/adr/0006-pipeline-engine' },
           ],
         },
       ],
