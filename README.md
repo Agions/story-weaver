@@ -118,8 +118,6 @@ VITE_KLING_API_KEY=your_key_here     # 快手 Kling（图像，可选）
 └──────────────────────────────────────────────────────────────┘
 ```
 
-详细架构决策见 [`docs/adr/`](./docs/adr/) (Tauri 桌面优先 + Monorepo DDD 分层)。
-
 ---
 
 ## 📂 项目结构
@@ -140,7 +138,6 @@ frame-fab/
 │   ├── src/utils/                # 路径验证/ID 生成/FFPS 解析
 │   └── src/models/               # 领域模型（app_settings/video_metadata/shortcut）
 ├── docs/                         # VitePress 文档站
-│   ├── adr/                      # 架构决策记录（6 篇）
 │   ├── api/                      # API 参考
 │   ├── performance/              # 性能基准报告
 │   ├── developer-guide/          # 架构/项目结构/服务
@@ -191,7 +188,6 @@ frame-fab/
 | 开发     | [平台适配层](./docs/developer-guide/platform-layer.md)     | Web/Desktop 抽象             |
 | 开发     | [服务清单](./docs/developer-guide/services.md)             | 21 个核心服务                |
 | **API**  | [服务参考](./docs/api/)                                    | AI/图像/视频/TTS/字幕/流水线 |
-| **决策** | [ADR 索引](./docs/adr/)                                    | 6 篇架构决策记录             |
 | **品牌** | [品牌设计指南](./docs/BRAND_GUIDELINES.md)                 | Logo/色彩/字体规范           |
 | **性能** | [v2.2.0 基准](./docs/performance/benchmark-v2.2.0.md)      | bundle/流水线/UI LCP         |
 

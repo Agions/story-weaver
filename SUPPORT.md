@@ -14,7 +14,6 @@
 | **配置说明**          | [/getting-started/configuration.md](./docs/getting-started/configuration.md) |
 | **架构设计**          | [/developer-guide/architecture.md](./docs/developer-guide/architecture.md)   |
 | **API 参考**          | [/api/](./docs/api/)                                                         |
-| **ADR 决策记录**      | [/adr/](./docs/adr/)                                                         |
 
 ### 💬 社区支持
 

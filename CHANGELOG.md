@@ -190,8 +190,6 @@ Comprehensive post-v3.2 audit. Single mega PR (#22) supersedes 5 planned sequent
 
 #### 新增文档
 
-- `docs/adr/0001-tauri-desktop-architecture.md` — 桌面优先架构决策记录
-- `docs/adr/0002-frontend-monorepo-ddd.md` — Monorepo + DDD 分层决策记录
 - `docs/performance/benchmark-v2.2.0.md` — 性能基准报告
 
 ## [2.1.0] - 2026-06-02

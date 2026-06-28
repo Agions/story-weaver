@@ -69,7 +69,6 @@ frame-fab/
 │   ├── src/utils/                # 路径验证/ID 生成/FFPS 解析
 │   └── src/constants/            # 允许目录白名单
 ├── docs/                         # VitePress 文档站
-│   ├── adr/                      # 架构决策记录 (ADR)
 │   ├── api/                      # API 参考
 │   ├── performance/              # 性能基准报告
 │   ├── developer-guide/          # 架构/项目结构/服务
