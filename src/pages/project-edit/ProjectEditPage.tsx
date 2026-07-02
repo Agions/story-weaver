@@ -99,7 +99,7 @@ const ProjectEdit = () => {
   const [description, setDescription] = useState<string>('');
 
   // ProjectLoad 子集: currentStep/loading/saving/project/error → useProject hook
-  // (v3.4 P0 phase 4 R2 极细: 利用现成 useProject 集中管, 减少 5 useState)
+  // (v3.4 P0 phase 4 R2: 利用现成 useProject 集中管, 减少 5 useState)
   const {
     project,
     saving,
