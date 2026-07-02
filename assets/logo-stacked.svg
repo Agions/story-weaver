@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 400" role="img" aria-label="frame-fab stacked logo">
   <title>frame-fab</title>
-  <desc>堆叠式 logo: 顶部图标 + 中英文字 + 副标 (v3.0 升级版)</desc>
+  <desc>堆叠式 logo: 顶部图标 + 中英文字 + 副标 (v2.2.3 patch版)</desc>
   <defs>
     <linearGradient id="brandPrimaryS" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#6366F1"/>

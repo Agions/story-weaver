@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/schema.json",
   "productName": "frame-fab",
-  "version": "3.0.0",
+  "version": "2.2.3",
   "identifier": "com.framefab.app",
   "build": {
     "beforeDevCommand": "npm run dev",

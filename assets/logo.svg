@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="frame-fab">
   <title>frame-fab</title>
-  <desc>AI 漫剧创作平台 — 胶片三帧 + 多模型神经连结 + 中心光圈的视觉锤 (v3.0)</desc>
+  <desc>AI 漫剧创作平台 — 胶片三帧 + 多模型神经连结 + 中心光圈的视觉锤 (v2.2.3)</desc>
   <defs>
     <!-- 主品牌渐变: 靛 → 紫 → 品红 -->
     <linearGradient id="brandPrimary" x1="0%" y1="0%" x2="100%" y2="100%">

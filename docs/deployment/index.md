@@ -7,7 +7,7 @@ version: '>=3.0'
 
 # 部署文档
 
-> frame-fab v3.0 是 **Tauri 2.1 桌面应用**——**不是服务端**，**无需 K8s/PostgreSQL/Redis**。
+> frame-fab v2.2.3 是 **Tauri 2.1 桌面应用**——**不是服务端**，**无需 K8s/PostgreSQL/Redis**。
 > 本章节专注于**桌面端构建与发布**。
 
 ---
@@ -121,14 +121,14 @@ jobs:
 
 ## 六、性能预算
 
-| 指标 | 预算 | 实际 (v3.0) |
+| 指标 | 预算 | 实际 (v2.2.3) |
 |------|------|-------------|
 | JS bundle gzip | ≤ 350 KB | ~280 KB |
 | Tauri 二进制 | ≤ 30 MB | ~26 MB |
 | 冷启动 | ≤ 1.5s | ~0.9s |
 | 流水线 10 步（无 AI） | < 500ms | 275ms |
 
-详见 [v3.0 性能基准](../performance/benchmark-v3.0.md)。
+详见 [v2.2.3 性能基准](../performance/benchmark-v2.2.3.md)。
 
 ---
 

@@ -45,9 +45,9 @@ features:
     details: 全局快捷键、系统托盘、原生菜单、文件 I/O；macOS / Windows / Linux 三端一致的体验
 ---
 
-<!-- 顶部品牌信息条 v3.0 -->
+<!-- 顶部品牌信息条 v2.2.3 -->
 <div class="vp-brand-bar">
-  <span class="vp-brand-tag">🆕 v3.0</span>
+  <span class="vp-brand-tag">🆕 v2.2.3</span>
   <span class="vp-brand-info">44 个大文件拆分重构 · 195+ 子模块 · 0 调用方影响</span>
   <a href="https://github.com/Agions/frame-fab/blob/main/CHANGELOG.md" class="vp-brand-link">查看更新 →</a>
 </div>

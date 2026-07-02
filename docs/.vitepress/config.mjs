@@ -1,7 +1,7 @@
 import { defineConfig } from 'vitepress'
 
 /**
- * frame-fab v3.0 VitePress Config
+ * frame-fab v2.2.3 VitePress Config
  *
  * Default appearance: light. Dark theme is opt-in via nav toggle.
  * Base path: /frame-fab/ (GitHub Pages repo, not user/org site).
@@ -25,7 +25,7 @@ export default defineConfig({
       dark: 'github-dark',
     },
     // NOTE: markdown-it-anchor 4.x 用 permalink: false 关闭自动 anchor link,
-    //       v3.0 已不需要 permalinkSymbol (旧 API)
+    //       v2.2.3 已不需要 permalinkSymbol (旧 API)
     anchor: false,
     toc: {
       level: [2, 3, 4],       // Include h4 in TOC
@@ -162,8 +162,8 @@ export default defineConfig({
         {
           text: '性能基准',
           items: [
-            { text: 'v3.0 基准报告（当前）', link: '/performance/benchmark-v3.0' },
-            { text: 'v2.2.0 基准报告（历史）', link: '/performance/benchmark-v2.2.0' },
+            { text: 'v2.2.3 基准报告', link: '/performance/benchmark-v2.2.3' },
+            { text: 'v2.2.0 历史报告', link: '/performance/benchmark-v2.2.0' },
           ],
         },
       ],

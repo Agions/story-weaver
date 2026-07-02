@@ -1,13 +1,13 @@
 ---
 title: 架构设计
-description: frame-fab v3.0 整体架构：Tauri 桌面 + 前端分层 (app/pages/features/shared/core/domain) + 10 步 Pipeline + AI 服务编排
+description: frame-fab v2.2.3 整体架构：Tauri 桌面 + 前端分层 (app/pages/features/shared/core/domain) + 10 步 Pipeline + AI 服务编排
 category: developer-guide
 version: '>=3.0'
 ---
 
 # 架构设计
 
-> frame-fab v3.0 的系统架构——**Tauri 2.1 桌面端** + **DDD 轻量分层前端** + **10 步 Pipeline** + **多 Provider AI 编排**。
+> frame-fab v2.2.3 的系统架构——**Tauri 2.1 桌面端** + **DDD 轻量分层前端** + **10 步 Pipeline** + **多 Provider AI 编排**。
 
 ## 一、设计目标
 
@@ -24,7 +24,7 @@ version: '>=3.0'
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│                    frame-fab 系统架构 (v3.0)                            │
+│                    frame-fab 系统架构 (v2.2.3)                            │
 └──────────────────────────────────────────────────────────────────────┘
 
   ┌─────────────────────────────────────────────────────────────────┐
@@ -342,7 +342,7 @@ unsub();
 | 冷启动                | ≤ 1.5s   | ~0.9s   |
 | 流水线 10 步（无 AI） | < 500ms  | 275ms   |
 
-详见 [v3.0 性能基准](../performance/benchmark-v3.0.md)。
+详见 [v2.2.3 性能基准](../performance/benchmark-v2.2.3.md)。
 
 ## 十、相关文档
 

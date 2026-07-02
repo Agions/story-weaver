@@ -7,7 +7,7 @@ version: '>=3.0'
 
 # 服务清单
 
-> frame-fab v3.0 把全部业务能力收敛到 **`src/core/services/`** 下的 **7 大领域**。
+> frame-fab v2.2.3 把全部业务能力收敛到 **`src/core/services/`** 下的 **7 大领域**。
 > 所有服务**默认导出单例**（不要 `new`），统一从 `@/core/services` 导入。
 
 ## 一、领域全景

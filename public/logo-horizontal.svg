@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" role="img" aria-label="frame-fab — AI Manju Studio">
   <title>frame-fab</title>
-  <desc>frame-fab 水平 logo: 图标 + 渐变文字 + 副标 (v3.0 升级版)</desc>
+  <desc>frame-fab 水平 logo: 图标 + 渐变文字 + 副标 (v2.2.3 patch版)</desc>
   <defs>
     <linearGradient id="brandPrimaryH" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#6366F1"/>
@@ -27,7 +27,7 @@
     </radialGradient>
   </defs>
 
-  <!-- 左侧图标 (复用 v3.0 设计) -->
+  <!-- 左侧图标 (复用 v2.2.3 patch) -->
   <g transform="translate(20 20) scale(0.625)">
     <rect x="16" y="16" width="224" height="224" rx="56" fill="url(#bgGlowH)"/>
     <g opacity="0.55">

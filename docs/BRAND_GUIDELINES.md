@@ -1,13 +1,13 @@
 ---
 title: 品牌设计指南
-description: frame-fab v3.0 视觉与品牌规范：Logo 体系、色彩、字体、组件、资产清单。所有贡献者请遵守。
+description: frame-fab v2.2.3 视觉与品牌规范：Logo 体系、色彩、字体、组件、资产清单。所有贡献者请遵守。
 category: brand
 version: '>=3.0'
 ---
 
 # 品牌设计指南 (Brand Guidelines)
 
-> frame-fab v3.0 的视觉锤与品牌规范——Logo 构成、配色系统、字体栈、组件样式、资产清单。
+> frame-fab v2.2.3 的视觉锤与品牌规范——Logo 构成、配色系统、字体栈、组件样式、资产清单。
 > 任何视觉修改请先读本指南，并开 issue 走设计 review。
 
 ---
@@ -33,7 +33,7 @@ version: '>=3.0'
 
 ---
 
-## 2. Logo 规范（v3.0 设计语言）
+## 2. Logo 规范（v2.2.3 patch语言）
 
 ### 2.1 元素构成（自外向内 5 层）
 

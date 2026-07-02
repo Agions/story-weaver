@@ -1,13 +1,13 @@
 ---
 title: 模块系统
-description: frame-fab v3.0 的领域分层与目录结构
+description: frame-fab v2.2.3 的领域分层与目录结构
 category: developer-guide
 version: '>=3.0'
 ---
 
 # 模块系统
 
-frame-fab 采用**领域驱动设计 (DDD)** 的轻量分层架构。从 v3.0 开始,目录按用户故事切分,业务与技术分离。
+frame-fab 采用**领域驱动设计 (DDD)** 的轻量分层架构。从 v2.2.3 开始,目录按用户故事切分,业务与技术分离。
 
 ## 顶层结构
 

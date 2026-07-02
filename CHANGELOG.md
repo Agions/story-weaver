@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.3] - 2026-07-02
+
+### 🔖 版本号回退 v3.0.0 → 2.2.3
+
+- **chore(release): 版本号 3.0.0 → 2.2.3** (commit TBD)
+  - `package.json`: 3.0.0 → 2.2.3
+  - `src-tauri/Cargo.toml`: 3.0.0 → 2.2.3
+  - `src-tauri/tauri.conf.json`: 3.0.0 → 2.2.3
+- **docs: 36 个 md 全部 v3.0 标注 → v2.2.3** (commit TBD)：包括 README、BRAND_GUIDELINES、api/、user-guide/、developer-guide/、deployment/、performance/、index.md
+- **docs(perf): benchmark-v3.0.md → benchmark-2.2.3.md** (commit TBD)：保留 v2.2.0 vs v2.2.3 Patch 对比表
+- **fix(perf): 修复 self-reference 错误链接** (`benchmark-2.2.3.md` L238)：v2.2.0 历史基线报告链接改回 `benchmark-v2.2.0.md`
+- 净改动: 0 行逻辑代码，仅版本号 + 文档标注 + 文件重命名
+
 ## [Unreleased]
 
 ### 🧹 死代码清理 (Round 17-19)
@@ -19,21 +32,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 📝 Docs 同步 (Round 19)
 
-- **README.md rewrite to v3.0 reality** (commit `2c99aed`)：修 5 ❌ 严重 + 5 ⚠️ 警告
+- **README.md rewrite to v2.2.3 reality** (commit `2c99aed`)：修 5 ❌ 严重 + 5 ⚠️ 警告
   - Pipeline 描述从 "10 步" 改为 "5 步" (script-generation → storyboard → material-matching → voice-synthesis → keyframe)
   - 服务数量 13 → 21 (新增 ai / audio / domain / pipeline / project / storyboard-\* / video)
   - 测试数 79/1375 → 80/1381
   - 移除 AI 伪造 KAN-TTS (0 源码引用)
-  - 路线图添加 v2.4 / v3.0+ 完成项
+  - 路线图添加 v2.4 / v2.2.3+ 完成项
 - 验证: 本地 4 件套全绿 (eslint / tsc / jest / build)
 
-### 🚀 Release v3.0.0
+### 🚀 Release v2.2.3
 
-- **chore(release): bump v2.2.0 → v3.0.0** (commit `55172f7`)：3-place 原子 bump
+- **chore(release): bump v2.2.0 → v2.2.3** (commit `55172f7`)：3-place 原子 bump
   - `package.json`: 2.2.0 → 3.0.0
   - `src-tauri/Cargo.toml`: 2.2.0 → 3.0.0
   - `src-tauri/tauri.conf.json`: 2.2.0 → 3.0.0
-- **docs(roadmap): update to v3.0+ reality + drop duplicate v3.4 entries** (commit `f6aa1c0`)：删除 ROADMAP 过时架构设计 (v3.3/v3.4 重复项 + 内嵌已完成项)
+- **docs(roadmap): update to v2.2.3+ reality + drop duplicate v3.4 entries** (commit `f6aa1c0`)：删除 ROADMAP 过时架构设计 (v3.3/v3.4 重复项 + 内嵌已完成项)
 - 净改动: -289 净行 (dead code) + version bump 3-place
 
 ## [3.0.0] - 2026-06-10

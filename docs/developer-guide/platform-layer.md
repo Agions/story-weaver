@@ -30,7 +30,7 @@ export async function readProject(path: string) {
 
 ## Platform Adapter 设计
 
-从 v3.0 开始,所有与运行时的交互都经过 `core/platform/` 抽象层:
+从 v2.2.3 开始,所有与运行时的交互都经过 `core/platform/` 抽象层:
 
 ```
 ┌─────────────────────────────────────┐

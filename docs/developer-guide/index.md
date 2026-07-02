@@ -7,7 +7,7 @@ version: '>=2.4'
 
 # 开发者指南
 
-> 本指南面向希望深入了解 frame-fab v3.0 架构、扩展功能或参与贡献的开发者。
+> 本指南面向希望深入了解 frame-fab v2.2.3 架构、扩展功能或参与贡献的开发者。
 
 ---
 
@@ -28,7 +28,7 @@ version: '>=2.4'
 
 ## 🏗️ 系统架构总览
 
-frame-fab v3.0 是一款**全自主 Agent 型**漫剧制作系统，核心特性包括：
+frame-fab v2.2.3 是一款**全自主 Agent 型**漫剧制作系统，核心特性包括：
 
 - **Self-Review Loop**：每步 AI 自审，不合格自动修复（最多 3 次循环）
 - **Quality Gate**：全自动质量门禁，确保输出品质
@@ -170,7 +170,7 @@ pnpm tauri dev
 | 跨平台层 | [平台适配层](./platform-layer.md) |
 | 自主模式 API | [Autonomous API](./autonomous-api.md) |
 | 生产部署 | [部署文档](../deployment/) |
-| 性能数据 | [性能基准 v3.0](../performance/benchmark-v3.0.md) |
+| 性能数据 | [性能基准 v2.2.3](../performance/benchmark-v2.2.3.md) |
 
 ---
 

@@ -7,7 +7,7 @@ version: '>=3.0'
 
 # Pipeline 引擎 API
 
-> frame-fab v3.0 的 Pipeline 引擎**对外 API**——10 步编排、StepChain 接口、Checkpoint 恢复。
+> frame-fab v2.2.3 的 Pipeline 引擎**对外 API**——10 步编排、StepChain 接口、Checkpoint 恢复。
 
 ## 一、核心类型
 
@@ -44,7 +44,7 @@ export enum PipelineStepId {
 | 9   | AUDIO_SYNTHESIS | 配音            | `ttsService` + `lipSyncService`                     |
 | 10  | EXPORT          | 导出 MP4        | `videoCompositorService` + FFmpeg                   |
 
-> 💡 v3.0 把 **scene 识别合并到 analysis**，把 **subtitle 嵌入合并到 composition**，因此核心代码只枚举 10 步（不重复）。
+> 💡 v2.2.3 把 **scene 识别合并到 analysis**，把 **subtitle 嵌入合并到 composition**，因此核心代码只枚举 10 步（不重复）。
 
 ### 1.2 StepChain（步骤链接口）
 
