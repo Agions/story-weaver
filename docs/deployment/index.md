@@ -128,7 +128,7 @@ jobs:
 | 冷启动 | ≤ 1.5s | ~0.9s |
 | 流水线 10 步（无 AI） | < 500ms | 275ms |
 
-详见 [v2.2.3 性能基准](../performance/benchmark-v2.2.3.md)。
+详见 [v2.2.3 性能基准](../performance/benchmark-2.2.3.md)。
 
 ---
 
