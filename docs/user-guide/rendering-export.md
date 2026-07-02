@@ -176,4 +176,4 @@ A: 启用硬件加速（NVENC/QSV/VideoToolbox），1080p 推荐 `medium` 预设
 - [TTS 服务](../api/tts-service.md)
 - [字幕服务](../api/subtitle-service.md)
 - [分镜设计](./storyboard-design.md)
-- [性能基准 v2.2.3](../performance/benchmark-v2.2.3.md)
+- [性能基准 v2.2.3](../performance/benchmark-2.2.3.md)
