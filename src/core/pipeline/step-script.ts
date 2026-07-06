@@ -1,29 +1,28 @@
-/**
- * Pipeline 步骤3：剧本生成 (Script Generation)
- *
- * 基于分析结果生成结构化视频剧本
- */
-
 import { aiService } from '@/core/services/ai/text/ai.service';
 import { logger } from '@/core/utils/logger';
 
-import type {
+import { BasePipelineStep } from './base-pipeline-step';
+import {
+  PipelineStepId,
   PipelineStep,
   StepInput,
-  StepOutput,
-  StepProgressEvent,
   RetryPolicy,
+  StepProgressEvent,
+  PipelineExecutionMode,
 } from './pipeline.types';
-import { PipelineStepId, PipelineExecutionMode } from './pipeline.types';
-import {
-  createFailedStepResult,
-  createSuccessStepResult,
-  reportStepProgress,
-  DEFAULT_RETRY_POLICY,
-} from './step-helpers';
 import type { ImportOutput } from './step-import';
 
-export interface ScriptStepConfig extends Partial<PipelineStep> {
+// ========== 配置与输出接口 ==========
+
+export interface ScriptStepConfig {
+  id?: string;
+  name?: string;
+  stepId?: PipelineStepId;
+  mode?: PipelineExecutionMode;
+  retryPolicy?: RetryPolicy;
+  dependencies?: PipelineStepId[];
+  parallelKeys?: string[];
+  onProgress?: (event: StepProgressEvent) => void;
   model?: string;
   provider?: string;
 }
@@ -42,82 +41,71 @@ export interface ScriptOutput {
   totalDuration: number;
 }
 
-export class ScriptStep implements PipelineStep {
-  readonly id: string;
-  readonly name: string;
-  readonly stepId: PipelineStepId;
-  readonly mode = PipelineExecutionMode.SEQUENCE;
-  readonly retryPolicy: RetryPolicy;
-  readonly dependencies = [PipelineStepId.IMPORT, PipelineStepId.ANALYSIS];
-  onProgress?: (event: StepProgressEvent) => void;
+// ========== ScriptStep 实现 ==========
 
+export class ScriptStep extends BasePipelineStep {
   private model: string;
   private provider: string;
+  private lastTokenCount = 0;
 
   constructor(config?: ScriptStepConfig) {
-    this.id = config?.id ?? 'step-script';
-    this.name = config?.name ?? '剧本生成';
-    this.stepId = PipelineStepId.SCRIPT;
-    this.retryPolicy = config?.retryPolicy ?? DEFAULT_RETRY_POLICY;
+    super({
+      ...config,
+      id: config?.id ?? 'step-script',
+      name: config?.name ?? '剧本生成',
+      stepId: config?.stepId ?? PipelineStepId.SCRIPT,
+      dependencies: config?.dependencies ?? [PipelineStepId.IMPORT, PipelineStepId.ANALYSIS],
+    });
     this.model = config?.model ?? 'glm-5';
     this.provider = config?.provider ?? 'zhipu';
   }
 
-  async execute(input: StepInput): Promise<StepOutput> {
-    const startTime = Date.now();
+  protected async executeImpl(input: StepInput): Promise<unknown> {
     const context = input.context;
-
     logger.info(`[ScriptStep] Generating script for workflow ${input.workflowId}`);
 
-    try {
-      // 获取分析结果
-      const analysisResult = context.getVariable<ImportOutput>('analysisResult');
-      const chapters = context.getVariable<ImportOutput['chapters']>('chapters');
+    const analysisResult = context.getVariable<ImportOutput>('analysisResult');
+    const chapters = context.getVariable<ImportOutput['chapters']>('chapters');
 
-      if (!chapters || chapters.length === 0) {
-        throw new Error('No content to generate script from');
-      }
-
-      this.reportProgress(10, '正在构建剧本生成提示词...');
-
-      // 构建提示词
-      const prompt = this.buildScriptPrompt(chapters, analysisResult);
-
-      this.reportProgress(30, '正在生成剧本结构...');
-
-      // 调用 AI 生成
-      const scriptContent = await aiService.generate(prompt, {
-        model: this.model,
-        provider: this.provider,
-        max_tokens: 8192,
-      });
-
-      this.reportProgress(70, '正在解析生成结果...');
-
-      // 解析 AI 返回的剧本
-      const scriptOutput = this.parseScriptOutput(scriptContent, chapters);
-
-      this.reportProgress(90, '剧本生成完成');
-
-      // 保存到上下文
-      context.setVariable('scriptOutput', scriptOutput);
-      context.setVariable('scenes', scriptOutput.scenes);
-
-      logger.success(`[ScriptStep] Script generated: ${scriptOutput.scenes.length} scenes`);
-
-      return createSuccessStepResult(this.stepId, startTime, scriptOutput, {
-        durationMs: Date.now() - startTime,
-        tokensUsed: scriptContent.length,
-      });
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      logger.error(`[ScriptStep] Script generation failed: ${errorMsg}`);
-      return createFailedStepResult(this.stepId, startTime, errorMsg);
+    if (!chapters || chapters.length === 0) {
+      throw new Error('No content to generate script from');
     }
+
+    this.reportProgress(10, '正在构建剧本生成提示词...');
+
+    const prompt = this.buildScriptPrompt(chapters, analysisResult);
+
+    this.reportProgress(30, '正在生成剧本结构...');
+
+    const scriptContent = await aiService.generate(prompt, {
+      model: this.model,
+      provider: this.provider,
+      max_tokens: 8192,
+    });
+
+    this.reportProgress(70, '正在解析生成结果...');
+
+    const scriptOutput = this.parseScriptOutput(scriptContent, chapters);
+
+    this.reportProgress(90, '剧本生成完成');
+
+    context.setVariable('scriptOutput', scriptOutput);
+    context.setVariable('scenes', scriptOutput.scenes);
+
+    logger.success(`[ScriptStep] Script generated: ${scriptOutput.scenes.length} scenes`);
+
+    return scriptOutput;
   }
 
-  private reportProgress(progress: number, message: string): void {
-    reportStepProgress(this.stepId, this.onProgress, progress, message);
+  protected computeMetrics(result: unknown): Record<string, unknown> {
+    if (typeof result === 'string') {
+      return { tokensUsed: result.length };
+    }
+    if (result && typeof result === 'object' && 'scenes' in (result as Record<string, unknown>)) {
+      const r = result as { scenes: unknown[] };
+      return { framesProcessed: r.scenes.length };
+    }
+    return {};
   }
 
   private buildScriptPrompt(
@@ -157,7 +145,6 @@ ${chapters.map((ch, i) => `【第${i + 1}章】${ch.title}\n${ch.content.slice(0
 
   private parseScriptOutput(content: string, _chapters: ImportOutput['chapters']): ScriptOutput {
     try {
-      // 尝试解析 JSON
       const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         const parsed = JSON.parse(jsonMatch[0]);
@@ -175,7 +162,6 @@ ${chapters.map((ch, i) => `【第${i + 1}章】${ch.title}\n${ch.content.slice(0
       logger.warn('[ScriptStep] Failed to parse JSON, using fallback');
     }
 
-    // Fallback：按行解析
     const scenes: ScriptOutput['scenes'] = [];
     const lines = content.split('\n').filter((l) => l.trim());
 
@@ -211,6 +197,8 @@ ${chapters.map((ch, i) => `【第${i + 1}章】${ch.title}\n${ch.content.slice(0
     };
   }
 }
+
+// ========== 工厂函数 ==========
 
 export function createScriptStep(config?: ScriptStepConfig): ScriptStep {
   return new ScriptStep(config);

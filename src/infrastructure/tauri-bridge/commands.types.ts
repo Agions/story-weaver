@@ -44,3 +44,8 @@ export type { ExportProgressCallback } from '@/features/video-export/services/ta
 
 // 目录条目 (re-export from features/video-export/services/tauri-types)
 export type { DirInfo } from '@/features/video-export/services/tauri-types';
+
+// analyzeVideo 参数
+export type AnalyzeVideoOptions = {
+  path: string;
+};

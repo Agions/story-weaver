@@ -50,13 +50,15 @@ export function createSuccessStepResult(
   stepId: PipelineStepId | string,
   startTime: number,
   data: unknown,
-  metrics?: StepOutput['metrics']
+  metrics?: Partial<StepOutput['metrics']>
 ): StepOutput {
   return {
     stepId: stepId as PipelineStepId,
     status: StepStatus.COMPLETED,
     data,
-    metrics,
+    metrics: metrics
+      ? { durationMs: Date.now() - startTime, ...metrics }
+      : { durationMs: Date.now() - startTime },
     qualityGate: QualityGateDecision.PASS,
     startTime,
     endTime: Date.now(),

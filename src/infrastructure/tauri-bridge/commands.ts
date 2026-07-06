@@ -42,20 +42,6 @@ export type {
   DirInfo,
 } from './commands.types';
 
-/**
- * 将 Tauri 事件 payload 转成 ExportProgressCallback 期望的格式。
- * 内部 helper — 消除 exportVideo 内联事件处理 + onExportProgress 重复字段映射。
- */
-function toExportProgress(payload: ExportProgress): ExportProgress {
-  return {
-    exportId: payload.exportId,
-    stage: payload.stage as ExportProgress['stage'],
-    progress: payload.progress,
-    message: payload.message,
-    error: payload.error,
-  };
-}
-
 // ========== 服务类 ==========
 
 class TauriService {
@@ -317,7 +303,14 @@ class TauriService {
     if (onProgress) {
       unlisten = await listen<ExportProgress>('export-progress', (event) => {
         if (event.payload.exportId === exportId) {
-          onProgress(toExportProgress(event.payload));
+          const p = event.payload;
+          onProgress({
+            exportId: p.exportId,
+            stage: p.stage as ExportProgress['stage'],
+            progress: p.progress,
+            message: p.message,
+            error: p.error,
+          });
         }
       });
     }
@@ -340,7 +333,14 @@ class TauriService {
    */
   async onExportProgress(callback: ExportProgressCallback): Promise<UnlistenFn> {
     return listen<ExportProgress>('export-progress', (event) => {
-      callback(toExportProgress(event.payload));
+      const p = event.payload;
+      callback({
+        exportId: p.exportId,
+        stage: p.stage as ExportProgress['stage'],
+        progress: p.progress,
+        message: p.message,
+        error: p.error,
+      });
     });
   }
 
@@ -352,23 +352,33 @@ class TauriService {
   }
 
   /**
-   * 获取视频信息
+   * 检查运行时依赖（WebView2 / FFmpeg）
    */
-  async getVideoInfo(path: string): Promise<{
+  async checkRuntimeDependencies(): Promise<Record<string, unknown>> {
+    return invoke('check_runtime_dependencies');
+  }
+
+  /**
+   * 分析视频文件获取元数据
+   * 调用 Rust 端 analyze_video 命令
+   */
+  async analyzeVideo(path: string): Promise<{
     duration: number;
     width: number;
     height: number;
     fps: number;
-    format: string;
+    codec: string;
+    bitrate: number;
   }> {
-    return invoke('get_video_info', { path });
+    return invoke('analyze_video', { path });
   }
 
   /**
-   * 生成缩略图
+   * 提取关键帧
+   * 调用 Rust 端 extract_key_frames 命令
    */
-  async generateThumbnails(path: string, count: number): Promise<string[]> {
-    return invoke<string[]>('generate_thumbnails', { path, count });
+  async extractKeyFrames(path: string, count: number): Promise<string[]> {
+    return invoke<string[]>('extract_key_frames', { path, count });
   }
 
   // ========== 窗口操作（通过 Rust 命令） ==========

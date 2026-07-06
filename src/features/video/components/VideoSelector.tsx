@@ -69,7 +69,7 @@ function VideoSelector({
       // 分析视频获取元数据
       setIsAnalyzing(true);
       try {
-        const videoMetadata = await tauriService.getVideoInfo(filePath);
+        const videoMetadata = await tauriService.analyzeVideo(filePath);
         setMetadata(videoMetadata);
         onVideoSelect(filePath, videoMetadata);
       } catch (error) {

@@ -31,8 +31,7 @@ export {
 } from '../utils/test-utils';
 
 // ============ Pipeline Step Context ============
-// 来源: src/__tests__/utils/mock-context.ts (v2.x 已存在但 0 消费者,
-// v3.0 fixtures 标准化时让 9 个 step-*.test.ts 真正引用)
+// 来源: src/__tests__/utils/mock-context.ts (被 10+ step-*.test.ts 引用)
 export { createMockStepContext } from '../utils/mock-context';
 
 // ============ Manga-pipeline domain fixtures ============

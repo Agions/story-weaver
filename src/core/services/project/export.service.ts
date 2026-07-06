@@ -35,5 +35,4 @@ export { generateFileName, getFileExtension, getSupportedFormats } from './expor
 export { generateASS, generateSRT } from './subtitle-generators';
 export { exportAsZip } from './image-export';
 export { exportAsMP4, exportAsGIF } from './video-export';
-export { exportAsPDF } from './pdf-export';
 export { exportProject } from './export-dispatcher';

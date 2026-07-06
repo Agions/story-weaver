@@ -10,6 +10,7 @@
  */
 
 import { logger } from '@/core/utils/logger';
+import { tauriService } from '@/infrastructure/tauri-bridge/commands';
 import { delay, PROCESSING_DELAY_MS } from '@/shared/utils';
 
 import type {
@@ -205,10 +206,7 @@ export class VideoEditingStep implements PipelineStep {
 
     if (this.isTauriEnvironment()) {
       try {
-        const { getTauriService } = await import('@/features/video-export/services/tauri.service');
-        const tauriService = getTauriService();
-
-        await tauriService.exportVideoCommand({
+        await tauriService.exportVideo({
           inputPath: clips[0]?.path ?? '',
           outputPath,
           segments: clips.map((clip) => ({

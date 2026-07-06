@@ -1,29 +1,7 @@
-/**
- * Pipeline 步骤4（拆分）：音频合成 (Audio Synthesis)
- *
- * 负责：TTS 对话生成、BGM 选择与淡入淡出、音频轨道混合
- *
- * 注意：此步骤是从原来的配音合成模块（Step 4）中拆分的独立步骤。
- * 主要功能已整合在 audio-pipeline.service.ts 中，
- * 此处作为 Pipeline Step 提供标准化的上下文管理。
- */
-
 import { logger } from '@/core/utils/logger';
 
-import type {
-  PipelineStep,
-  StepInput,
-  StepOutput,
-  StepProgressEvent,
-  RetryPolicy,
-} from './pipeline.types';
-import { PipelineStepId, PipelineExecutionMode } from './pipeline.types';
-import {
-  createFailedStepResult,
-  createSuccessStepResult,
-  reportStepProgress,
-  DEFAULT_RETRY_POLICY,
-} from './step-helpers';
+import { BasePipelineStep } from './base-pipeline-step';
+import { PipelineStepId, PipelineStep, StepInput, PipelineExecutionMode } from './pipeline.types';
 
 export interface AudioSynthesisOutput {
   dialogueAudio: Array<{ audioUrl: string; duration: number; speakerId: string }>;
@@ -31,93 +9,80 @@ export interface AudioSynthesisOutput {
   totalAudioDuration: number;
 }
 
-export class AudioSynthesisStep implements PipelineStep {
-  readonly id: string;
-  readonly name: string;
-  readonly stepId = PipelineStepId.AUDIO_SYNTHESIS;
-  readonly mode = PipelineExecutionMode.SEQUENCE;
-  readonly retryPolicy: RetryPolicy;
-  readonly dependencies = [PipelineStepId.SCRIPT];
-  onProgress?: (event: StepProgressEvent) => void;
+// ========== AudioSynthesisStep 实现 ==========
 
+export class AudioSynthesisStep extends BasePipelineStep {
   constructor(config?: Partial<PipelineStep>) {
-    this.id = config?.id ?? 'step-audio-synthesis';
-    this.name = config?.name ?? '音频合成';
-    this.retryPolicy = config?.retryPolicy ?? DEFAULT_RETRY_POLICY;
+    super({
+      ...config,
+      id: config?.id ?? 'step-audio-synthesis',
+      name: config?.name ?? '音频合成',
+      stepId: config?.stepId ?? PipelineStepId.AUDIO_SYNTHESIS,
+      dependencies: config?.dependencies ?? [PipelineStepId.SCRIPT],
+    });
   }
 
-  async execute(input: StepInput): Promise<StepOutput> {
-    const startTime = Date.now();
+  protected async executeImpl(input: StepInput): Promise<unknown> {
     const context = input.context;
-
     logger.info(`[AudioSynthesisStep] Starting audio synthesis for workflow ${input.workflowId}`);
 
-    try {
-      // 从上下文获取剧本数据（对话信息）
-      const scriptOutput = context.getVariable<{
-        scenes: Array<{
-          dialogue?: Array<{ speaker: string; text: string; emotion?: string }>;
-        }>;
-      }>('scriptOutput');
+    const scriptOutput = context.getVariable<{
+      scenes: Array<{
+        dialogue?: Array<{ speaker: string; text: string; emotion?: string }>;
+      }>;
+    }>('scriptOutput');
 
-      const selectedBgm = context.getVariable<string>('selectedBgm') ?? '';
+    const selectedBgm = context.getVariable<string>('selectedBgm') ?? '';
 
-      // 获取对话数据
-      const dialogueAudio: AudioSynthesisOutput['dialogueAudio'] = [];
-      if (scriptOutput?.scenes) {
-        for (let i = 0; i < scriptOutput.scenes.length; i++) {
-          const scene = scriptOutput.scenes[i];
-          if (scene.dialogue && scene.dialogue.length > 0) {
-            for (const line of scene.dialogue) {
-              const charCount = line.text.length;
-              const estimatedDuration = Math.max(1, charCount / 5); // 5 字/秒
-              dialogueAudio.push({
-                audioUrl: `tts://scene_${i}/${line.speaker}`,
-                duration: estimatedDuration,
-                speakerId: line.speaker,
-              });
-            }
+    const dialogueAudio: AudioSynthesisOutput['dialogueAudio'] = [];
+    if (scriptOutput?.scenes) {
+      for (let i = 0; i < scriptOutput.scenes.length; i++) {
+        const scene = scriptOutput.scenes[i];
+        if (scene.dialogue && scene.dialogue.length > 0) {
+          for (const line of scene.dialogue) {
+            const charCount = line.text.length;
+            const estimatedDuration = Math.max(1, charCount / 5);
+            dialogueAudio.push({
+              audioUrl: `tts://scene_${i}/${line.speaker}`,
+              duration: estimatedDuration,
+              speakerId: line.speaker,
+            });
           }
         }
       }
-
-      this.reportProgress(50, '音频合成完成');
-
-      // 计算总时长
-      const totalAudioDuration = dialogueAudio.reduce((sum, a) => sum + a.duration, 0);
-
-      // 保存到上下文供后续步骤使用
-      context.setVariable('dialogueAudio', dialogueAudio);
-      context.setVariable('totalAudioDuration', totalAudioDuration);
-
-      const totalMs = Date.now() - startTime;
-      logger.success(
-        `[AudioSynthesisStep] Audio synthesis completed: ${dialogueAudio.length} clips, ${totalAudioDuration.toFixed(1)}s`
-      );
-
-      return createSuccessStepResult(
-        this.stepId,
-        startTime,
-        {
-          dialogueAudio,
-          selectedBgm,
-          totalAudioDuration,
-        } as AudioSynthesisOutput,
-        {
-          durationMs: totalMs,
-        }
-      );
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      logger.error(`[AudioSynthesisStep] Audio synthesis failed: ${errorMsg}`);
-      return createFailedStepResult(this.stepId, startTime, errorMsg);
     }
+
+    this.reportProgress(50, '音频合成完成');
+
+    const totalAudioDuration = dialogueAudio.reduce((sum, a) => sum + a.duration, 0);
+
+    context.setVariable('dialogueAudio', dialogueAudio);
+    context.setVariable('totalAudioDuration', totalAudioDuration);
+
+    logger.success(
+      `[AudioSynthesisStep] Audio synthesis completed: ${dialogueAudio.length} clips, ${totalAudioDuration.toFixed(1)}s`
+    );
+
+    return {
+      dialogueAudio,
+      selectedBgm,
+      totalAudioDuration,
+    } as AudioSynthesisOutput;
   }
 
-  private reportProgress(progress: number, message: string): void {
-    reportStepProgress(this.stepId, this.onProgress, progress, message);
+  protected computeMetrics(result: unknown): Record<string, unknown> {
+    if (
+      result &&
+      typeof result === 'object' &&
+      'dialogueAudio' in (result as Record<string, unknown>)
+    ) {
+      return { framesProcessed: (result as { dialogueAudio: unknown[] }).dialogueAudio.length };
+    }
+    return {};
   }
 }
+
+// ========== 工厂函数 ==========
 
 export function createAudioSynthesisStep(config?: Partial<PipelineStep>): AudioSynthesisStep {
   return new AudioSynthesisStep(config);

@@ -1,107 +1,81 @@
-/**
- * Pipeline 步骤2：AI分析与结构化 (AI Analysis)
- *
- * 识别章节结构、角色、场景
- */
-
 import { logger } from '@/core/utils/logger';
 
-import type {
-  PipelineStep,
-  StepInput,
-  StepOutput,
-  StepProgressEvent,
-  RetryPolicy,
-} from './pipeline.types';
-import { PipelineStepId, PipelineExecutionMode } from './pipeline.types';
-import {
-  createFailedStepResult,
-  createSuccessStepResult,
-  reportStepProgress,
-  DEFAULT_RETRY_POLICY,
-} from './step-helpers';
+import { BasePipelineStep } from './base-pipeline-step';
+import { PipelineStepId, PipelineStep, StepInput, PipelineExecutionMode } from './pipeline.types';
 import type { ImportOutput } from './step-import';
 
-export class AnalysisStep implements PipelineStep {
-  readonly id: string;
-  readonly name: string;
-  readonly stepId: PipelineStepId;
-  readonly mode = PipelineExecutionMode.SEQUENCE;
-  readonly retryPolicy: RetryPolicy;
-  readonly dependencies = [PipelineStepId.IMPORT];
-  onProgress?: (event: StepProgressEvent) => void;
+// ========== AnalysisStep 实现 ==========
 
+export class AnalysisStep extends BasePipelineStep {
   constructor(config?: Partial<PipelineStep>) {
-    this.id = config?.id ?? 'step-analysis';
-    this.name = config?.name ?? 'AI分析';
-    this.stepId = PipelineStepId.ANALYSIS;
-    this.retryPolicy = config?.retryPolicy ?? DEFAULT_RETRY_POLICY;
+    super({
+      ...config,
+      id: config?.id ?? 'step-analysis',
+      name: config?.name ?? 'AI分析',
+      stepId: config?.stepId ?? PipelineStepId.ANALYSIS,
+      dependencies: config?.dependencies ?? [PipelineStepId.IMPORT],
+    });
   }
 
-  async execute(input: StepInput): Promise<StepOutput> {
-    const startTime = Date.now();
+  protected async executeImpl(input: StepInput): Promise<unknown> {
     const context = input.context;
-
     logger.info(`[AnalysisStep] Analyzing content for workflow ${input.workflowId}`);
 
-    try {
-      const chapters = context.getVariable<ImportOutput['chapters']>('chapters');
-      const metadata = context.getVariable<ImportOutput['metadata']>('projectMetadata');
+    const chapters = context.getVariable<ImportOutput['chapters']>('chapters');
+    const metadata = context.getVariable<ImportOutput['metadata']>('projectMetadata');
 
-      if (!chapters || chapters.length === 0) {
-        throw new Error('No chapters to analyze');
-      }
-
-      this.reportProgress(20, '正在识别角色...');
-
-      const characterCount = await this.estimateCharacterCount(chapters);
-
-      this.reportProgress(50, '正在识别场景...');
-
-      const sceneCount = this.estimateSceneCount(chapters);
-
-      this.reportProgress(80, '正在生成分析报告...');
-
-      const analysisResult = {
-        totalChapters: chapters.length,
-        estimatedCharacters: characterCount,
-        estimatedScenes: sceneCount,
-        chaptersSummary: chapters.map((ch) => ({
-          id: ch.id,
-          title: ch.title,
-          wordCount: ch.wordCount,
-        })),
-        genre: metadata?.title || '通用',
-        language: metadata?.language || 'zh',
-      };
-
-      context.setVariable('analysisResult', analysisResult);
-      context.setVariable('estimatedCharacters', characterCount);
-      context.setVariable('estimatedScenes', sceneCount);
-
-      logger.success(
-        `[AnalysisStep] Analysis completed: ${characterCount} characters, ${sceneCount} scenes`
-      );
-
-      return createSuccessStepResult(this.stepId, startTime, analysisResult, {
-        durationMs: Date.now() - startTime,
-        framesProcessed: sceneCount,
-      });
-    } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      logger.error(`[AnalysisStep] Analysis failed: ${errorMsg}`);
-      return createFailedStepResult(this.stepId, startTime, errorMsg);
+    if (!chapters || chapters.length === 0) {
+      throw new Error('No chapters to analyze');
     }
+
+    this.reportProgress(20, '正在识别角色...');
+
+    const characterCount = await this.estimateCharacterCount(chapters);
+
+    this.reportProgress(50, '正在识别场景...');
+
+    const sceneCount = this.estimateSceneCount(chapters);
+
+    this.reportProgress(80, '正在生成分析报告...');
+
+    const analysisResult = {
+      totalChapters: chapters.length,
+      estimatedCharacters: characterCount,
+      estimatedScenes: sceneCount,
+      chaptersSummary: chapters.map((ch) => ({
+        id: ch.id,
+        title: ch.title,
+        wordCount: ch.wordCount,
+      })),
+      genre: metadata?.title || '通用',
+      language: metadata?.language || 'zh',
+    };
+
+    context.setVariable('analysisResult', analysisResult);
+    context.setVariable('estimatedCharacters', characterCount);
+    context.setVariable('estimatedScenes', sceneCount);
+
+    logger.success(
+      `[AnalysisStep] Analysis completed: ${characterCount} characters, ${sceneCount} scenes`
+    );
+
+    return analysisResult;
   }
 
-  private reportProgress(progress: number, message: string): void {
-    reportStepProgress(this.stepId, this.onProgress, progress, message);
+  protected computeMetrics(result: unknown): Record<string, unknown> {
+    if (
+      result &&
+      typeof result === 'object' &&
+      'estimatedScenes' in (result as Record<string, unknown>)
+    ) {
+      return { framesProcessed: (result as { estimatedScenes: number }).estimatedScenes };
+    }
+    return {};
   }
 
   private estimateCharacterCount(chapters: ImportOutput['chapters']): number {
     const allContent = chapters.map((ch) => ch.content).join('');
     const namePatterns = [/[A-Z][a-z]{1,20}/g, /[\u4e00-\u9fa5]{2,4}/g];
-
     const names = new Set<string>();
     for (const pattern of namePatterns) {
       const matches = allContent.match(pattern);
@@ -109,7 +83,6 @@ export class AnalysisStep implements PipelineStep {
         matches.forEach((n) => names.add(n));
       }
     }
-
     return Math.min(names.size, 20);
   }
 
@@ -120,6 +93,8 @@ export class AnalysisStep implements PipelineStep {
     }, 0);
   }
 }
+
+// ========== 工厂函数 ==========
 
 export function createAnalysisStep(config?: Partial<PipelineStep>): AnalysisStep {
   return new AnalysisStep(config);

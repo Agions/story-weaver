@@ -139,7 +139,7 @@ export function useVideoEditor(projectId?: string) {
       setLoading(true);
       try {
         setVideoSrc(`file://${selected}`);
-        const metadata = await tauriService.getVideoInfo(selected);
+        const metadata = await tauriService.analyzeVideo(selected);
         setDuration(metadata.duration);
 
         const newSegment: VideoSegment = {
@@ -153,7 +153,7 @@ export function useVideoEditor(projectId?: string) {
         addToHistory([newSegment]);
 
         const frameCount = Math.max(5, Math.floor(metadata.duration / 10));
-        const frames = await tauriService.generateThumbnails(selected, frameCount);
+        const frames = await tauriService.extractKeyFrames(selected, frameCount);
         setKeyframes(frames);
         toast.success('视频加载成功');
       } catch (error) {

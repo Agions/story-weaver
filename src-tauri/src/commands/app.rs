@@ -111,3 +111,47 @@ pub fn open_file_location(path: String) -> Result<(), String> {
         Err("无法确定父目录".to_string())
     }
 }
+
+/// Check runtime dependencies (WebView2 on Windows, FFmpeg).
+#[tauri::command]
+pub fn check_runtime_dependencies() -> Result<std::collections::HashMap<String, serde_json::Value>, String> {
+    let mut result = std::collections::HashMap::new();
+
+    #[cfg(target_os = "windows")]
+    {
+        match Command::new("reg").args(&[
+            "query",
+            "HKLM\\SOFTWARE\\WOW6432Node\\Microsoft\\EdgeUpdate\\Clients\\{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}",
+        ]).output() {
+            Ok(output) if output.status.success() => {
+                result.insert("webview2_installed".to_string(), serde_json::Value::Bool(true));
+            }
+            _ => {
+                result.insert("webview2_installed".to_string(), serde_json::Value::Bool(false));
+                result.insert("webview2_install_url".to_string(), serde_json::Value::String(
+                    "https://developer.microsoft.com/en-us/microsoft-edge/webview2/".to_string()
+                ));
+            }
+        }
+    }
+
+    #[cfg(not(target_os = "windows"))]
+    {
+        result.insert("webview2_installed".to_string(), serde_json::Value::Bool(true));
+    }
+
+    match Command::new("ffmpeg").arg("-version").output() {
+        Ok(output) if output.status.success() => {
+            let version_str = String::from_utf8_lossy(&output.stdout);
+            result.insert("ffmpeg_installed".to_string(), serde_json::Value::Bool(true));
+            result.insert("ffmpeg_version".to_string(), serde_json::Value::String(
+                version_str.lines().next().unwrap_or("").to_string()
+            ));
+        }
+        _ => {
+            result.insert("ffmpeg_installed".to_string(), serde_json::Value::Bool(false));
+        }
+    }
+
+    Ok(result)
+}

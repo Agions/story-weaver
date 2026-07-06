@@ -122,6 +122,17 @@ const App = () => {
     const initializeApp = async () => {
       try {
         logger.info('应用初始化...');
+
+        // 检查运行时依赖（Windows 11 24H2 WebView2 / FFmpeg）
+        const deps = await tauriService.checkRuntimeDependencies();
+        if (deps.webview2_installed === false) {
+          notify.warning({
+            message: '运行时依赖缺失',
+            description: 'WebView2 运行时未安装，请访问以下链接安装后重启应用',
+            duration: 15000,
+          });
+        }
+
         logger.info('应用数据目录检查完成');
       } catch (error) {
         logger.error('应用初始化失败:', error);

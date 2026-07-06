@@ -9,7 +9,7 @@
 import { logger } from '@/core/utils/logger';
 import { delay } from '@/shared/utils/timing';
 
-import { saveCheckpoint, loadCheckpoint, hasCheckpoint } from './checkpoint';
+import { CheckpointManager } from './checkpoint-manager';
 import type {
   PipelineEngineEventHandler,
   PipelineEngineOptions,
@@ -31,7 +31,6 @@ export {
   getMetrics,
   resetMetrics,
 } from './pipeline-middleware';
-export type { PipelineStep } from './step.interface';
 
 export class PipelineEngine {
   private steps: PipelineStep[] = [];
@@ -39,9 +38,13 @@ export class PipelineEngine {
   private status: PipelineStatus = PipelineStatus.IDLE;
   private eventHandler?: PipelineEngineEventHandler;
   private abortController: AbortController | null = null;
+  private checkpointManager: CheckpointManager;
 
   constructor(options: PipelineEngineOptions = {}) {
     this.options = { enableCheckpoint: true, enableQualityGate: true, ...options };
+    this.checkpointManager = new CheckpointManager(
+      this.options.enableCheckpoint && !!this.options.workflowId
+    );
   }
 
   onEvents(handler: PipelineEngineEventHandler): void {
@@ -53,7 +56,7 @@ export class PipelineEngine {
       workflowId: this.options.workflowId ?? '',
       status: this.status,
       stepStates: new Map(),
-      context: new Map() as unknown as PipelineContext,
+      context: { variables: new Map() } as PipelineContext,
     } as PipelineExecutionState;
   }
 
@@ -109,20 +112,16 @@ export class PipelineEngine {
 
         this.options.middlewares?.forEach((m) => m.onStepStart?.(step.id, context));
 
-        // 恢复检查点
-        if (isResume && enableCheckpoint) {
-          const checkpoint = await loadCheckpoint(step.id);
-          if (checkpoint?.completed) {
-            logger.info(`[PipelineEngine] Restoring from checkpoint: ${step.id}`);
-            context = { ...context, ...(checkpoint.data as StepInput) };
-            this.eventHandler?.onStepComplete?.(step.id, checkpoint.data as StepOutput);
-            continue;
-          }
+        // 恢复检查点（仅 resume 模式）
+        const restored = await this.checkpointManager.restore(step.id, context, isResume);
+        if (restored) {
+          context = restored as StepInput;
+          this.eventHandler?.onStepComplete?.(step.id, context);
+          continue;
         }
 
         // 跳过已完成步骤
-        if (enableCheckpoint && (await hasCheckpoint(step.id))) {
-          logger.info(`[PipelineEngine] Skipping completed step: ${step.id}`);
+        if (await this.checkpointManager.shouldSkip(step.id)) {
           continue;
         }
 
@@ -134,7 +133,7 @@ export class PipelineEngine {
           const result = await step.execute(context);
           context = { ...context, ...result };
 
-          if (enableCheckpoint) await saveCheckpoint(step.id, result);
+          await this.checkpointManager.save(step.id, result);
 
           this.options.onProgress?.(step.id, 1);
           this.eventHandler?.onStepComplete?.(step.id, result);
