@@ -14,13 +14,8 @@ import { tauriService } from '@/infrastructure/tauri-bridge/commands';
 import { delay, PROCESSING_DELAY_MS } from '@/shared/utils';
 
 import { BasePipelineStep } from './base-pipeline-step';
-import {
-  PipelineStepId,
-  PipelineExecutionMode,
-  QualityGateDecision,
-  StepStatus,
-} from './pipeline.types';
-import type { PipelineStep, StepInput, StepOutput, StepProgressEvent } from './pipeline.types';
+import { PipelineStepId, QualityGateDecision, StepStatus } from './pipeline.types';
+import type { PipelineStep, StepInput, StepOutput } from './pipeline.types';
 import { createFailedStepResult } from './step-helpers';
 import type {
   VideoClip,

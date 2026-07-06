@@ -1,7 +1,7 @@
 import { logger } from '@/core/utils/logger';
 
 import { BasePipelineStep } from './base-pipeline-step';
-import { PipelineStepId, PipelineStep, StepInput, PipelineExecutionMode } from './pipeline.types';
+import { PipelineStepId, PipelineStep, StepInput } from './pipeline.types';
 
 export interface AudioSynthesisOutput {
   dialogueAudio: Array<{ audioUrl: string; duration: number; speakerId: string }>;
@@ -22,6 +22,7 @@ export class AudioSynthesisStep extends BasePipelineStep {
     });
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   protected async executeImpl(input: StepInput): Promise<unknown> {
     const context = input.context;
     logger.info(`[AudioSynthesisStep] Starting audio synthesis for workflow ${input.workflowId}`);

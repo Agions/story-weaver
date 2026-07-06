@@ -99,8 +99,6 @@ export class PipelineEngine {
 
   private async runInternal(input: StepInput, isResume: boolean): Promise<StepOutput> {
     let context: StepInput = { ...input };
-    const enableCheckpoint = this.options.enableCheckpoint && this.options.workflowId;
-
     this.options.middlewares?.forEach((m) => m.onPipelineStart?.());
 
     try {

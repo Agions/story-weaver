@@ -4,7 +4,6 @@ import { logger } from '@/core/utils/logger';
 import { BasePipelineStep } from './base-pipeline-step';
 import {
   PipelineStepId,
-  PipelineStep,
   StepInput,
   RetryPolicy,
   StepProgressEvent,
@@ -147,15 +146,30 @@ ${chapters.map((ch, i) => `【第${i + 1}章】${ch.title}\n${ch.content.slice(0
     try {
       const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        const parsed = JSON.parse(jsonMatch[0]);
+        const parsed = JSON.parse(jsonMatch[0]) as {
+          title?: string;
+          scenes?: Array<{
+            id?: string;
+            title?: string;
+            description?: string;
+            dialogue?: string;
+            narration?: string;
+            duration?: number;
+            shots?: number;
+          }>;
+        };
         return {
           title: parsed.title || '未命名剧本',
-          scenes: parsed.scenes || [],
-          totalDuration:
-            parsed.scenes?.reduce(
-              (sum: number, s: { duration?: number }) => sum + (s.duration || 30),
-              0
-            ) || 0,
+          scenes: (parsed.scenes ?? []).map((s, idx) => ({
+            id: s.id || `scene-${idx}`,
+            title: s.title || `场景${idx + 1}`,
+            description: s.description || '',
+            dialogue: s.dialogue || '',
+            narration: s.narration,
+            duration: s.duration,
+            shots: s.shots,
+          })),
+          totalDuration: (parsed.scenes ?? []).reduce((sum, s) => sum + (s.duration || 30), 0) || 0,
         };
       }
     } catch {

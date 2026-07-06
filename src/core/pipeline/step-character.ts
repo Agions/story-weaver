@@ -2,7 +2,7 @@ import { getCharacterService } from '@/core/services/domain/character.service';
 import { logger } from '@/core/utils/logger';
 
 import { BasePipelineStep } from './base-pipeline-step';
-import { PipelineStepId, PipelineStep, StepInput, PipelineExecutionMode } from './pipeline.types';
+import { PipelineStepId, PipelineStep, StepInput } from './pipeline.types';
 
 export interface CharacterOutput {
   characters: Array<{

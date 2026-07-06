@@ -1,7 +1,7 @@
 import { logger } from '@/core/utils/logger';
 
 import { BasePipelineStep } from './base-pipeline-step';
-import { PipelineStepId, PipelineStep, StepInput, PipelineExecutionMode } from './pipeline.types';
+import { PipelineStepId, PipelineStep, StepInput } from './pipeline.types';
 import type { ImportOutput } from './step-import';
 
 // ========== AnalysisStep 实现 ==========

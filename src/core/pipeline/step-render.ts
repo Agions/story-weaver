@@ -9,7 +9,6 @@ import {
   StepOutput,
   StepStatus,
   QualityGateDecision,
-  PipelineExecutionMode,
 } from './pipeline.types';
 import { createFailedStepResult } from './step-helpers';
 import type { StoryboardOutput } from './step-storyboard';
