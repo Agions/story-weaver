@@ -34,11 +34,11 @@ export interface TelemetryPayload {
   metadata?: Record<string, unknown>;
 }
 
-export interface ITelemetryExporter {
+export interface TelemetryExporter {
   export(payload: TelemetryPayload): void | Promise<void>;
 }
 
-class ConsoleExporter implements ITelemetryExporter {
+class ConsoleExporter implements TelemetryExporter {
   export(payload: TelemetryPayload): void {
     logger.info('[Telemetry] ' + payload.event, {
       ts: new Date(payload.timestamp).toISOString(),
@@ -53,7 +53,7 @@ class ConsoleExporter implements ITelemetryExporter {
 
 class TelemetryService {
   private static instance: TelemetryService;
-  private exporters: ITelemetryExporter[] = [new ConsoleExporter()];
+  private exporters: TelemetryExporter[] = [new ConsoleExporter()];
   private enabled = true;
 
   private constructor() {}
@@ -65,7 +65,7 @@ class TelemetryService {
     return TelemetryService.instance;
   }
 
-  addExporter(exporter: ITelemetryExporter): void {
+  addExporter(exporter: TelemetryExporter): void {
     this.exporters.push(exporter);
   }
 
@@ -77,7 +77,7 @@ class TelemetryService {
     if (!this.enabled) return;
     for (const exporter of this.exporters) {
       try {
-        exporter.export(payload);
+        void exporter.export(payload);
       } catch (err) {
         logger.error('[Telemetry] Exporter error', err);
       }

@@ -15,17 +15,17 @@ import { cn } from '@/shared/utils/class-names';
 import { useAutoPipelineStore, selectAllSteps } from '../stores/autoPipelineStore';
 
 const STEP_LABELS: Record<string, string> = {
-  step_import: '📥 导入解析',
-  step_analysis: '🧠 AI 分析',
-  step_script: '📝 剧本生成',
-  step_character: '🎭 角色设计',
-  step_scene: '🎨 场景规划',
-  step_storyboard: '🎬 分镜生成',
-  step_render: '🖼️ 批量渲染',
-  step_video_edit: '🎞️ 视频剪辑',
-  step_audio: '🔊 配音合成',
-  step_subtitle: '💬 字幕嵌入',
-  step_export: '📤 成片导出',
+  'step-import': '📥 导入解析',
+  'step-analysis': '🧠 AI 分析',
+  'step-script': '📝 剧本生成',
+  'step-character': '🎭 角色设计',
+  'step-scene': '🎨 场景规划',
+  'step-storyboard': '🎬 分镜生成',
+  'step-render': '🖼️ 批量渲染',
+  'step-video-edit': '🎞️ 视频剪辑',
+  'step-audio': '🔊 配音合成',
+  'step-subtitle': '💬 字幕嵌入',
+  'step-export': '📤 成片导出',
 };
 
 export function AutonomousProgress() {

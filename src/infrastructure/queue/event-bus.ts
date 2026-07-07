@@ -12,9 +12,9 @@ interface Subscription {
 }
 
 /**
- * IEventBus — 事件总线接口
+ * EventBus — 事件总线接口
  */
-export interface IEventBus {
+export interface EventBusInterface {
   subscribe<T extends DomainEvent>(
     eventType: string,
     handler: (event: T) => void | Promise<void>
@@ -30,7 +30,7 @@ export interface IEventBus {
 /**
  * EventBus — 轻量事件总线实现
  */
-export class EventBus implements IEventBus {
+export class EventBus implements EventBusInterface {
   private subscriptions = new Map<string, Subscription[]>();
   private queue: DomainEvent[] = [];
   private processing = false;
@@ -108,7 +108,7 @@ export class EventBus implements IEventBus {
   publish<T extends DomainEvent>(event: T): void {
     this.queue.push(event);
     if (!this.processing && !this.flushing) {
-      this.processQueue();
+      void this.processQueue();
     }
     this.broadcastCrossTab(event);
   }

@@ -30,67 +30,67 @@ const STEP_BRIEFINGS: Record<
     defaultTime: number;
   }
 > = {
-  step_import: {
+  'step-import': {
     goal: '解析原材料',
     reason: '自动识别小说/剧本格式，智能切分章节',
     model: '内置解析器',
     defaultTime: 10,
   },
-  step_analysis: {
+  'step-analysis': {
     goal: '分析故事结构',
     reason: '识别人物、场景、情节曲线和情绪爆点',
     model: 'GLM-5 / M2.5',
     defaultTime: 60,
   },
-  step_script: {
+  'step-script': {
     goal: '生成视频剧本',
     reason: '将小说文本转化为结构化的视频分镜脚本',
     model: 'GLM-5',
     defaultTime: 120,
   },
-  step_character: {
+  'step-character': {
     goal: '设计角色',
     reason: '生成角色设定卡，保证跨镜头一致性',
     model: 'Seedream 5.0 + GLM-5',
     defaultTime: 180,
   },
-  step_scene: {
+  'step-scene': {
     goal: '规划场景',
     reason: '规划全局场景布局、色彩基调和氛围',
     model: 'GLM-5',
     defaultTime: 60,
   },
-  step_storyboard: {
+  'step-storyboard': {
     goal: '生成分镜',
     reason: '生成每个镜头的参考图和动作描述',
     model: 'Seedream 5.0',
     defaultTime: 300,
   },
-  step_render: {
+  'step-render': {
     goal: '批量渲染',
     reason: 'AI 批量生成所有关键帧图像',
     model: 'Seedream 5.0 / Kling 1.6',
     defaultTime: 600,
   },
-  step_video_edit: {
+  'step-video-edit': {
     goal: '剪辑合成',
     reason: '将帧序列合成为连续视频，添加转场',
     model: 'FFmpeg WASM',
     defaultTime: 120,
   },
-  step_audio: {
+  'step-audio': {
     goal: '配音合成',
     reason: '文字转语音，生成角色对话和旁白',
     model: 'Edge TTS / CosyVoice 2.0',
     defaultTime: 180,
   },
-  step_subtitle: {
+  'step-subtitle': {
     goal: '字幕嵌入',
     reason: '生成时间轴字幕并嵌入视频',
     model: '内置字幕引擎',
     defaultTime: 60,
   },
-  step_export: {
+  'step-export': {
     goal: '导出成片',
     reason: '最终编码输出 MP4/WebM 文件',
     model: 'FFmpeg WASM',

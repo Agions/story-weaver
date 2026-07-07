@@ -246,19 +246,19 @@ export interface PipelineCheckpoint {
 // 步骤定义
 // ============================================================================
 
-/** 步骤 ID 枚举 */
+/** 步骤 ID 枚举（kebab-case 与 core/pipeline/pipeline.types.ts 对齐） */
 export enum PipelineStepId {
-  IMPORT = 'step_import',
-  ANALYSIS = 'step_analysis',
-  SCRIPT = 'step_script',
-  CHARACTER = 'step_character',
-  SCENE = 'step_scene',
-  STORYBOARD = 'step_storyboard',
-  RENDER = 'step_render',
-  VIDEO_EDIT = 'step_video_edit',
-  AUDIO = 'step_audio',
-  SUBTITLE = 'step_subtitle',
-  EXPORT = 'step_export',
+  IMPORT = 'step-import',
+  ANALYSIS = 'step-analysis',
+  SCRIPT = 'step-script',
+  CHARACTER = 'step-character',
+  SCENE = 'step-scene',
+  STORYBOARD = 'step-storyboard',
+  RENDER = 'step-render',
+  VIDEO_EDIT = 'step-video-edit',
+  AUDIO = 'step-audio',
+  SUBTITLE = 'step-subtitle',
+  EXPORT = 'step-export',
 }
 
 /** 步骤配置 */

@@ -97,7 +97,7 @@ export const DEFAULT_QUALITY_GATE_CONFIG: Record<string, QualityGateConfig> = {
     onFail: 'retry',
     reviewConfig: { enabled: true, maxRetries: 2 },
   },
-  video_edit: {
+  'video-edit': {
     enabled: true,
     threshold: 65,
     onFail: 'retry',
