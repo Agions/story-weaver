@@ -160,7 +160,7 @@ const ProjectEdit = () => {
         .readText(projectId)
         .then((projectText) => {
           const projectData = JSON.parse(projectText) as ProjectData;
-          updateProject(projectData as Parameters<typeof updateProject>[0]);
+          updateProject({ name: projectData.name, description: projectData.description });
           setName(projectData.name);
           setDescription(projectData.description ?? '');
 
@@ -225,7 +225,8 @@ const ProjectEdit = () => {
           setInitialLoading(false);
         });
     }
-  }, [projectId, name, description, location.search]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId, location.search]);
 
   // --- 事件处理函数 ---
 

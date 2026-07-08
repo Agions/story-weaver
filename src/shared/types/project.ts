@@ -93,7 +93,7 @@ export type PipelineStep =
 export type TaskStatus = {
   id: string;
   type: string;
-  status: 'pending' | 'running' | 'completed' | 'failed';
+  status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
   progress: number;
   message?: string;
   createdAt: string;
