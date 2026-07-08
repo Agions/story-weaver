@@ -1,13 +1,13 @@
 ---
 title: 构建与发布
-description: frame-fab Tauri 桌面应用构建命令、产物位置、自动更新配置
+description: Story Weaver Tauri 桌面应用构建命令、产物位置、自动更新配置
 category: deployment
 version: '>=3.0'
 ---
 
 # 构建与发布
 
-> frame-fab v2.2.3 使用 **Tauri 2.1** 构建跨平台桌面应用。
+> Story Weaver v2.2.3 使用 **Tauri 2.1** 构建跨平台桌面应用。
 > 本文档介绍：构建命令、产物位置、自动更新、签名配置、CI/CD。
 
 ## 一、构建命令
@@ -39,26 +39,26 @@ pnpm tauri build --debug
 
 ## 二、构建产物位置
 
-| 平台 | 路径 |
-|------|------|
-| **macOS** | `src-tauri/target/release/bundle/macos/frame-fab.app` |
-| **macOS DMG** | `src-tauri/target/release/bundle/dmg/frame-fab_<version>_<arch>.dmg` |
-| **Windows** | `src-tauri/target/release/bundle/msi/frame-fab_<version>_<arch>-setup.exe` |
-| **Linux** | `src-tauri/target/release/bundle/appimage/frame-fab_<version>_amd64.AppImage` |
-| **Linux deb** | `src-tauri/target/release/bundle/deb/frame-fab_<version>_amd64.deb` |
+| 平台          | 路径                                                                             |
+| ------------- | -------------------------------------------------------------------------------- |
+| **macOS**     | `src-tauri/target/release/bundle/macos/Story Weaver.app`                         |
+| **macOS DMG** | `src-tauri/target/release/bundle/dmg/Story Weaver_<version>_<arch>.dmg`          |
+| **Windows**   | `src-tauri/target/release/bundle/msi/Story Weaver_<version>_<arch>-setup.exe`    |
+| **Linux**     | `src-tauri/target/release/bundle/appimage/Story Weaver_<version>_amd64.AppImage` |
+| **Linux deb** | `src-tauri/target/release/bundle/deb/Story Weaver_<version>_amd64.deb`           |
 
 ## 三、产物大小基准
 
-| 平台 | 大小 | 冷启动 |
-|------|------|--------|
+| 平台                  | 大小   | 冷启动 |
+| --------------------- | ------ | ------ |
 | macOS (Apple Silicon) | ~26 MB | < 0.9s |
-| macOS (Intel) | ~28 MB | < 1.0s |
-| Windows x64 | ~28 MB | < 1.2s |
-| Linux AppImage | ~24 MB | < 0.8s |
+| macOS (Intel)         | ~28 MB | < 1.0s |
+| Windows x64           | ~28 MB | < 1.2s |
+| Linux AppImage        | ~24 MB | < 0.8s |
 
 ## 四、自动更新
 
-frame-fab 使用 **Tauri Updater** 提供自动更新：
+Story Weaver 使用 **Tauri Updater** 提供自动更新：
 
 ```json
 // src-tauri/tauri.conf.json
@@ -66,9 +66,7 @@ frame-fab 使用 **Tauri Updater** 提供自动更新：
   "updater": {
     "active": true,
     "dialog": true,
-    "endpoints": [
-      "https://github.com/Agions/frame-fab/releases/latest/download/latest.json"
-    ]
+    "endpoints": ["https://github.com/Agions/story-weaver/releases/latest/download/latest.json"]
   }
 }
 ```
@@ -137,9 +135,11 @@ jobs:
 ### Q1: macOS 构建失败 `code signing required`？
 
 A: 临时禁用签名：
+
 ```bash
 pnpm tauri build --no-bundle
 ```
+
 或配置有效的 `APPLE_SIGNING_IDENTITY`。
 
 ### Q2: Windows 构建提示缺 MSVC？
@@ -149,6 +149,7 @@ A: 安装 Visual Studio Build Tools 2022（含 C++ 桌面开发）。
 ### Q3: Linux 缺 webkit2gtk？
 
 A: Ubuntu/Debian：
+
 ```bash
 sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
 ```
@@ -156,9 +157,10 @@ sudo apt install libwebkit2gtk-4.1-dev build-essential curl wget file libxdo-dev
 ### Q4: 启动崩溃？
 
 A: 查看日志：
-- macOS: `~/Library/Logs/frame-fab/`
-- Windows: `%APPDATA%/frame-fab/logs/`
-- Linux: `~/.config/frame-fab/logs/`
+
+- macOS: `~/Library/Logs/Story Weaver/`
+- Windows: `%APPDATA%/Story Weaver/logs/`
+- Linux: `~/.config/Story Weaver/logs/`
 
 ## 八、相关文档
 

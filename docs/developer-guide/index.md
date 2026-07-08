@@ -1,34 +1,34 @@
 ---
 title: 开发者指南
-description: frame-fab 架构与开发文档索引，含 8 个核心主题（架构/模块/平台/服务/API/ADR）
+description: Story Weaver 架构与开发文档索引，含 8 个核心主题（架构/模块/平台/服务/API/ADR）
 category: developer-guide
 version: '>=2.4'
 ---
 
 # 开发者指南
 
-> 本指南面向希望深入了解 frame-fab v2.2.3 架构、扩展功能或参与贡献的开发者。
+> 本指南面向希望深入了解 Story Weaver v2.2.3 架构、扩展功能或参与贡献的开发者。
 
 ---
 
 ## 📑 目录
 
-| 文档 | 说明 |
-| -------------------------------------- | ------------------------------------------- |
-| **[架构设计](./architecture.md)** | 系统整体架构、核心模块、数据流设计 |
-| **[项目结构](./project-structure.md)** | 目录结构、模块划分、文件说明 |
-| **[模块系统](./module-system.md)** | DDD 分层 |
-| **[服务清单](./services.md)** | 7 大核心服务 |
-| **[Pipeline 引擎](./pipeline-api.md)** | 10 步流水线细节 |
-| **[AI Providers](./ai-providers.md)** | ProviderRegistry + Fallback Chain |
-| **[平台适配层](./platform-layer.md)** | Web/Desktop 抽象 |
-| **[Autonomous API](./autonomous-api.md)** | Autonomous Pipeline 引擎 API |
+| 文档                                      | 说明                               |
+| ----------------------------------------- | ---------------------------------- |
+| **[架构设计](./architecture.md)**         | 系统整体架构、核心模块、数据流设计 |
+| **[项目结构](./project-structure.md)**    | 目录结构、模块划分、文件说明       |
+| **[模块系统](./module-system.md)**        | DDD 分层                           |
+| **[服务清单](./services.md)**             | 7 大核心服务                       |
+| **[Pipeline 引擎](./pipeline-api.md)**    | 10 步流水线细节                    |
+| **[AI Providers](./ai-providers.md)**     | ProviderRegistry + Fallback Chain  |
+| **[平台适配层](./platform-layer.md)**     | Web/Desktop 抽象                   |
+| **[Autonomous API](./autonomous-api.md)** | Autonomous Pipeline 引擎 API       |
 
 ---
 
 ## 🏗️ 系统架构总览
 
-frame-fab v2.2.3 是一款**全自主 Agent 型**漫剧制作系统，核心特性包括：
+Story Weaver v2.2.3 是一款**全自主 Agent 型**漫剧制作系统，核心特性包括：
 
 - **Self-Review Loop**：每步 AI 自审，不合格自动修复（最多 3 次循环）
 - **Quality Gate**：全自动质量门禁，确保输出品质
@@ -140,8 +140,8 @@ src/core/pipeline/
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/Agions/frame-fab.git
-cd frame-fab
+git clone https://github.com/Agions/story-weaver.git
+cd Story Weaver
 
 # 2. 安装依赖
 pnpm install
@@ -160,18 +160,18 @@ pnpm tauri dev
 
 ## 📖 更多文档
 
-| 目的 | 阅读 |
-|------|------|
-| 详细架构 | [架构设计](./architecture.md) |
-| 完整目录 | [项目结构](./project-structure.md) |
-| 服务 API | [服务清单](./services.md) |
-| Pipeline 细节 | [Pipeline 引擎](./pipeline-api.md) |
-| 注册新 Provider | [AI Providers](./ai-providers.md) |
-| 跨平台层 | [平台适配层](./platform-layer.md) |
-| 自主模式 API | [Autonomous API](./autonomous-api.md) |
-| 生产部署 | [部署文档](../deployment/) |
-| 性能数据 | [性能基准 v2.2.3](../performance/benchmark-2.2.3.md) |
+| 目的            | 阅读                                                 |
+| --------------- | ---------------------------------------------------- |
+| 详细架构        | [架构设计](./architecture.md)                        |
+| 完整目录        | [项目结构](./project-structure.md)                   |
+| 服务 API        | [服务清单](./services.md)                            |
+| Pipeline 细节   | [Pipeline 引擎](./pipeline-api.md)                   |
+| 注册新 Provider | [AI Providers](./ai-providers.md)                    |
+| 跨平台层        | [平台适配层](./platform-layer.md)                    |
+| 自主模式 API    | [Autonomous API](./autonomous-api.md)                |
+| 生产部署        | [部署文档](../deployment/)                           |
+| 性能数据        | [性能基准 v2.2.3](../performance/benchmark-2.2.3.md) |
 
 ---
 
-> **💡 参与贡献**：欢迎提交 Issue 和 Pull Request！详见 [CONTRIBUTING.md](https://github.com/Agions/frame-fab/blob/main/CONTRIBUTING.md)。
+> **💡 参与贡献**：欢迎提交 Issue 和 Pull Request！详见 [CONTRIBUTING.md](https://github.com/Agions/story-weaver/blob/main/CONTRIBUTING.md)。

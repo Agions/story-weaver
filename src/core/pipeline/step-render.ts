@@ -2,15 +2,7 @@ import { imageGenerationService } from '@/core/services/ai/image/image-generatio
 import { logger } from '@/core/utils/logger';
 
 import { BasePipelineStep } from './base-pipeline-step';
-import {
-  PipelineStepId,
-  PipelineStep,
-  StepInput,
-  StepOutput,
-  StepStatus,
-  QualityGateDecision,
-} from './pipeline.types';
-import { createFailedStepResult } from './step-helpers';
+import { PipelineStepId, PipelineStep, StepInput, QualityGateDecision } from './pipeline.types';
 import type { StoryboardOutput } from './step-storyboard';
 
 export interface RenderOutput {
@@ -47,35 +39,24 @@ export class RenderStep extends BasePipelineStep {
     this.batchSize = config?.parallelKeys?.length ? Math.min(config.parallelKeys.length, 4) : 4;
   }
 
-  async execute(input: StepInput): Promise<StepOutput> {
-    const startTime = Date.now();
-    try {
-      const data = (await this.executeImpl(input)) as {
-        renderedFrames: Array<{ frameId: string; imageUrl: string }>;
-        failedFrames: string[];
-        totalFrames: number;
-        successRate: number;
-      };
-
-      return {
-        stepId: this.stepId,
-        status: StepStatus.COMPLETED,
-        data,
-        metrics: {
-          durationMs: Date.now() - startTime,
-          framesProcessed: data.totalFrames,
-          qualityScore: data.successRate,
-        },
-        qualityGate: data.successRate >= 0.8 ? QualityGateDecision.PASS : QualityGateDecision.WARN,
-        startTime,
-        endTime: Date.now(),
-        retryCount: 0,
-      };
-    } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error);
-      logger.error(`[RenderStep] Render failed: ${msg}`);
-      return createFailedStepResult(this.stepId, startTime, msg);
+  protected computeMetrics(result: unknown): Record<string, unknown> {
+    if (result && typeof result === 'object') {
+      const r = result as Record<string, unknown>;
+      const totalFrames = typeof r.totalFrames === 'number' ? r.totalFrames : 0;
+      const successRate = typeof r.successRate === 'number' ? r.successRate : 0;
+      return { framesProcessed: totalFrames, qualityScore: successRate };
     }
+    return {};
+  }
+
+  protected computeQualityGate(result: unknown): QualityGateDecision | undefined {
+    if (result && typeof result === 'object') {
+      const successRate = (result as Record<string, unknown>).successRate;
+      if (typeof successRate === 'number') {
+        return successRate >= 0.8 ? QualityGateDecision.PASS : QualityGateDecision.WARN;
+      }
+    }
+    return undefined;
   }
 
   protected async executeImpl(input: StepInput): Promise<unknown> {

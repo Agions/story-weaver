@@ -33,9 +33,7 @@ import { getSuggestions } from './video-analysis-suggestions';
 import { generateSummary } from './video-analysis-summary';
 import {
   DEFAULT_ANALYSIS_CONFIG,
-  SCENE_TYPES,
   createEmptyAnalysis,
-  type SceneType,
   type VideoAnalysisConfig,
 } from './video-analysis-types';
 

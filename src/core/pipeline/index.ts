@@ -1,5 +1,5 @@
 /**
- * frame-fab Pipeline 统一入口
+ * Story Weaver Pipeline 统一入口
  *
  * 精简版：删除死代码 PipelineService（运行时从未被外部消费）。
  * 仅保留 PipelineEngine 和枚举常量导出。

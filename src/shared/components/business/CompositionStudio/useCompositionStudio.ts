@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef, useReducer } from 'react';
 import type {
   CompositionProject,
   FrameAnimation,
-  AnimationKeyframe,
   TransitionConfig,
   TransitionEffect,
 } from '@/shared/types';

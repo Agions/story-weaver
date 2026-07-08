@@ -11,12 +11,11 @@
 
 import { logger } from '@/core/utils/logger';
 import { tauriService } from '@/infrastructure/tauri-bridge/commands';
-import { delay, PROCESSING_DELAY_MS } from '@/shared/utils';
+import { delay, PROCESSING_DELAY_MS, isTauri } from '@/shared/utils';
 
 import { BasePipelineStep } from './base-pipeline-step';
-import { PipelineStepId, QualityGateDecision, StepStatus } from './pipeline.types';
-import type { PipelineStep, StepInput, StepOutput } from './pipeline.types';
-import { createFailedStepResult } from './step-helpers';
+import { PipelineStepId, QualityGateDecision } from './pipeline.types';
+import type { PipelineStep, StepInput } from './pipeline.types';
 import type {
   VideoClip,
   SubtitleBlock,
@@ -40,32 +39,18 @@ export class VideoEditingStep extends BasePipelineStep {
     });
   }
 
-  async execute(input: StepInput): Promise<StepOutput> {
-    const startTime = Date.now();
-    try {
-      const data = await this.executeImpl(input);
+  protected computeMetrics(result: unknown): Record<string, unknown> {
+    return this.computeCountMetric(result, 'clips');
+  }
 
-      const clips = (data as { clips: VideoClip[] }).clips;
-      const successRate = clips.length > 0 ? 1 : 0;
-
-      return {
-        stepId: this.stepId,
-        status: StepStatus.COMPLETED,
-        data,
-        metrics: {
-          durationMs: Date.now() - startTime,
-          framesProcessed: clips.length,
-        },
-        qualityGate: successRate >= 0.8 ? QualityGateDecision.PASS : QualityGateDecision.WARN,
-        startTime,
-        endTime: Date.now(),
-        retryCount: 0,
-      };
-    } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error);
-      logger.error(`[VideoEditingStep] Video editing failed: ${msg}`);
-      return createFailedStepResult(this.stepId, startTime, msg);
+  protected computeQualityGate(result: unknown): QualityGateDecision | undefined {
+    if (result && typeof result === 'object') {
+      const clips = (result as Record<string, unknown>).clips;
+      if (Array.isArray(clips)) {
+        return clips.length > 0 ? QualityGateDecision.PASS : QualityGateDecision.WARN;
+      }
     }
+    return undefined;
   }
 
   protected async executeImpl(input: StepInput): Promise<unknown> {
@@ -182,19 +167,12 @@ export class VideoEditingStep extends BasePipelineStep {
     } as VideoEditingOutput;
   }
 
-  protected computeMetrics(result: unknown): Record<string, unknown> {
-    if (result && typeof result === 'object' && 'clips' in (result as Record<string, unknown>)) {
-      return { framesProcessed: (result as { clips: VideoClip[] }).clips.length };
-    }
-    return {};
-  }
-
   private async exportVideo(editor: VideoEditor, workflowId: string): Promise<string> {
     const clips = editor.exportConfig().clips;
     const timestamp = Date.now();
     const outputPath = `output/${workflowId}/final_${timestamp}.mp4`;
 
-    if (this.isTauriEnvironment()) {
+    if (isTauri()) {
       try {
         await tauriService.exportVideo({
           inputPath: clips[0]?.path ?? '',
@@ -239,11 +217,6 @@ export class VideoEditingStep extends BasePipelineStep {
     );
 
     return outputPath;
-  }
-
-  private isTauriEnvironment(): boolean {
-    if (typeof window === 'undefined') return false;
-    return '__TAURI__' in window;
   }
 }
 

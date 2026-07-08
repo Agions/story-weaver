@@ -10,7 +10,6 @@ import { useState, useMemo } from 'react';
 import { MODEL_PROVIDERS } from '@/core/config/models.config';
 import { LLM_MODELS, type LLMModelConfig } from '@/core/constants';
 import { useModel, useModelCost, useRecommendedModel } from '@/core/hooks/useModel';
-import { TruncatedDescription } from '@/features/ai/components/TruncatedDescription';
 import { Alert, AlertDescription } from '@/shared/components/ui/alert';
 import { Avatar, AvatarFallback, AvatarImage } from '@/shared/components/ui/avatar';
 import { Badge } from '@/shared/components/ui/badge';
@@ -22,6 +21,7 @@ import { Tooltip } from '@/shared/components/ui/tooltip';
 import type { ModelCategory, ModelProvider } from '@/shared/types';
 
 import styles from './index.module.less';
+import { TruncatedDescription } from './TruncatedDescription';
 
 // 分类选项
 const CATEGORY_OPTIONS = [

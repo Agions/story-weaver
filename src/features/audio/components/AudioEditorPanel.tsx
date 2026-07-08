@@ -6,7 +6,9 @@
 import React, { Suspense } from 'react';
 
 import { tauriService } from '@/core/services';
+import { logger } from '@/core/utils/logger';
 import { AudioEditor as AudioEditorComponent } from '@/features/audio';
+import { toast } from '@/shared/components/ui/sonner';
 import { Spin } from '@/shared/components/ui/spin';
 import type { ProjectData } from '@/shared/types';
 
@@ -24,7 +26,10 @@ export const AudioEditorPanel: React.FC<AudioEditorPanelProps> = ({ project, onP
       updatedAt: new Date().toISOString(),
     };
     onPersistPatch({ audioConfig: config });
-    tauriService.writeText(project.id, JSON.stringify(updatedProject)).catch(() => undefined);
+    tauriService.writeText(project.id, JSON.stringify(updatedProject)).catch((err) => {
+      logger.error('保存音频配置失败:', err);
+      toast.error('保存音频配置失败');
+    });
   };
 
   return (

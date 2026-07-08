@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/schema.json",
-  "productName": "frame-fab",
+  "productName": "Story Weaver",
   "version": "2.2.3",
-  "identifier": "com.framefab.app",
+  "identifier": "com.storyweaver.app",
   "build": {
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build",
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "frame-fab - AI 漫剧创作平台",
+        "title": "Story Weaver - AI 漫剧创作平台",
         "width": 1280,
         "height": 800,
         "minWidth": 960,
@@ -41,7 +41,7 @@
   "bundle": {
     "active": true,
     "category": "Video",
-    "copyright": "Copyright © 2024-2026 frame-fab",
+    "copyright": "Copyright © 2024-2026 Story Weaver",
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -49,7 +49,7 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "longDescription": "frame-fab - AI 漫剧创作平台。集成多模型 AI、角色一致性、分镜设计与 TTS 配音，将小说一键转化为专业级漫剧视频。",
+    "longDescription": "Story Weaver - AI 漫剧创作平台。集成多模型 AI、角色一致性、分镜设计与 TTS 配音，将小说一键转化为专业级漫剧视频。",
     "shortDescription": "AI 漫剧创作平台",
     "targets": "all",
     "linux": {

@@ -3,7 +3,7 @@ import * as React from 'react';
 import { cn } from '@/shared/utils/class-names';
 
 // ListItem with generic props
-interface ListItemProps<T = Record<string, unknown>> extends React.HTMLAttributes<HTMLDivElement> {
+interface ListItemProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
   onClick?: () => void;
   children: React.ReactNode;

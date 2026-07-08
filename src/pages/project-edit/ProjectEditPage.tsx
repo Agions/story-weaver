@@ -32,7 +32,6 @@ import type {
   FrameComment,
   QualityGateIssue,
   StoryboardVersion,
-  VersionDiffSummary,
 } from '@/core/services';
 import { logger } from '@/core/utils/logger';
 import type { ScriptImportMetadata } from '@/features/script/components/NovelImporter';
@@ -45,19 +44,10 @@ import { toast } from '@/shared/components/ui/toast';
 import { useStoryboard } from '@/shared/stores/storyboard.store';
 import type { StoryAnalysis, Character, CompositionProject } from '@/shared/types';
 import type { AudioTrackConfig } from '@/shared/types/audio';
+import type { VideoSegment } from '@/shared/types/script';
 import type { StoryboardFrame } from '@/shared/types/storyboard';
 
-import {
-  StepImport,
-  StepAnalysis,
-  StepScript,
-  StepStoryboard,
-  StepCharacter,
-  StepRender,
-  StepComposition,
-  StepAudio,
-  StepExport,
-} from './components';
+import { StepContentSwitcher } from './components/StepContentSwitcher';
 import styles from './ProjectEdit.module.less';
 
 export interface ProjectData {
@@ -81,9 +71,6 @@ export interface ProjectData {
   createdAt: string;
   updatedAt: string;
 }
-
-/** 保存时使用的序列化类型（novelMetadata 序列化为 JSON 兼容格式） */
-type SerializedProjectData = ProjectData & { novelMetadata?: unknown };
 
 /**
  * 项目编辑页面
@@ -111,7 +98,7 @@ const ProjectEdit = () => {
     currentStep,
     setCurrentStep,
     updateProject,
-    resetProject,
+    resetProject: _resetProject,
   } = useProject();
   // AI 分析 loading (与 useProject.projectLoading 概念不同, 独立 useState 避免互相覆盖)
   const [loading, setLoading] = useState(false);
@@ -173,7 +160,7 @@ const ProjectEdit = () => {
         .readText(projectId)
         .then((projectText) => {
           const projectData = JSON.parse(projectText) as ProjectData;
-          updateProject(projectData as Parameters<typeof updateProject>[0]);
+          updateProject({ name: projectData.name, description: projectData.description });
           setName(projectData.name);
           setDescription(projectData.description ?? '');
 
@@ -238,7 +225,8 @@ const ProjectEdit = () => {
           setInitialLoading(false);
         });
     }
-  }, [projectId, name, description, location.search]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectId, location.search]);
 
   // --- 事件处理函数 ---
 
@@ -504,6 +492,15 @@ const ProjectEdit = () => {
     toast.info(`导出脚本为 ${format.toUpperCase()} 格式`);
   };
 
+  /** 将脚本片段序列化为纯文本并更新 scriptText */
+  const handleSaveScript = (segments: VideoSegment[]) => {
+    const text = segments
+      .map((seg) => seg.content || '')
+      .filter(Boolean)
+      .join('\n');
+    setScriptText(text);
+  };
+
   const handleExportReviewNotes = async () => {
     if (!project?.id) {
       toast.warning('请先加载项目后再导出评审记录');
@@ -561,149 +558,6 @@ const ProjectEdit = () => {
   const handleBuildStoryboardDraft = () => {
     if (storyAnalysis) {
       storyboard.setFrames(buildStoryboardDraft(storyAnalysis));
-    }
-  };
-
-  // --- Step Content Switcher Component ---
-  const StepContentSwitcher = () => {
-    switch (currentStep) {
-      case 0:
-        return (
-          <StepImport
-            content={content}
-            loading={loading}
-            onContentLoad={handleContentLoad}
-            onRemove={handleContentRemove}
-            onNext={() => setCurrentStep(1)}
-          />
-        );
-
-      case 1:
-        return (
-          <StepAnalysis
-            content={content}
-            novelMetadata={novelMetadata}
-            analysisDraft={analysisDraft}
-            analysisState={analysisState}
-            loading={loading}
-            onContentLoad={handleContentLoad}
-            onRemove={handleContentRemove}
-            onAnalyze={handleAnalyzeContent}
-            onAccept={handleAcceptAnalysis}
-            onDraftChange={setAnalysisDraft}
-            onPrev={() => setCurrentStep(0)}
-          />
-        );
-
-      case 2:
-        return (
-          <StepScript
-            onExport={handleExportScript}
-            onSave={(segments: unknown) => setScriptText(segments as unknown as string)}
-            onPrev={() => setCurrentStep(1)}
-            onNext={() => setCurrentStep(3)}
-          />
-        );
-
-      case 3:
-        return (
-          <StepStoryboard
-            storyboardFrames={storyboard.frames}
-            storyAnalysis={storyAnalysis}
-            selectedFrame={storyboard.selectedFrame}
-            focusFrameId={focusFrameId}
-            commentDraft={commentDraft}
-            versionLabel={versionLabel}
-            compareLeftVersionId={storyboard.compareLeftVersionId}
-            compareRightVersionId={storyboard.compareRightVersionId}
-            versionDiff={storyboard.versionDiff}
-            storyboardVersions={storyboard.versions}
-            projectId={project?.id}
-            onFramesChange={storyboard.setFrames}
-            onFrameSelect={storyboard.selectFrame}
-            onBuildDraft={handleBuildStoryboardDraft}
-            onAddComment={handleAddFrameComment}
-            onSaveVersion={handleSaveStoryboardVersion}
-            onCompareVersions={handleCompareVersions}
-            onRollback={handleRollbackVersion}
-            onCommentDraftChange={setCommentDraft}
-            onLeftVersionChange={storyboard.setCompareLeft}
-            onRightVersionChange={storyboard.setCompareRight}
-            onVersionLabelChange={setVersionLabel}
-            onPrev={() => setCurrentStep(2)}
-            onNext={() => setCurrentStep(4)}
-          />
-        );
-
-      case 4:
-        return (
-          <StepCharacter
-            characters={characters}
-            projectId={project?.id}
-            onChange={setCharacters}
-            onPrev={() => setCurrentStep(3)}
-            onNext={() => setCurrentStep(5)}
-          />
-        );
-
-      case 5:
-        return (
-          <StepRender
-            storyboardFrames={storyboard.frames}
-            projectId={project?.id}
-            onApplyRenderedFrame={handleApplyRenderedFrame}
-            onPrev={() => setCurrentStep(4)}
-            onNext={() => setCurrentStep(6)}
-          />
-        );
-
-      case 6:
-        return (
-          <StepComposition
-            storyboardFrames={storyboard.frames}
-            projectId={project?.id}
-            onCompositionChange={setComposition}
-            onPrev={() => setCurrentStep(5)}
-            onNext={() => setCurrentStep(7)}
-          />
-        );
-
-      case 7:
-        return (
-          <StepAudio
-            audioConfig={audioConfig}
-            audioEditorKey={audioEditorKey}
-            audioGenerating={audioGenerating}
-            scriptText={scriptText}
-            storyboardFrames={storyboard.frames}
-            onConfigChange={setAudioConfig}
-            onGenerateVoices={handleGenerateVoices}
-            onPrev={() => setCurrentStep(6)}
-            onNext={() => setCurrentStep(8)}
-          />
-        );
-
-      case 8:
-        return (
-          <StepExport
-            exportPreset={exportPreset}
-            exportSettings={exportSettings}
-            projectId={project?.id}
-            projectName={name || project?.name || '未命名项目'}
-            storyboardFrameCount={storyboard.frames.length}
-            qualityGateIssues={exportQualityGate.issues}
-            qualityGatePassed={exportQualityGate.passed}
-            saving={saving}
-            onPresetChange={setExportPreset}
-            onExport={(settings) => setExportSettings((prev) => ({ ...prev, ...settings }))}
-            onLocateIssue={handleLocateIssueFrame}
-            onSave={handleSaveProject}
-            onPrev={() => setCurrentStep(7)}
-          />
-        );
-
-      default:
-        return null;
     }
   };
 
@@ -835,7 +689,67 @@ const ProjectEdit = () => {
             </div>
           }
         >
-          <StepContentSwitcher />
+          <StepContentSwitcher
+            currentStep={currentStep}
+            content={content}
+            loading={loading}
+            novelMetadata={novelMetadata}
+            analysisDraft={analysisDraft}
+            analysisState={analysisState}
+            storyAnalysis={storyAnalysis}
+            storyboardFrames={storyboard.frames}
+            selectedFrame={storyboard.selectedFrame}
+            focusFrameId={focusFrameId}
+            commentDraft={commentDraft}
+            versionLabel={versionLabel}
+            compareLeftVersionId={storyboard.compareLeftVersionId}
+            compareRightVersionId={storyboard.compareRightVersionId}
+            versionDiff={storyboard.versionDiff}
+            storyboardVersions={storyboard.versions}
+            projectId={project?.id}
+            characters={characters}
+            audioConfig={audioConfig}
+            audioEditorKey={audioEditorKey}
+            audioGenerating={audioGenerating}
+            scriptText={scriptText}
+            exportPreset={exportPreset}
+            exportSettings={exportSettings}
+            projectName={name || project?.name || '未命名项目'}
+            storyboardFrameCount={storyboard.frames.length}
+            qualityGateIssues={exportQualityGate.issues}
+            qualityGatePassed={exportQualityGate.passed}
+            saving={saving}
+            onContentLoad={handleContentLoad}
+            onRemove={handleContentRemove}
+            onAnalyze={handleAnalyzeContent}
+            onAcceptAnalysis={handleAcceptAnalysis}
+            onDraftChange={setAnalysisDraft}
+            onExportScript={handleExportScript}
+            onSaveScript={handleSaveScript}
+            onFramesChange={storyboard.setFrames}
+            onFrameSelect={storyboard.selectFrame}
+            onBuildDraft={handleBuildStoryboardDraft}
+            onAddComment={handleAddFrameComment}
+            onSaveVersion={handleSaveStoryboardVersion}
+            onCompareVersions={handleCompareVersions}
+            onRollback={handleRollbackVersion}
+            onCommentDraftChange={setCommentDraft}
+            onLeftVersionChange={storyboard.setCompareLeft}
+            onRightVersionChange={storyboard.setCompareRight}
+            onVersionLabelChange={setVersionLabel}
+            onApplyRenderedFrame={handleApplyRenderedFrame}
+            onCompositionChange={setComposition}
+            onConfigChange={setAudioConfig}
+            onGenerateVoices={handleGenerateVoices}
+            onPresetChange={setExportPreset}
+            onExportSettingsChange={(settings) =>
+              setExportSettings((prev) => ({ ...prev, ...settings }))
+            }
+            onLocateIssue={handleLocateIssueFrame}
+            onSaveProject={handleSaveProject}
+            onCharactersChange={setCharacters}
+            onGoToStep={setCurrentStep}
+          />
         </Suspense>
       </div>
     </div>

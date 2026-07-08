@@ -12,7 +12,6 @@ import {
   CURRENT_VERSION,
   generateExportFilename,
   nowIso,
-  type ExportFormat,
   type ExportOptions,
   type ProjectExportData,
 } from './project-import-export-types';
@@ -50,9 +49,7 @@ export function buildProjectExportData(
 }
 
 /** 解析导出选项（与原 exportProject 内联 defaultOptions 字节级一致） */
-export function resolveExportOptions(
-  options: Partial<ExportOptions> = {}
-): ExportOptions {
+export function resolveExportOptions(options: Partial<ExportOptions> = {}): ExportOptions {
   return {
     format: 'json',
     includeMedia: false,
@@ -65,10 +62,7 @@ export function resolveExportOptions(
 /**
  * 导出项目为 JSON 字符串
  */
-export function exportToJSON(
-  project: ProjectData,
-  options: Partial<ExportOptions> = {}
-): string {
+export function exportToJSON(project: ProjectData, options: Partial<ExportOptions> = {}): string {
   return JSON.stringify(buildProjectExportData(project, options), null, 2);
 }
 

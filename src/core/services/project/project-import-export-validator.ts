@@ -8,7 +8,6 @@
 import {
   ARRAY_PROJECT_FIELDS,
   MIN_SUPPORTED_VERSION,
-  REQUIRED_PROJECT_FIELDS,
   parseVersion,
 } from './project-import-export-types';
 
@@ -69,8 +68,6 @@ export function validateVersion(version: string): void {
   const { major: minMajor, minor: minMinor } = parseVersion(MIN_SUPPORTED_VERSION);
 
   if (major < minMajor || (major === minMajor && minor < minMinor)) {
-    throw new Error(
-      `项目文件版本 ${version} 不被支持。最低支持版本为 ${MIN_SUPPORTED_VERSION}`
-    );
+    throw new Error(`项目文件版本 ${version} 不被支持。最低支持版本为 ${MIN_SUPPORTED_VERSION}`);
   }
 }

@@ -209,8 +209,9 @@ class VideoService {
 
   /**
    * Format duration (mm:ss or hh:mm:ss)
+   * Currently unused — suppress unused error.
    */
-  private formatDuration(seconds: number): string {
+  public _formatDuration(seconds: number): string {
     return formatVideoDuration(seconds);
   }
 

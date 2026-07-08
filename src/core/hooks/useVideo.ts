@@ -263,7 +263,7 @@ export function useVideo(): UseVideoReturn {
     }
     setIsAnalyzing(false);
     setTaskStatus((prev) =>
-      prev ? ({ ...prev, status: 'cancelled', message: '已取消' } as unknown as TaskStatus) : null
+      prev ? { ...prev, status: 'cancelled' as const, message: '已取消' } : null
     );
   }, []);
 

@@ -3,12 +3,7 @@
  */
 import { useCallback, useMemo, useState } from 'react';
 
-import type {
-  SubtitleItem,
-  SubtitleStyle,
-  SubtitleEditorProps,
-  DEFAULT_SUBTITLE_STYLE,
-} from '../types/subtitle.entities';
+import type { SubtitleItem, SubtitleStyle, SubtitleEditorProps } from '../types/subtitle.entities';
 import { DEFAULT_SUBTITLE_STYLE as DEFAULT_STYLE } from '../types/subtitle.entities';
 
 /**
@@ -19,8 +14,8 @@ export function useSubtitleEditor({
   subtitles,
   onChange,
   currentTime = 0,
-  videoWidth = 1920,
-  videoHeight = 1080,
+  videoWidth: _videoWidth = 1920,
+  videoHeight: _videoHeight = 1080,
 }: Pick<
   SubtitleEditorProps,
   'subtitles' | 'onChange' | 'currentTime' | 'videoWidth' | 'videoHeight'

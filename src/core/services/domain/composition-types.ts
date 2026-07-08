@@ -9,7 +9,6 @@ import type {
   AnimationProperty,
   CameraMotion,
   CompositionProject,
-  FrameAnimation,
   TransitionConfig,
 } from '@/shared/types';
 
@@ -61,7 +60,7 @@ export interface AnimationKeyframeInput {
 }
 
 /** localStorage 持久化键 */
-export const COMPOSITION_STORAGE_KEY = 'frame-fab-compositions';
+export const COMPOSITION_STORAGE_KEY = 'storyweaver-compositions';
 
 /** 导出数据 schema 版本 */
 export const EXPORT_SCHEMA_VERSION = '1.0';

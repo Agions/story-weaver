@@ -2,9 +2,10 @@
  * Step 2: 编辑剧本
  */
 import { Edit } from 'lucide-react';
-import { lazy } from 'react';
+import { lazy, useMemo, useState } from 'react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';
+import type { VideoSegment } from '@/shared/types/script';
 
 import styles from '../ProjectEdit.module.less';
 
@@ -14,12 +15,22 @@ const ScriptEditor = lazy(() => import('@/features/script/components/ScriptEdito
 
 export interface StepScriptProps {
   onExport: (format: string) => void;
-  onSave: (segments: unknown) => void;
+  onSave: (segments: VideoSegment[]) => void;
   onPrev: () => void;
   onNext: () => void;
 }
 
-function StepScript({ onExport, onPrev, onNext, onSave }: StepScriptProps) {
+// onExport is kept in the props interface for parent-level wiring (StepContentSwitcher pass-through)
+function StepScript({ onExport: _onExport, onPrev, onNext, onSave }: StepScriptProps) {
+  const [segments, setSegments] = useState<VideoSegment[]>([]);
+
+  const handleSegmentsChange = useMemo(() => {
+    return (updated: VideoSegment[]) => {
+      setSegments(updated);
+      onSave(updated);
+    };
+  }, [onSave]);
+
   return (
     <Card className={styles.stepCard}>
       <CardHeader>
@@ -33,7 +44,7 @@ function StepScript({ onExport, onPrev, onNext, onSave }: StepScriptProps) {
           编辑和优化AI生成的剧本内容，可以添加、删除或修改片段。
         </p>
 
-        <ScriptEditor videoPath="" initialSegments={[]} onSave={onSave} onExport={onExport} />
+        <ScriptEditor segments={segments} onSegmentsChange={handleSegmentsChange} videoPath="" />
 
         <StepActions onPrev={onPrev} onNext={onNext} />
       </CardContent>

@@ -1,5 +1,5 @@
 /**
- * frame-fab Novel Types
+ * Story Weaver Novel Types
  * Extracted from src/shared/types/index.ts
  * Novel/script analysis and processing types
  */

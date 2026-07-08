@@ -1,10 +1,13 @@
 /**
- * frame-fab Shared Utils - Barrel Export
+ * Story Weaver Shared Utils - Barrel Export
  * Re-exports all utilities from modular files for backward compatibility
  */
 
 // General Utilities
 export * from './general';
+
+// Environment Detection (single source of truth for isTauri)
+export { isTauri } from '@/core/services/video/video-compositor-environment';
 
 // Formatting Utilities
 export * from './format';

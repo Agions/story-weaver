@@ -53,7 +53,6 @@ import type {
   AIModel,
   AIModelSettings,
   VideoAnalysis,
-  ScriptSegment,
   MockConfig,
 } from './ai.service.types';
 

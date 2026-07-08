@@ -43,7 +43,6 @@ import {
   buildProjectDataKey,
   buildSecureConfigKey,
   type CheckpointData,
-  type TauriStore,
 } from './secure-storage-types';
 
 // 重导出公共类型

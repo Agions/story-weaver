@@ -62,7 +62,7 @@ const featureList: Feature[] = [
 
 /**
  * 功能展示组件
- * 展示 frame-fab 核心功能特性
+ * 展示 Story Weaver 核心功能特性
  */
 const Features = () => {
   const { isDarkMode } = useTheme();

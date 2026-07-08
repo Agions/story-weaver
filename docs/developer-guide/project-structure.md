@@ -7,14 +7,14 @@ version: '>=3.0'
 
 # 项目结构
 
-> 本文档详细介绍 frame-fab 项目的目录结构、模块划分与文件说明。
+> 本文档详细介绍 Story Weaver 项目的目录结构、模块划分与文件说明。
 
 ---
 
 ## 一、整体目录结构
 
 ```
-frame-fab/
+Story Weaver/
 ├── docs/                          # 项目文档
 │   ├── index.md                   # 文档首页
 │   ├── getting-started/           # 入门指南

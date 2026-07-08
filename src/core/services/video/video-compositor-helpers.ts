@@ -19,7 +19,6 @@ import {
   ffmpegWasmService,
   isFFmpegWasmAvailable,
   type ExportProgress,
-  type ProgressCallback,
 } from '@/core/services/video/ffmpeg-wasm.service';
 import { logger } from '@/core/utils/logger';
 

@@ -1,5 +1,5 @@
 /**
- * frame-fab Shared Utils - Request Utilities & Request Cache
+ * Story Weaver Shared Utils - Request Utilities & Request Cache
  */
 import { delay } from '@/shared/utils/timing';
 
@@ -83,10 +83,6 @@ export class RequestCache {
   constructor(options: CacheOptions = {}) {
     this.ttl = options.ttl ?? 5 * 60 * 1000;
     this.maxSize = options.maxSize ?? 100;
-  }
-
-  private generateKey(...args: unknown[]): string {
-    return JSON.stringify(args);
   }
 
   get<T>(key: string): T | null {

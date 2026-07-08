@@ -239,7 +239,7 @@ class TauriService {
     options?: { title?: string; kind?: 'info' | 'warning' | 'error' }
   ): Promise<void> {
     await message(msg, {
-      title: options?.title ?? 'frame-fab AI',
+      title: options?.title ?? 'Story Weaver AI',
       kind: options?.kind ?? 'info',
     });
   }

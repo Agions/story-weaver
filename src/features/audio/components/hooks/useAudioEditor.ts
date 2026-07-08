@@ -102,8 +102,8 @@ export interface UseAudioEditorReturn {
 export function useAudioEditor({
   initialConfig,
   onConfigChange,
-  videoDuration = 60,
-  disabled = false,
+  videoDuration: _videoDuration = 60,
+  disabled: _disabled = false,
 }: UseAudioEditorOptions): UseAudioEditorReturn {
   // ========== 状态 ==========
   // 13 个 useState 已迁移到 useReducer 状态机 (2026-06-11)

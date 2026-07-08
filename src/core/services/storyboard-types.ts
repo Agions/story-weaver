@@ -7,8 +7,6 @@
  * 共用这套类型，保持领域模型一致。
  */
 
-import type { StoryboardFrame } from '@/shared/types/storyboard';
-
 /** 分镜服务构造选项 */
 export interface StoryboardServiceOptions {
   projectId?: string;
@@ -49,7 +47,7 @@ export const STORYBOARD_FRAME_DEFAULTS = {
 } as const;
 
 /** localStorage 存储键前缀 */
-export const STORYBOARD_STORAGE_KEY = 'frame-fab-storyboards';
+export const STORYBOARD_STORAGE_KEY = 'storyweaver-storyboards';
 
 /** 项目级 key 构造（与原 StoryboardService.loadFromStorage / saveToStorage 逻辑一致） */
 export function buildStoryboardStorageKey(projectId?: string): string {

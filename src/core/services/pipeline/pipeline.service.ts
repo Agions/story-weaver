@@ -34,7 +34,6 @@ import {
 } from './pipeline-step-factories';
 import type {
   PipelineCallbacks as PipelineRunCallbacks,
-  PipelineContext,
   PipelineResult,
   PipelineStep,
   PipelineStatus,

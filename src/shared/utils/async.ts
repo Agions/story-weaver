@@ -1,5 +1,5 @@
 /**
- * frame-fab Shared Utils - Async Error Handling Utilities
+ * Story Weaver Shared Utils - Async Error Handling Utilities
  */
 
 import { logger } from '@/core/utils/logger';

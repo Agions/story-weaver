@@ -1,5 +1,5 @@
 name: Feature Request
-description: Suggest a new feature for frame-fab
+description: Suggest a new feature for Story Weaver
 labels: ["enhancement", "needs-triage"]
 body:
   - type: markdown

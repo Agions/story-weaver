@@ -63,14 +63,7 @@ export class AnalysisStep extends BasePipelineStep {
   }
 
   protected computeMetrics(result: unknown): Record<string, unknown> {
-    if (
-      result &&
-      typeof result === 'object' &&
-      'estimatedScenes' in (result as Record<string, unknown>)
-    ) {
-      return { framesProcessed: (result as { estimatedScenes: number }).estimatedScenes };
-    }
-    return {};
+    return this.computeNumericMetric(result, 'estimatedScenes');
   }
 
   private estimateCharacterCount(chapters: ImportOutput['chapters']): number {

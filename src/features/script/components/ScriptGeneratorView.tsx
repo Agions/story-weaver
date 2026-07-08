@@ -15,7 +15,7 @@ import styles from './ScriptGeneratorView.module.less';
  */
 const ScriptGeneratorView = () => {
   const [novelMetadata, setNovelMetadata] = useState<ScriptImportMetadata | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [isGenerating, _setIsGenerating] = useState(false);
 
   const handleNovelImport = (metadata: ScriptImportMetadata) => {
     setNovelMetadata(metadata);
@@ -30,7 +30,7 @@ const ScriptGeneratorView = () => {
 
       <Space direction="vertical" size="large" className={styles.content}>
         <Card title="导入小说">
-          <NovelImporter onContentLoad={(content, metadata) => handleNovelImport(metadata)} />
+          <NovelImporter onContentLoad={(_content, metadata) => handleNovelImport(metadata)} />
         </Card>
 
         {novelMetadata && (

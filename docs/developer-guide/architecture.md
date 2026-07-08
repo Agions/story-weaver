@@ -1,13 +1,13 @@
 ---
 title: 架构设计
-description: frame-fab v2.2.3 整体架构：Tauri 桌面 + 前端分层 (app/pages/features/shared/core/domain) + 10 步 Pipeline + AI 服务编排
+description: Story Weaver v2.2.3 整体架构：Tauri 桌面 + 前端分层 (app/pages/features/shared/core/domain) + 10 步 Pipeline + AI 服务编排
 category: developer-guide
 version: '>=3.0'
 ---
 
 # 架构设计
 
-> frame-fab v2.2.3 的系统架构——**Tauri 2.1 桌面端** + **DDD 轻量分层前端** + **10 步 Pipeline** + **多 Provider AI 编排**。
+> Story Weaver v2.2.3 的系统架构——**Tauri 2.1 桌面端** + **DDD 轻量分层前端** + **10 步 Pipeline** + **多 Provider AI 编排**。
 
 ## 一、设计目标
 
@@ -24,7 +24,7 @@ version: '>=3.0'
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│                    frame-fab 系统架构 (v2.2.3)                            │
+│                    Story Weaver 系统架构 (v2.2.3)                            │
 └──────────────────────────────────────────────────────────────────────┘
 
   ┌─────────────────────────────────────────────────────────────────┐

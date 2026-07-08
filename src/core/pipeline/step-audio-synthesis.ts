@@ -72,14 +72,7 @@ export class AudioSynthesisStep extends BasePipelineStep {
   }
 
   protected computeMetrics(result: unknown): Record<string, unknown> {
-    if (
-      result &&
-      typeof result === 'object' &&
-      'dialogueAudio' in (result as Record<string, unknown>)
-    ) {
-      return { framesProcessed: (result as { dialogueAudio: unknown[] }).dialogueAudio.length };
-    }
-    return {};
+    return this.computeCountMetric(result, 'dialogueAudio');
   }
 }
 

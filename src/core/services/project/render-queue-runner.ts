@@ -18,7 +18,6 @@ import {
   TICK_INTERVAL_MS,
   TICK_PROGRESS_POINTS,
   type FrameRenderJob,
-  type RenderLog,
   type RenderQueueState,
 } from './render-queue-types';
 

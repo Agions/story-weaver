@@ -59,7 +59,7 @@ export async function exportAsMP4(
 export async function exportAsGIF(
   storyboard: StoryboardData,
   fileName: string,
-  options: ProjectExportOptions,
+  _options: ProjectExportOptions,
   onProgress?: ProgressCallback
 ): Promise<Blob> {
   const scenes = storyboardToVideoScenes(storyboard, GIF_DEFAULT_SCENE_DURATION);

@@ -6,7 +6,7 @@
  * 3. 局部错误捕获 Hook
  */
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 
 import { logger } from '@/core/utils/logger';
 import { telemetry } from '@/infrastructure/telemetry/telemetry';

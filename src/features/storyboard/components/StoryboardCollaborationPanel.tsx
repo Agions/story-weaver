@@ -46,7 +46,7 @@ export const StoryboardCollaborationPanel: React.FC<StoryboardCollaborationPanel
 }) => {
   // 评论相关状态
   const [commentDraft, setCommentDraft] = useState('');
-  const [storyboardComments, setStoryboardComments] = useState<FrameComment[]>([]);
+  const [_storyboardComments, setStoryboardComments] = useState<FrameComment[]>([]);
 
   // 版本管理状态
   const [storyboardVersions, setStoryboardVersions] = useState<StoryboardVersion[]>([]);
@@ -83,7 +83,7 @@ export const StoryboardCollaborationPanel: React.FC<StoryboardCollaborationPanel
   // 保存快照
   const handleSaveVersion = () => {
     if (!projectId) return;
-    const version = collaborationService.saveVersion({
+    collaborationService.saveVersion({
       projectId,
       label: versionLabel.trim() || `版本-${new Date().toLocaleTimeString()}`,
       createdBy: 'current-user',

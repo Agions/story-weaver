@@ -54,12 +54,10 @@ export type {
 
 export class CompositionService {
   private compositions: Map<string, CompositionProject> = new Map();
-  private projectId?: string;
   private autoSave: boolean;
   private subscriber = new CompositionSubscriber();
 
   constructor(options: CompositionServiceOptions = {}) {
-    this.projectId = options.projectId;
     this.autoSave = options.autoSave ?? true;
     this.hydrateFromStorage();
   }

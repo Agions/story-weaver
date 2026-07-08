@@ -115,10 +115,7 @@ export class ImportStep extends BasePipelineStep {
   }
 
   protected computeMetrics(result: unknown): Record<string, unknown> {
-    if (result && typeof result === 'object' && 'chapters' in (result as Record<string, unknown>)) {
-      return { framesProcessed: (result as { chapters: unknown[] }).chapters.length };
-    }
-    return {};
+    return this.computeCountMetric(result, 'chapters');
   }
 
   private detectContentType(content: string): 'novel' | 'script' | 'prompt' {

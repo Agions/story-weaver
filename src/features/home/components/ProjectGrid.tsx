@@ -45,7 +45,7 @@ function ProjectGrid({ projects, loading, onRefresh }: ProjectGridProps) {
     navigate(`/editor/${id}`);
   };
 
-  const handleDeleteProject = (id: string, e: React.MouseEvent) => {
+  const handleDeleteProject = (_id: string, e: React.MouseEvent) => {
     e.stopPropagation();
     // Simplified - just call onRefresh for now
     onRefresh?.();

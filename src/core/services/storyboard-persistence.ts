@@ -8,11 +8,7 @@
 
 import { logger } from '@/core/utils/logger';
 
-import {
-  buildStoryboardStorageKey,
-  resolveProjectKey,
-  type StoryboardFrame,
-} from './storyboard-types';
+import { buildStoryboardStorageKey, type StoryboardFrame } from './storyboard-types';
 
 /**
  * 从 localStorage 加载当前项目的分镜

@@ -31,7 +31,6 @@ import styles from './SubtitleEditor.module.less';
 import type { SubtitleItem } from './types/subtitle.entities';
 import {
   ALIGNMENT_OPTIONS,
-  DEFAULT_SUBTITLE_STYLE,
   FONT_FAMILY_OPTIONS,
   POSITION_OPTIONS,
 } from './types/subtitle.entities';

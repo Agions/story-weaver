@@ -25,7 +25,7 @@ describe('evaluationService', () => {
     expect(report.summary.overall).toBeGreaterThan(0);
 
     const md = evaluationService.toMarkdown(report);
-    expect(md).toContain('frame-fab AI 评测回归报告');
+    expect(md).toContain('Story Weaver AI 评测回归报告');
     expect(md).toContain('| ID | 标题 |');
   });
 });

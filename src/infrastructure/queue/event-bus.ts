@@ -41,7 +41,7 @@ export class EventBus implements EventBusInterface {
     // Try to enable cross-tab communication
     if (typeof BroadcastChannel !== 'undefined') {
       try {
-        this.crossTabChannel = new BroadcastChannel('frame-fab-events');
+        this.crossTabChannel = new BroadcastChannel('storyweaver-events');
         this.crossTabChannel.onmessage = (msg) => {
           const event = msg.data as DomainEvent;
           this.handleCrossTabEvent(event);

@@ -4,7 +4,6 @@
  */
 
 import type {
-  Character,
   CharacterAppearance,
   ClothingItem,
   CharacterExpression,

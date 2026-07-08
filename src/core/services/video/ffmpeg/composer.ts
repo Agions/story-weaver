@@ -10,12 +10,7 @@ import { fetchFile } from '@ffmpeg/util';
 import { logger } from '@/core/utils/logger';
 
 import { getFFmpegInstance, setActiveProgressCallback } from './ffmpeg-instance';
-import {
-  execFFmpegCommand,
-  readOutputAsBlob,
-  safeDeleteFiles,
-  writeInputFiles,
-} from './ffmpeg-pipeline';
+import { execFFmpegCommand, readOutputAsBlob, safeDeleteFiles } from './ffmpeg-pipeline';
 import { buildImageOnlyFilterComplex, buildMixedMediaFilterComplex } from './filter-builder';
 import type {
   CompositionOptions,

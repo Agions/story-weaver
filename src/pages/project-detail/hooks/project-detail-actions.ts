@@ -30,7 +30,7 @@ export function usePersistProjectPatch(
   updateProject: (id: string, data: ProjectData) => void
 ) {
   return useCallback(
-    (patch: Record<string, unknown>) => {
+    (patch: Partial<ProjectData>) => {
       if (!project) return;
       const updatedProject = {
         ...project,
@@ -39,9 +39,10 @@ export function usePersistProjectPatch(
       };
       setProject(updatedProject);
       updateProject(updatedProject.id, updatedProject);
-      tauriService
-        .writeText(updatedProject.id, JSON.stringify(updatedProject))
-        .catch(() => undefined);
+      tauriService.writeText(updatedProject.id, JSON.stringify(updatedProject)).catch((err) => {
+        logger.error('持久化项目失败:', err);
+        toast.error('保存失败，请重试');
+      });
     },
     [project, setProject, updateProject]
   );
@@ -53,7 +54,7 @@ export function usePersistProjectPatch(
 export function useHandleApplyRenderedFrame(
   project: ProjectData | null,
   storyboardFrames: StoryboardFrame[],
-  persistProjectPatch: (patch: Record<string, unknown>) => void
+  persistProjectPatch: (patch: Partial<ProjectData>) => void
 ) {
   return useCallback(
     (frameId: string, imageUrl: string) => {

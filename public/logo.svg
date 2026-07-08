@@ -1,129 +1,52 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="frame-fab">
-  <title>frame-fab</title>
-  <desc>AI 漫剧创作平台 — 胶片三帧 + 多模型神经连结 + 中心光圈的视觉锤 (v2.2.3)</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Story Weaver">
+  <title>Story Weaver</title>
+  <desc>AI 漫剧创作平台 — 编织故事的概念标志</desc>
   <defs>
-    <!-- 主品牌渐变: 靛 → 紫 → 品红 -->
-    <linearGradient id="brandPrimary" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#6366F1"/>
       <stop offset="50%" stop-color="#A855F7"/>
       <stop offset="100%" stop-color="#EC4899"/>
     </linearGradient>
-    <!-- 强调渐变: 活力橙红 -->
-    <linearGradient id="brandAccent" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#FB923C"/>
-      <stop offset="100%" stop-color="#F43F5E"/>
-    </linearGradient>
-    <!-- 中心光点脉冲: 由内到外的能量感 -->
-    <radialGradient id="pulseGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
-      <stop offset="35%" stop-color="#A855F7" stop-opacity="0.55"/>
-      <stop offset="100%" stop-color="#6366F1" stop-opacity="0"/>
-    </radialGradient>
-    <!-- 内底色: 深空蓝 + 紫色径向光晕 -->
-    <radialGradient id="bgGlow" cx="50%" cy="48%" r="62%">
-      <stop offset="0%" stop-color="#1A1B3E"/>
+    <radialGradient id="g2" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#1E1B4B"/>
       <stop offset="100%" stop-color="#0B0E2C"/>
     </radialGradient>
-    <!-- 胶片帧中心高光 -->
-    <radialGradient id="frameHighlight" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.18"/>
-      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
-    </radialGradient>
-    <!-- 神经网络连结线渐变 -->
-    <linearGradient id="neuroLine" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#6366F1" stop-opacity="0"/>
-      <stop offset="50%" stop-color="#A855F7" stop-opacity="0.55"/>
-      <stop offset="100%" stop-color="#EC4899" stop-opacity="0"/>
-    </linearGradient>
   </defs>
 
-  <!-- 圆角方底 (深空蓝 + 紫色径向晕) -->
-  <rect x="16" y="16" width="224" height="224" rx="56" fill="url(#bgGlow)"/>
-  <!-- 顶部高光弧 (强化玻璃感) -->
-  <path d="M 40 16 Q 128 8 216 16" stroke="#FFFFFF" stroke-opacity="0.08" stroke-width="1" fill="none"/>
+  <!-- 背景 -->
+  <rect width="256" height="256" rx="56" fill="url(#g2)"/>
 
-  <!-- 神经网络连接线: 4 角装饰点 + 微弱连线 (暗示 AI 多模型编排) -->
-  <g opacity="0.55">
-    <line x1="40" y1="40" x2="100" y2="100" stroke="url(#neuroLine)" stroke-width="1.2"/>
-    <line x1="216" y1="40" x2="156" y2="100" stroke="url(#neuroLine)" stroke-width="1.2"/>
-    <line x1="40" y1="216" x2="100" y2="156" stroke="url(#neuroLine)" stroke-width="1.2"/>
-    <line x1="216" y1="216" x2="156" y2="156" stroke="url(#neuroLine)" stroke-width="1.2"/>
-    <circle cx="40"  cy="40"  r="2" fill="#A855F7" opacity="0.7"/>
-    <circle cx="216" cy="40"  r="2" fill="#A855F7" opacity="0.7"/>
-    <circle cx="40"  cy="216" r="2" fill="#A855F7" opacity="0.7"/>
-    <circle cx="216" cy="216" r="2" fill="#A855F7" opacity="0.7"/>
+  <!-- 编织经纬线: 三条经线 + 三条纬线交织 -->
+  <g stroke="url(#g1)" stroke-width="3" stroke-linecap="round" opacity="0.6">
+    <!-- 经线 (纵向弧线) -->
+    <path d="M 70 30 Q 55 128 70 226" fill="none"/>
+    <path d="M 128 30 Q 128 128 128 226" fill="none"/>
+    <path d="M 186 30 Q 201 128 186 226" fill="none"/>
+    <!-- 纬线 (横向弧线) -->
+    <path d="M 30 70 Q 128 55 226 70" fill="none" opacity="0.4"/>
+    <path d="M 30 128 Q 128 128 226 128" fill="none" opacity="0.4"/>
   </g>
 
-  <!-- 胶片帧结构: 3 大主帧 + 2 半透明副帧 (暗示多镜头) -->
-  <g>
-    <!-- 左副帧 (暗示前序镜头) -->
-    <rect x="14"  y="84" width="40" height="88" rx="8" fill="none" stroke="url(#brandPrimary)" stroke-width="3" opacity="0.35"/>
-    <!-- 左主帧 -->
-    <rect x="50"  y="68" width="46" height="120" rx="9" fill="none" stroke="url(#brandPrimary)" stroke-width="4"/>
-    <rect x="50"  y="68" width="46" height="120" rx="9" fill="url(#frameHighlight)"/>
-    <!-- 中主帧 (主角, 略大 + 描边更粗) -->
-    <rect x="105" y="54" width="46" height="148" rx="9" fill="none" stroke="url(#brandPrimary)" stroke-width="5"/>
-    <rect x="105" y="54" width="46" height="148" rx="9" fill="url(#frameHighlight)"/>
-    <!-- 右主帧 -->
-    <rect x="160" y="68" width="46" height="120" rx="9" fill="none" stroke="url(#brandPrimary)" stroke-width="4"/>
-    <rect x="160" y="68" width="46" height="120" rx="9" fill="url(#frameHighlight)"/>
-    <!-- 右副帧 (暗示后续镜头) -->
-    <rect x="202" y="84" width="40" height="88" rx="8" fill="none" stroke="url(#brandPrimary)" stroke-width="3" opacity="0.35"/>
-
-    <!-- 胶片孔 (sprocket holes): 上下排, 大小整齐, 5 帧 4 孔 -->
-    <g fill="#EC4899" opacity="0.78">
-      <!-- 顶排 -->
-      <rect x="58"  y="78"  width="5" height="5" rx="1.5"/>
-      <rect x="78"  y="78"  width="5" height="5" rx="1.5"/>
-      <rect x="113" y="64"  width="5" height="5" rx="1.5"/>
-      <rect x="133" y="64"  width="5" height="5" rx="1.5"/>
-      <rect x="168" y="78"  width="5" height="5" rx="1.5"/>
-      <rect x="188" y="78"  width="5" height="5" rx="1.5"/>
-    </g>
-    <g fill="#EC4899" opacity="0.78">
-      <!-- 底排 -->
-      <rect x="58"  y="173" width="5" height="5" rx="1.5"/>
-      <rect x="78"  y="173" width="5" height="5" rx="1.5"/>
-      <rect x="113" y="187" width="5" height="5" rx="1.5"/>
-      <rect x="133" y="187" width="5" height="5" rx="1.5"/>
-      <rect x="168" y="173" width="5" height="5" rx="1.5"/>
-      <rect x="188" y="173" width="5" height="5" rx="1.5"/>
-    </g>
+  <!-- 节点 (经线交点): 代表漫剧画面 -->
+  <g fill="url(#g1)">
+    <rect x="62" y="62" width="16" height="16" rx="4"/>
+    <rect x="120" y="62" width="16" height="16" rx="4"/>
+    <rect x="178" y="62" width="16" height="16" rx="4"/>
+    <rect x="62" y="120" width="16" height="16" rx="4"/>
+    <rect x="120" y="120" width="16" height="16" rx="4" opacity="0.7"/>
+    <rect x="178" y="120" width="16" height="16" rx="4"/>
   </g>
 
-  <!-- AI 中心光圈 (多模型编排核心): 4 层同心圆 + 4 向脉冲 + 4 对角细线 -->
+  <!-- 中心光点 (故事汇聚) -->
   <g transform="translate(128 128)">
-    <!-- 最外光晕脉冲 (由内到外) -->
-    <circle r="46" fill="url(#pulseGlow)" opacity="0.55"/>
-    <!-- 强调色外环 -->
-    <circle r="18" fill="url(#brandAccent)"/>
-    <circle r="18" fill="none" stroke="#FFFFFF" stroke-opacity="0.25" stroke-width="1"/>
-    <!-- 主色内圈 (视觉锤焦点) -->
-    <circle r="12" fill="url(#brandPrimary)"/>
-    <!-- 中心高亮 (AI 启动按钮感) -->
-    <circle r="5" fill="#FFFFFF"/>
-    <circle r="2" fill="#A855F7"/>
-
-    <!-- 4 向主脉冲线 -->
-    <g stroke="url(#brandPrimary)" stroke-width="3" stroke-linecap="round" opacity="0.85">
-      <line x1="-58" y1="0"   x2="-26" y2="0"/>
-      <line x1="26"  y1="0"   x2="58"  y2="0"/>
-      <line x1="0"   y1="-58" x2="0"  y2="-26"/>
-      <line x1="0"   y1="26"  x2="0"   y2="58"/>
-    </g>
-    <!-- 对角细脉冲 (暗示次级模型) -->
-    <g stroke="url(#brandPrimary)" stroke-width="1.8" stroke-linecap="round" opacity="0.55">
-      <line x1="-40" y1="-40" x2="-22" y2="-22"/>
-      <line x1="40"  y1="-40" x2="22"  y2="-22"/>
-      <line x1="-40" y1="40"  x2="-22" y2="22"/>
-      <line x1="40"  y1="40"  x2="22"  y2="22"/>
-    </g>
-    <!-- 4 端小点 (神经网络节点感) -->
-    <g fill="#EC4899" opacity="0.85">
-      <circle cx="-62" cy="0"   r="1.8"/>
-      <circle cx="62"  cy="0"   r="1.8"/>
-      <circle cx="0"   cy="-62" r="1.8"/>
-      <circle cx="0"   cy="62"  r="1.8"/>
-    </g>
+    <circle r="20" fill="url(#g1)" opacity="0.2"/>
+    <circle r="10" fill="url(#g1)"/>
+    <circle r="4" fill="#FFFFFF"/>
   </g>
+
+  <!-- 四角装饰 -->
+  <circle cx="40" cy="40" r="2" fill="#A855F7" opacity="0.5"/>
+  <circle cx="216" cy="40" r="2" fill="#A855F7" opacity="0.5"/>
+  <circle cx="40" cy="216" r="2" fill="#A855F7" opacity="0.5"/>
+  <circle cx="216" cy="216" r="2" fill="#A855F7" opacity="0.5"/>
 </svg>

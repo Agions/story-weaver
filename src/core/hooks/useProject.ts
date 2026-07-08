@@ -1,16 +1,23 @@
 /**
- * 项目管理 Hook（自包含实现）
+ * 项目管理 Hook（reducer 实现）
  *
- * 不依赖 project-storage / useProject.reducer / useProjectList，
- * 内部用 useState + localStorage 完成项目 CRUD。
+ * 内部用 useReducer + localStorage 完成项目 CRUD。
+ * 状态机定义在 useProject.reducer.ts。
  */
 
-import { useState, useCallback, useMemo } from 'react';
+import { useReducer, useCallback, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { ProjectData, VideoInfo, Script, ProjectSettings, TaskStatus } from '@/shared/types';
 
-const PROJECTS_STORAGE_KEY = 'framefab_projects';
+import {
+  projectReducer,
+  initialProjectState,
+  createProjectSetters,
+  type ProjectState,
+} from './useProject.reducer';
+
+const PROJECTS_STORAGE_KEY = 'storyweaver_projects';
 
 function loadProjects(): ProjectData[] {
   try {
@@ -67,184 +74,189 @@ export interface UseProjectReturn {
   resetProject: () => void;
 }
 
+// 初始状态工厂 (lazy load projects from storage)
+function createInitialState(): ProjectState {
+  return { ...initialProjectState, projects: loadProjects() };
+}
+
 export function useProject(_projectId?: string): UseProjectReturn {
-  const [project, setProject] = useState<ProjectData | null>(null);
-  const [projects, setProjects] = useState<ProjectData[]>(() => loadProjects());
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
+  const [state, dispatch] = useReducer(projectReducer, undefined, createInitialState);
+  const setters = createProjectSetters(dispatch);
 
-  const taskStatus: TaskStatus | null = null;
+  const { projects } = state;
 
-  const recentProjects = useMemo(() => {
-    return [...projects]
-      .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-      .slice(0, 10);
-  }, [projects]);
+  const recentProjects = useMemo(
+    () =>
+      [...projects]
+        .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+        .slice(0, 10),
+    [projects]
+  );
 
-  const createProject = useCallback((name: string, description?: string): ProjectData => {
-    const now = new Date().toISOString();
-    const newProject: ProjectData = {
-      id: uuidv4(),
-      name: name || '未命名项目',
-      description,
-      status: 'draft',
-      settings: { ...DEFAULT_SETTINGS },
-      videos: [],
-      scripts: [],
-      createdAt: now,
-      updatedAt: now,
-    };
-    setProjects((prev) => {
-      const next = [newProject, ...prev];
-      persistProjects(next);
-      return next;
-    });
-    setProject(newProject);
-    setHasUnsavedChanges(false);
-    return newProject;
-  }, []);
+  const createProject = useCallback(
+    (name: string, description?: string): ProjectData => {
+      const now = new Date().toISOString();
+      const newProject: ProjectData = {
+        id: uuidv4(),
+        name: name || '未命名项目',
+        description,
+        status: 'draft',
+        settings: { ...DEFAULT_SETTINGS },
+        videos: [],
+        scripts: [],
+        createdAt: now,
+        updatedAt: now,
+      };
+      setters.setProjects((prev) => {
+        const next = [newProject, ...prev];
+        persistProjects(next);
+        return next;
+      });
+      setters.setProject(newProject);
+      setters.setHasUnsavedChanges(false);
+      return newProject;
+    },
+    [setters]
+  );
 
-  const loadProject = useCallback(async (id: string): Promise<boolean> => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const all = loadProjects();
-      const loaded = all.find((p) => p.id === id) || null;
-      if (loaded) {
-        setProject(loaded);
-        setHasUnsavedChanges(false);
-        return true;
-      } else {
-        setError('项目不存在');
+  const loadProject = useCallback(
+    async (id: string): Promise<boolean> => {
+      setters.setIsLoading(true);
+      setters.setError(null);
+      try {
+        const all = loadProjects();
+        const loaded = all.find((p) => p.id === id) || null;
+        if (loaded) {
+          setters.setProject(loaded);
+          setters.setHasUnsavedChanges(false);
+          return true;
+        } else {
+          setters.setError('项目不存在');
+          return false;
+        }
+      } catch {
+        setters.setError('加载项目失败');
         return false;
+      } finally {
+        setters.setIsLoading(false);
       }
-    } catch {
-      setError('加载项目失败');
-      return false;
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
+    },
+    [setters]
+  );
 
   const saveProject = useCallback(async (): Promise<boolean> => {
-    if (!project) return false;
-    setIsSaving(true);
+    const currentProject = state.project;
+    if (!currentProject) return false;
+    setters.setIsSaving(true);
     try {
-      const updated = { ...project, updatedAt: new Date().toISOString() };
-      setProjects((prev) => {
+      const updated = { ...currentProject, updatedAt: new Date().toISOString() };
+      setters.setProjects((prev) => {
         const next = prev.map((p) => (p.id === updated.id ? updated : p));
         persistProjects(next);
         return next;
       });
-      setProject(updated);
-      setHasUnsavedChanges(false);
+      setters.setProject(updated);
+      setters.setHasUnsavedChanges(false);
       return true;
     } catch {
-      setError('保存项目失败');
+      setters.setError('保存项目失败');
       return false;
     } finally {
-      setIsSaving(false);
+      setters.setIsSaving(false);
     }
-  }, [project]);
+  }, [setters, state.project]);
 
   const updateProject = useCallback(
     (updates: Partial<ProjectData>) => {
-      if (!project) return;
-      setProject((prev) => (prev ? { ...prev, ...updates } : null));
-      setHasUnsavedChanges(true);
+      setters.setProject((prev) => (prev ? { ...prev, ...updates } : null));
+      setters.setHasUnsavedChanges(true);
     },
-    [project]
+    [setters]
   );
 
   const deleteProject = useCallback(
     async (id: string): Promise<boolean> => {
       try {
-        setProjects((prev) => {
+        setters.setProjects((prev) => {
           const next = prev.filter((p) => p.id !== id);
           persistProjects(next);
           return next;
         });
-        if (project?.id === id) setProject(null);
+        if (state.project?.id === id) setters.setProject(null);
         return true;
       } catch {
-        setError('删除项目失败');
+        setters.setError('删除项目失败');
         return false;
       }
     },
-    [project]
+    [setters, state.project]
   );
 
-  const duplicateProject = useCallback(async (id: string): Promise<ProjectData | null> => {
-    const source = loadProjects().find((p) => p.id === id);
-    if (!source) return null;
-    const now = new Date().toISOString();
-    const duplicated: ProjectData = {
-      ...source,
-      id: uuidv4(),
-      name: `${source.name} (副本)`,
-      status: 'draft',
-      createdAt: now,
-      updatedAt: now,
-    };
-    setProjects((prev) => {
-      const next = [duplicated, ...prev];
-      persistProjects(next);
-      return next;
-    });
-    return duplicated;
-  }, []);
+  const duplicateProject = useCallback(
+    async (id: string): Promise<ProjectData | null> => {
+      const source = loadProjects().find((p) => p.id === id);
+      if (!source) return null;
+      const now = new Date().toISOString();
+      const duplicated: ProjectData = {
+        ...source,
+        id: uuidv4(),
+        name: `${source.name} (副本)`,
+        status: 'draft',
+        createdAt: now,
+        updatedAt: now,
+      };
+      setters.setProjects((prev) => {
+        const next = [duplicated, ...prev];
+        persistProjects(next);
+        return next;
+      });
+      return duplicated;
+    },
+    [setters]
+  );
 
   const setVideo = useCallback(
-    (videoInfo: VideoInfo) => {
-      updateProject({ videos: [videoInfo] });
-    },
+    (videoInfo: VideoInfo) => updateProject({ videos: [videoInfo] }),
     [updateProject]
   );
 
-  const removeVideo = useCallback(() => {
-    updateProject({ videos: [] });
-  }, [updateProject]);
+  const removeVideo = useCallback(() => updateProject({ videos: [] }), [updateProject]);
 
   const setScript = useCallback(
-    (script: Script) => {
-      updateProject({ scripts: [script] });
-    },
+    (script: Script) => updateProject({ scripts: [script] }),
     [updateProject]
   );
 
   const updateScript = useCallback(
     (updates: Partial<Script>) => {
-      if (!project?.scripts?.[0]) return;
+      if (!state.project?.scripts?.[0]) return;
       updateProject({
-        scripts: [{ ...project.scripts[0], ...updates, updatedAt: new Date().toISOString() }],
+        scripts: [{ ...state.project.scripts[0], ...updates, updatedAt: new Date().toISOString() }],
       });
     },
-    [project, updateProject]
+    [state.project, updateProject]
   );
 
   const updateSettings = useCallback(
     (settings: Partial<ProjectSettings>) => {
-      if (!project) return;
+      if (!state.project) return;
       updateProject({
-        settings: { ...project.settings, ...settings } as ProjectSettings,
+        settings: { ...state.project.settings, ...settings } as ProjectSettings,
       });
     },
-    [project, updateProject]
+    [state.project, updateProject]
   );
 
   const resetProject = useCallback(() => {
-    setProject(null);
-    setHasUnsavedChanges(false);
-    setError(null);
-    setCurrentStep(0);
-  }, []);
+    setters.setProject(null);
+    setters.setHasUnsavedChanges(false);
+    setters.setError(null);
+    setters.setCurrentStep(0);
+  }, [setters]);
 
   return {
-    project,
-    projects,
+    project: state.project,
+    projects: state.projects,
     recentProjects,
     createProject,
     loadProject,
@@ -257,16 +269,16 @@ export function useProject(_projectId?: string): UseProjectReturn {
     setScript,
     updateScript,
     updateSettings,
-    taskStatus,
-    isLoading,
-    isSaving,
-    error,
-    hasUnsavedChanges,
-    currentStep,
-    setCurrentStep,
-    saving: isSaving,
-    setSaving: setIsSaving,
-    setError,
+    taskStatus: state.taskStatus,
+    isLoading: state.isLoading,
+    isSaving: state.isSaving,
+    error: state.error,
+    hasUnsavedChanges: state.hasUnsavedChanges,
+    currentStep: state.currentStep,
+    setCurrentStep: setters.setCurrentStep,
+    saving: state.isSaving,
+    setSaving: setters.setIsSaving,
+    setError: setters.setError,
     resetProject,
   };
 }

@@ -15,7 +15,7 @@ export class ScriptAnalyzer {
    */
   exportToScript(
     result: AnalyzeResult,
-    format: 'screenplay' | 'comic' | 'manga' = 'manga'
+    _format: 'screenplay' | 'comic' | 'manga' = 'manga'
   ): string {
     const lines: string[] = [
       `# ${result.metadata.title}`,

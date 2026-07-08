@@ -91,10 +91,7 @@ export class StoryboardStep extends BasePipelineStep {
   }
 
   protected computeMetrics(result: unknown): Record<string, unknown> {
-    if (result && typeof result === 'object' && 'frames' in (result as Record<string, unknown>)) {
-      return { framesProcessed: (result as { frames: unknown[] }).frames.length };
-    }
-    return {};
+    return this.computeCountMetric(result, 'frames');
   }
 
   private buildShotPrompt(

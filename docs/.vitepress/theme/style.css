@@ -1,5 +1,5 @@
 /**
- * frame-fab v3.0 VitePress Theme
+ * Story Weaver v3.0 VitePress Theme
  *
  * Design system: Indigo (#6366F1) → Purple (#A855F7) → Pink (#EC4899)
  * Accent: warm orange (#FB923C) for AI pulse
@@ -612,8 +612,12 @@ html {
   scroll-padding-top: 80px; /* 适配 fixed nav */
 }
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *, *::before, *::after {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
@@ -703,7 +707,8 @@ html {
 }
 
 /* ── List spacing ── */
-.vp-doc ul, .vp-doc ol {
+.vp-doc ul,
+.vp-doc ol {
   padding-left: 1.5em;
   line-height: 1.7;
 }
@@ -715,8 +720,8 @@ html {
 }
 
 /* ── External link icon ── */
-.vp-doc a[href^="http"]:not(.no-icon)::after {
-  content: " ↗";
+.vp-doc a[href^='http']:not(.no-icon)::after {
+  content: ' ↗';
   font-size: 0.8em;
   opacity: 0.6;
   display: inline-block;
@@ -763,7 +768,9 @@ html {
   cursor: pointer;
   font-size: 20px;
   box-shadow: var(--vp-shadow-3);
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
   opacity: 0;
   transform: translateY(20px);
   pointer-events: none;
@@ -796,13 +803,21 @@ html {
    ═══════════════════════════════════════════════════════════ */
 @media print {
   /* Hide chrome */
-  .VPSidebar, .VPNavBar, .VPDocFooter, .VPDocAside,
-  .vp-cta, .vp-back-to-top, .vp-skip-link,
-  .VPHero .actions, button, .VPNavBarMenu {
+  .VPSidebar,
+  .VPNavBar,
+  .VPDocFooter,
+  .VPDocAside,
+  .vp-cta,
+  .vp-back-to-top,
+  .vp-skip-link,
+  .VPHero .actions,
+  button,
+  .VPNavBarMenu {
     display: none !important;
   }
   /* Force light theme + high contrast */
-  :root, .dark {
+  :root,
+  .dark {
     --color-bg-base: white !important;
     --color-bg-card: white !important;
     --color-text-primary: black !important;
@@ -815,25 +830,27 @@ html {
     size: A4;
     margin: 18mm 14mm;
   }
-  html, body {
+  html,
+  body {
     background: white !important;
     color: black !important;
     font-size: 11pt;
   }
   /* Show links' URLs */
-  .vp-doc a[href^="http"]::after {
-    content: " (" attr(href) ")";
+  .vp-doc a[href^='http']::after {
+    content: ' (' attr(href) ')';
     font-size: 9pt;
     color: #555;
     word-break: break-all;
   }
-  .vp-doc a[href^="/"]::after {
-    content: " (" attr(href) ")";
+  .vp-doc a[href^='/']::after {
+    content: ' (' attr(href) ')';
     font-size: 9pt;
     color: #555;
   }
   /* Code blocks: keep code, drop scroll */
-  .vp-doc pre, .vp-doc div[class*='language-'] {
+  .vp-doc pre,
+  .vp-doc div[class*='language-'] {
     background: #f4f4f4 !important;
     color: black !important;
     border: 1px solid #ccc !important;
@@ -847,25 +864,35 @@ html {
     border: 1px solid #ccc !important;
   }
   /* Tables: avoid split */
-  table, tr, td, th {
+  table,
+  tr,
+  td,
+  th {
     page-break-inside: avoid !important;
   }
-  thead { display: table-header-group; }
+  thead {
+    display: table-header-group;
+  }
   /* Headings: keep with content */
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     page-break-after: avoid;
     color: black !important;
   }
   /* Cards: no shadows */
   .vp-doc blockquote,
-  .vp-why-card, .vp-tech-card, .vp-stat {
+  .vp-why-card,
+  .vp-tech-card,
+  .vp-stat {
     box-shadow: none !important;
     border: 1px solid #ccc !important;
     background: white !important;
   }
   /* Show URL footer */
   .vp-doc::after {
-    content: "frame-fab docs · /frame-fab/";
+    content: 'Story Weaver docs · /story-weaver/';
     display: block;
     margin-top: 24pt;
     padding-top: 8pt;
@@ -898,8 +925,9 @@ html {
 /* Mobile (max-width: 640px): single column, larger touch targets */
 @media (max-width: 640px) {
   :root {
-    --vp-font-family-base: -apple-system, BlinkMacSystemFont, 'Segoe UI',
-      'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    --vp-font-family-base:
+      -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+      'Microsoft YaHei', sans-serif;
   }
   .vp-doc {
     font-size: 15px;
@@ -917,7 +945,7 @@ html {
   }
   .vp-compare-header > div:nth-child(4),
   .vp-compare-row > div:nth-child(4) {
-    display: none;  /* Hide 4th col on mobile */
+    display: none; /* Hide 4th col on mobile */
   }
   .vp-step {
     grid-template-columns: 40px 1fr;

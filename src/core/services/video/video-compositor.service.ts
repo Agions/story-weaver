@@ -30,12 +30,7 @@
  *   - ffmpegInitialized 模块级状态保留（initializeVideoCompositor 内部）
  */
 
-import {
-  ffmpegWasmService,
-  loadFFmpeg,
-  isFFmpegWasmAvailable,
-  type ProgressCallback,
-} from '@/core/services/video/ffmpeg-wasm.service';
+import { loadFFmpeg, type ProgressCallback } from '@/core/services/video/ffmpeg-wasm.service';
 import { logger } from '@/core/utils/logger';
 
 import { dispatchByMode } from './video-compositor-dispatch';
@@ -79,9 +74,6 @@ export type {
   ProgressCallback,
 } from '@/core/services/video/ffmpeg-wasm.service';
 
-/** FFmpeg.wasm 是否已初始化（模块级状态，跨调用保持） */
-let ffmpegInitialized = false;
-
 /**
  * 初始化视频合成器：
  *   - Tauri 环境：直接返回 true（本地 FFmpeg 总是可用）
@@ -109,7 +101,6 @@ export async function initializeVideoCompositor(
     });
 
     const loaded = await loadFFmpeg(progressCallback);
-    ffmpegInitialized = loaded;
 
     if (loaded) {
       logger.info('[VideoCompositor] FFmpeg.wasm 初始化成功');

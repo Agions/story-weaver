@@ -1,13 +1,13 @@
 ---
 title: 平台适配层
-description: frame-fab 如何让业务代码在 Tauri 桌面端和 Web 浏览器之间无缝切换
+description: Story Weaver 如何让业务代码在 Tauri 桌面端和 Web 浏览器之间无缝切换
 category: developer-guide
 version: '>=3.0'
 ---
 
 # 平台适配层 (Platform Adapter)
 
-frame-fab 是一个**桌面优先**的应用,但开发时常常需要在 Web 浏览器中调试。本章解释 Platform Adapter 是如何解耦业务代码与运行时环境的。
+Story Weaver 是一个**桌面优先**的应用,但开发时常常需要在 Web 浏览器中调试。本章解释 Platform Adapter 是如何解耦业务代码与运行时环境的。
 
 ## 问题背景
 
@@ -216,7 +216,7 @@ rg "from '@tauri-apps" src/
 
 ## 未来扩展
 
-Platform Adapter 让 frame-fab 拥有了"一次实现,多端运行"的能力:
+Platform Adapter 让 Story Weaver 拥有了"一次实现,多端运行"的能力:
 
 - **🖥️ Tauri 桌面** — 主力平台,完整功能
 - **🌐 Web Demo** — 在线试用版,可在 Vercel 部署

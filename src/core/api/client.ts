@@ -25,10 +25,8 @@ interface ApiResponse<T = unknown> {
 
 class ApiClient {
   private client: AxiosInstance;
-  private baseURL: string;
 
   constructor(baseURL: string = '') {
-    this.baseURL = baseURL;
     this.client = axios.create({
       baseURL,
       timeout: 30000,

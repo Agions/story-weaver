@@ -42,8 +42,6 @@ import type {
   StoryboardFrame,
   CompositionProject,
   FrameAnimation,
-  TransitionConfig,
-  TransitionEffect,
   AnimationKeyframe,
 } from '@/shared/types';
 
@@ -282,7 +280,6 @@ interface CompositionStudioProps {
 const CompositionStudio = ({ frames, projectId, onCompositionChange }: CompositionStudioProps) => {
   const {
     composition,
-    setComposition,
     editingFrameId,
     setEditingFrameId,
     frameModalVisible,
@@ -294,13 +291,10 @@ const CompositionStudio = ({ frames, projectId, onCompositionChange }: Compositi
     previewModalVisible,
     setPreviewModalVisible,
     isPlaying,
-    setIsPlaying,
     currentFrameIndex,
-    setCurrentFrameIndex,
     playbackSpeed,
     setPlaybackSpeed,
     keyframes,
-    setKeyframes,
     handleEditFrame,
     handleOpenKeyframes,
     handleSaveKeyframes,

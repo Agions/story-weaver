@@ -96,14 +96,7 @@ export class CharacterStep extends BasePipelineStep {
   }
 
   protected computeMetrics(result: unknown): Record<string, unknown> {
-    if (
-      result &&
-      typeof result === 'object' &&
-      'characters' in (result as Record<string, unknown>)
-    ) {
-      return { framesProcessed: (result as { characters: unknown[] }).characters.length };
-    }
-    return {};
+    return this.computeCountMetric(result, 'characters');
   }
 
   private extractCharacterNames(scenes: Array<{ description: string }>): string[] {

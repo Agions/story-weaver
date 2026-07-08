@@ -1,11 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 
-import { ThemeProvider } from '@/app/providers/ThemeContext';
 import '@/app/styles/index.css';
-import { logger } from '@/core/utils/logger';
-
 import App from '@/app/index';
+import { logger } from '@/core/utils/logger';
 
 // 防止控制台出现错误消息
 window.addEventListener('error', (e) => {
@@ -26,8 +24,6 @@ const root = ReactDOM.createRoot(rootElement);
 
 root.render(
   <React.StrictMode>
-    <ThemeProvider>
-      <App />
-    </ThemeProvider>
+    <App />
   </React.StrictMode>
 );

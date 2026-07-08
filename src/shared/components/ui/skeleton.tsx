@@ -67,13 +67,7 @@ export type CardSkeletonProps = BaseSkeletonProps & {
   actions?: boolean;
 };
 
-export const CardSkeleton = ({
-  title = true,
-  avatar = true,
-  _cover = false,
-  _active = true,
-  className,
-}: CardSkeletonProps) => {
+export const CardSkeleton = ({ title = true, avatar = true, className }: CardSkeletonProps) => {
   return (
     <div className={className}>
       <div className="space-y-4">
@@ -97,12 +91,7 @@ export type ListSkeletonProps = BaseSkeletonProps & {
   actions?: boolean;
 };
 
-export const ListSkeleton = ({
-  count = 3,
-  avatar = true,
-  _active = true,
-  className,
-}: ListSkeletonProps) => {
+export const ListSkeleton = ({ count = 3, avatar = true, className }: ListSkeletonProps) => {
   return (
     <div className={className}>
       {Array.from({ length: count }).map((_, index) => (
@@ -129,7 +118,6 @@ export const FormSkeleton = ({
   count = 4,
   labels = true,
   button = true,
-  _active = true,
   className,
 }: FormSkeletonProps) => {
   return (
@@ -165,7 +153,6 @@ export const StatisticSkeleton = ({
   icon = true,
   title = true,
   value = true,
-  _active = true,
   className,
 }: StatisticSkeletonProps) => {
   return (

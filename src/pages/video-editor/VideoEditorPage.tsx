@@ -9,26 +9,17 @@
  * 原始 714 行 → 拆分后 <250 行
  */
 import { useParams } from 'react-router-dom';
-import { Row, Col } from '@/shared/components/ui/grid';
+
 import { Card } from '@/shared/components/ui/card';
+import { Row, Col } from '@/shared/components/ui/grid';
 import { Tabs, TabPane } from '@/shared/components/ui/tabs';
 import { Title } from '@/shared/components/ui/typography';
 
 import { useVideoEditor } from './hooks/useVideoEditor';
-import {
-  renderToolbar,
-  ExportProgressModal,
-  renderSettingsPanel,
-} from './VideoEditorPage.toolbar';
-import {
-  renderVideoPlayer,
-  renderTimeline,
-} from './VideoEditorPage.player';
-import {
-  renderSegmentList,
-  renderKeyframeList,
-} from './VideoEditorPage.segments';
 import styles from './VideoEditorPage.module.less';
+import { renderVideoPlayer, renderTimeline } from './VideoEditorPage.player';
+import { renderSegmentList, renderKeyframeList } from './VideoEditorPage.segments';
+import { renderToolbar, ExportProgressModal, renderSettingsPanel } from './VideoEditorPage.toolbar';
 
 const VideoEditor = () => {
   const { projectId } = useParams<{ projectId: string }>();
@@ -51,7 +42,6 @@ const VideoEditor = () => {
     handleVideoLoaded,
     setOutputFormat,
     setVideoQuality,
-    formatTime,
     togglePlayPause,
   } = state;
 
@@ -99,14 +89,18 @@ const VideoEditor = () => {
 
               <TabPane tab="关键帧" key="keyframes">
                 <div className={styles.keyframesContainer}>
-                  <Title level={5} className={styles.sectionTitle}>关键帧</Title>
+                  <Title level={5} className={styles.sectionTitle}>
+                    关键帧
+                  </Title>
                   {renderKeyframeList(keyframes)}
                 </div>
               </TabPane>
 
               <TabPane tab="效果" key="effects">
                 <div className={styles.effectsPanel}>
-                  <Title level={5} className={styles.sectionTitle}>视频效果</Title>
+                  <Title level={5} className={styles.sectionTitle}>
+                    视频效果
+                  </Title>
                   <p style={{ color: '#999', textAlign: 'center', padding: '40px 0' }}>
                     此功能正在开发中
                   </p>
@@ -114,12 +108,7 @@ const VideoEditor = () => {
               </TabPane>
 
               <TabPane tab="设置" key="settings">
-                {renderSettingsPanel(
-                  outputFormat,
-                  videoQuality,
-                  setVideoQuality,
-                  setOutputFormat
-                )}
+                {renderSettingsPanel(outputFormat, videoQuality, setVideoQuality, setOutputFormat)}
               </TabPane>
             </Tabs>
           </Col>

@@ -1,13 +1,7 @@
 import { defineConfig } from 'vitepress'
 
-/**
- * frame-fab v2.2.3 VitePress Config
- *
- * Default appearance: light. Dark theme is opt-in via nav toggle.
- * Base path: /frame-fab/ (GitHub Pages repo, not user/org site).
- */
 export default defineConfig({
-  title: 'frame-fab',
+  title: 'Story Weaver',
   description: 'AI 漫剧创作平台 — 输入一本小说，AI 自动把它拍成一部漫剧',
   srcDir: '.',
   srcExclude: ['plans/**', 'ui-redesign/**', '**/node_modules/**'],
@@ -15,62 +9,50 @@ export default defineConfig({
   appearance: 'light',
   cleanUrls: true,
   ignoreDeadLinks: true,
-  base: '/frame-fab/',
+  base: '/story-weaver/',
 
-  // v3.1: Markdown-it options for better link handling
   markdown: {
-    lineNumbers: true,        // Enable line numbers in code blocks (Shiki)
+    lineNumbers: true,
     theme: {
       light: 'github-light',
       dark: 'github-dark',
     },
-    // NOTE: markdown-it-anchor 4.x 用 permalink: false 关闭自动 anchor link,
-    //       v2.2.3 已不需要 permalinkSymbol (旧 API)
     anchor: false,
     toc: {
-      level: [2, 3, 4],       // Include h4 in TOC
+      level: [2, 3, 4],
       permalink: false,
     },
   },
 
   head: [
-    // Favicon (multi-size for cross-platform)
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }],
     ['link', { rel: 'icon', type: 'image/png', sizes: '32x32', href: '/favicon-32x32.png' }],
     ['link', { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/favicon-16x16.png' }],
     ['link', { rel: 'apple-touch-icon', sizes: '180x180', href: '/favicon-256x256.png' }],
-
-    // Theme color (mobile browser chrome)
     ['meta', { name: 'theme-color', content: '#0B0E2C' }],
     ['meta', { name: 'color-scheme', content: 'light dark' }],
-
-    // Open Graph (Facebook, LinkedIn, Discord, Slack)
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:title', content: 'frame-fab - AI 漫剧创作平台' }],
+    ['meta', { property: 'og:title', content: 'Story Weaver - AI 漫剧创作平台' }],
     ['meta', { property: 'og:description', content: '基于 Tauri 2.1 桌面端 + 多模型 AI 编排的端到端 AI 漫剧创作工作台' }],
     ['meta', { property: 'og:image', content: '/og-image.png' }],
     ['meta', { property: 'og:image:width', content: '1280' }],
     ['meta', { property: 'og:image:height', content: '640' }],
-    ['meta', { property: 'og:image:alt', content: 'frame-fab — AI 漫剧创作平台' }],
+    ['meta', { property: 'og:image:alt', content: 'Story Weaver — AI 漫剧创作平台' }],
     ['meta', { property: 'og:locale', content: 'zh_CN' }],
-    ['meta', { property: 'og:site_name', content: 'frame-fab' }],
-
-    // Twitter Card
+    ['meta', { property: 'og:site_name', content: 'Story Weaver' }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
-    ['meta', { name: 'twitter:title', content: 'frame-fab - AI 漫剧创作平台' }],
+    ['meta', { name: 'twitter:title', content: 'Story Weaver - AI 漫剧创作平台' }],
     ['meta', { name: 'twitter:description', content: '输入一本小说，AI 自动把它拍成一部漫剧。基于 Tauri 2.1 桌面端 + 多模型 AI 编排。' }],
     ['meta', { name: 'twitter:image', content: '/og-image.png' }],
     ['meta', { name: 'twitter:creator', content: '@Agions' }],
-
-    // SEO
-    ['meta', { name: 'description', content: 'frame-fab - AI 漫剧创作平台。基于 Tauri 2.1 桌面端，集成多模型 AI 实现从小说/剧本到成片的端到端自动化。' }],
-    ['meta', { name: 'keywords', content: 'frame-fab, AI漫剧, 漫剧创作, Tauri, 桌面应用, 多模型AI, 分镜设计, 角色一致性, TTS, FFmpeg' }],
+    ['meta', { name: 'description', content: 'Story Weaver - AI 漫剧创作平台。基于 Tauri 2.1 桌面端，集成多模型 AI 实现从小说/剧本到成片的端到端自动化。' }],
+    ['meta', { name: 'keywords', content: 'story-weaver, AI漫剧, 漫剧创作, Tauri, 桌面应用, 多模型AI, 分镜设计, 角色一致性, TTS, FFmpeg' }],
     ['meta', { name: 'author', content: 'Agions' }],
   ],
 
   themeConfig: {
-    logo: { src: '/logo.svg', alt: 'frame-fab' },
-    siteTitle: 'frame-fab',
+    logo: { src: '/logo.svg', alt: 'Story Weaver' },
+    siteTitle: 'Story Weaver',
 
     nav: [
       { text: '首页', link: '/' },
@@ -81,9 +63,9 @@ export default defineConfig({
       {
         text: '更多',
         items: [
-          { text: 'GitHub', link: 'https://github.com/Agions/frame-fab' },
-          { text: '下载桌面端', link: 'https://github.com/Agions/frame-fab/releases' },
-          { text: '报告问题', link: 'https://github.com/Agions/frame-fab/issues/new' },
+          { text: 'GitHub', link: 'https://github.com/Agions/story-weaver' },
+          { text: '下载桌面端', link: 'https://github.com/Agions/story-weaver/releases' },
+          { text: '报告问题', link: 'https://github.com/Agions/story-weaver/issues/new' },
         ],
       },
     ],
@@ -168,29 +150,18 @@ export default defineConfig({
     },
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/Agions/frame-fab' },
+      { icon: 'github', link: 'https://github.com/Agions/story-weaver' },
     ],
 
     footer: {
       message: '基于 MIT 协议开源 · 由 Agions & 社区维护',
-      copyright: `© 2024-${new Date().getFullYear()} frame-fab`,
+      copyright: `© 2024-${new Date().getFullYear()} Story Weaver`,
     },
 
-    outline: {
-      level: [2, 3],
-      label: '本页大纲',
-    },
+    outline: { level: [2, 3], label: '本页目录' },
+    docFooter: { prev: '上一篇', next: '下一篇' },
 
-    docFooter: {
-      prev: '上一篇',
-      next: '下一篇',
-    },
-
-    editLink: {
-      pattern: 'https://github.com/Agions/frame-fab/edit/main/docs/:path',
-      text: '在 GitHub 上编辑此页',
-    },
-
-    lastUpdatedText: '最后更新',
+    search: { provider: 'local', options: {} },
+    lastUpdated: { text: '最后更新于' },
   },
 })

@@ -6,8 +6,9 @@
 import type { FrameComment, StoryboardVersion } from '@/core/services/domain/collaboration.service';
 import type { CostRecord, CostStats } from '@/core/services/project/cost.service';
 import type { EvaluationScores } from '@/core/services/project/evaluation.service';
+import { getErrorMessage } from '@/shared/utils';
 
-const REVIEW_EXPORT_ACTIVITY_KEY = 'frame-fab_review_export_activities';
+const REVIEW_EXPORT_ACTIVITY_KEY = 'storyweaver_review_export_activities';
 
 export interface ReviewExportProjectMeta {
   id: string;
@@ -58,7 +59,7 @@ class ReviewExportService {
     const generatedAt = input.generatedAt || new Date();
     const lines: string[] = [];
 
-    lines.push('# frame-fab AI 评审记录导出');
+    lines.push('# Story Weaver AI 评审记录导出');
     lines.push('');
     lines.push(`- 项目ID: ${input.project.id}`);
     lines.push(`- 项目名称: ${input.project.name}`);
@@ -200,7 +201,7 @@ class ReviewExportService {
         source: options.source || 'unknown',
         status: 'failed',
         fileName: defaultFileName,
-        errorMessage: error instanceof Error ? error.message : String(error),
+        errorMessage: getErrorMessage(error),
       });
       throw error;
     }

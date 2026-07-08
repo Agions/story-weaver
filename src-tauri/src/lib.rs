@@ -1,4 +1,4 @@
-//! frame-fab Tauri backend.
+//! Story Weaver Tauri backend.
 //!
 //! This crate is the Rust-side first citizen of the desktop application.
 //! It exposes Tauri commands to the JS frontend, and is internally organized
@@ -26,7 +26,7 @@ pub fn run() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info"))
         .init();
 
-    info!("frame-fab 启动中...");
+    info!("Story Weaver 启动中...");
 
     tauri::Builder::default()
         .plugin(tauri_plugin_fs::init())
@@ -83,5 +83,5 @@ pub fn run() {
             commands::shortcuts::get_registered_shortcuts,
         ])
         .run(tauri::generate_context!())
-        .expect("启动 frame-fab 时发生错误");
+        .expect("启动 Story Weaver 时发生错误");
 }

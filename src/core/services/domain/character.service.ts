@@ -19,13 +19,7 @@ import type { Character, CharacterAppearance, CharacterConsistency } from '@/sha
 import { createCharacter, duplicateCharacter } from './character-factory';
 import { loadCharactersFromStorage, saveCharactersToStorage } from './character-persistence';
 import { createCharacterSubscriber } from './character-subscriber';
-import {
-  buildCharacterFromTemplate,
-  countTemplates,
-  listTemplates,
-  validateCharacter,
-  type CharacterTemplateOverrides,
-} from './character-template';
+import { buildCharacterFromTemplate, type CharacterTemplateOverrides } from './character-template';
 import type { CharacterServiceOptions } from './character-types';
 
 // 重导出公共类型，保持 `@/core/services/domain/character.service` 一站式导入

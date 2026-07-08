@@ -62,10 +62,10 @@ export const CURRENT_VERSION = '1.0.0';
 export const MIN_SUPPORTED_VERSION = '1.0.0';
 
 /** 备份索引存储键 */
-export const BACKUP_INDEX_KEY = 'framefab_backups';
+export const BACKUP_INDEX_KEY = 'storyweaver_backups';
 
-/** 单条备份内容存储键前缀（与原 `framefab_backup_${id}` 一致） */
-export const BACKUP_ITEM_PREFIX = 'framefab_backup_';
+/** 单条备份内容存储键前缀（格式：`storyweaver_backup_${id}`） */
+export const BACKUP_ITEM_PREFIX = 'storyweaver_backup_';
 
 /** 备份最大保留数量（与原 `if (backups.length > 10) backups.shift()` 一致） */
 export const MAX_BACKUPS = 10;
@@ -87,7 +87,7 @@ export function sanitizeProjectName(name: string): string {
 /** 生成导出文件名（与原 generateFilename 字节级一致） */
 export function generateExportFilename(projectName: string, format: ExportFormat): string {
   const timestamp = new Date().toISOString().slice(0, 10);
-  return `framefab_${sanitizeProjectName(projectName)}_${timestamp}.${format}`;
+  return `storyweaver_${sanitizeProjectName(projectName)}_${timestamp}.${format}`;
 }
 
 /** 生成备份文件名（与原 backupProject 内联一致） */

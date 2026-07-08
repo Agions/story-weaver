@@ -1,5 +1,12 @@
+/**
+ * ScriptEditor — 脚本片段编辑器
+ *
+ * 受控组件：外部通过 segments/onSegmentsChange 管理状态,
+ * 添加/删除/编辑操作通过 onSegmentsChange 回调向上传递。
+ */
+
 import { convertFileSrc } from '@tauri-apps/api/core';
-import { Edit3, Trash2, Play, Plus, Save, Download, ChevronDown, Sparkles } from 'lucide-react';
+import { Edit3, Trash2, Play, Plus, Download, ChevronDown, Sparkles } from 'lucide-react';
 import { useState, useMemo } from 'react';
 
 import { tauriService } from '@/core/services';
@@ -9,9 +16,9 @@ import { Card } from '@/shared/components/ui/card';
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '@/shared/components/ui/dialog';
 import { Input } from '@/shared/components/ui/input';
 import {
@@ -22,59 +29,46 @@ import {
   SelectValue,
 } from '@/shared/components/ui/select';
 import { toast } from '@/shared/components/ui/sonner';
-import type { Script, ScriptMetadata } from '@/shared/types';
+import type { VideoSegment } from '@/shared/types/script';
 import { formatDurationShort } from '@/shared/utils';
 import { theme } from '@/styles/theme';
 
 import styles from './ScriptEditor.module.less';
 
-// 定义 VideoSegment 类型（兼容旧接口）
-interface VideoSegment {
-  id: string;
-  start: number;
-  end: number;
-  type: string;
-  content?: string;
-}
+// --- Props ---
 
-// 兼容两种接口
-interface ScriptEditorProps {
-  // 旧接口
+export interface ScriptEditorProps {
+  /** 片段列表（受控） */
+  segments: VideoSegment[];
+  /** 片段变更回调 */
+  onSegmentsChange: (segments: VideoSegment[]) => void;
+  /** 视频路径（用于预览生成，可选） */
   videoPath?: string;
-  initialSegments?: VideoSegment[];
-  onSave?: (segments: VideoSegment[]) => void;
-  onExport?: (format: string) => void;
-  // 新接口 (来自 VideoStudio)
-  script?: Script;
-  metadata?: ScriptMetadata;
-  onScriptUpdate?: (updatedScript: Script) => void;
-  // VideoStudio 使用的 segments
-  segments?: VideoSegment[];
-  onSegmentsChange?: (newSegments: VideoSegment[]) => void;
 }
 
-/**
- * 脚本编辑器组件
- */
-function ScriptEditor({
-  videoPath,
-  initialSegments = [],
-  onSave,
-  onExport,
-  script: _script,
-  metadata: _metadata,
-  onScriptUpdate: _onScriptUpdate,
-}: ScriptEditorProps) {
-  const [segments, setSegments] = useState<VideoSegment[]>(initialSegments);
+// --- Segment type label mapping ---
+
+const SEGMENT_TYPE_LABELS: Record<string, string> = {
+  narration: '旁白',
+  dialogue: '对白',
+  action: '动作',
+  transition: '转场',
+};
+
+// --- Component ---
+
+function ScriptEditor({ segments, onSegmentsChange, videoPath = '' }: ScriptEditorProps) {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [editFormValues, setEditFormValues] = useState<{
+  const [editForm, setEditForm] = useState<{
     start: number;
     end: number;
     type: string;
     content: string;
   } | null>(null);
+
+  // Dialog states
   const [previewVisible, setPreviewVisible] = useState(false);
-  const [previewSrc, setPreviewSrc] = useState<string>('');
+  const [previewSrc, setPreviewSrc] = useState('');
   const [previewLoading, setPreviewLoading] = useState(false);
   const [aiModalVisible, setAiModalVisible] = useState(false);
   const [exportMenuVisible, setExportMenuVisible] = useState(false);
@@ -82,79 +76,62 @@ function ScriptEditor({
   const [segmentToDelete, setSegmentToDelete] = useState<number | null>(null);
 
   const totalDuration = useMemo(
-    () => segments.reduce((sum, segment) => sum + (segment.end - segment.start), 0),
+    () => segments.reduce((sum, seg) => sum + (seg.end - seg.start), 0),
     [segments]
   );
 
-  // 添加新片段
-  const handleAddSegment = () => {
-    // 计算新片段的开始时间（从上一个片段的结束时间开始）
-    const lastSegment = segments.length > 0 ? segments[segments.length - 1] : null;
-    const startTime = lastSegment ? lastSegment.end : 0;
-    const endTime = startTime + 30; // 默认片段长度30秒
+  // --- handlers ---
 
-    setEditFormValues({
-      start: startTime,
-      end: endTime,
-      type: 'narration',
-      content: '',
-    });
+  const handleAddSegment = () => {
+    const lastSeg = segments.length > 0 ? segments[segments.length - 1] : null;
+    const start = lastSeg ? lastSeg.end : 0;
+    setEditForm({ start, end: start + 30, type: 'narration', content: '' });
     setEditingIndex(segments.length);
   };
 
-  // 编辑片段
   const handleEditSegment = (index: number) => {
-    const segment = segments[index];
-    setEditFormValues({
-      start: segment.start,
-      end: segment.end,
-      type: segment.type || 'narration',
-      content: segment.content || '',
+    const seg = segments[index];
+    setEditForm({
+      start: seg.start,
+      end: seg.end,
+      type: seg.type || 'narration',
+      content: seg.content || '',
     });
     setEditingIndex(index);
   };
 
-  // 保存编辑片段
   const handleSaveSegment = () => {
-    if (!editFormValues) return;
-
-    const start = editFormValues.start;
-    const end = editFormValues.end;
-
-    if (end <= start) {
+    if (!editForm || editingIndex === null) return;
+    if (editForm.end <= editForm.start) {
       toast.error('结束时间必须大于开始时间');
       return;
     }
 
-    const newSegments = [...segments];
-    const segment: VideoSegment = {
-      id: newSegments[editingIndex as number]?.id || `seg_${Date.now()}`,
-      start,
-      end,
-      type: editFormValues.type,
-      content: editFormValues.content,
+    const updated = [...segments];
+    const seg: VideoSegment = {
+      id: updated[editingIndex]?.id || `seg_${Date.now()}`,
+      start: editForm.start,
+      end: editForm.end,
+      type: editForm.type,
+      content: editForm.content,
     };
 
-    if (editingIndex !== null) {
-      if (editingIndex < segments.length) {
-        newSegments[editingIndex] = segment;
-      } else {
-        newSegments.push(segment);
-      }
+    if (editingIndex < segments.length) {
+      updated[editingIndex] = seg;
+    } else {
+      updated.push(seg);
     }
 
-    setSegments(newSegments);
+    onSegmentsChange(updated);
     setEditingIndex(null);
-    setEditFormValues(null);
+    setEditForm(null);
   };
 
-  // 取消编辑
   const handleCancelEdit = () => {
     setEditingIndex(null);
-    setEditFormValues(null);
+    setEditForm(null);
   };
 
-  // 删除片段
   const handleDeleteSegment = (index: number) => {
     setSegmentToDelete(index);
     setDeleteConfirmOpen(true);
@@ -162,25 +139,22 @@ function ScriptEditor({
 
   const confirmDelete = () => {
     if (segmentToDelete !== null) {
-      const newSegments = [...segments];
-      newSegments.splice(segmentToDelete, 1);
-      setSegments(newSegments);
+      const updated = [...segments];
+      updated.splice(segmentToDelete, 1);
+      onSegmentsChange(updated);
     }
     setDeleteConfirmOpen(false);
     setSegmentToDelete(null);
   };
 
-  // 预览片段
   const handlePreviewSegment = async (index: number) => {
     try {
       setPreviewLoading(true);
-      const segment = segments[index];
-
+      const seg = segments[index];
       const previewPath = await tauriService.generatePreview({
-        inputPath: videoPath || '',
-        segment: { start: segment.start, end: segment.end, type: 'preview' },
+        inputPath: videoPath,
+        segment: { start: seg.start, end: seg.end, type: 'preview' },
       });
-
       setPreviewSrc(convertFileSrc(previewPath));
       setPreviewVisible(true);
     } catch (error) {
@@ -191,31 +165,31 @@ function ScriptEditor({
     }
   };
 
-  // 导出脚本
-  const handleExport = () => {
-    setExportMenuVisible(true);
+  const handleExport = (format: string) => {
+    setExportMenuVisible(false);
+    // Convert segments to the requested format and trigger download
+    const content = segments
+      .map(
+        (seg) =>
+          `[${formatDurationShort(seg.start)} - ${formatDurationShort(seg.end)}] ${seg.content || ''}`
+      )
+      .join('\n');
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `script.${format}`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
-  // 打开 AI 优化模态框
-  const handleOpenAIModal = () => {
-    setAiModalVisible(true);
+  const handleAIImprove = () => {
+    setAiModalVisible(false);
+    toast.info('AI 优化功能即将上线');
   };
 
-  // AI 优化脚本
-  const handleAIImprove = async () => {
-    try {
-      toast.info('正在使用 AI 优化脚本...');
-      setAiModalVisible(false);
-      setTimeout(() => {
-        toast.success('脚本优化完成');
-      }, 2000);
-    } catch (error) {
-      logger.error('AI 优化脚本失败:', error);
-      toast.error('AI 优化脚本失败');
-    }
-  };
+  // --- render ---
 
-  // 表格列定义
   return (
     <div className={styles.scriptEditor}>
       <Card
@@ -223,58 +197,60 @@ function ScriptEditor({
         className={styles.editorCard}
         footer={
           <div style={{ display: 'flex', gap: 8 }}>
-            <Button variant="outline" icon={<Sparkles size={16} />} onClick={handleOpenAIModal}>
+            <Button
+              variant="outline"
+              icon={<Sparkles size={16} />}
+              onClick={() => setAiModalVisible(true)}
+            >
               AI优化
             </Button>
-            <Button variant="default" icon={<Save size={16} />} onClick={() => onSave?.(segments)}>
-              保存
-            </Button>
-            {onExport && (
-              <div style={{ position: 'relative' }}>
-                <Button variant="outline" icon={<Download size={16} />} onClick={handleExport}>
-                  导出 <ChevronDown size={14} />
-                </Button>
-                {exportMenuVisible && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: '100%',
-                      right: 0,
-                      marginTop: 4,
-                      background: 'white',
-                      border: `1px solid ${theme.borders.medium}`,
-                      borderRadius: 6,
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                      zIndex: 100,
-                      minWidth: 120,
-                    }}
-                  >
-                    {[
-                      { format: 'txt' as const, label: '文本文件 (.txt)' },
-                      { format: 'srt' as const, label: '字幕文件 (.srt)' },
-                      { format: 'doc' as const, label: 'Word文档 (.docx)' },
-                    ].map(({ format, label }) => (
-                      <div
-                        key={format}
-                        style={{ padding: '8px 12px', cursor: 'pointer' }}
-                        onClick={() => {
-                          onExport(format);
-                          setExportMenuVisible(false);
-                        }}
-                        onMouseEnter={(e) =>
-                          ((e.target as HTMLElement).style.background = theme.colors.gray[50])
-                        }
-                        onMouseLeave={(e) =>
-                          ((e.target as HTMLElement).style.background = 'transparent')
-                        }
-                      >
-                        {label}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+            <div style={{ position: 'relative' }}>
+              <Button
+                variant="outline"
+                icon={<Download size={16} />}
+                onClick={() => setExportMenuVisible((v) => !v)}
+              >
+                导出 <ChevronDown size={14} />
+              </Button>
+              {exportMenuVisible && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '100%',
+                    right: 0,
+                    marginTop: 4,
+                    background: 'white',
+                    border: `1px solid ${theme.borders.medium}`,
+                    borderRadius: 6,
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                    zIndex: 100,
+                    minWidth: 120,
+                  }}
+                >
+                  {(
+                    [
+                      { format: 'txt', label: '文本文件 (.txt)' },
+                      { format: 'srt', label: '字幕文件 (.srt)' },
+                      { format: 'doc', label: 'Word文档 (.docx)' },
+                    ] as const
+                  ).map(({ format, label }) => (
+                    <div
+                      key={format}
+                      style={{ padding: '8px 12px', cursor: 'pointer' }}
+                      onClick={() => handleExport(format)}
+                      onMouseEnter={(e) =>
+                        ((e.target as HTMLElement).style.background = theme.colors.gray[50])
+                      }
+                      onMouseLeave={(e) =>
+                        ((e.target as HTMLElement).style.background = 'transparent')
+                      }
+                    >
+                      {label}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         }
       >
@@ -307,15 +283,7 @@ function ScriptEditor({
                     {formatDurationShort(record.end - record.start)}
                   </td>
                   <td style={{ padding: '8px' }}>
-                    {record.type === 'narration'
-                      ? '旁白'
-                      : record.type === 'dialogue'
-                        ? '对白'
-                        : record.type === 'action'
-                          ? '动作'
-                          : record.type === 'transition'
-                            ? '转场'
-                            : record.type}
+                    {SEGMENT_TYPE_LABELS[record.type] || record.type}
                   </td>
                   <td style={{ padding: '8px' }}>
                     <div className={styles.contentCell}>
@@ -357,7 +325,7 @@ function ScriptEditor({
           </Button>
         </div>
 
-        {editingIndex !== null && editFormValues && (
+        {editingIndex !== null && editForm && (
           <div className={styles.editForm}>
             <Card title={`编辑片段 #${editingIndex + 1}`} className={styles.editCard}>
               <div className={styles.timeInputs}>
@@ -371,12 +339,9 @@ function ScriptEditor({
                     type="number"
                     step="0.1"
                     min="0"
-                    value={editFormValues.start}
+                    value={editForm.start}
                     onChange={(e) =>
-                      setEditFormValues({
-                        ...editFormValues,
-                        start: parseFloat(e.target.value) || 0,
-                      })
+                      setEditForm({ ...editForm, start: parseFloat(e.target.value) || 0 })
                     }
                   />
                 </div>
@@ -390,9 +355,9 @@ function ScriptEditor({
                     type="number"
                     step="0.1"
                     min="0"
-                    value={editFormValues.end}
+                    value={editForm.end}
                     onChange={(e) =>
-                      setEditFormValues({ ...editFormValues, end: parseFloat(e.target.value) || 0 })
+                      setEditForm({ ...editForm, end: parseFloat(e.target.value) || 0 })
                     }
                   />
                 </div>
@@ -403,8 +368,8 @@ function ScriptEditor({
                   类型
                 </label>
                 <Select
-                  value={editFormValues.type}
-                  onValueChange={(v) => setEditFormValues({ ...editFormValues, type: v })}
+                  value={editForm.type}
+                  onValueChange={(v) => setEditForm({ ...editForm, type: v })}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -432,10 +397,8 @@ function ScriptEditor({
                     fontSize: 14,
                     resize: 'vertical',
                   }}
-                  value={editFormValues.content}
-                  onChange={(e) =>
-                    setEditFormValues({ ...editFormValues, content: e.target.value })
-                  }
+                  value={editForm.content}
+                  onChange={(e) => setEditForm({ ...editForm, content: e.target.value })}
                 />
               </div>
 
@@ -454,6 +417,7 @@ function ScriptEditor({
         )}
       </Card>
 
+      {/* Preview dialog */}
       <Dialog open={previewVisible} onOpenChange={setPreviewVisible}>
         <DialogContent style={{ maxWidth: 700 }}>
           <DialogHeader>
@@ -477,6 +441,7 @@ function ScriptEditor({
         </DialogContent>
       </Dialog>
 
+      {/* AI optimize dialog */}
       <Dialog open={aiModalVisible} onOpenChange={setAiModalVisible}>
         <DialogContent>
           <DialogHeader>
@@ -495,6 +460,7 @@ function ScriptEditor({
         </DialogContent>
       </Dialog>
 
+      {/* Delete confirmation dialog */}
       <Dialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
         <DialogContent>
           <DialogHeader>

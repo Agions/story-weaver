@@ -36,29 +36,29 @@ async generateImage(
 
 **参数（`ImageGenerationOptions`）**
 
-| 字段 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| `prompt` | `string` | ✅ | 图像描述词 |
-| `negativePrompt` | `string` | 否 | 反向提示词 |
-| `model` | `ImageModel` | ✅ | 模型 ID |
-| `resolution` | `'1:1' \| '16:9' \| '9:16' \| '4:3' \| '3:4'` | 否 | 宽高比 |
-| `width` | `number` | 否 | 自定义宽（像素） |
-| `height` | `number` | 否 | 自定义高（像素） |
-| `style` | `string` | 否 | 风格描述（'cinematic'/'anime'/'realistic'） |
-| `seed` | `number` | 否 | 随机种子（保证可复现） |
-| `referenceImages` | `string[]` | 否 | 参考图 URL 数组（用于一致性） |
-| `characterProfile` | `CharacterProfile` | 否 | 角色设定卡（自动注入 prompt） |
+| 字段               | 类型                                          | 必填 | 说明                                        |
+| ------------------ | --------------------------------------------- | ---- | ------------------------------------------- |
+| `prompt`           | `string`                                      | ✅   | 图像描述词                                  |
+| `negativePrompt`   | `string`                                      | 否   | 反向提示词                                  |
+| `model`            | `ImageModel`                                  | ✅   | 模型 ID                                     |
+| `resolution`       | `'1:1' \| '16:9' \| '9:16' \| '4:3' \| '3:4'` | 否   | 宽高比                                      |
+| `width`            | `number`                                      | 否   | 自定义宽（像素）                            |
+| `height`           | `number`                                      | 否   | 自定义高（像素）                            |
+| `style`            | `string`                                      | 否   | 风格描述（'cinematic'/'anime'/'realistic'） |
+| `seed`             | `number`                                      | 否   | 随机种子（保证可复现）                      |
+| `referenceImages`  | `string[]`                                    | 否   | 参考图 URL 数组（用于一致性）               |
+| `characterProfile` | `CharacterProfile`                            | 否   | 角色设定卡（自动注入 prompt）               |
 
 **返回（`ImageGenerationResult`）**
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `imageUrl` | `string` | 生成图像 URL（本地缓存或 base64） |
-| `width` / `height` | `number` | 实际尺寸 |
-| `model` | `string` | 命中的模型 |
-| `seed` | `number` | 实际种子 |
-| `latencyMs` | `number` | 耗时 |
-| `usage` | `TokenUsage` | 计费信息 |
+| 字段               | 类型         | 说明                              |
+| ------------------ | ------------ | --------------------------------- |
+| `imageUrl`         | `string`     | 生成图像 URL（本地缓存或 base64） |
+| `width` / `height` | `number`     | 实际尺寸                          |
+| `model`            | `string`     | 命中的模型                        |
+| `seed`             | `number`     | 实际种子                          |
+| `latencyMs`        | `number`     | 耗时                              |
+| `usage`            | `TokenUsage` | 计费信息                          |
 
 **示例：基础生成**
 
@@ -100,11 +100,11 @@ async generateVideo(
 
 参数与 `generateImage` 类似，额外字段：
 
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `duration` | `5 \| 10` | 视频时长（秒） |
-| `motionIntensity` | `0-1` | 运镜强度 |
-| `imageUrl` | `string` | 首帧参考图 |
+| 字段              | 类型      | 说明           |
+| ----------------- | --------- | -------------- |
+| `duration`        | `5 \| 10` | 视频时长（秒） |
+| `motionIntensity` | `0-1`     | 运镜强度       |
+| `imageUrl`        | `string`  | 首帧参考图     |
 
 ### generateBatch()
 
@@ -120,13 +120,13 @@ async generateBatch(
 
 ## 支持的 Provider
 
-| Provider | 模型 | 类型 | 适用场景 |
-|----------|------|------|----------|
-| 字节跳动 `seedream` | Seedream 5.0 | 图像 | 动画/插画，**首选** |
-| 快手 `kling` | Kling 1.6 | 图像+视频 | 视频生成首选 |
-| 生数科技 `vidu` | Vidu Q3 / Vidu 2.0 | 图像+视频 | 高一致性 |
-| 字节跳动 `seedance` | Seedance 2.0 | 视频 | 短运镜 |
-| Stability `stability` | SDXL | 图像 | 降级方案 |
+| Provider              | 模型               | 类型      | 适用场景            |
+| --------------------- | ------------------ | --------- | ------------------- |
+| 字节跳动 `seedream`   | Seedream 5.0       | 图像      | 动画/插画，**首选** |
+| 快手 `kling`          | Kling 1.6          | 图像+视频 | 视频生成首选        |
+| 生数科技 `vidu`       | Vidu Q3 / Vidu 2.0 | 图像+视频 | 高一致性            |
+| 字节跳动 `seedance`   | Seedance 2.0       | 视频      | 短运镜              |
+| Stability `stability` | SDXL               | 图像      | 降级方案            |
 
 **降级链**（按价格/质量平衡）：
 
@@ -138,7 +138,7 @@ Seedream 5.0 → Kling 1.6 → Vidu 2.0 → Stability SDXL
 
 ## 角色一致性机制
 
-frame-fab 在三层保障角色一致性：
+Story Weaver 在三层保障角色一致性：
 
 ```
 ┌────────────────────────────────────┐

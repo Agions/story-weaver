@@ -7,7 +7,7 @@ version: '>=3.0'
 
 # 自主引擎 API
 
-> frame-fab **Autonomous 模式**的核心 API——`AutoPipelineEngine` + `QualityGate` + `SelfReviewLoop`。
+> Story Weaver **Autonomous 模式**的核心 API——`AutoPipelineEngine` + `QualityGate` + `SelfReviewLoop`。
 > **本地服务接口**，**无 REST API**，**无 token 鉴权**——所有调用在进程内完成。
 
 ## 一、模块结构

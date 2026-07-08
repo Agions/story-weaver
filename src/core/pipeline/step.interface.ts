@@ -1,11 +1,41 @@
-import type { QualityGateDecision, PipelineExecutionMode } from './pipeline.types';
+/**
+ * Pipeline Step 宽松接口层
+ *
+ * 提供 StepInput/StepOutput 的宽松 Record 定义，
+ * 兼容需要附加自定义字段的 step 实现和旧版控制器。
+ *
+ * 核心 pipeline 代码(步骤执行器、质量门禁)应使用
+ * pipeline.types.ts 中的严格类型定义。
+ */
 
-// ========== 从 pipeline.types.ts re-export PipelineStep（统一接口定义来源） ==========
-// 注意：StepInput/StepOutput 保持 Record<string, unknown> 宽松定义，
-// 以兼容通过附加自定义字段使用 StepInput 的控制器。
-// 核心 pipeline 代码应使用 pipeline.types.ts 中的严格定义。
+export type {
+  PipelineStep,
+  PipelineStepId,
+  StepInput as StrictStepInput,
+  StepOutput as StrictStepOutput,
+  StepStatus,
+  StepMetrics,
+  StepCheckpoint,
+  StepProgressEvent,
+  PipelineStatus,
+  PipelineContext,
+  PipelineEvent,
+  PipelineConfig,
+  PipelineExecutionState,
+  PipelineEngineEvent,
+  RetryPolicy,
+  QualityGateConfig,
+} from './pipeline.types';
 
+// 以下两个枚举在本地接口中被引用，需要显式 import type
+import type { PipelineExecutionMode, QualityGateDecision } from './pipeline.types';
+
+export type { PipelineExecutionMode, QualityGateDecision };
+
+/** 宽松 StepInput — 允许任意自定义字段 */
 export type StepInput = Record<string, unknown>;
+
+/** 宽松 StepOutput — 允许任意自定义字段 */
 export type StepOutput = Record<string, unknown>;
 
 export interface CheckpointState<S = unknown> {
@@ -21,11 +51,12 @@ export interface PipelineOptions {
   onError?: (stepId: string, error: Error) => void;
 }
 
-// ========== PipelineStep 宽松接口（含 validate/rollback/getCheckpoint/restore 等可选方法） ==========
-// 与 pipeline.types.ts 中的 PipelineStep 并存，各自服务不同层级的代码。
-// 新代码优先使用 pipeline.types.ts 中的定义。
-
-export interface PipelineStep<S = unknown> {
+/**
+ * 宽松 PipelineStep 接口 — 含 validate/rollback/getCheckpoint/restore 等可选扩展方法。
+ * 与 pipeline.types.ts 中的 PipelineStep 并存，各自服务不同层级的代码。
+ * 新代码优先使用 pipeline.types.ts 中的严格定义。
+ */
+export interface LoosePipelineStep<S = unknown> {
   id: string;
   name: string;
   order?: number;

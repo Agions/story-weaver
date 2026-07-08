@@ -16,6 +16,7 @@
  */
 
 import { logger } from '@/core/utils/logger';
+import { getErrorMessage } from '@/shared/utils';
 
 import type {
   PipelineCallbacks,
@@ -209,7 +210,7 @@ export class PipelineRunner {
       return stepResult;
     } catch (error) {
       stepResult.status = 'error';
-      stepResult.error = error instanceof Error ? error.message : String(error);
+      stepResult.error = getErrorMessage(error);
       stepResult.endTime = Date.now();
       stepResult.duration = stepResult.endTime - stepResult.startTime;
 

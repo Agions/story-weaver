@@ -6,7 +6,7 @@ interface TruncatedDescriptionProps {
   lines?: number;
 }
 
-const truncatedStyle: React.CSSProperties = {
+const baseStyle: React.CSSProperties = {
   display: '-webkit-box',
   WebkitLineClamp: 2,
   WebkitBoxOrient: 'vertical',
@@ -22,13 +22,7 @@ export function TruncatedDescription({
   lines = 2,
 }: TruncatedDescriptionProps) {
   return (
-    <p
-      className={className}
-      style={{
-        ...truncatedStyle,
-        WebkitLineClamp: lines,
-      }}
-    >
+    <p className={className} style={{ ...baseStyle, WebkitLineClamp: lines }}>
       {children}
     </p>
   );

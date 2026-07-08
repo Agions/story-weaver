@@ -39,8 +39,7 @@ module.exports = {
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
-    '^@core/(.*)$': '<rootDir>/src/core/$1',
-    '^@shared/(.*)$': '<rootDir>/src/shared/$1',
+    // @core/ and @shared/ aliases removed (unused — all imports use @/ prefix)
     '\\.(css|less|scss|sass)$': '<rootDir>/src/__tests__/__mocks__/styleMock.js',
     '\\.(jpg|jpeg|png|gif|webp|svg)$': '<rootDir>/src/__tests__/__mocks__/fileMock.js',
     '^@tauri-apps/api/notification$': '<rootDir>/src/__mocks__/@tauri-apps/api/notification.ts',

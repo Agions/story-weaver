@@ -10,12 +10,7 @@
 
 import { useReducer, useCallback } from 'react';
 
-import type {
-  AIAssistantState,
-  AIAssistantActions,
-  ChatMessage,
-  UseAIAssistantReturn,
-} from '../../types/ai-assistant.entities';
+import type { ChatMessage, UseAIAssistantReturn } from '../../types/ai-assistant.entities';
 
 import {
   aiAssistantReducer,

@@ -13,9 +13,10 @@ import {
   Edit,
   Lightbulb,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 
 import { useTheme } from '@/app/providers/ThemeContext';
+import { MODEL_PROVIDERS, getModelsByProvider } from '@/core/config/models.config';
 import { logger } from '@/core/utils/logger';
 import { Alert, AlertDescription } from '@/shared/components/ui/alert';
 import { Avatar, AvatarFallback } from '@/shared/components/ui/avatar';
@@ -36,58 +37,23 @@ import { Separator } from '@/shared/components/ui/separator';
 import { Switch } from '@/shared/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/shared/components/ui/tabs';
 import { toast } from '@/shared/components/ui/toast';
+import type { ModelProvider } from '@/shared/types';
 import { theme } from '@/styles/theme';
 
 import styles from './Settings.module.less';
 
-// API 密钥配置
-const apiProviders = [
-  {
-    key: 'openai',
-    name: 'OpenAI',
-    logo: '🤖',
-    models: ['gpt-4', 'gpt-4-turbo', 'gpt-3.5-turbo'],
-    color: '#10a37f',
-  },
-  {
-    key: 'anthropic',
-    name: 'Anthropic',
-    logo: '🧠',
-    models: ['claude-3-opus', 'claude-3-sonnet', 'claude-3-haiku'],
-    color: '#d4a373',
-  },
-  {
-    key: 'baidu',
-    name: '百度',
-    logo: '🔍',
-    models: ['ernie-4', 'ernie-3.5'],
-    color: '#2932e1',
-  },
-  {
-    key: 'alibaba',
-    name: '阿里',
-    logo: '☁️',
-    models: ['qwen-turbo', 'qwen-plus', 'qwen-max'],
-    color: '#ff6a00',
-  },
-  {
-    key: 'zhipu',
-    name: '智谱',
-    logo: '📊',
-    models: ['glm-4', 'glm-3-turbo'],
-    color: '#5e72e4',
-  },
-];
-
 const Settings = () => {
   const [activeTab, setActiveTab] = useState('general');
-  const [apiKeys] = useState<Record<string, string>>({
-    openai: '',
-    anthropic: '',
-    baidu: '',
-    alibaba: '',
-    zhipu: '',
-  });
+  const [apiKeys] = useState<Record<string, string>>({});
+
+  // 从规范配置派生 API 提供商列表 (含模型目录)
+  const apiProviders = useMemo(() => {
+    return Object.entries(MODEL_PROVIDERS).map(([key, provider]) => ({
+      key,
+      name: provider.name,
+      models: getModelsByProvider(key as ModelProvider).map((m) => m.id),
+    }));
+  }, []);
 
   const { isDarkMode, toggleTheme } = useTheme();
 
@@ -131,7 +97,6 @@ const Settings = () => {
                   <Card key={provider.key} className={styles.providerCard}>
                     <div className={styles.providerHeader}>
                       <div className={styles.providerInfo}>
-                        <span className={styles.providerLogo}>{provider.logo}</span>
                         <span className={styles.providerName}>{provider.name}</span>
                         {apiKeys[provider.key] ? (
                           <Badge variant="default" className="bg-green-500">
@@ -269,7 +234,10 @@ const Settings = () => {
                 <div className="space-y-2">
                   <Label>项目保存路径</Label>
                   <div className="flex gap-2">
-                    <Input placeholder="/Users/username/frame-fab AI/projects" className="flex-1" />
+                    <Input
+                      placeholder="/Users/username/Story Weaver AI/projects"
+                      className="flex-1"
+                    />
                     <Button variant="outline" size="sm">
                       浏览
                     </Button>
@@ -441,7 +409,7 @@ const Settings = () => {
           <TabsContent value="about" className="space-y-6">
             <Card className={styles.aboutCard}>
               <div className={styles.aboutHeader}>
-                <h2 className="text-2xl font-bold">🎬 frame-fab AI</h2>
+                <h2 className="text-2xl font-bold">🎬 Story Weaver AI</h2>
                 <p className="text-muted-foreground">AI 漫剧智能创作平台</p>
               </div>
 
@@ -462,7 +430,7 @@ const Settings = () => {
 
               <Alert className="mt-4">
                 <AlertDescription>
-                  感谢使用 frame-fab AI，如有问题或建议，请提交 Issue 或联系开发者。
+                  感谢使用 Story Weaver AI，如有问题或建议，请提交 Issue 或联系开发者。
                 </AlertDescription>
               </Alert>
             </Card>

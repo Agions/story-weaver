@@ -78,7 +78,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@frame-fab/common': path.resolve(__dirname, './packages/common/src'),
+      '@story-weaver/common': path.resolve(__dirname, './packages/common/src'),
     },
   },
 
