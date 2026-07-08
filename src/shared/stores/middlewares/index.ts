@@ -1,1 +1,1 @@
-export { createDebouncedStorage, createIncrementalStorage, createCompressedStorage } from './persistWithDebounce';
+export { createDebouncedStorage } from './persistWithDebounce';

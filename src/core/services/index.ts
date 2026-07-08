@@ -36,30 +36,17 @@ export type {
 export { videoCompositorService } from './video/video-compositor.service';
 export type {
   CompositionScene,
-  SubtitleTrack as VideoSubtitleTrack,
-  Subtitle as VideoSubtitle,
   BackgroundMusic,
   CompositionOptions,
   CompositionResult,
-  ExportProgress as VideoExportProgress,
 } from './video/ffmpeg-wasm.service';
 
 // FFmpeg.wasm 服务
 export { ffmpegWasmService, loadFFmpeg, isFFmpegWasmAvailable } from './video/ffmpeg-wasm.service';
-export type {
-  CompositionOptions as FFmpegCompositionOptions,
-  CompositionResult as FFmpegCompositionResult,
-  ExportProgress as FFmpegExportProgress,
-} from './video/ffmpeg-wasm.service';
 
 // 视频脚本流水线服务
 export { mangaPipelineService } from './domain/manga-pipeline.service';
-export type {
-  PipelineConfig as MangaPipelineConfig,
-  PipelineScene,
-  PipelineResult as MangaPipelineResult,
-  PipelineProgress,
-} from './domain/manga-pipeline.service';
+export type { PipelineScene, PipelineProgress } from './domain/manga-pipeline.service';
 
 // 核心服务
 export { aiService, type AIResponse, type AIRequestConfig } from './ai/text/ai.service';
