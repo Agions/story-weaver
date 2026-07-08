@@ -5,8 +5,6 @@
  */
 
 import { logger } from '@/core/utils/logger';
-
-// Import shared types (single source of truth)
 import type {
   CompositionScene,
   SceneEffect,
@@ -17,6 +15,7 @@ import type {
   CompositionResult,
   ExportProgress,
 } from '@/shared/types/video-composition.types';
+import { isTauri } from '@/shared/utils';
 
 // Re-export for backward compatibility
 export type {
@@ -49,12 +48,6 @@ const mockProgress: ExportProgress = {
   progress: 100,
   status: 'completed',
 };
-
-// Check if running in Tauri environment
-function isTauri(): boolean {
-  if (typeof window === 'undefined') return false;
-  return '__TAURI__' in window;
-}
 
 // Tauri command invocation
 async function tauriInvoke<T>(_cmd: string, _args?: Record<string, unknown>): Promise<T> {

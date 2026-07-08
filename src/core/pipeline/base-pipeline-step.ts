@@ -1,4 +1,5 @@
 import { logger } from '@/core/utils/logger';
+import { getErrorMessage } from '@/shared/utils';
 
 import type {
   PipelineStep,
@@ -59,7 +60,7 @@ export abstract class BasePipelineStep implements PipelineStep {
         retryCount: 0,
       };
     } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error);
+      const msg = getErrorMessage(error);
       logger.error(`[${this.name}] failed: ${msg}`);
       return createFailedStepResult(this.stepId, startTime, msg);
     }

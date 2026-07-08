@@ -11,7 +11,7 @@
 
 import { logger } from '@/core/utils/logger';
 import { tauriService } from '@/infrastructure/tauri-bridge/commands';
-import { delay, PROCESSING_DELAY_MS } from '@/shared/utils';
+import { delay, PROCESSING_DELAY_MS, isTauri } from '@/shared/utils';
 
 import { BasePipelineStep } from './base-pipeline-step';
 import { PipelineStepId, QualityGateDecision } from './pipeline.types';
@@ -172,7 +172,7 @@ export class VideoEditingStep extends BasePipelineStep {
     const timestamp = Date.now();
     const outputPath = `output/${workflowId}/final_${timestamp}.mp4`;
 
-    if (this.isTauriEnvironment()) {
+    if (isTauri()) {
       try {
         await tauriService.exportVideo({
           inputPath: clips[0]?.path ?? '',
@@ -217,11 +217,6 @@ export class VideoEditingStep extends BasePipelineStep {
     );
 
     return outputPath;
-  }
-
-  private isTauriEnvironment(): boolean {
-    if (typeof window === 'undefined') return false;
-    return '__TAURI__' in window;
   }
 }
 

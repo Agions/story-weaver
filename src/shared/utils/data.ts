@@ -63,3 +63,9 @@ export async function computeHash(data: string): Promise<string> {
   const hashArray = Array.from(new Uint8Array(hashBuffer));
   return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
 }
+
+/** 安全提取错误对象的 message，兼容非 Error 类型的 thrwon 值 */
+export function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) return error.message;
+  return String(error);
+}

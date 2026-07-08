@@ -26,7 +26,7 @@
  */
 
 import { logger } from '@/core/utils/logger';
-import { retryRequest } from '@/shared/utils';
+import { getErrorMessage, retryRequest } from '@/shared/utils';
 
 // ========== Error Types ==========
 
@@ -255,7 +255,7 @@ export abstract class BaseAIService<TParams, TResult> {
       code = 'NETWORK_ERROR';
     }
 
-    const message = error instanceof Error ? error.message : String(error);
+    const message = getErrorMessage(error);
 
     logger.error(`[${this.serviceName}] request failed`, {
       endpoint,

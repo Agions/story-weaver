@@ -6,6 +6,7 @@
 import type { FrameComment, StoryboardVersion } from '@/core/services/domain/collaboration.service';
 import type { CostRecord, CostStats } from '@/core/services/project/cost.service';
 import type { EvaluationScores } from '@/core/services/project/evaluation.service';
+import { getErrorMessage } from '@/shared/utils';
 
 const REVIEW_EXPORT_ACTIVITY_KEY = 'frame-fab_review_export_activities';
 
@@ -200,7 +201,7 @@ class ReviewExportService {
         source: options.source || 'unknown',
         status: 'failed',
         fileName: defaultFileName,
-        errorMessage: error instanceof Error ? error.message : String(error),
+        errorMessage: getErrorMessage(error),
       });
       throw error;
     }
