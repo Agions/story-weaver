@@ -7,13 +7,13 @@ version: '>=3.0'
 
 # AI Provider Registry
 
-frame-fab 的核心竞争力之一是**多模型 AI 编排**。本章深入讲解 ProviderRegistry + Fallback Chain 的设计。
+Story Weaver 的核心竞争力之一是**多模型 AI 编排**。本章深入讲解 ProviderRegistry + Fallback Chain 的设计。
 
 ## 为什么需要 Provider Registry
 
 AI 漫剧创作涉及 4 类模型:
 
-| 类型               | 用途                           | frame-fab 集成                     |
+| 类型               | 用途                           | Story Weaver 集成                  |
 | ------------------ | ------------------------------ | ---------------------------------- |
 | **文字模型 (LLM)** | 剧本分析、对话生成、提示词工程 | GLM-5 / Kimi K2.5 / M2.5           |
 | **图像模型 (T2I)** | 角色设计、场景渲染、首帧图     | Seedream 5.0 / Imagen 3            |

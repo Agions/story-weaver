@@ -1,19 +1,15 @@
-import type { Config } from 'tailwindcss'
+import type { Config } from 'tailwindcss';
 
 /**
- * frame-fab Tailwind Config
+ * story-weaver Tailwind Config
  *
- * Migrated from CJS module.exports to ESM in Phase 1 of frame-fab refactor.
+ * Migrated from CJS module.exports to ESM in Phase 1 of story-weaver refactor.
  * Tailwind v4 (via @tailwindcss/vite plugin) handles base/components/utilities
  * automatically; this config only defines design tokens that extend the theme.
  */
 const config: Config = {
   darkMode: 'class',
-  content: [
-    './index.html',
-    './src/**/*.{js,ts,jsx,tsx}',
-    './packages/*/src/**/*.{js,ts,jsx,tsx}',
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}', './packages/*/src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
@@ -72,8 +68,10 @@ const config: Config = {
         'gradient-primary-hover': 'linear-gradient(135deg, #2563EB 0%, #4F46E5 100%)',
         'gradient-success': 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
         'gradient-error': 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
-        'gradient-surface': 'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)',
-        'gradient-dark-surface': 'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)',
+        'gradient-surface':
+          'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%)',
+        'gradient-dark-surface':
+          'linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%)',
       },
       keyframes: {
         fadeIn: {
@@ -119,6 +117,6 @@ const config: Config = {
     },
   },
   plugins: [],
-}
+};
 
-export default config
+export default config;

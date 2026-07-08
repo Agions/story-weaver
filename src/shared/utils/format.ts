@@ -1,5 +1,5 @@
 /**
- * frame-fab Shared Utils - Formatting Utilities
+ * Story Weaver Shared Utils - Formatting Utilities
  * 注意: formatDate 已移至 ./format-ui（支持更多 options 格式），不要在此重复定义
  */
 

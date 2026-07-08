@@ -53,7 +53,7 @@ export const useProjectStore = create<ProjectState>()(
       };
     },
     {
-      name: 'framefab-project-storage',
+      name: 'storyweaver-project-storage',
       storage: createJSONStorage(() => createDebouncedStorage(localStorage, 1500)),
       partialize: (state) => ({
         projects: state.projects,

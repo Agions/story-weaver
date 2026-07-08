@@ -1,18 +1,18 @@
 ---
 title: 模块系统
-description: frame-fab v2.2.3 的领域分层与目录结构
+description: Story Weaver v2.2.3 的领域分层与目录结构
 category: developer-guide
 version: '>=3.0'
 ---
 
 # 模块系统
 
-frame-fab 采用**领域驱动设计 (DDD)** 的轻量分层架构。从 v2.2.3 开始,目录按用户故事切分,业务与技术分离。
+Story Weaver 采用**领域驱动设计 (DDD)** 的轻量分层架构。从 v2.2.3 开始,目录按用户故事切分,业务与技术分离。
 
 ## 顶层结构
 
 ```
-frame-fab/
+Story Weaver/
 ├── app/                # 应用入口: 路由、Providers、Layout
 ├── pages/              # 路由级页面 (7 个)
 ├── features/           # 业务功能 (按用户故事切,9 个)
@@ -101,7 +101,7 @@ features/script/
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"],
-      "@frame-fab/common/*": ["./packages/common/src/*"]
+      "@Story Weaver/common/*": ["./packages/common/src/*"]
     }
   }
 }

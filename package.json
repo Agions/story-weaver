@@ -1,8 +1,8 @@
 {
-  "name": "frame-fab",
+  "name": "story-weaver",
   "private": true,
   "version": "2.2.3",
-  "description": "frame-fab - AI 漫剧创作平台。集成多模型 AI、角色一致性、分镜设计与 TTS 配音，将小说一键转化为专业级漫剧视频。",
+  "description": "Story Weaver - AI 漫剧创作平台。集成多模型 AI、角色一致性、分镜设计与 TTS 配音，将小说一键转化为专业级漫剧视频。",
   "author": "Agions <agions@qq.com>",
   "license": "MIT",
   "type": "module",

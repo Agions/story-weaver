@@ -1,4 +1,4 @@
-// frame-fab desktop entry point.
+// Story Weaver desktop entry point.
 //
 // On Windows in release builds, hides the console window.
 // The actual application logic lives in `lib::run()`.

@@ -100,7 +100,7 @@ class ProjectImportExportService {
    * 行为与原 `ProjectImportExportService.backupProject` 字节级一致：
    *   - 构造 ProjectExportData + JSON 序列化
    *   - 追加到索引（超出 10 条则 shift 最早一条）
-   *   - 写入单条备份内容到 `framefab_backup_${id}`
+   *   - 写入单条备份内容到 `storyweaver_backup_${id}`
    */
   async backupProject(project: ProjectData): Promise<string> {
     const backupData: ProjectExportData = {

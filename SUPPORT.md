@@ -1,6 +1,6 @@
 # Support
 
-> frame-fab 用户支持渠道与资源
+> Story Weaver 用户支持渠道与资源
 
 ## 快速获取帮助
 
@@ -8,7 +8,7 @@
 
 | 资源                  | 链接                                                                         |
 | --------------------- | ---------------------------------------------------------------------------- |
-| **在线文档站**        | [agions.github.io/frame-fab](https://agions.github.io/frame-fab/)            |
+| **在线文档站**        | [agions.github.io/story-weaver](https://agions.github.io/story-weaver/)      |
 | **快速开始 (5 分钟)** | [/getting-started/quick-start.md](./docs/getting-started/quick-start.md)     |
 | **安装指南**          | [/getting-started/installation.md](./docs/getting-started/installation.md)   |
 | **配置说明**          | [/getting-started/configuration.md](./docs/getting-started/configuration.md) |
@@ -25,11 +25,11 @@
 
 ### 🐛 报告 Bug
 
-请在 [GitHub Issues](https://github.com/Agions/frame-fab/issues/new) 提交，包含：
+请在 [GitHub Issues](https://github.com/Agions/story-weaver/issues/new) 提交，包含：
 
 1. **环境信息**：
    - 操作系统 + 版本（macOS 14.5 / Windows 11 / Ubuntu 24.04）
-   - frame-fab 版本（v3.0.0）
+   - Story Weaver 版本（v3.0.0）
    - Tauri 版本（v2.1）
 
 2. **复现步骤**：
@@ -45,11 +45,11 @@
 
 4. **截图/录屏**（强烈推荐）
 
-5. **日志**（`~/.frame-fab/logs/` 目录下）
+5. **日志**（`~/.story-weaver/logs/` 目录下）
 
 ### 💡 功能建议
 
-在 [GitHub Discussions](https://github.com/Agions/frame-fab/discussions) 创建 `Ideas` 类型话题，说明：
+在 [GitHub Discussions](https://github.com/Agions/story-weaver/discussions) 创建 `Ideas` 类型话题，说明：
 
 - 你想解决的问题
 - 期望的工作流
@@ -57,12 +57,12 @@
 
 ## 商业支持
 
-frame-fab 是 MIT 开源项目，**不提供官方商业支持喵**。
+Story Weaver 是 MIT 开源项目，**不提供官方商业支持喵**。
 
 如需定制开发、企业部署、专属功能，可通过以下渠道联系社区认证开发者：
 
-- [GitHub Discussions · Service](https://github.com/Agions/frame-fab/discussions)
-- 邮件：business@frame-fab.dev（社区转发，非官方）
+- [GitHub Discussions · Service](https://github.com/Agions/story-weaver/discussions)
+- 邮件：business@story-weaver.dev（社区转发，非官方）
 
 ## 贡献代码
 
@@ -70,9 +70,9 @@ frame-fab 是 MIT 开源项目，**不提供官方商业支持喵**。
 
 ## 致谢
 
-frame-fab 由以下项目启发 / 使用：
+Story Weaver 由以下项目启发 / 使用：
 
 - [ComfyUI](https://github.com/comfyanonymous/ComfyUI) — 节点化工作流理念
 - [Stable Diffusion WebUI](https://github.com/AUTOMATIC1111/stable-diffusion-webui) — 创作者工具设计
 - [剪映专业版](https://www.capcut.cn/) — 视频编辑交互模式
-- 所有 [贡献者](https://github.com/Agions/frame-fab/graphs/contributors) ❤️
+- 所有 [贡献者](https://github.com/Agions/story-weaver/graphs/contributors) ❤️

@@ -1,4 +1,4 @@
-//! Data models for the frame-fab Tauri backend.
+//! Data models for the Story Weaver Tauri backend.
 
 pub mod app_settings;
 pub mod shortcut;

@@ -1,13 +1,13 @@
 ---
 title: 服务清单
-description: frame-fab 7 大服务领域架构：ai / audio / video / pipeline / project / domain / platform，依赖关系图与单例调用规范
+description: Story Weaver 7 大服务领域架构：ai / audio / video / pipeline / project / domain / platform，依赖关系图与单例调用规范
 category: developer-guide
 version: '>=3.0'
 ---
 
 # 服务清单
 
-> frame-fab v2.2.3 把全部业务能力收敛到 **`src/core/services/`** 下的 **7 大领域**。
+> Story Weaver v2.2.3 把全部业务能力收敛到 **`src/core/services/`** 下的 **7 大领域**。
 > 所有服务**默认导出单例**（不要 `new`），统一从 `@/core/services` 导入。
 
 ## 一、领域全景
@@ -45,16 +45,17 @@ src/core/services/
 
 **核心服务**：
 
-| 服务 | 文件 | 能力 |
-|------|------|------|
-| `aiService` | `ai/text/ai.service.ts` | 统一文本生成/分析/对话/流式 |
-| `novelService` | `ai/text/novel.service.ts` | 小说导入与结构化 |
-| `novelAnalyzer` | `ai/text/novel-analyze.service.ts` | 章节/场景/人物识别 |
-| `storyAnalysisService` | `ai/text/story-analysis.service.ts` | 故事结构深度分析 |
-| `scriptImportService` | `ai/text/script-import.service.ts` | 剧本导入（行业格式） |
-| `imageGenerationService` | `ai/image/image-generation.service.ts` | 图像/视频生成 |
+| 服务                     | 文件                                   | 能力                        |
+| ------------------------ | -------------------------------------- | --------------------------- |
+| `aiService`              | `ai/text/ai.service.ts`                | 统一文本生成/分析/对话/流式 |
+| `novelService`           | `ai/text/novel.service.ts`             | 小说导入与结构化            |
+| `novelAnalyzer`          | `ai/text/novel-analyze.service.ts`     | 章节/场景/人物识别          |
+| `storyAnalysisService`   | `ai/text/story-analysis.service.ts`    | 故事结构深度分析            |
+| `scriptImportService`    | `ai/text/script-import.service.ts`     | 剧本导入（行业格式）        |
+| `imageGenerationService` | `ai/image/image-generation.service.ts` | 图像/视频生成               |
 
 **子模块**（拆分后 25+ 文件）：
+
 - `ai-cache.ts` / `ai-batch.ts` / `ai-stream.ts` / `ai-call-dispatcher.ts`
 - `novel-ai-parser.ts` / `novel-prompt-templates.ts` / `novel-helpers.ts`
 - `novel-analyze-chapter-segments.ts` / `novel-analyze-scene-segments.ts` / `novel-analyze-metadata.ts` / `novel-analyze-config.ts` / `novel-analyze-statistics.ts`
@@ -77,12 +78,12 @@ aiService.setFallbackChain(['zhipu', 'anthropic', 'minimax', 'moonshot']);
 
 **核心服务**：
 
-| 服务 | 文件 | 能力 |
-|------|------|------|
-| `ttsService` | `audio/tts.service.ts` | 文本转语音（200+ 音色） |
-| `lipSyncService` | `audio/lip-sync.service.ts` | 唇形同步元数据 |
-| `audioPipelineService` | `audio/audio-pipeline.service.ts` | 音频编排（混音/对齐） |
-| `ttsProviderRegistry` | `audio/tts-provider-registry.ts` | TTS Provider 管理 |
+| 服务                   | 文件                              | 能力                    |
+| ---------------------- | --------------------------------- | ----------------------- |
+| `ttsService`           | `audio/tts.service.ts`            | 文本转语音（200+ 音色） |
+| `lipSyncService`       | `audio/lip-sync.service.ts`       | 唇形同步元数据          |
+| `audioPipelineService` | `audio/audio-pipeline.service.ts` | 音频编排（混音/对齐）   |
+| `ttsProviderRegistry`  | `audio/tts-provider-registry.ts`  | TTS Provider 管理       |
 
 **TTS Provider 降级链**：
 
@@ -98,16 +99,17 @@ Edge TTS（免费）→ CosyVoice 2.0 → 百度 TTS → KAN-TTS
 
 **核心服务**：
 
-| 服务 | 文件 | 能力 |
-|------|------|------|
-| `videoCompositorService` | `video/video-compositor.service.ts` | FFmpeg 视频合成（多轨） |
-| `ffmpegWasmService` | `video/ffmpeg-wasm.service.ts` | FFmpeg.wasm 加载/调用 |
-| `sceneAnalyzerService` | `video/scene-analyzer.service.ts` | 视频场景识别 |
-| `subtitleService` | `video/subtitle.service.ts` | 字幕生成与多格式导出 |
-| `videoAnalysisService` | `video/video-analysis.service.ts` | 视频内容分析 |
-| `visualConsistencyService` | `video/visual-consistency-scorer.service.ts` | 跨镜头视觉一致性评分 |
+| 服务                       | 文件                                         | 能力                    |
+| -------------------------- | -------------------------------------------- | ----------------------- |
+| `videoCompositorService`   | `video/video-compositor.service.ts`          | FFmpeg 视频合成（多轨） |
+| `ffmpegWasmService`        | `video/ffmpeg-wasm.service.ts`               | FFmpeg.wasm 加载/调用   |
+| `sceneAnalyzerService`     | `video/scene-analyzer.service.ts`            | 视频场景识别            |
+| `subtitleService`          | `video/subtitle.service.ts`                  | 字幕生成与多格式导出    |
+| `videoAnalysisService`     | `video/video-analysis.service.ts`            | 视频内容分析            |
+| `visualConsistencyService` | `video/visual-consistency-scorer.service.ts` | 跨镜头视觉一致性评分    |
 
 **子模块**（拆分后 25+ 文件）：
+
 - `video-compositor-{dispatch,environment,ffmpeg,helpers,tauri}.ts`
 - `video-analysis-{abort-registry,emotions,keyframes,objects,scenes,stats,suggestions,summary,types}.ts`
 - `visual-consistency-{heuristic,keywords,scorer,types,vlm}.ts`
@@ -122,13 +124,13 @@ Edge TTS（免费）→ CosyVoice 2.0 → 百度 TTS → KAN-TTS
 
 **核心服务**：
 
-| 服务 | 文件 | 能力 |
-|------|------|------|
-| `pipelineService` | `pipeline/pipeline.service.ts` | 主入口（run/resume/checkpoint） |
-| `pipelineRunner` | `pipeline/pipeline-runner.ts` | 步骤执行器 |
-| `pipelineStepFactories` | `pipeline/pipeline-step-factories.ts` | 10 步工厂 |
-| `qualityGateService` | `pipeline/quality-gate.service.ts` | 质量门禁评分 |
-| `reviewExportService` | `pipeline/review-export.service.ts` | 自审循环导出 |
+| 服务                    | 文件                                  | 能力                            |
+| ----------------------- | ------------------------------------- | ------------------------------- |
+| `pipelineService`       | `pipeline/pipeline.service.ts`        | 主入口（run/resume/checkpoint） |
+| `pipelineRunner`        | `pipeline/pipeline-runner.ts`         | 步骤执行器                      |
+| `pipelineStepFactories` | `pipeline/pipeline-step-factories.ts` | 10 步工厂                       |
+| `qualityGateService`    | `pipeline/quality-gate.service.ts`    | 质量门禁评分                    |
+| `reviewExportService`   | `pipeline/review-export.service.ts`   | 自审循环导出                    |
 
 **10 个步骤**（按顺序）：
 
@@ -145,16 +147,17 @@ import → analysis → script → character → scene → storyboard
 
 **核心服务**：
 
-| 服务 | 文件 | 能力 |
-|------|------|------|
+| 服务                         | 文件                                       | 能力                     |
+| ---------------------------- | ------------------------------------------ | ------------------------ |
 | `projectImportExportService` | `project/project-import-export.service.ts` | 项目导入导出（10+ 格式） |
-| `renderQueueService` | `project/render-queue.service.ts` | 渲染任务队列 |
-| `costService` | `project/cost.service.ts` | API 成本统计 |
-| `evaluationService` | `project/evaluation.service.ts` | 项目质量评估 |
-| `secureStorageService` | `project/secure-storage.service.ts` | API Key 加密存储 |
-| `exportDispatcher` | `project/export-dispatcher.ts` | 多格式导出调度 |
+| `renderQueueService`         | `project/render-queue.service.ts`          | 渲染任务队列             |
+| `costService`                | `project/cost.service.ts`                  | API 成本统计             |
+| `evaluationService`          | `project/evaluation.service.ts`            | 项目质量评估             |
+| `secureStorageService`       | `project/secure-storage.service.ts`        | API Key 加密存储         |
+| `exportDispatcher`           | `project/export-dispatcher.ts`             | 多格式导出调度           |
 
 **子模块**（拆分后 25+ 文件）：
+
 - `project-import-export-{importer,exporter,validator,duplicator,compare,backup,types}.ts`
 - `render-queue-{fallback,logger,runner,subscriber,types}.ts`
 - `cost-{record-builders,report,stats,types,constants}.ts`
@@ -168,14 +171,15 @@ import → analysis → script → character → scene → storyboard
 
 **核心服务**：
 
-| 服务 | 文件 | 能力 |
-|------|------|------|
-| `characterService` | `domain/character.service.ts` | 角色设定卡管理 |
-| `mangaPipelineService` | `domain/manga-pipeline.service.ts` | 漫剧 6 步编排 |
-| `compositionService` | `domain/composition.service.ts` | 单镜头组合 |
-| `collaborationService` | `domain/collaboration.service.ts` | 多人协作（v3.1+） |
+| 服务                   | 文件                               | 能力              |
+| ---------------------- | ---------------------------------- | ----------------- |
+| `characterService`     | `domain/character.service.ts`      | 角色设定卡管理    |
+| `mangaPipelineService` | `domain/manga-pipeline.service.ts` | 漫剧 6 步编排     |
+| `compositionService`   | `domain/composition.service.ts`    | 单镜头组合        |
+| `collaborationService` | `domain/collaboration.service.ts`  | 多人协作（v3.1+） |
 
 **子模块**（拆分后 20+ 文件）：
+
 - `character-{factory,persistence,subscriber,template,types}.ts`
 - `composition-{factory,persistence,subscriber,types}.ts`
 - `manga-pipeline-{orchestrator,extra,progress,types,stage-audio,stage-compose,stage-images,stage-lipsync}.ts`
@@ -185,16 +189,16 @@ import → analysis → script → character → scene → storyboard
 
 > 桌面端能力 + 分镜独立服务 + 根级便捷导出。
 
-| 服务 | 文件 | 能力 |
-|------|------|------|
-| `desktopAppService` | `desktop-app.service.ts` | 桌面应用元信息 |
-| `desktopAppInfo` | `desktop-app-info.ts` | 系统信息 |
-| `desktopFileDrop` | `desktop-file-drop.ts` | 文件拖拽桥 |
-| `desktopNotificationController` | `desktop-notification-controller.ts` | 系统通知 |
-| `desktopShortcutController` | `desktop-shortcut-controller.ts` | 全局快捷键 |
-| `desktopWindowController` | `desktop-window-controller.ts` | 窗口控制 |
-| `getStoryboardService` | `storyboard.service.ts` | 分镜生命周期 |
-| `getStoryboardService` | `storyboard.service.ts` | 分镜管理 |
+| 服务                            | 文件                                 | 能力           |
+| ------------------------------- | ------------------------------------ | -------------- |
+| `desktopAppService`             | `desktop-app.service.ts`             | 桌面应用元信息 |
+| `desktopAppInfo`                | `desktop-app-info.ts`                | 系统信息       |
+| `desktopFileDrop`               | `desktop-file-drop.ts`               | 文件拖拽桥     |
+| `desktopNotificationController` | `desktop-notification-controller.ts` | 系统通知       |
+| `desktopShortcutController`     | `desktop-shortcut-controller.ts`     | 全局快捷键     |
+| `desktopWindowController`       | `desktop-window-controller.ts`       | 窗口控制       |
+| `getStoryboardService`          | `storyboard.service.ts`              | 分镜生命周期   |
+| `getStoryboardService`          | `storyboard.service.ts`              | 分镜管理       |
 
 详见 [平台适配层](./platform-layer.md)。
 
@@ -234,6 +238,7 @@ import → analysis → script → character → scene → storyboard
 ```
 
 **依赖规则**：
+
 - `domain/` 依赖 `ai/`、`pipeline/`、`project/`
 - `pipeline/` 依赖 `ai/`、`project/`
 - `video/` 和 `audio/` 是**叶子**（不再依赖其他 service）
@@ -268,13 +273,13 @@ ttsService.setFallbackChain(['edge', 'cosyvoice']);
 
 ## 五、错误处理
 
-| 错误类型 | 触发场景 | 推荐处理 |
-|---------|---------|---------|
-| `AIProviderError` | AI 模型调用失败 | 自动降级，UI 提示用户 |
-| `InvalidInputError` | 入参校验失败 | 表单红字提示 |
-| `QuotaExceededError` | 配额耗尽 | 引导用户升级/换 Provider |
-| `CheckpointError` | 断点续传损坏 | 提示用户从最近有效 Checkpoint 恢复 |
-| `RenderQueueError` | 渲染队列满 | 排队等待或清理旧任务 |
+| 错误类型             | 触发场景        | 推荐处理                           |
+| -------------------- | --------------- | ---------------------------------- |
+| `AIProviderError`    | AI 模型调用失败 | 自动降级，UI 提示用户              |
+| `InvalidInputError`  | 入参校验失败    | 表单红字提示                       |
+| `QuotaExceededError` | 配额耗尽        | 引导用户升级/换 Provider           |
+| `CheckpointError`    | 断点续传损坏    | 提示用户从最近有效 Checkpoint 恢复 |
+| `RenderQueueError`   | 渲染队列满      | 排队等待或清理旧任务               |
 
 ```typescript
 try {

@@ -1,5 +1,5 @@
 /**
- * frame-fab Shared Utils - Format UI Utilities
+ * Story Weaver Shared Utils - Format UI Utilities
  *
  * Provides UI-specific formatting utilities including status config,
  * relative time formatting, and date formatting.

@@ -22,6 +22,7 @@ export default [
       'src/__mocks__/**',
       'packages/**',
       'vite.config.ts',
+      'tailwind.config.ts',
       'jest.config.js',
     ],
   },

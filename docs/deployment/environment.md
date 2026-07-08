@@ -1,21 +1,21 @@
 ---
 title: 环境变量
-description: frame-fab 环境变量配置：VITE_ 前缀、AI Provider API Key、应用配置
+description: Story Weaver 环境变量配置：VITE_ 前缀、AI Provider API Key、应用配置
 category: deployment
 version: '>=3.0'
 ---
 
 # 环境变量
 
-> frame-fab v2.2.3 的环境变量分为两类：**构建时**（`VITE_` 前缀，暴露给前端）和 **运行时**（Tauri 注入）。
+> Story Weaver v2.2.3 的环境变量分为两类：**构建时**（`VITE_` 前缀，暴露给前端）和 **运行时**（Tauri 注入）。
 > **推荐**：桌面端用户从「设置面板」配置 API Key（加密存储），开发模式用 `.env.local`。
 
 ## 一、命名规范
 
-| 前缀 | 阶段 | 说明 |
-|------|------|------|
+| 前缀    | 阶段   | 说明                         |
+| ------- | ------ | ---------------------------- |
 | `VITE_` | 构建时 | 客户端可见，**API Key 慎用** |
-| 无前缀 | 运行时 | Rust 端配置，不暴露给前端 |
+| 无前缀  | 运行时 | Rust 端配置，不暴露给前端    |
 
 ## 二、AI Provider 配置
 
@@ -53,7 +53,7 @@ VITE_BAIDU_TTS_SECRET_KEY=xxxxxxxx
 ## 三、应用配置
 
 ```bash
-VITE_APP_NAME=frame-fab
+VITE_APP_NAME=Story Weaver
 VITE_APP_VERSION=3.0.0
 VITE_APP_MODE=desktop                   # desktop | web
 ```
@@ -62,7 +62,7 @@ VITE_APP_MODE=desktop                   # desktop | web
 
 ```bash
 # .env.example（提交到 Git）
-VITE_APP_NAME=frame-fab
+VITE_APP_NAME=Story Weaver
 
 # .env.local（**不提交**，本地开发）
 VITE_ZHIPU_API_KEY=your_real_key
@@ -142,7 +142,7 @@ VITE_VIDU_API_KEY=k3
 **生产建议**：
 
 1. **桌面端**：使用 [Tauri Secure Storage](https://tauri.app/v1/api/js/storage) 加密存储
-2. **Web 端**：使用服务端代理（frame-fab 暂不提供）
+2. **Web 端**：使用服务端代理（Story Weaver 暂不提供）
 3. **密钥轮换**：定期更换 API Key
 
 ## 七、配置验证

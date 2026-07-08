@@ -1,5 +1,5 @@
 name: Bug Report
-description: Report a bug in frame-fab
+description: Report a bug in Story Weaver
 labels: ["bug", "needs-triage"]
 body:
   - type: markdown
@@ -43,7 +43,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: frame-fab Version
+      label: Story Weaver Version
       placeholder: e.g., 3.0.0
 
   - type: dropdown

@@ -2,7 +2,7 @@ import DefaultTheme from 'vitepress/theme';
 import './style.css';
 
 /**
- * frame-fab v2.2.3 VitePress Theme
+ * Story Weaver v2.2.3 VitePress Theme
  *
  * Strategy: minimal custom components, max CSS-driven design.
  * Why: scene-fab experience showed that markdown containers and Vue SFCs

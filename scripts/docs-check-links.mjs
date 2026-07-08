@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * frame-fab docs 死链检查器
+ * Story Weaver docs 死链检查器
  *
  * 扫描 docs/ 下所有 .md 文件，提取内部链接，验证目标存在。
  * 支持：

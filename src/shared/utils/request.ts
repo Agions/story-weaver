@@ -1,5 +1,5 @@
 /**
- * frame-fab Shared Utils - Request Utilities & Request Cache
+ * Story Weaver Shared Utils - Request Utilities & Request Cache
  */
 import { delay } from '@/shared/utils/timing';
 

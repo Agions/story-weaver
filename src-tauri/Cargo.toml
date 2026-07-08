@@ -1,10 +1,10 @@
 [package]
-name = "frame-fab"
+name = "story-weaver"
 version = "2.2.3"
-description = "frame-fab v2.2.0 - AI 漫剧创作平台"
-authors = ["frame-fab Team <agions@qq.com>"]
+description = "Story Weaver - AI 漫剧创作平台"
+authors = ["Story Weaver Team <agions@qq.com>"]
 license = "MIT"
-repository = "https://github.com/Agions/frame-fab"
+repository = "https://github.com/Agions/story-weaver"
 edition = "2021"
 
 [lib]

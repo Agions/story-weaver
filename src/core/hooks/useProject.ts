@@ -17,7 +17,7 @@ import {
   type ProjectState,
 } from './useProject.reducer';
 
-const PROJECTS_STORAGE_KEY = 'framefab_projects';
+const PROJECTS_STORAGE_KEY = 'storyweaver_projects';
 
 function loadProjects(): ProjectData[] {
   try {

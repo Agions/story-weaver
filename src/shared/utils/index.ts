@@ -1,5 +1,5 @@
 /**
- * frame-fab Shared Utils - Barrel Export
+ * Story Weaver Shared Utils - Barrel Export
  * Re-exports all utilities from modular files for backward compatibility
  */
 

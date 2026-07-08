@@ -1,5 +1,5 @@
 /**
- * frame-fab Shared Utils - General Utilities (facade)
+ * Story Weaver Shared Utils - General Utilities (facade)
  *
  * 按职责拆分为 6 个子模块，本文件仅做 re-export 保持向后兼容。
  */

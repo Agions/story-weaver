@@ -82,7 +82,7 @@ export const useAppStore = create<AppState>()(
       },
     }),
     {
-      name: 'framefab-app-storage',
+      name: 'storyweaver-app-storage',
       partialize: (state) => ({
         language: state.language,
       }),

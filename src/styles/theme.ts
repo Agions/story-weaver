@@ -1,5 +1,5 @@
 /**
- * frame-fab AI 设计系统
+ * Story Weaver AI 设计系统
  * 统一的设计令牌和 Ant Design 主题配置
  */
 

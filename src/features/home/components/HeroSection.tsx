@@ -33,7 +33,7 @@ const HeroSection = () => {
         </div>
 
         <h1 className={styles.title}>
-          frame-fab
+          Story Weaver
           <span className={styles.highlight}>AI</span>
         </h1>
 

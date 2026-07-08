@@ -16,6 +16,6 @@ export const useSettingsStore = create<SettingsState>()(
       settings: defaultSettings,
       updateSettings: (patch) => set((s) => ({ settings: { ...s.settings, ...patch } })),
     }),
-    { name: 'framefab-settings' }
+    { name: 'storyweaver-settings' }
   )
 );

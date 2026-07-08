@@ -1,13 +1,13 @@
 ---
 title: Pipeline 引擎 API
-description: frame-fab 10 步 Pipeline 引擎 API：PipelineStepId 枚举、StepChain 接口、AsyncStepChain、StepChainBuilder、检查点恢复
+description: Story Weaver 10 步 Pipeline 引擎 API：PipelineStepId 枚举、StepChain 接口、AsyncStepChain、StepChainBuilder、检查点恢复
 category: developer-guide
 version: '>=3.0'
 ---
 
 # Pipeline 引擎 API
 
-> frame-fab v2.2.3 的 Pipeline 引擎**对外 API**——10 步编排、StepChain 接口、Checkpoint 恢复。
+> Story Weaver v2.2.3 的 Pipeline 引擎**对外 API**——10 步编排、StepChain 接口、Checkpoint 恢复。
 
 ## 一、核心类型
 
@@ -271,4 +271,4 @@ chain.setNext(createAnalysisStepChain());
 
 - [API - 流水线](../api/pipeline-service.md) — 服务层 API
 - [架构设计](./architecture.md#四核心模块) — Pipeline 引擎位置
-- [Pipeline 服务源码](https://github.com/Agions/frame-fab/tree/main/src/core/pipeline)
+- [Pipeline 服务源码](https://github.com/Agions/story-weaver/tree/main/src/core/pipeline)
