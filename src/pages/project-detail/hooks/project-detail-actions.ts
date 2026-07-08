@@ -30,7 +30,7 @@ export function usePersistProjectPatch(
   updateProject: (id: string, data: ProjectData) => void
 ) {
   return useCallback(
-    (patch: Record<string, unknown>) => {
+    (patch: Partial<ProjectData>) => {
       if (!project) return;
       const updatedProject = {
         ...project,
@@ -53,7 +53,7 @@ export function usePersistProjectPatch(
 export function useHandleApplyRenderedFrame(
   project: ProjectData | null,
   storyboardFrames: StoryboardFrame[],
-  persistProjectPatch: (patch: Record<string, unknown>) => void
+  persistProjectPatch: (patch: Partial<ProjectData>) => void
 ) {
   return useCallback(
     (frameId: string, imageUrl: string) => {

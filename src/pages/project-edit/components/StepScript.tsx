@@ -15,7 +15,7 @@ const ScriptEditor = lazy(() => import('@/features/script/components/ScriptEdito
 
 export interface StepScriptProps {
   onExport: (format: string) => void;
-  onSave: (segments: unknown) => void;
+  onSave: (segments: VideoSegment[]) => void;
   onPrev: () => void;
   onNext: () => void;
 }

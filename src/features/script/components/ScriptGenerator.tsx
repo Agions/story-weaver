@@ -117,7 +117,7 @@ export function ScriptGenerator({
   const [language, setLanguage] = useState('zh');
   const [requirements, setRequirements] = useState('');
 
-  const buildFormValues = () => ({
+  const buildFormValues = (): ScriptFormValues => ({
     topic,
     keywords,
     style,
@@ -143,7 +143,7 @@ export function ScriptGenerator({
   // 生成脚本
   const handleGenerate = useCallback(
     async (values?: ScriptFormValues) => {
-      const formData = values ?? (buildFormValues() as unknown as ScriptFormValues);
+      const formData = values ?? buildFormValues();
       if (!selectedModel) {
         toast.warning('请先选择 AI 模型');
         setShowModelSelector(true);

@@ -14,6 +14,7 @@ import type { ScriptImportMetadata } from '@/features/script/components/NovelImp
 import type { ExportSettings } from '@/features/video/components/VideoExporter';
 import type { StoryAnalysis, Character, CompositionProject } from '@/shared/types';
 import type { AudioTrackConfig } from '@/shared/types/audio';
+import type { VideoSegment } from '@/shared/types/script';
 import type { StoryboardFrame } from '@/shared/types/storyboard';
 
 import {
@@ -73,7 +74,7 @@ export interface StepContentSwitcherProps {
   onAcceptAnalysis: () => Promise<void>;
   onDraftChange: (draft: string) => void;
   onExportScript: (format: string) => void;
-  onSaveScript: (segments: unknown) => void;
+  onSaveScript: (segments: VideoSegment[]) => void;
   onFramesChange: (
     frames: StoryboardFrame[] | ((prev: StoryboardFrame[]) => StoryboardFrame[])
   ) => void;

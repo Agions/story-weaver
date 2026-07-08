@@ -44,6 +44,7 @@ import { toast } from '@/shared/components/ui/toast';
 import { useStoryboard } from '@/shared/stores/storyboard.store';
 import type { StoryAnalysis, Character, CompositionProject } from '@/shared/types';
 import type { AudioTrackConfig } from '@/shared/types/audio';
+import type { VideoSegment } from '@/shared/types/script';
 import type { StoryboardFrame } from '@/shared/types/storyboard';
 
 import { StepContentSwitcher } from './components/StepContentSwitcher';
@@ -490,6 +491,15 @@ const ProjectEdit = () => {
     toast.info(`导出脚本为 ${format.toUpperCase()} 格式`);
   };
 
+  /** 将脚本片段序列化为纯文本并更新 scriptText */
+  const handleSaveScript = (segments: VideoSegment[]) => {
+    const text = segments
+      .map((seg) => seg.content || '')
+      .filter(Boolean)
+      .join('\n');
+    setScriptText(text);
+  };
+
   const handleExportReviewNotes = async () => {
     if (!project?.id) {
       toast.warning('请先加载项目后再导出评审记录');
@@ -714,7 +724,7 @@ const ProjectEdit = () => {
             onAcceptAnalysis={handleAcceptAnalysis}
             onDraftChange={setAnalysisDraft}
             onExportScript={handleExportScript}
-            onSaveScript={(segments) => setScriptText(segments as unknown as string)}
+            onSaveScript={handleSaveScript}
             onFramesChange={storyboard.setFrames}
             onFrameSelect={storyboard.selectFrame}
             onBuildDraft={handleBuildStoryboardDraft}
