@@ -1,19 +1,6 @@
-import {
-  ArrowLeft,
-  Save,
-  FileText,
-  Zap,
-  Edit,
-  CheckCircle,
-  User,
-  Image,
-  PlayCircle,
-  Volume2,
-  Download,
-  AlertTriangle,
-} from 'lucide-react';
-import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft, Save, FileText, AlertTriangle } from 'lucide-react';
+import { Suspense, useCallback, useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { v4 as uuid } from 'uuid';
 
 import { useProject } from '@/core/hooks/useProject';
@@ -30,28 +17,23 @@ import {
 import type { EvaluationScores, QualityGateIssue } from '@/core/services';
 import { logger } from '@/core/utils/logger';
 import type { ScriptImportMetadata } from '@/features/script/components/NovelImporter';
-import type { ExportSettings } from '@/features/video/components/VideoExporter';
 import CostDashboard from '@/shared/components/business/CostDashboard';
 import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
 import { Input } from '@/shared/components/ui/input';
 import { toast } from '@/shared/components/ui/toast';
 import { useStoryboard } from '@/shared/stores/storyboard.store';
-import type { Character, CompositionProject, ProjectData, StoryAnalysis } from '@/shared/types';
+import type { Character, CompositionProject, StoryAnalysis } from '@/shared/types';
 import type { AudioTrackConfig } from '@/shared/types/audio';
-import type { VideoSegment } from '@/shared/types/script';
 import type { StoryboardFrame } from '@/shared/types/storyboard';
 
 import { StepContentSwitcher } from './components/StepContentSwitcher';
+import { StepNavigation } from './components/StepNavigation';
+import { useProjectExport } from './hooks/useProjectExport';
+import { useProjectLoader } from './hooks/useProjectLoader';
+import type { ProjectEditData } from './hooks/useProjectLoader';
+import { useScriptStep } from './hooks/useScriptStep';
 import styles from './ProjectEdit.module.less';
-
-/** Page-local extension of canonical ProjectData with strongly-typed fields. */
-interface ProjectEditData extends ProjectData {
-  name: string; // required in edit context
-  content?: string;
-  script?: string;
-  novelMetadata?: ScriptImportMetadata;
-}
 
 /**
  * 项目编辑页面
@@ -59,7 +41,6 @@ interface ProjectEditData extends ProjectData {
  */
 const ProjectEdit = () => {
   const { projectId } = useParams();
-  const location = useLocation();
   const navigate = useNavigate();
   // The project name/description used to live behind a RHF useForm()
   // instance, but ProjectEditPage never rendered a <Form> — the form
@@ -69,7 +50,6 @@ const ProjectEdit = () => {
   const [description, setDescription] = useState<string>('');
 
   // ProjectLoad 子集: currentStep/loading/saving/project/error → useProject hook
-  // (v3.4 P0 phase 4 R2: 利用现成 useProject 集中管, 减少 5 useState)
   const {
     project,
     saving,
@@ -79,13 +59,13 @@ const ProjectEdit = () => {
     currentStep,
     setCurrentStep,
     updateProject,
-    resetProject: _resetProject,
   } = useProject();
+
   // AI 分析 loading (与 useProject.projectLoading 概念不同, 独立 useState 避免互相覆盖)
   const [loading, setLoading] = useState(false);
   const [content, setContent] = useState<string>('');
   const [novelMetadata, setNovelMetadata] = useState<ScriptImportMetadata | null>(null);
-  const [scriptText, setScriptText] = useState<string>('');
+  const { scriptText, setScriptText, saveScriptFromSegments } = useScriptStep();
   const [storyAnalysis, setStoryAnalysis] = useState<StoryAnalysis | null>(null);
   const [analysisDraft, setAnalysisDraft] = useState<string>('');
   const [analysisState, setAnalysisState] = useState<'idle' | 'generated' | 'accepted'>('idle');
@@ -107,14 +87,7 @@ const ProjectEdit = () => {
   // 8 个分镜相关 useState → useStoryboard hook (v3.4 P0 phase 2)
   const storyboard = useStoryboard();
   const [focusFrameId, setFocusFrameId] = useState<string | undefined>(undefined); // UI 局部焦点
-  const [exportPreset, setExportPreset] = useState<'9:16' | '16:9' | '1:1'>('9:16');
-  const [exportSettings, setExportSettings] = useState<ExportSettings>({
-    format: 'MP4',
-    quality: 'high',
-    resolution: '1080p',
-    frameRate: 30,
-    filename: '',
-  });
+  const { exportPreset, exportSettings, setExportPreset, mergeExportSettings } = useProjectExport();
   const [isNewProject, setIsNewProject] = useState(true);
   const [initialLoading, setInitialLoading] = useState(false);
   // error 已从 useProject() 解构 (v3.4 P0 phase 4 R2)
@@ -132,82 +105,33 @@ const ProjectEdit = () => {
   );
 
   // 初始化 - 加载项目数据（如果是编辑现有项目）
-  useEffect(() => {
-    if (projectId) {
-      setInitialLoading(true);
-      setIsNewProject(false);
-
-      tauriService
-        .readProjectFile(projectId)
-        .then((projectText) => {
-          const projectData = JSON.parse(projectText) as ProjectEditData;
-          updateProject({ name: projectData.name, description: projectData.description });
-          setName(projectData.name);
-          setDescription(projectData.description ?? '');
-
-          if (projectData.content) setContent(projectData.content);
-          if (projectData.novelMetadata) setNovelMetadata(projectData.novelMetadata);
-          if (projectData.storyAnalysis) {
-            setStoryAnalysis(projectData.storyAnalysis);
-            setAnalysisDraft(JSON.stringify(projectData.storyAnalysis, null, 2));
-            setAnalysisState('accepted');
-          }
-          if (Array.isArray(projectData.storyboardFrames))
-            storyboard.setFrames(projectData.storyboardFrames);
-          if (
-            Array.isArray(projectData.storyboardComments) ||
-            Array.isArray(projectData.storyboardVersions)
-          ) {
-            collaborationService.hydrate(
-              projectData.id,
-              projectData.storyboardComments ?? [],
-              projectData.storyboardVersions ?? []
-            );
-            storyboard.setComments(collaborationService.listComments(projectData.id));
-            storyboard.setVersions(collaborationService.listVersions(projectData.id));
-          }
-          if (projectData.audioConfig) {
-            setAudioConfig(projectData.audioConfig);
-            setAudioEditorKey(`audio-${Date.now()}`);
-          }
-          if (Array.isArray(projectData.characters)) setCharacters(projectData.characters);
-          if (projectData.composition) setComposition(projectData.composition);
-          if (projectData.exportPreset) setExportPreset(projectData.exportPreset);
-          if (projectData.exportSettings)
-            setExportSettings((prev) => ({ ...prev, ...projectData.exportSettings }));
-          if (projectData.script) {
-            setScriptText(projectData.script);
-            setCurrentStep(2);
-          } else if (projectData.content) {
-            setCurrentStep(1);
-          }
-
-          const search = new URLSearchParams(location.search);
-          const frameId = search.get('frameId');
-          const stepValue = search.get('step');
-          if (frameId) {
-            setCurrentStep(3);
-            setFocusFrameId(frameId);
-          } else if (stepValue) {
-            const nextStep = Number(stepValue);
-            if (Number.isInteger(nextStep) && nextStep >= 0 && nextStep <= 8) {
-              setCurrentStep(nextStep);
-            }
-          }
-
-          setError(null);
-        })
-        .catch((err) => {
-          logger.error('加载项目失败:', err);
-          setError('加载项目失败，请确认项目文件是否存在');
-          toast.error('加载项目失败');
-        })
-        .finally(() => {
-          setInitialLoading(false);
-        });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectId, location.search]);
+  useProjectLoader({
+    projectId,
+    setters: {
+      setError,
+      setInitialLoading,
+      setIsNewProject,
+      setName,
+      setDescription,
+      setContent,
+      setNovelMetadata,
+      setStoryAnalysis,
+      setAnalysisDraft,
+      setAnalysisState,
+      setCurrentStep,
+      setFocusFrameId,
+      setAudioConfig,
+      setAudioEditorKey,
+      setCharacters,
+      setComposition,
+      setExportPreset,
+      mergeExportSettings,
+      setScriptText,
+      updateProject,
+    },
+    storyboard,
+    collaborationService,
+  });
 
   // --- 事件处理函数 ---
 
@@ -479,13 +403,7 @@ const ProjectEdit = () => {
   };
 
   /** 将脚本片段序列化为纯文本并更新 scriptText */
-  const handleSaveScript = (segments: VideoSegment[]) => {
-    const text = segments
-      .map((seg) => seg.content || '')
-      .filter(Boolean)
-      .join('\n');
-    setScriptText(text);
-  };
+  const handleSaveScript = saveScriptFromSegments;
 
   const handleExportReviewNotes = async () => {
     if (!project?.id) {
@@ -546,43 +464,6 @@ const ProjectEdit = () => {
       storyboard.setFrames(buildStoryboardDraft(storyAnalysis));
     }
   };
-
-  // --- Step Navigation Renderer ---
-  const renderStepNavigation = () => (
-    <div className={styles.stepsContainer}>
-      <div className="flex items-center gap-2 overflow-x-auto pb-2">
-        {[
-          { key: 'import', title: '导入', icon: FileText, desc: '小说/剧本' },
-          { key: 'analysis', title: 'AI解析', icon: Zap, desc: '智能分析' },
-          { key: 'script', title: '剧本', icon: Edit, desc: '生成剧本' },
-          { key: 'storyboard', title: '分镜', icon: Image, desc: '漫画分镜' },
-          { key: 'character', title: '角色', icon: User, desc: '角色形象' },
-          { key: 'render', title: '渲染', icon: CheckCircle, desc: '场景渲染' },
-          { key: 'composition', title: '合成', icon: PlayCircle, desc: '动态效果' },
-          { key: 'audio', title: '配音', icon: Volume2, desc: '配音配乐' },
-          { key: 'export', title: '导出', icon: Download, desc: '视频导出' },
-        ].map((step, index) => {
-          const Icon = step.icon;
-          return (
-            <div
-              key={step.key}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-                index === currentStep
-                  ? 'bg-primary text-primary-foreground'
-                  : index < currentStep
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-muted text-muted-foreground'
-              }`}
-              onClick={() => setCurrentStep(index)}
-            >
-              <Icon className="h-4 w-4" />
-              <span className="text-sm font-medium">{step.title}</span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
 
   // --- 渲染 ---
   if (error) {
@@ -666,7 +547,7 @@ const ProjectEdit = () => {
       </Suspense>
 
       {/* 步骤导航 */}
-      {renderStepNavigation()}
+      <StepNavigation currentStep={currentStep} onStepChange={setCurrentStep} />
 
       {/* 步骤内容 */}
       <div className={styles.stepsContent}>
@@ -730,9 +611,7 @@ const ProjectEdit = () => {
             onConfigChange={setAudioConfig}
             onGenerateVoices={handleGenerateVoices}
             onPresetChange={setExportPreset}
-            onExportSettingsChange={(settings) =>
-              setExportSettings((prev) => ({ ...prev, ...settings }))
-            }
+            onExportSettingsChange={mergeExportSettings}
             onLocateIssue={handleLocateIssueFrame}
             onSaveProject={handleSaveProject}
             onCharactersChange={setCharacters}

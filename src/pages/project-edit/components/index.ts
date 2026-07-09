@@ -13,3 +13,4 @@ export { default as StepAudio } from './StepAudio';
 export { default as StepExport } from './StepExport';
 export { default as QualityGateAlert } from './QualityGateAlert';
 export { default as CollaborationPanel } from './CollaborationPanel';
+export { StepNavigation } from './StepNavigation';
