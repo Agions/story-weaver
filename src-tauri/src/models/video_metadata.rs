@@ -16,8 +16,6 @@ pub struct VideoMetadata {
 pub struct VideoSegment {
     pub start: f64,
     pub end: f64,
-    #[serde(rename = "type")]
-    pub segment_type: Option<String>,
     pub content: Option<String>,
 }
 
