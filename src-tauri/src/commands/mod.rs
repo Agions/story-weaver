@@ -6,5 +6,4 @@
 
 pub mod app;
 pub mod file;
-pub mod shortcuts;
 pub mod video;

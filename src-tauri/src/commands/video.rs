@@ -6,7 +6,6 @@
 //! 3. Delegate to the corresponding `services::video` function
 
 use log::info;
-use tauri::Window;
 
 use crate::models::video_metadata::{CleanFileParams, CutVideoParams, PreviewParams};
 use crate::services::video::{analyzer, cutter, preview};
@@ -35,12 +34,10 @@ pub fn generate_thumbnail(path: String) -> Result<String, String> {
 
 /// Cut / splice a video according to segments and transitions.
 #[tauri::command]
-pub async fn cut_video(params: CutVideoParams, window: Window) -> Result<String, String> {
+pub async fn cut_video(params: CutVideoParams) -> Result<String, String> {
     validate_input_path(&params.input_path)?;
     validate_output_path(&params.output_path)?;
     info!("开始剪辑视频: {:?}", params);
-    // window is kept for future progress events; for now we just acknowledge it
-    let _ = window;
     cutter::cut(&params)
 }
 

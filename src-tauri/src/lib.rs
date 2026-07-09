@@ -116,9 +116,6 @@ pub fn run() {
             commands::file::list_app_data_files,
             commands::file::delete_project_file,
             commands::file::remove_file,
-            commands::shortcuts::register_shortcut,
-            commands::shortcuts::unregister_shortcut,
-            commands::shortcuts::get_registered_shortcuts,
         ])
         .run(tauri::generate_context!())
         .unwrap_or_else(|e| {
