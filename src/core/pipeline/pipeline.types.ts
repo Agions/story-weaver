@@ -234,3 +234,35 @@ export interface PipelineEngineEvent {
   onPipelineComplete?: (results: Map<PipelineStepId, StepOutput>) => void;
   onPipelineFail?: (error: string, failedStepId?: PipelineStepId) => void;
 }
+
+// ========== 回调接口（原 services/pipeline/pipeline.types.ts） ==========
+
+export interface PipelineCallbacks {
+  onStepChange?: (step: PipelineStep) => void;
+  onProgress?: (stepId: string, progress: number, message?: string) => void;
+  onComplete?: (result: PipelineResult) => void;
+  onError?: (error: string, step?: PipelineStep) => void;
+}
+
+// ========== 流水线执行结果（原 services/pipeline/pipeline.types.ts） ==========
+
+export interface PipelineResult {
+  workflowId: string;
+  status: PipelineStatus;
+  output?: unknown;
+  error?: string;
+  startTime: number;
+  endTime?: number;
+  steps: PipelineStepResult[];
+}
+
+export interface PipelineStepResult {
+  stepId: string;
+  name: string;
+  status: PipelineStatus;
+  output?: unknown;
+  error?: string;
+  startTime: number;
+  endTime?: number;
+  duration?: number;
+}
