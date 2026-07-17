@@ -19,4 +19,4 @@ export type {
   CompositionResult,
   ExportProgress,
   ProgressCallback,
-} from '@/types/media';
+} from '@/shared/types/video-composition-types';

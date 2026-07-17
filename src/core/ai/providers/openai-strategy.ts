@@ -2,7 +2,7 @@
  * OpenAI Provider Strategy
  */
 
-import type { AIRequestConfig } from '@/types/ai';
+import type { AIRequestConfig } from '@/shared/types/ai-core';
 
 import type { OpenAICompatibleConfig } from './openai-compatible-strategy';
 import { OpenAICompatibleStrategy } from './openai-compatible-strategy';

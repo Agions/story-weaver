@@ -6,7 +6,7 @@
  * ai-stream, ai-mock-data, ai-cache) and the barrel index.ts continue
  * to resolve without changes.
  *
- * @deprecated Import from '@/types/ai' in new code.
+ * @deprecated Import from '@/shared/types/ai-core' in new code.
  */
 
-export * from '@/types/ai';
+export * from '@/shared/types/ai-core';

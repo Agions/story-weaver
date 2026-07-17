@@ -1,7 +1,7 @@
 import type { ScriptImportMetadata } from '@/components/ai';
 import type { QualityGateIssue } from '@/core/services';
 import type { Character, CompositionProject, StoryAnalysis } from '@/shared/types';
-import type { AudioTrackConfig } from '@/types/media';
+import type { AudioTrackConfig } from '@/shared/types/audio';
 import type { ContentType } from '@/core/services/domain/collaboration-service';
 
 /** ProjectEditProvider 管理的页面级状态。 */
