@@ -80,5 +80,14 @@ docs/.vitepress/cache/
 demo/
 
 # Internal dev reference docs (kept off repo per user pref 2026-06-10)
-# 主人偏好: 内部参考文档（refactor plan / 收官战报）不提交到 GitHub
+# 主人偏好: 内部参考文档（refactor plan / 收官战报 / 基线快照）不提交到 GitHub
 docs/dev/
+docs/refactor-plan.md
+docs/baseline.md
+
+# Session-local artifacts (IDE/agent temp files)
+.zcode/plans/
+.workbuddy/memory/
+
+# Generated code quality reports
+reports/jscpd/

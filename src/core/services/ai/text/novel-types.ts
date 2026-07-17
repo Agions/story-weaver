@@ -1,7 +1,7 @@
 /**
  * Novel Service 类型定义
  *
- * 从 novel.service.ts 提取的 5 个 interface：
+ * 从 novel-service.ts 提取的 5 个 interface：
  *   - NovelChapter    小说章节
  *   - ScriptScene     剧本场景
  *   - NovelScript     完整剧本

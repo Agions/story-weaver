@@ -2,7 +2,7 @@
  * Story Weaver Shared Utils - Async Error Handling Utilities
  */
 
-import { toast } from '@/shared/components/ui';
+import { toast } from '@/shared/components/ui/toast';
 
 import { logger } from './logger';
 

@@ -6,10 +6,10 @@
  * 两个独立轻量方法：图生视频 + 口型视频委托。
  */
 
-import { generateVideo } from '@/core/services/ai/image/image-generation.service';
-import type { VideoGenerationResult } from '@/core/services/ai/image/image-generation.service';
-import { generateTalkingHead } from '@/core/services/audio/lip-sync.service';
-import type { TalkingFaceResult } from '@/core/services/audio/lip-sync.service';
+import { generateVideo } from '@/core/services/ai/image/image-generation-service';
+import type { VideoGenerationResult } from '@/core/services/ai/image/image-generation-service';
+import { generateTalkingHead } from '@/core/services/audio/lip-sync-service';
+import type { TalkingFaceResult } from '@/core/services/audio/lip-sync-service';
 
 import type { ProgressEmitter } from './manga-pipeline-progress';
 import {

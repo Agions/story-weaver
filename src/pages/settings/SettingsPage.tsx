@@ -6,7 +6,7 @@ import { Settings as SettingsIcon, User, Bell, Key, Info, Edit, Lightbulb } from
 import { useState, useMemo } from 'react';
 
 import { useTheme } from '@/app/providers/ThemeContext';
-import { MODEL_PROVIDERS, getModelsByProvider } from '@/core/config/models.config';
+import { MODEL_PROVIDERS, getModelsByProvider } from '@/core/config/models-config';
 import { logger } from '@/core/utils/logger';
 import { Alert, AlertDescription } from '@/shared/components/ui/alert';
 import { Avatar, AvatarFallback } from '@/shared/components/ui/avatar';

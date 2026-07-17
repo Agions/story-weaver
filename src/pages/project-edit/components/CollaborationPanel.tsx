@@ -24,7 +24,6 @@ import { useProjectEdit } from '../context/ProjectEditContext';
 import { useCollaborationContext } from '../context/selectors';
 import styles from '../ProjectEdit.module.less';
 
-/** @deprecated 内部改用 Context selector，保留类型以兼容旧引用。 */
 export interface CollaborationPanelProps {
   projectId?: string;
   selectedFrame?: StoryboardFrame | null;
@@ -32,8 +31,8 @@ export interface CollaborationPanelProps {
   versionLabel?: string;
   compareLeftVersionId?: string;
   compareRightVersionId?: string;
-  versionDiff?: import('@/core/services/domain/collaboration.service').VersionDiffSummary | null;
-  storyboardVersions?: import('@/core/services/domain/collaboration.service').StoryboardVersion[];
+  versionDiff?: import('@/core/services/domain/collaboration-service').VersionDiffSummary | null;
+  storyboardVersions?: import('@/core/services/domain/collaboration-service').StoryboardVersion[];
   onCommentDraftChange?: (v: string) => void;
   onAddComment?: () => void;
   onSaveVersion?: () => void;

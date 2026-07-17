@@ -6,9 +6,9 @@
  */
 
 import type { ScriptSegment } from '@/shared/types';
-import type { SubtitleFormat } from '@/shared/types/video-composition.types';
+import type { SubtitleFormat } from '@/shared/types/video-composition-types';
 
-/** @deprecated Use @/shared/types/video-composition.types */
+/** @deprecated Use @/shared/types/video-composition-types */
 export type { SubtitleFormat };
 
 /** 字幕样式 */

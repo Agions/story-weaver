@@ -4,12 +4,14 @@
 
 /** 存储键名 */
 export const STORAGE_KEYS = {
-  PROJECTS: 'reelforge_projects',
-  APP_STATE: 'reelforge_app_state',
-  USER_PREFERENCES: 'reelforge_preferences',
-  RECENT_FILES: 'reelforge_recent_files',
-  MODEL_SETTINGS: 'reelforge_model_settings',
-  EXPORT_HISTORY: 'reelforge_export_history',
+  PROJECTS: 'storyweaver_projects',
+  STORYBOARDS: 'storyweaver-storyboards',
+  COMPOSITIONS: 'storyweaver-compositions',
+  ASSETS: 'panelcraft_assets',
+  CHARACTERS: 'man ga-characters',
+  BACKUPS: 'storyweaver_backups',
+  REVIEW_EXPORT_ACTIVITIES: 'storyweaver_review_export_activities',
+  TOKEN: 'reelforge_token',
 } as const;
 
 /** 路由路径 */

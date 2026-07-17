@@ -1,7 +1,7 @@
 /**
  * Composition 持久化
  *
- * 把 composition.service.ts 中的 localStorage 读写抽出来，
+ * 把 composition-service.ts 中的 localStorage 读写抽出来，
  * 并提供带错误日志的容错版本。
  */
 

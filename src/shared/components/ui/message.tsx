@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { toast } from 'sonner';
+import { toast } from '@/shared/components/ui/toast';
 
 // ============================================================
 // message API (wraps sonner toast)

@@ -1,4 +1,4 @@
-import { scriptImportService } from '@/core/services/ai/text/script-import.service';
+import { scriptImportService } from '@/core/services/ai/text/script-import-service';
 
 describe('scriptImportService', () => {
   it('should detect file format by filename', () => {

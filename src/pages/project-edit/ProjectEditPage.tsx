@@ -136,7 +136,7 @@ const ProjectEdit = () => {
         </Suspense>
 
         {/* 步骤导航 */}
-        <StepNavigation currentStep={currentStep} onStepChange={setCurrentStep} />
+        <StepNavigation currentStep={currentStep} onStepChange={setCurrentStep} projectId={project?.id} />
 
         {/* 步骤内容 */}
         <div className={styles.stepsContent}>

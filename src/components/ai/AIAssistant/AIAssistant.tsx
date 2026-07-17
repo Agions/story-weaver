@@ -49,7 +49,7 @@ import styles from './AIAssistant.module.less';
 import { EnhanceOptionCard } from './EnhanceOptionCard';
 import { useAIAssistant } from './hooks/useAIAssistant';
 import { OptionSlider } from './OptionSlider';
-import type { ChatMessage } from './types/ai-assistant.entities';
+import type { ChatMessage } from './types/ai-assistant-entities';
 
 // ========== 子组件 ==========
 
@@ -527,4 +527,4 @@ function AIAssistant() {
 export default AIAssistant;
 
 // Re-export types for backward compatibility
-export type { ChatMessage } from './types/ai-assistant.entities';
+export type { ChatMessage } from './types/ai-assistant-entities';

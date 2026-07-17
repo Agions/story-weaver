@@ -12,7 +12,7 @@ import type { Character, StoryAnalysis } from './novel';
 import type { Script } from './script';
 import type { StoryboardFrame } from './storyboard';
 
-/** 质量评分（原 core/services/project/evaluation.service.ts） */
+/** 质量评分（原 core/services/project/evaluation-service.ts） */
 export interface EvaluationScores {
   consistency: number;
   pacing: number;
@@ -21,7 +21,7 @@ export interface EvaluationScores {
   overall: number;
 }
 
-/** 分镜评论（原 core/services/domain/collaboration.service.ts） */
+/** 分镜评论（原 core/services/domain/collaboration-service.ts） */
 export interface FrameComment {
   id: string;
   projectId: string;
@@ -31,7 +31,7 @@ export interface FrameComment {
   createdAt: string;
 }
 
-/** 分镜版本快照（原 core/services/domain/collaboration.service.ts） */
+/** 分镜版本快照（原 core/services/domain/collaboration-service.ts） */
 export interface StoryboardVersion {
   id: string;
   projectId: string;
@@ -39,6 +39,25 @@ export interface StoryboardVersion {
   createdAt: string;
   createdBy: string;
   payload: unknown;
+  /** 内容类型：storyboard | script | character | asset */
+  contentType?: string;
+}
+
+/** 剧本版本 payload */
+export interface ScriptVersionPayload {
+  scriptText: string;
+  segments: unknown[];
+}
+
+/** 角色版本 payload */
+export interface CharacterVersionPayload {
+  characters: unknown[];
+}
+
+/** 素材版本 payload */
+export interface AssetVersionPayload {
+  assets: unknown[];
+  templates: unknown[];
 }
 
 export interface ProjectData {

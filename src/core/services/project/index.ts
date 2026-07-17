@@ -6,9 +6,9 @@
  * defined in multiple files).
  */
 
-export * from './project-import-export.service';
-export * from './export.service';
-export * from './secure-storage.service';
-export * from './render-queue.service';
-export * from './evaluation.service';
-export * from './cost.service';
+export * from './project-import-export-service';
+export * from './export-service';
+export * from './secure-storage-service';
+export * from './render-queue-service';
+export * from './evaluation-service';
+export * from './cost-service';

@@ -24,4 +24,4 @@ export { default as AIFeaturePanel } from './AIFeaturePanel/AIFeaturePanel';
 export { ProgressStatus } from './ProgressStatus/ProgressStatus';
 export { OptionSlider } from './AIAssistant/OptionSlider';
 export { EnhanceOptionCard } from './AIAssistant/EnhanceOptionCard';
-export type { ChatMessage } from './AIAssistant/types/ai-assistant.entities';
+export type { ChatMessage } from './AIAssistant/types/ai-assistant-entities';

@@ -1,7 +1,7 @@
 /**
  * 桌面窗口控制器
  *
- * 集中所有 Tauri Window API 操作。原 desktop-app.service.ts 中 13
+ * 集中所有 Tauri Window API 操作。原 desktop-app-service.ts 中 13
  * 个窗口方法每个都是 `const window = getCurrentWindow(); await
  * window.xxx();` 的同质代码——拆出后所有方法仍保留原签名和原
  * 行为，差异只在具体调用的 window API。

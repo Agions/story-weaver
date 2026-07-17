@@ -1,5 +1,5 @@
-import type { FrameComment, StoryboardVersion } from '@/core/services/domain/collaboration.service';
-import type { CostStats } from '@/core/services/project/cost.service';
+import type { FrameComment, StoryboardVersion } from '@/core/services/domain/collaboration-service';
+import type { CostStats } from '@/core/services/project/cost-service';
 
 const mockInvoke = jest.fn();
 
@@ -8,7 +8,7 @@ jest.mock('@tauri-apps/api/core', () => ({
 }));
 
 const getService = async () => {
-  const mod = await import('@/core/services/pipeline/review-export.service');
+  const mod = await import('@/core/services/pipeline/review-export-service');
   return mod.reviewExportService;
 };
 

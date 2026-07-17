@@ -1,7 +1,7 @@
 /**
  * 字幕文件生成器
  *
- * 从 export.service.ts 抽离 generateSRT / generateASS。
+ * 从 export-service.ts 抽离 generateSRT / generateASS。
  * 与 video/subtitle/* 下的同名生成器独立 —— 此处专门用于"从分镜数据导出"。
  */
 

@@ -12,7 +12,7 @@
  * 对外接口（参数/返回类型）保持完全一致。
  */
 
-import { toast } from '@/shared/components/ui';
+import { toast } from '@/shared/components/ui/toast';
 import type { TTSConfig, TTSResponse } from '@/shared/types';
 
 import { synthesizeEdge } from './edge';

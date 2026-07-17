@@ -13,7 +13,7 @@ import { Tag } from '@/shared/components/ui/tag';
 import { PRESET_BGM_LIST } from '@/shared/constants/media-presets';
 import { formatTime } from '@/shared/utils';
 
-import type { BackgroundMusic } from './types/audio.entities';
+import type { BackgroundMusic } from './types/audio-entities';
 
 interface MusicTabProps {
   backgroundMusic: BackgroundMusic | null;

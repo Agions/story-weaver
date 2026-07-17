@@ -1,4 +1,3 @@
-import type { Config } from 'tailwindcss';
 
 /**
  * story-weaver Tailwind Config
@@ -7,7 +6,7 @@ import type { Config } from 'tailwindcss';
  * Tailwind v4 (via @tailwindcss/vite plugin) handles base/components/utilities
  * automatically; this config only defines design tokens that extend the theme.
  */
-const config: Config = {
+const config = {
   darkMode: 'class',
   // Tailwind v4 auto-detects sources; content array is unused but kept for @config reference
   theme: {

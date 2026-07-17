@@ -20,7 +20,7 @@ import {
   type ImageGenerationResult,
   type VideoGenerationOptions,
   type VideoGenerationResult,
-} from '@/core/services/ai/image/image-generation.service';
+} from '@/core/services/ai/image/image-generation-service';
 
 // Mock axios
 jest.mock('axios');
@@ -28,7 +28,7 @@ jest.mock('axios');
 const mockedAxios = axios as any;
 
 // Mock secure storage service
-jest.mock('@/core/services/project/secure-storage.service', () => ({
+jest.mock('@/core/services/project/secure-storage-service', () => ({
   secureStorage: {
     getSecureConfig: jest.fn().mockImplementation((key: string) => {
       if (key === 'api_keys') {
@@ -859,7 +859,7 @@ describe('Image Generation Service', () => {
 
   describe('API Key 处理', () => {
     it('应该从存储服务获取 API Key', async () => {
-      const { secureStorage } = await import('@/core/services/project/secure-storage.service');
+      const { secureStorage } = await import('@/core/services/project/secure-storage-service');
       mockedAxios.mockResolvedValue(createMockImageResponse());
 
       await generateWithSeedream('测试');

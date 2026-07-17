@@ -1,4 +1,4 @@
-import CollaborationService from '@/core/services/domain/collaboration.service';
+import CollaborationService from '@/core/services/domain/collaboration-service';
 
 describe('collaborationService', () => {
   let service: CollaborationService;

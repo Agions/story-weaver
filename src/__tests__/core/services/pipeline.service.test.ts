@@ -13,7 +13,7 @@ import { PipelineService ,
   createDefaultPipeline,
   getPipelineService,
   PIPELINE_STEP_IDS,
-} from '@/core/services/pipeline/pipeline.service';
+} from '@/core/services/pipeline/pipeline-service';
 
 // Mock logger
 jest.mock('@/core/utils/logger', () => ({
@@ -541,7 +541,7 @@ describe('Step Factory Functions', () => {
     it('should create a step with correct name and stepId', () => {
       const step = createExportStep();
 
-      expect(step.name).toBe('导出');
+      expect(step.name).toBe('导出发布');
       expect(step.stepId).toBe('export');
     });
   });

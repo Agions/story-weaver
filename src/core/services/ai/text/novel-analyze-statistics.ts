@@ -1,7 +1,7 @@
 /**
  * 小说统计信息计算
  *
- * 从 novel-analyze.service.ts 提取的 calculateStatistics 私有方法。
+ * 从 novel-analyze-service.ts 提取的 calculateStatistics 私有方法。
  * 纯函数：无副作用、无外部依赖，便于单元测试。
  *
  * 单一职责：聚合 metadata + chapters + scenes + characters

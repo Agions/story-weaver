@@ -1,7 +1,7 @@
 /**
  * TTS 音色数据表
  *
- * 从 tts.service.ts 提取：6 个 provider × 共 23 个音色的静态配置。
+ * 从 tts-service.ts 提取：6 个 provider × 共 23 个音色的静态配置。
  * 单一大数据表独立成模块便于：
  *   1. 后续按 provider 拆为多文件（edge-voices.ts / azure-voices.ts …）
  *   2. 单元测试可单独 mock 该映射

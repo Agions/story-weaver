@@ -1,7 +1,7 @@
-import { aiService } from '@/core/services/ai/text/ai.service';
-import { storyAnalysisService } from '@/core/services/ai/text/story-analysis.service';
+import { aiService } from '@/core/services/ai/text/ai-service';
+import { storyAnalysisService } from '@/core/services/ai/text/story-analysis-service';
 
-jest.mock('@/core/services/ai/text/ai.service', () => ({
+jest.mock('@/core/services/ai/text/ai-service', () => ({
   aiService: {
     generate: jest.fn(),
   },

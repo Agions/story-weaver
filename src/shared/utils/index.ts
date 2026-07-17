@@ -3,32 +3,51 @@
  * Re-exports all utilities from modular files for backward compatibility
  */
 
-// General Utilities
-export * from './general';
+// General Utilities (was re-exported via ./general; now direct)
+export { debounce, throttle, delay, retry, PROCESSING_DELAY_MS, retryRequest } from './timing';
+export type { RetryOptions } from './timing';
+export {
+  deepClone,
+  generateId,
+  generatePrefixedId,
+  generateSceneId,
+  generateFrameId,
+  generateCharId,
+  generateCompId,
+  generateProjectId,
+  generateItemId,
+  safeJSONParse,
+  computeHash,
+  getErrorMessage,
+} from './data';
+export {
+  truncateText,
+  capitalize,
+  camelToKebab,
+  kebabToCamel,
+  isValidEmail,
+  isValidURL,
+} from './string';
+export { chunkArray, uniqueArray, sortBy } from './collection';
+
+// Environment
 export * from './environment';
+
+// Logger
 export * from './logger';
 
-// Formatting Utilities
+// Formatting
 export * from './format';
 
-// Request Utilities & Cache
+// Request
 export * from './request';
 
-// Idle Callback
-
-// Motion/Animation Utilities
-
-// Platform Utilities
-
-// i18n removed (useTranslation is dead export; Language type has 0 consumers)
+// Async Error Handling
+export * from './async';
 
 // Format UI Utilities (selective re-export to avoid name conflicts)
 export { formatDate, formatDateShort, getStatusConfig, STATUS_CONFIG } from './format-ui';
 export type { ProjectStatus, StatusConfig } from './format-ui';
 
-// Async Error Handling
-export * from './async';
-
 // Re-export types that may be needed
 export type { FormatTimeOptions } from './format';
-export type { RetryOptions } from './request';

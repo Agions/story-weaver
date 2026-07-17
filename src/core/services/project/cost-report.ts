@@ -5,7 +5,7 @@
  * 纯展示逻辑从 CostService 类剥离，便于独立测试。
  */
 
-import type { CostBudget, CostStats } from './cost.types';
+import type { CostBudget, CostStats } from './cost-types';
 
 /** 高成本模型列表（与原实现一致） */
 const HIGH_COST_MODELS = ['gpt-5', 'claude-4-opus', 'qwen-max'];

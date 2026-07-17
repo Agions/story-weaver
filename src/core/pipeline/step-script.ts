@@ -1,4 +1,4 @@
-import { aiService } from '@/core/services/ai/text/ai.service';
+import { aiService } from '@/core/services/ai/text/ai-service';
 import { logger } from '@/core/utils/logger';
 
 import { BasePipelineStep } from './base-pipeline-step';
@@ -8,11 +8,9 @@ import {
   RetryPolicy,
   StepProgressEvent,
   PipelineExecutionMode,
-} from './pipeline.types';
+} from './pipeline-types';
 import { getContext } from './step-helpers';
 import type { ImportOutput } from './step-import';
-
-// ========== 配置与输出接口 ==========
 
 export interface ScriptStepConfig {
   id?: string;
@@ -40,8 +38,6 @@ export interface ScriptOutput {
   }>;
   totalDuration: number;
 }
-
-// ========== ScriptStep 实现 ==========
 
 export class ScriptStep extends BasePipelineStep {
   private model: string;
@@ -207,8 +203,6 @@ ${chapters.map((ch, i) => `【第${i + 1}章】${ch.title}\n${ch.content.slice(0
     };
   }
 }
-
-// ========== 工厂函数 ==========
 
 export function createScriptStep(config?: ScriptStepConfig): ScriptStep {
   return new ScriptStep(config);

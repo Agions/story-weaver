@@ -1,7 +1,7 @@
 /**
  * Export 模块类型定义
  *
- * 把 export.service.ts 中的 enum/interface 集中到此文件，
+ * 把 export-service.ts 中的 enum/interface 集中到此文件，
  * 多个子模块共享，避免循环依赖。
  */
 

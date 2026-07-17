@@ -5,8 +5,6 @@
 
 import React from 'react';
 
-import BaseSkeleton from '@/shared/components/ui/skeleton';
-
 // Local Skeleton wrapper with antd-style variant support
 function Skeleton({
   variant,
@@ -24,7 +22,7 @@ function Skeleton({
   const variantClass = variant === 'circular' ? 'rounded-full' : variant === 'text' ? '' : '';
   const defaultHeight = variant === 'text' ? '1em' : undefined;
   return (
-    <BaseSkeleton
+    <SkeletonComponent
       className={[variantClass, className].filter(Boolean).join(' ') || undefined}
       style={{ width, height: height ?? defaultHeight, ...style }}
       {...props}

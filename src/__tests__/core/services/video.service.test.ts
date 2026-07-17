@@ -2,7 +2,7 @@
  * Video Service Tests
  */
 
-import { videoService } from '@/core/services/video/video.service';
+import { videoService } from '@/core/services/video/video-service';
 
 // Mock uuid
 jest.mock('uuid', () => ({
@@ -422,7 +422,7 @@ describe('VideoService', () => {
     });
 
     it('should be the same instance when imported', () => {
-      const { videoService: anotherInstance } = require('@/core/services/video/video.service');
+      const { videoService: anotherInstance } = require('@/core/services/video/video-service');
       expect(anotherInstance).toBe(videoService);
     });
 

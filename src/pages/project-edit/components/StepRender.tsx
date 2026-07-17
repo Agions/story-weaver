@@ -14,11 +14,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui
 import { useStepRenderContext } from '../context/selectors';
 import styles from '../ProjectEdit.module.less';
 
-import { StepActions } from './StepActions';
+import { StepActions } from '@/components/pipeline/StepActions';
 
 const RenderCenter = lazy(() => import('@/shared/components/business/RenderCenter'));
 
-/** @deprecated 内部改用 Context selector，保留类型以兼容旧引用。 */
 export interface StepRenderProps {
   storyboardFrames?: import('@/shared/types/storyboard').StoryboardFrame[];
   projectId?: string;

@@ -1,4 +1,4 @@
-import CostService from '@/core/services/project/cost.service';
+import CostService from '@/core/services/project/cost-service';
 
 describe('costService enhancements', () => {
   let service: CostService;

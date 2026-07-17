@@ -11,7 +11,7 @@ import type { VideoInfo, VideoAnalysis, TaskStatus } from '@/shared/types';
 import { formatDurationShort } from '@/shared/utils';
 import { delay } from '@/shared/utils/timing';
 
-import { videoReducer, initialVideoState, createVideoSetters } from './useVideo.reducer';
+import { videoReducer, initialVideoState, createVideoSetters } from './useVideo-reducer';
 
 export interface UseVideoReturn {
   // 视频信息

@@ -5,6 +5,8 @@ import { logger } from '@/core/utils/logger';
 
 import type { PipelineMiddleware } from './pipeline-engine-types';
 
+/* eslint-disable @typescript-eslint/naming-convention */
+
 /** 日志中间件 */
 export const LoggerMiddleware: PipelineMiddleware = {
   name: 'logger',
@@ -42,3 +44,5 @@ export const MetricsMiddleware: PipelineMiddleware = {
     pipelineMetrics.completedAt = Date.now();
   },
 };
+
+/* eslint-enable @typescript-eslint/naming-convention */

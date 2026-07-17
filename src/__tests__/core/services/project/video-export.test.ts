@@ -2,7 +2,7 @@
  * video-export.ts 单元测试
  * ========================
  * 测试 MP4/GIF 导出路径：场景转换 → 合成器调用 → 文件保存。
- * 核心手段：mock 动态导入的 video-compositor.service + file-saver。
+ * 核心手段：mock 动态导入的 video-compositor-service + file-saver。
  */
 
 import type { StoryboardData, ProjectExportOptions } from '@/core/services/project/export-types';
@@ -11,7 +11,7 @@ import type { StoryboardData, ProjectExportOptions } from '@/core/services/proje
 const mockCompose = jest.fn();
 const mockInitializeVideoCompositor = jest.fn().mockResolvedValue(true);
 
-jest.mock('@/core/services/video/video-compositor.service', () => ({
+jest.mock('@/core/services/video/video-compositor-service', () => ({
   videoCompositorService: {
     compose: (...args: unknown[]) => mockCompose(...args),
   },

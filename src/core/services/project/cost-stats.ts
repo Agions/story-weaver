@@ -5,7 +5,7 @@
  * 便于单测与未来支持更多维度。
  */
 
-import type { CostRecord, CostStats } from './cost.types';
+import type { CostRecord, CostStats } from './cost-types';
 
 /** 7 天前的起点（用于本周聚合） */
 const WEEK_WINDOW_DAYS = 7;

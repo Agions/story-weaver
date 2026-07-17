@@ -1,7 +1,7 @@
 /**
  * Novel Service AI 调用与 JSON 解析共享层
  *
- * 原 novel.service.ts 中 3 处重复模式：
+ * 原 novel-service.ts 中 3 处重复模式：
  *   1. aiService.generate(prompt, { provider, model })
  *   2. JSON.parse(aiResponse)
  *   3. catch → throw new Error('XXX失败：AI 返回格式错误')
@@ -12,7 +12,7 @@
  * / "分镜生成失败：AI 返回格式错误" 三种 message）。
  */
 
-import { aiService } from '@/core/services/ai/text/ai.service';
+import { aiService } from '@/core/services/ai/text/ai-service';
 
 /**
  * 调用 AI 并解析 JSON 响应。

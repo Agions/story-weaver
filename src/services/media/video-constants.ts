@@ -1,7 +1,7 @@
 /**
  * 视频服务常量集中
  * ==================
- * 把分散在 video.service 中的 magic number / map / 默认样式 全部命名集中。
+ * 把分散在 video-service 中的 magic number / map / 默认样式 全部命名集中。
  * 单一职责：常量字典。无逻辑。
  */
 

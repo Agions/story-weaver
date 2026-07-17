@@ -27,7 +27,7 @@ import {
   type SoundEffect,
   type AudioTrackConfig,
   type AudioPlaybackState,
-} from '../types/audio.entities';
+} from '../types/audio-entities';
 
 import {
   loadAudioFromPath,
@@ -40,7 +40,7 @@ import {
   audioEditorReducer,
   initialAudioEditorState,
   createAudioEditorSetters,
-} from './useAudioEditor.reducer';
+} from './useAudioEditor-reducer';
 import { useRecording } from './useRecording';
 
 interface UseAudioEditorOptions {

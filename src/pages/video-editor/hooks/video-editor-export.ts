@@ -4,7 +4,7 @@
 import { invoke } from '@tauri-apps/api/core';
 import { save } from '@tauri-apps/plugin-dialog';
 import { useCallback, useState } from 'react';
-import { toast } from 'sonner';
+import { toast } from '@/shared/components/ui/toast';
 
 import { logger } from '@/core/utils/logger';
 

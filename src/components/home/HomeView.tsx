@@ -1,9 +1,14 @@
 import { Separator } from '@/shared/components/ui/separator';
-import { useProjectStore } from '@/shared/stores/project.store';
+import { useProjectStore } from '@/shared/stores/project-store';
 
 import styles from './Home.module.less';
 
-import { HeroSection, StatsCards, ProjectGrid, Features, WorkflowSteps, CTASection } from '.';
+import HeroSection from './HeroSection';
+import StatsCards from './StatsCards';
+import ProjectGrid from './ProjectGrid';
+import Features from './Features';
+import WorkflowSteps from './WorkflowSteps';
+import CTASection from './CTASection';
 
 /**
  * 首页视图组件

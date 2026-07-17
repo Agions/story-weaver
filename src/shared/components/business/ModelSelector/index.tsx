@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Bot, CheckCircle, Loader, Zap, Star, DollarSign, Settings, Search } from 'lucide-react';
 import { useState, useMemo, useDeferredValue } from 'react';
 
-import { MODEL_PROVIDERS } from '@/core/config/models.config';
+import { MODEL_PROVIDERS } from '@/core/config/models-config';
 import { LLM_MODELS, type LLMModelConfig } from '@/core/constants';
 import { useModel, useModelCost, useRecommendedModel } from '@/core/hooks/useModel';
 

@@ -4,7 +4,7 @@ import {
   renderQueueService,
   type FrameRenderJob,
   type RenderLog,
-} from '@/core/services/project/render-queue.service';
+} from '@/core/services/project/render-queue-service';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card';

@@ -2,19 +2,19 @@
  * 小说拆解服务测试
  */
 
-import { aiService } from '@/core/services/ai/text/ai.service';
-import { costService } from '@/core/services/project/cost.service';
-import { novelService } from '@/core/services/ai/text/novel.service';
+import { aiService } from '@/core/services/ai/text/ai-service';
+import { costService } from '@/core/services/project/cost-service';
+import { novelService } from '@/core/services/ai/text/novel-service';
 import type {
   NovelChapter,
   NovelParseResult,
   ScriptScene,
   Script,
   Storyboard,
-} from '@/core/services/ai/text/novel.service';
+} from '@/core/services/ai/text/novel-service';
 
 // Mock AI 服务
-jest.mock('@/core/services/ai/text/ai.service', () => ({
+jest.mock('@/core/services/ai/text/ai-service', () => ({
   aiService: {
     generate: jest.fn(),
     setMockMode: jest.fn(),
@@ -23,7 +23,7 @@ jest.mock('@/core/services/ai/text/ai.service', () => ({
 }));
 
 // Mock 成本服务
-jest.mock('@/core/services/project/cost.service', () => ({
+jest.mock('@/core/services/project/cost-service', () => ({
   costService: {
     recordLLMCost: jest.fn(),
   },

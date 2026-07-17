@@ -5,4 +5,4 @@
  * 请勿在此新增类型 — 请改到 @/types/media。
  */
 
-export type { VoiceTrack, BackgroundMusic, SoundEffect, AudioTrackConfig } from '@/types/media';
+export type { VoiceTrack, BackgroundMusic, SoundEffect, AudioTrackConfig } from '@/shared/types/audio';

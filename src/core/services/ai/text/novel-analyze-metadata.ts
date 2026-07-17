@@ -1,7 +1,7 @@
 /**
  * 小说元数据提取
  *
- * 从 novel-analyze.service.ts 提取的 extractMetadata 私有方法。
+ * 从 novel-analyze-service.ts 提取的 extractMetadata 私有方法。
  * 行为：构造 prompt → 调 AI → JSON.parse → 字段兜底 → 返回 NovelMetadata。
  * 失败 fallback：返回"未命名小说"基础 metadata（无 author/genre/tags/language）。
  *
@@ -13,7 +13,7 @@
  *   在"成功时返回什么、失败时返回什么"。
  */
 
-import { aiService } from '@/core/services/ai/text/ai.service';
+import { aiService } from '@/core/services/ai/text/ai-service';
 import { logger } from '@/core/utils/logger';
 import type { NovelMetadata } from '@/shared/types';
 

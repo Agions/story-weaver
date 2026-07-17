@@ -23,7 +23,7 @@ import { adaptFFmpegProgressToExport, storyboardToVideoScenes } from './export-u
 /**
  * 通过视频合成器导出 MP4 视频。
  * 行为与原 exportProject MP4 分支逐字一致：
- * - 动态导入 video-compositor.service（懒加载）
+ * - 动态导入 video-compositor-service（懒加载）
  * - 默认 30fps、1920×1080、每场景 3 秒
  */
 export async function exportAsMP4(
@@ -89,7 +89,7 @@ async function composeMp4Blob(
   onFfmpegProgress?: (p: { progress: number; status: string; message?: string }) => void
 ) {
   const { videoCompositorService, initializeVideoCompositor } =
-    await import('@/core/services/video/video-compositor.service');
+    await import('@/core/services/video/video-compositor-service');
 
   await initializeVideoCompositor();
 

@@ -5,7 +5,7 @@
 import { useProjectStore } from '@/shared/stores';
 
 // 模拟 storage service
-jest.mock('@/core/services/project/secure-storage.service', () => ({
+jest.mock('@/core/services/project/secure-storage-service', () => ({
   secureStorage: {
     saveSecureConfig: jest.fn(),
     getSecureConfig: jest.fn().mockResolvedValue(null),

@@ -4,7 +4,7 @@
  * 负责：转场效果、字幕叠加、音频混音、最终导出
  *
  * 模块结构：
- * - video-editing.types.ts    — 类型定义（VideoClip, Transition, SubtitleBlock, AudioTrack 等）
+ * - video-editing-types.ts    — 类型定义（VideoClip, Transition, SubtitleBlock, AudioTrack 等）
  * - video-editor-engine.ts    — VideoEditor 纯引擎类（状态机，不涉及 Pipeline 接口）
  * - step-video-editing.ts     — PipelineStep 实现（ orchestration）
  */
@@ -15,14 +15,14 @@ import { RESOLUTION_1080P } from '@/shared/constants/media-presets';
 import { delay, PROCESSING_DELAY_MS, isTauri } from '@/shared/utils';
 
 import { BasePipelineStep } from './base-pipeline-step';
-import { PipelineStepId, QualityGateDecision } from './pipeline.types';
-import type { PipelineStep, StepInput } from './pipeline.types';
+import { PipelineStepId, QualityGateDecision } from './pipeline-types';
+import type { PipelineStep, StepInput } from './pipeline-types';
 import { getContext } from './step-helpers';
 import type {
   VideoClip,
   SubtitleBlock,
   VideoEditingOutput,
-} from './steps/video-editing/video-editing.types';
+} from './steps/video-editing/video-editing-types';
 import { VideoEditor } from './steps/video-editing/video-editor-engine';
 
 // Re-export pure engine for direct unit tests
@@ -231,7 +231,7 @@ export type {
   AudioTrack,
   VideoEditingOutput,
   VideoEditingConfig,
-} from './steps/video-editing/video-editing.types';
+} from './steps/video-editing/video-editing-types';
 
 /** Factory function — used by pipeline/index.ts */
 export function createVideoEditingStep(config?: Partial<PipelineStep>): VideoEditingStep {

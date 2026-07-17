@@ -8,8 +8,8 @@
  * 时间戳使用 new Date().toISOString()，duration 单位保持毫秒。
  */
 
-import { MODEL_COSTS, VIDEO_COSTS } from './cost.constants';
-import type { CostRecord, CostRecordType } from './cost.types';
+import { MODEL_COSTS, VIDEO_COSTS } from './cost-constants';
+import type { CostRecord, CostRecordType } from './cost-types';
 
 /**
  * 生成成本记录 ID，与原实现逐字一致。

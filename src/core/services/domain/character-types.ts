@@ -2,7 +2,7 @@
  * 角色服务共享类型与常量
  * @module core/services/domain/character-types
  *
- * 提取自原 character.service.ts 中散落的 interface / const / helper。
+ * 提取自原 character-service.ts 中散落的 interface / const / helper。
  * 其它子模块（factory / template / persistence / subscriber）
  * 共用这套类型 + 字段默认值常量，保持领域模型一致。
  */
@@ -15,8 +15,10 @@ export interface CharacterServiceOptions {
   autoSave?: boolean;
 }
 
-/** localStorage 存储键（与原 CHARACTER_STORAGE_KEY 字节级一致——保留 "man ga" 拼写以不破坏既有数据） */
-const CHARACTER_STORAGE_KEY = 'man ga-characters';
+import { STORAGE_KEYS } from '@/core/constants/app-config';
+
+/** localStorage 存储键（保留 "manga-characters" 拼写以兼容既有数据） */
+const CHARACTER_STORAGE_KEY = STORAGE_KEYS.CHARACTERS;
 
 /** 默认角色字段值（与原 CharacterService.create / bulkCreate 内联默认值完全一致） */
 export const DEFAULT_CHARACTER_FIELDS = {

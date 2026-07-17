@@ -1,68 +1,11 @@
 /**
  * Story Weaver Shared Utils - Request Utilities & Request Cache
  */
-import { delay } from '@/shared/utils/timing';
+import { retry as retryRequest, type RetryOptions } from '@/shared/utils/timing';
 
-export interface RetryOptions {
-  maxRetries: number;
-  delay: number;
-  backoff?: 'linear' | 'exponential' | 'none';
-  retryCondition?: (error: unknown) => boolean;
-  onRetry?: (attempt: number, error: unknown) => void;
-}
-
-const defaultRetryCondition = (error: unknown): boolean => {
-  if (error instanceof TypeError) return true;
-  if (error instanceof Response) return error.status >= 500 || error.status === 429;
-  if (error instanceof Error) {
-    const message = error.message.toLowerCase();
-    return (
-      message.includes('network') ||
-      message.includes('fetch') ||
-      message.includes('timeout') ||
-      message.includes('econnrefused')
-    );
-  }
-  return false;
-};
-
-export const retryRequest = async <T>(
-  fn: () => Promise<T>,
-  options: Partial<RetryOptions> = {}
-): Promise<T> => {
-  const {
-    maxRetries = 3,
-    delay: delayMs = 1000,
-    backoff = 'exponential',
-    retryCondition = defaultRetryCondition,
-    onRetry,
-  } = options;
-
-  let lastError: unknown;
-
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    try {
-      return await fn();
-    } catch (error) {
-      lastError = error;
-
-      if (attempt < maxRetries && retryCondition(error)) {
-        let actualDelay = delayMs;
-        if (backoff === 'exponential') actualDelay = delayMs * Math.pow(2, attempt);
-        else if (backoff === 'linear') actualDelay = delayMs * (attempt + 1);
-
-        if (onRetry) onRetry(attempt + 1, error);
-        await delay(actualDelay);
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  throw lastError;
-};
-
-// ========== Request Cache ==========
+// Re-export for backward compatibility (retryRequest now aliases to timing.retry)
+export type { RetryOptions };
+export { retryRequest };
 
 interface CacheEntry<T> {
   data: T;

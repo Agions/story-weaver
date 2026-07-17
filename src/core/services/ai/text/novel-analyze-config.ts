@@ -1,7 +1,7 @@
 /**
  * 小说分析器配置
  *
- * 从 novel-analyze.service.ts 提取的默认配置工厂 + 完整配置类型。
+ * 从 novel-analyze-service.ts 提取的默认配置工厂 + 完整配置类型。
  * 单一职责：把 AnalyzeConfig 各种 undefined 兜底为默认值。
  */
 

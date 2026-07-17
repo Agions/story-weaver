@@ -1,8 +1,8 @@
-import { novelService } from '@/core/services/ai/text/novel.service';
+import { novelService } from '@/core/services/ai/text/novel-service';
 import { logger } from '@/core/utils/logger';
 
 import { BasePipelineStep } from './base-pipeline-step';
-import { PipelineStepId, PipelineStep, StepInput, PipelineExecutionMode } from './pipeline.types';
+import { PipelineStepId, PipelineStep, StepInput, PipelineExecutionMode } from './pipeline-types';
 import { getContext } from './step-helpers';
 
 export const IMPORT_STEP_CONFIG = {
@@ -11,8 +11,6 @@ export const IMPORT_STEP_CONFIG = {
   stepId: PipelineStepId.IMPORT,
   mode: PipelineExecutionMode.SEQUENCE,
 };
-
-// ========== 导入数据接口 ==========
 
 export interface ImportInput {
   rawContent: string;

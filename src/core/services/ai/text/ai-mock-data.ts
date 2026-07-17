@@ -10,7 +10,7 @@
  * 这些都是无副作用的纯函数，独立可测。
  */
 
-import type { Keyframe, VideoScene, ScriptSegment } from './ai.service.types';
+import type { Keyframe, VideoScene, ScriptSegment } from './ai-service-types';
 
 /** 默认场景切分间隔（秒） */
 const SCENE_INTERVAL_SECONDS = 30;

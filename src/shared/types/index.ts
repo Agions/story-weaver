@@ -4,7 +4,7 @@
  * Canonical type definitions. All types previously scattered across
  * `@/types` and `@/core/types` are re-exported here.
  */
-export * from './ai.core';
+export * from './ai-core';
 export * from './composition';
 export * from './legacy';
 export * from './preview';
@@ -36,7 +36,7 @@ export {
   type ExportProgress,
   type ProgressCallback,
   type Subtitle,
-} from './video-composition.types';
+} from './video-composition-types';
 
 export {
   type VoiceTrack,

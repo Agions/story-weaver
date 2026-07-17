@@ -2,7 +2,7 @@
  * CharacterService 单元测试
  */
 
-import { CharacterService, resetCharacterService } from '@/core/services/domain/character.service';
+import { CharacterService, resetCharacterService } from '@/core/services/domain/character-service';
 import type { CharacterAppearance, Character } from '@/shared/types';
 
 describe('CharacterService', () => {

@@ -14,7 +14,7 @@ import { open } from '@tauri-apps/plugin-dialog';
 
 import { message } from '@/shared/components/ui/message';
 
-import { AUDIO_FILE_EXTENSIONS } from '../types/audio.entities';
+import { AUDIO_FILE_EXTENSIONS } from '../types/audio-entities';
 
 /** 文件导入结果（loadAudioFromPath 返回） */
 export interface LoadedAudio {

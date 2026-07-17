@@ -8,8 +8,8 @@ import type {
   StepProgressEvent,
   RetryPolicy,
   PipelineStepId,
-} from './pipeline.types';
-import { PipelineExecutionMode, StepStatus, QualityGateDecision } from './pipeline.types';
+} from './pipeline-types';
+import { PipelineExecutionMode, StepStatus, QualityGateDecision } from './pipeline-types';
 import { createFailedStepResult, reportStepProgress, DEFAULT_RETRY_POLICY } from './step-helpers';
 
 /**

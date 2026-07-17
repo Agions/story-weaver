@@ -15,4 +15,4 @@ export {
   type ProjectState,
   type ProjectAction,
   type ProjectSetters,
-} from '@/core/hooks/useProject.reducer';
+} from '@/core/hooks/useProject-reducer';

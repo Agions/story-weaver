@@ -1,7 +1,7 @@
-import { imageGenerationService } from '@/core/services/ai/image/image-generation.service';
-import RenderQueueService from '@/core/services/project/render-queue.service';
+import { imageGenerationService } from '@/core/services/ai/image/image-generation-service';
+import RenderQueueService from '@/core/services/project/render-queue-service';
 
-jest.mock('@/core/services/ai/image/image-generation.service', () => ({
+jest.mock('@/core/services/ai/image/image-generation-service', () => ({
   imageGenerationService: {
     generateImage: jest.fn(),
   },

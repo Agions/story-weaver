@@ -7,7 +7,7 @@ import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
 import { Input } from '@/shared/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/shared/components/ui/radio-group';
-import { toast } from '@/shared/components/ui/sonner';
+import { toast } from '@/shared/components/ui/toast';
 import { Tooltip } from '@/shared/components/ui/tooltip';
 import type { Script } from '@/shared/types';
 

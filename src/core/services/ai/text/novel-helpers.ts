@@ -1,6 +1,6 @@
 /**
  * 小说分析辅助工具函数
- * 从 novel-analyze.service.ts 中提取的纯函数，不依赖实例状态
+ * 从 novel-analyze-service.ts 中提取的纯函数，不依赖实例状态
  */
 
 import type { NovelScene } from '@/shared/types';

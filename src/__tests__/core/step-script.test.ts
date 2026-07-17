@@ -2,7 +2,7 @@ import {
   PipelineStepId,
   StepStatus,
   QualityGateDecision,
-} from '../../core/pipeline/pipeline.types';
+} from '../../core/pipeline/pipeline-types';
 import {
   ScriptStep,
   createScriptStep,
@@ -11,13 +11,13 @@ import {
 } from '../../core/pipeline/step-script';
 
 // Mock aiService
-jest.mock('@/core/services/ai/text/ai.service', () => ({
+jest.mock('@/core/services/ai/text/ai-service', () => ({
   aiService: {
     generate: jest.fn(),
   },
 }));
 
-import { aiService } from '@/core/services/ai/text/ai.service';
+import { aiService } from '@/core/services/ai/text/ai-service';
 import { createMockStepContext } from '@/__tests__/fixtures';
 
 describe('ScriptStep', () => {

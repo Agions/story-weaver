@@ -5,10 +5,10 @@
  * 提取自原 generateFromNovel "阶段 2" 循环（ttsService.synthesize + 进度推送 + 占位 URL）。
  */
 
-import { ttsService } from '@/core/services/audio/tts.service';
+import { ttsService } from '@/core/services/audio/tts-service';
 
 import { ensureNotAborted } from './manga-pipeline-stage-images';
-import type { ProgressEmitter } from './manga-pipeline-progress';
+import type { StageProgressEmitter } from './manga-pipeline-types';
 import {
   DEFAULT_TTS_CONFIG,
   STAGE_PROGRESS_START,
@@ -30,7 +30,7 @@ export async function generateSceneAudio(
   pipelineScenes: PipelineScene[],
   _config: PipelineConfig,
   signal: AbortSignal,
-  emit: ProgressEmitter,
+  emit: StageProgressEmitter,
   totalScenes: number
 ): Promise<void> {
   emit.emit('generating_audio', STAGE_PROGRESS_START.audio, 0, 0, totalScenes, '开始生成语音');

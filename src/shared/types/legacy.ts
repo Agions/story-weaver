@@ -3,7 +3,7 @@
  * Extracted from src/shared/types/index.ts (lines 841-893)
  */
 
-import type { AIModelSettings } from './ai.core';
+import type { AIModelSettings } from './ai-core';
 
 type AIModelType = string;
 

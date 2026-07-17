@@ -15,11 +15,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui
 import { useStepAudioContext } from '../context/selectors';
 import styles from '../ProjectEdit.module.less';
 
-import { StepActions } from './StepActions';
+import { StepActions } from '@/components/pipeline/StepActions';
 
 const AudioEditor = lazy(() => import('@/components/media/audio/AudioEditor'));
 
-/** @deprecated 内部改用 Context selector，保留类型以兼容旧引用。 */
 export interface StepAudioProps {
   audioConfig?: AudioTrackConfig;
   audioEditorKey?: string;

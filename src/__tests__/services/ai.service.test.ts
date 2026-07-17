@@ -2,7 +2,7 @@
  * AI 服务测试
  */
 
-import { aiService } from '@/core/services/ai/text/ai.service';
+import { aiService } from '@/core/services/ai/text/ai-service';
 import type { AIModel, AIModelSettings } from '@/shared/types';
 
 // Mock 配置

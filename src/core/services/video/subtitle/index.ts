@@ -1,7 +1,7 @@
 /**
  * Subtitle 子模块统一入口（兼容 facade）
  *
- * 旧代码从 '@/core/services/video/subtitle.service' 导入。
+ * 旧代码从 '@/core/services/video/subtitle-service' 导入。
  * 该文件改为薄壳，本目录为真正的实现。
  */
 

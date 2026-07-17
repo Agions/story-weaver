@@ -5,9 +5,9 @@
  * 提取自原 generateFromNovel "阶段 1" 循环（generateImage 调用 + 进度推送）。
  */
 
-import { generateImage } from '@/core/services/ai/image/image-generation.service';
+import { generateImage } from '@/core/services/ai/image/image-generation-service';
 
-import type { ProgressEmitter } from './manga-pipeline-progress';
+import type { StageProgressEmitter } from './manga-pipeline-types';
 import {
   DEFAULT_IMAGE_MODEL,
   PIPELINE_CANCELLED_MESSAGE,
@@ -37,7 +37,7 @@ export async function generateSceneImages(
   scenes: Omit<PipelineScene, 'imageUrl' | 'videoUrl' | 'audioUrl' | 'finalVideoUrl'>[],
   config: PipelineConfig,
   signal: AbortSignal,
-  emit: ProgressEmitter,
+  emit: StageProgressEmitter,
   totalScenes: number
 ): Promise<PipelineScene[]> {
   const pipelineScenes: PipelineScene[] = [];

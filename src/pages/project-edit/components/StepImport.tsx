@@ -18,7 +18,6 @@ import { useStepImportContext } from '../context/selectors';
 
 const NovelImporter = lazy(() => import('@/components/ai/NovelImporter/NovelImporter'));
 
-/** @deprecated 内部改用 Context selector，保留类型以兼容旧引用。 */
 export interface StepImportProps {
   content?: string;
   loading?: boolean;

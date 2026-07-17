@@ -6,7 +6,7 @@ Story Weaver 是 AI 驱动的 **AI 漫剧创作平台**，输入一本小说，A
 
 ## 技术栈
 
-- **前端框架**：React 18 · TypeScript 5 · Vite 5
+- **前端框架**：React 19 · TypeScript 5 · Vite 6
 - **UI 组件**：shadcn/ui (Radix UI + Tailwind CSS)
 - **状态管理**：Zustand
 - **桌面端**：Tauri 2.1 (Rust)
@@ -14,7 +14,116 @@ Story Weaver 是 AI 驱动的 **AI 漫剧创作平台**，输入一本小说，A
 - **国际化**：i18next
 - **测试**：Jest · React Testing Library
 
-## 项目结构
+## 项目分层架构
+
+Story Weaver 采用严格的 **downward dependency（向下依赖）** 架构：
+
+```
+app（应用入口 + 路由 + Providers）
+  └─▶ pages（页面级容器）
+       └─▶ components（业务/媒体组件）
+            ├─▶ features（垂直切片，可选）
+            └─▶ shared（UI 基元 + stores + utils + types）
+                 └─▶ types（全局类型定义）
+
+core/services（领域服务：AI/音频/视频/项目/流水线）
+core/pipeline（漫剧流水线引擎 + 步骤）
+core/ai/providers（多模型策略层）
+core（config/constants/data/hooks/utils/domains）
+
+infrastructure（平台桥接：tauri-bridge/queue/telemetry）
+```
+
+**铁律：只能向下依赖。** 禁止反向引用（如 `core/*` → `components/`）。
+
+## 核心架构原则
+
+- **依赖方向唯一性**：`app → pages → components/features → core/services → core → shared → types`，禁止反向依赖
+- **Rust 后端是第一公民**：FFmpeg/文件 I/O/窗口/快捷键/配置全在 Rust，JS/TS 仅做 UI
+- **领域驱动分层**：`core/services/` 按 ai/video/audio/pipeline/project/domain 划分
+- **Barrel 导出规范**：`index.ts` 仅 `export { }`，禁止混入逻辑
+- **Tauri IPC 类型安全**：所有 `#[tauri::command]` 函数返回 `Result<T, String>`，路径必须经过 `validate_input_path` / `validate_output_path` 校验
+
+## 命名规范
+
+| 对象 | 规范 | 示例 |
+|------|------|------|
+| 目录名 | `kebab-case` | `script-writer/`, `video-export/` |
+| 非组件文件（.ts） | `kebab-case` | `ai-provider-registry.ts`, `pipeline-engine.ts` |
+| React 组件文件（.tsx） | `PascalCase` | `HomePage.tsx`, `StepExport.tsx` |
+| 变量 / 函数 | `camelCase` | `generateSceneId`, `useProjectStore` |
+| 类 / 接口 / 类型 / 枚举 | `PascalCase` | `PipelineEngine`, `AIProvider` |
+| 编译期常量 / 枚举值 | `UPPER_CASE` | `MAX_RETRIES`, `API_TIMEOUT_MS` |
+| 测试文件 | `<target>.test.ts(x)` | `provider-registry.test.ts` |
+
+> **注意**：拒绝 `snake_case`。项目采用 React 19 + Vite + Tauri + Radix 技术栈，整套工具链以 camelCase/kebab/PascalCase 为默认。
+
+## 依赖方向规则（禁止边）
+
+以下依赖方向**禁止**：
+
+| 禁止边（from → to） | 理由 |
+|----------------------|------|
+| `core/*` → `components/`、`pages/`、`app/` | 核心层不得反向依赖 UI |
+| `shared/*` → `core/services/*`、`pages/*`、`components/*`、`app/` | shared 是基座，只依赖 `types/*` 与自身 |
+| `core/services/*` → `app/`、`pages/`、`components/` | 领域服务不得依赖 UI |
+| 任意文件 → `infrastructure/ai/providers/*` | 该目录已删除（死代码） |
+| 任意文件 → `shared/utils/general` | 该文件已删除，改从 `@/shared/utils` 桶消费 |
+| `features/*` → 其它 `features/*` 的内部实现 | feature 间只允许通过 `core/services` 或 `shared` 协作 |
+| 经 `./` 桶自引用的"同居导出" | 禁止在 barrel 中 re-export 又会从同 barrel 导入的模块 |
+
+**校验方式**：CI 加入 `madge --circular`（必须为 0）与 `dependency-cruiser` 守护上述禁止边。
+
+## 代码简化原则
+
+1. **单一职责 + 合理粒度**：一个文件聚合同一关注点的实现，避免"一函数一文件"；文件 >250 行且无逻辑分割时才考虑拆分。
+2. **无冗余抽象**：禁止"转发门面"层（re-export 不含逻辑）；新增模块不得新建与 `core/*` 并行的第二套抽象。
+3. **不写多余代码**：删除 `@deprecated`、未使用的导出（`knip` 守护）、TODO 占位空实现。
+4. **引用最短路径**：消费 utils 一律走 `@/shared/utils` 桶，不穿透到中间桶。
+5. **配置即文档**：命名/依赖方向用 ESLint + dependency-cruiser 强制，不靠口头约定。
+
+## features/ 垂直切片约定
+
+`features/` 目录用于承载**业务能力垂直切片**，每个切片自包含：
+
+```
+src/features/
+  script-writer/        # ① 剧本生成
+  storyboard/           # ② 分镜设计
+  character-consistency/# ② 角色一致性锚点/角色DNA
+  asset-library/        # ③ 图片素材库
+  tts-dubbing/          # ⑤ 配音/TTS
+  video-export/         # ④⑤ AI视频生成+后期剪辑+发布
+```
+
+**约定**：
+- 每个切片只通过 `core/services` 或 `shared` 与横向引擎交互
+- 切片间不得直接 import 对方的内部实现
+- 切片入口为 `index.ts`，导出 `*FeatureService` 对象
+
+## 错误处理约定
+
+- 统一使用 `ServiceError`（来自 `base-ai-service`）
+- 禁止散落 try/catch 吞错
+- 异步函数必须返回 `Promise<T>`，禁止静默失败
+
+## ID 生成约定
+
+统一使用 `shared/utils/data.ts` 的 `generate*Id` 函数，禁止各模块自造 ID 函数。
+
+## 状态管理约定
+
+- zustand store 放 `shared/stores`，按 domain 切片
+- 页面局部状态用 Context selector（如 `useStepExportContext`）
+- 禁止在 `core/*` 中引入 React hooks
+
+## 流水线约定
+
+- 新增漫剧环节 = 加 1 个 `step-*.ts` + 注册进 `PipelineEngine`
+- 质量门接入 `QualityGate`
+- 步骤实现继承 `BasePipelineStep`，实现 `execute()` 方法
+
+## 开发指南
 
 ```
 Story Weaver/
@@ -152,12 +261,12 @@ export const useExampleStore = create<ExampleState>()(
 
 ### 添加新组件
 
-1. UI 基元组件放入 `packages/shared/ui/primitives/`（PascalCase.component.tsx 命名）
+1. UI 基元组件放入 `src/shared/components/ui/`（PascalCase.tsx 命名）
 2. Feature 业务组件放入对应 `src/features/<feature>/components/`
 3. 通过 `cn()` 工具合并 className
 
 ```typescript
-// packages/shared/ui/primitives/Example.component.tsx
+// src/shared/components/ui/example.tsx
 import { cn } from '@/shared/utils/class-names';
 
 interface ExampleProps {
@@ -168,6 +277,43 @@ interface ExampleProps {
 export function Example({ className, children }: ExampleProps) {
   return <div className={cn('some-class', className)}>{children}</div>;
 }
+```
+
+### 添加新特性（features/ 切片）
+
+1. 在 `src/features/` 下新建目录（kebab-case）
+2. 创建 `index.ts` 作为切片入口
+3. 切片只能通过 `core/services` 或 `shared` 与横向引擎交互
+4. 导出 `*FeatureService` 对象
+
+```typescript
+// src/features/my-feature/index.ts
+export const myFeatureService = {
+  // feature-level business logic
+};
+
+export default myFeatureService;
+```
+
+## 质量门禁
+
+合并 PR 前必须运行以下命令，且全部通过：
+
+```bash
+# 类型检查
+pnpm exec tsc --noEmit
+
+# 测试
+pnpm test
+
+# 循环依赖（必须为 0）
+pnpm exec madge --circular --extensions ts,tsx src
+
+# 未用导出
+pnpm exec knip
+
+# 代码重复率
+pnpm exec jscpd src --pattern '**/*.{ts,tsx}' --min-tokens 50
 ```
 
 ## 命令

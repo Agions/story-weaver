@@ -1,4 +1,4 @@
-import { evaluationService } from '@/core/services/project/evaluation.service';
+import { evaluationService } from '@/core/services/project/evaluation-service';
 
 describe('evaluationService', () => {
   it('should load 20 benchmark samples', () => {

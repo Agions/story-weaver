@@ -1,6 +1,6 @@
 /**
  * Tauri Service 类型定义
- * 单一来源：@/infrastructure/tauri-bridge/commands.types
+ * 单一来源：@/infrastructure/tauri-bridge/commands-types
  * 本文件保留 re-export 以维持向后兼容
  */
 
@@ -13,7 +13,7 @@ export type {
   ExportProgress,
   ExportProgressCallback,
   DirInfo,
-} from '@/infrastructure/tauri-bridge/commands.types';
+} from '@/infrastructure/tauri-bridge/commands-types';
 
 /** 窗口状态 */
 export interface WindowState {

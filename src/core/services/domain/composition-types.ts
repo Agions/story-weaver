@@ -1,7 +1,7 @@
 /**
  * Composition 模块类型与默认常量
  *
- * 把 composition.service.ts 中的 interface / 默认值常量集中到此处，
+ * 把 composition-service.ts 中的 interface / 默认值常量集中到此处，
  * 多个子模块共享，避免循环依赖。
  */
 
@@ -59,8 +59,10 @@ export interface AnimationKeyframeInput {
   easing?: string;
 }
 
+import { STORAGE_KEYS } from '@/core/constants/app-config';
+
 /** localStorage 持久化键 */
-export const COMPOSITION_STORAGE_KEY = 'storyweaver-compositions';
+export const COMPOSITION_STORAGE_KEY = STORAGE_KEYS.COMPOSITIONS;
 
 /** 导出数据 schema 版本 */
 export const EXPORT_SCHEMA_VERSION = '1.0';

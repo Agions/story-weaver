@@ -1,9 +1,9 @@
-import { PipelineStepId, StepStatus, PipelineExecutionMode, QualityGateDecision } from '../../core/pipeline/pipeline.types';
+import { PipelineStepId, StepStatus, PipelineExecutionMode, QualityGateDecision } from '../../core/pipeline/pipeline-types';
 import { ImportStep, createImportStep, ImportInput } from '../../core/pipeline/step-import';
-import { novelService } from '../../core/services/ai/text/novel.service';
+import { novelService } from '../../core/services/ai/text/novel-service';
 
 // Mock novelService
-jest.mock('../../core/services/ai/text/novel.service', () => ({
+jest.mock('../../core/services/ai/text/novel-service', () => ({
   novelService: {
     parseNovel: jest.fn(),
   },

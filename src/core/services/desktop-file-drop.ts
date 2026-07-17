@@ -1,7 +1,7 @@
 /**
  * 桌面文件拖放监听
  *
- * 原 desktop-app.service.ts 中：
+ * 原 desktop-app-service.ts 中：
  *   - enableFileDrop / disableFileDrop 在 Tauri 1.5 不可用——保留为 no-op
  *     占位（避免破坏调用方期望的 API 形状）
  *   - onFileDrop 通过 window.onDragDropEvent 监听，回调仅在 drop 时触发

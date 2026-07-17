@@ -1,6 +1,9 @@
 /**
- * shared 层轻量日志（不依赖 core）
- * 提供与 core/utils/logger 一致的接口，shared 消费者可直接使用
+ * Shared-layer lightweight logger.
+ *
+ * @deprecated Use `@/core/utils/logger` instead for full-featured logging.
+ * This file is kept for backward compatibility with shared-layer consumers
+ * that cannot import from core (dependency direction constraint).
  */
 
 export const logger = {

@@ -1,7 +1,7 @@
 /**
  * Pipeline 内部执行器
  *
- * 提取自原 pipeline.service.ts 内的 Pipeline 私有类（189 行）。
+ * 提取自原 pipeline-service.ts 内的 Pipeline 私有类（189 行）。
  *
  * 单一职责：
  *   - 维护单条流水线的状态机（idle/running/paused/completed/error）
@@ -19,7 +19,7 @@
  * - 步骤通过 input[CONTEXT_KEY] 访问上下文
  */
 
-import { CONTEXT_KEY } from '@/core/pipeline/pipeline.types';
+import { CONTEXT_KEY } from '@/core/pipeline/pipeline-types';
 import { logger } from '@/core/utils/logger';
 import { getErrorMessage } from '@/shared/utils';
 
@@ -31,7 +31,7 @@ import type {
   PipelineStep,
   PipelineStepResult,
   PipelineStatus,
-} from './pipeline.types';
+} from './pipeline-types';
 
 type PipelineRunCallbacks = PipelineCallbacks;
 

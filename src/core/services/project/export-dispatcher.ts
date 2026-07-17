@@ -1,7 +1,7 @@
 /**
  * Export 统一调度入口
  *
- * 从 export.service.ts 抽离 exportProject 主函数。
+ * 从 export-service.ts 抽离 exportProject 主函数。
  * 按 ProjectExportFormat 分发到具体实现（ZIP/ASS/MP4/GIF）。
  *
  * 注：PDF 已被原 exportProject 标记为禁用（jsPDF 依赖已移除），

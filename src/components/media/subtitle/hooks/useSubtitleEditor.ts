@@ -3,8 +3,8 @@
  */
 import { useCallback, useMemo, useState } from 'react';
 
-import type { SubtitleItem, SubtitleStyle, SubtitleEditorProps } from '../types/subtitle.entities';
-import { DEFAULT_SUBTITLE_STYLE as DEFAULT_STYLE } from '../types/subtitle.entities';
+import type { SubtitleItem, SubtitleStyle, SubtitleEditorProps } from '../types/subtitle-entities';
+import { DEFAULT_SUBTITLE_STYLE as DEFAULT_STYLE } from '../types/subtitle-entities';
 
 /**
  * 字幕编辑器状态 Hook

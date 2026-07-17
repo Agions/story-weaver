@@ -6,9 +6,9 @@
 import type {
   ImageGenerationOptions,
   VideoGenerationOptions,
-} from '@/core/services/ai/image/image-generation.service';
-import type { LipSyncOptions } from '@/core/services/audio/lip-sync.service';
-import type { SubtitleTrack, CompositionOptions } from '@/core/services/video/ffmpeg-wasm.service';
+} from '@/core/services/ai/image/image-generation-service';
+import type { LipSyncOptions } from '@/core/services/audio/lip-sync-service';
+import type { SubtitleTrack, CompositionOptions } from '@/core/services/video/ffmpeg-wasm-service';
 export { DEFAULT_TTS_CONFIG } from '../audio/tts-types';
 import type { TTSConfig } from '@/shared/types';
 
@@ -53,7 +53,8 @@ export type PipelineStage =
   | 'composing'
   | 'exporting'
   | 'completed'
-  | 'failed';
+  | 'failed'
+  | 'processing';
 
 /** 进度推送载荷 */
 export interface PipelineProgress {
@@ -67,6 +68,18 @@ export interface PipelineProgress {
 
 /** 进度回调签名 */
 export type ProgressCallback = (progress: PipelineProgress) => void;
+
+/** 阶段进度发射器接口（stage-*.ts 函数使用） */
+export interface StageProgressEmitter {
+  emit: (
+    stage: PipelineStage,
+    overallProgress: number,
+    stageProgress: number,
+    currentSceneIndex: number,
+    totalScenes: number,
+    message?: string
+  ) => void;
+}
 
 /** 流水线各阶段在 overallProgress 上的起点百分比（消除 generateFromNovel 内 4 处 10/40/60/80 magic number） */
 export const STAGE_PROGRESS_START: Record<'images' | 'audio' | 'lipsync' | 'compose', number> = {

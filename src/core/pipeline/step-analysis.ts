@@ -1,11 +1,9 @@
 import { logger } from '@/core/utils/logger';
 
 import { BasePipelineStep } from './base-pipeline-step';
-import { PipelineStepId, PipelineStep, StepInput } from './pipeline.types';
+import { PipelineStepId, PipelineStep, StepInput } from './pipeline-types';
 import { getContext } from './step-helpers';
 import type { ImportOutput } from './step-import';
-
-// ========== AnalysisStep 实现 ==========
 
 export class AnalysisStep extends BasePipelineStep {
   constructor(config?: Partial<PipelineStep>) {

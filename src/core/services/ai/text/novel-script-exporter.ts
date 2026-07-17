@@ -1,7 +1,7 @@
 /**
  * Novel Service 剧本导出 + 分镜提示词生成
  *
- * 从 novel.service.ts 提取 3 块相对独立的小工具：
+ * 从 novel-service.ts 提取 3 块相对独立的小工具：
  *   - generatePanelPrompt(panel, scene)  把分镜 JSON 转 AI 绘图 prompt
  *   - exportScript(script, format)      导出剧本为 json/pdf/docx 字符串
  *   - generateScriptText(script)        生成可读剧本文本（pdf/docx 共用）

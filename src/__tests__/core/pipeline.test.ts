@@ -1,5 +1,5 @@
 import { PipelineEngine } from '../../core/pipeline/pipeline-engine';
-import { PipelineStep } from '../../core/pipeline/step.interface';
+import { PipelineStep } from '../../core/pipeline/step-interface';
 
 describe('PipelineEngine', () => {
   it('should create engine instance', () => {

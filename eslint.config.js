@@ -6,6 +6,7 @@ import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import importPlugin from 'eslint-plugin-import';
 import importFlatRecommended from 'eslint-plugin-import/config/flat/recommended.js';
+import unicornPlugin from 'eslint-plugin-unicorn';
 import prettier from 'eslint-config-prettier';
 
 export default [
@@ -92,6 +93,66 @@ export default [
 
   // Disable formatting rules that conflict with Prettier
   prettier,
+
+  // ===== 命名规范规则（C1/C3） =====
+  // unicorn/filename-case: .ts → kebab-case, .tsx → PascalCase（index.ts 豁免）
+  {
+    plugins: { unicorn: unicornPlugin },
+    rules: {
+      'unicorn/filename-case': [
+        'error',
+        {
+          case: 'kebabCase',
+          ignore: [{ extensions: ['tsx'], pattern: '^index$' }],
+        },
+      ],
+    },
+  },
+
+  // @typescript-eslint/naming-convention: 通用规则（所有文件）
+  // - 类/接口/类型别名/枚举 → PascalCase
+  // - 枚举成员 → UPPER_CASE
+  // - 类私有成员 → camelCase（允许 _ 前缀）
+  // - 函数 → camelCase（允许 _ 前缀，用于测试辅助函数）
+  {
+    files: ['src/**/*.{ts,tsx}', 'scripts/**/*.{ts,tsx}'],
+    ignores: ['src/__tests__/**', 'src/**/__tests__/**'],
+    rules: {
+      '@typescript-eslint/naming-convention': [
+        'error',
+        { selector: 'typeLike', format: ['PascalCase'] },
+        { selector: 'enumMember', format: ['UPPER_CASE'] },
+        { selector: 'memberLike', modifiers: ['private'], format: ['camelCase'], leadingUnderscore: 'allow' },
+        { selector: 'function', format: ['camelCase'], leadingUnderscore: 'allow' },
+      ],
+    },
+  },
+
+  // .ts 文件：变量 → camelCase 或 UPPER_CASE（模块级常量）；静态只读属性 → UPPER_CASE
+  {
+    files: ['src/**/*.ts', 'scripts/**/*.ts'],
+    ignores: ['src/__tests__/**', 'src/**/__tests__/**'],
+    rules: {
+      '@typescript-eslint/naming-convention': [
+        'error',
+        { selector: 'variable', format: ['camelCase', 'UPPER_CASE'], leadingUnderscore: 'allow' },
+        { selector: 'property', modifiers: ['static', 'readonly'], format: ['UPPER_CASE'] },
+      ],
+    },
+  },
+
+  // .tsx 文件：变量允许 PascalCase（React 组件）、camelCase、UPPER_CASE（模块常量）
+  {
+    files: ['src/**/*.tsx', 'scripts/**/*.tsx'],
+    ignores: ['src/__tests__/**', 'src/**/__tests__/**'],
+    rules: {
+      '@typescript-eslint/naming-convention': [
+        'error',
+        { selector: 'variable', format: ['PascalCase', 'camelCase', 'UPPER_CASE'], leadingUnderscore: 'allow' },
+      ],
+    },
+  },
+  // ===== 命名规范规则结束 =====
 
   // Project-specific type-aware rules (requires tsconfig project)
   {

@@ -1,7 +1,7 @@
-import { audioPipelineService } from '@/core/services/audio/audio-pipeline.service';
-import { ttsService } from '@/core/services/audio/tts.service';
+import { audioPipelineService } from '@/core/services/audio/audio-pipeline-service';
+import { ttsService } from '@/core/services/audio/tts-service';
 
-jest.mock('@/core/services/audio/tts.service', () => ({
+jest.mock('@/core/services/audio/tts-service', () => ({
   DEFAULT_TTS_CONFIG: {
     provider: 'edge',
     voice: 'zh-CN-XiaoxiaoNeural',

@@ -4,7 +4,7 @@
  * Source of truth for StoryboardFrame: @/shared/types/storyboard
  *
  * Note: PipelineStepId / StepCheckpoint 已移除 — 它们定义在 core/pipeline，
- * 不属于 shared 层。如需要请直接 import from '@/core/pipeline/pipeline.types'。
+ * 不属于 shared 层。如需要请直接 import from '@/core/pipeline/pipeline-types'。
  */
 
 export type { StoryboardFrame } from './storyboard';

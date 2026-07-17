@@ -5,7 +5,7 @@ import {
   StepStatus,
   QualityGateDecision,
   PipelineExecutionMode,
-} from '../../core/pipeline/pipeline.types';
+} from '../../core/pipeline/pipeline-types';
 import {
   StoryboardStep,
   createStoryboardStep,

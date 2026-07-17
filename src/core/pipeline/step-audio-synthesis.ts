@@ -1,7 +1,7 @@
 import { logger } from '@/core/utils/logger';
 
 import { BasePipelineStep } from './base-pipeline-step';
-import { PipelineStepId, PipelineStep, StepInput } from './pipeline.types';
+import { PipelineStepId, PipelineStep, StepInput } from './pipeline-types';
 import { getContext } from './step-helpers';
 
 export interface AudioSynthesisOutput {
@@ -9,8 +9,6 @@ export interface AudioSynthesisOutput {
   selectedBgm: string;
   totalAudioDuration: number;
 }
-
-// ========== AudioSynthesisStep 实现 ==========
 
 export class AudioSynthesisStep extends BasePipelineStep {
   constructor(config?: Partial<PipelineStep>) {
@@ -76,8 +74,6 @@ export class AudioSynthesisStep extends BasePipelineStep {
     return this.computeCountMetric(result, 'dialogueAudio');
   }
 }
-
-// ========== 工厂函数 ==========
 
 export function createAudioSynthesisStep(config?: Partial<PipelineStep>): AudioSynthesisStep {
   return new AudioSynthesisStep(config);

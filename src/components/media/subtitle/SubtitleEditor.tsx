@@ -28,12 +28,12 @@ import { formatTime } from '@/shared/utils';
 
 import { useSubtitleEditor } from './hooks/useSubtitleEditor';
 import styles from './SubtitleEditor.module.less';
-import type { SubtitleItem } from './types/subtitle.entities';
+import type { SubtitleItem } from './types/subtitle-entities';
 import {
   ALIGNMENT_OPTIONS,
   FONT_FAMILY_OPTIONS,
   POSITION_OPTIONS,
-} from './types/subtitle.entities';
+} from './types/subtitle-entities';
 
 // ColorPicker - uses HTML color input
 interface ColorPickerProps {
@@ -427,4 +427,4 @@ function OptionsSelect({
 }
 
 // Re-export types for backward compatibility
-export type { SubtitleItem, SubtitleStyle, SubtitleEditorProps } from './types/subtitle.entities';
+export type { SubtitleItem, SubtitleStyle, SubtitleEditorProps } from './types/subtitle-entities';

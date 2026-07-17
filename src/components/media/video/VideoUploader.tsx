@@ -6,7 +6,7 @@ import React, { useState, useRef } from 'react';
 import { logger } from '@/core/utils/logger';
 import { Button } from '@/shared/components/ui/button';
 import { Progress } from '@/shared/components/ui/progress';
-import { toast } from '@/shared/components/ui/sonner';
+import { toast } from '@/shared/components/ui/toast';
 import { delay } from '@/shared/utils';
 
 import styles from './VideoUploader.module.less';

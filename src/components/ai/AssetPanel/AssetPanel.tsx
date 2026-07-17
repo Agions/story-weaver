@@ -8,9 +8,10 @@ import {
 } from 'lucide-react';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 
-import { assetService, Asset } from '@/core/services/project/asset.service';
+import { assetService, Asset } from '@/core/services/project/asset-service';
 import { logger } from '@/core/utils/logger';
-import { EmptyState, toast } from '@/shared/components/ui';
+import { EmptyState } from '@/shared/components/ui';
+import { toast } from '@/shared/components/ui/toast';
 import { Button } from '@/shared/components/ui/button';
 import { Dropdown } from '@/shared/components/ui/dropdown';
 import { Input } from '@/shared/components/ui/input';

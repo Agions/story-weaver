@@ -6,7 +6,7 @@
  * - pipeline-middleware.ts: Logger + Metrics 中间件
  * - 本文件：引擎核心类 + 工厂函数
  */
-import { secureStorage } from '@/core/services/project/secure-storage.service';
+import { secureStorage } from '@/core/services/project/secure-storage-service';
 import { logger } from '@/core/utils/logger';
 import { delay } from '@/shared/utils/timing';
 
@@ -22,8 +22,8 @@ import type {
   StepCheckpoint,
   StepInput,
   StepOutput,
-} from './pipeline.types';
-import { CONTEXT_KEY, PipelineStatus } from './pipeline.types';
+} from './pipeline-types';
+import { CONTEXT_KEY, PipelineStatus } from './pipeline-types';
 
 // Re-export types + middleware 保持向后兼容
 export type {
@@ -31,8 +31,11 @@ export type {
   PipelineMiddleware,
   PipelineEngineOptions,
 } from './pipeline-engine-types';
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   LoggerMiddleware,
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   MetricsMiddleware,
   getMetrics,
   resetMetrics,
@@ -241,7 +244,7 @@ export class PipelineEngine {
     return this.status === PipelineStatus.FAILED;
   }
 
-  // ========== Checkpoint 策略（内联原 CheckpointManager） ==========
+  // Checkpoint 策略（内联原 CheckpointManager）
 
   private async shouldSkipCheckpoint(stepId: string): Promise<boolean> {
     if (!this.enableCheckpoint) return false;

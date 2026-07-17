@@ -1,7 +1,8 @@
 import type { ScriptImportMetadata } from '@/components/ai';
 import type { QualityGateIssue } from '@/core/services';
 import type { Character, CompositionProject, StoryAnalysis } from '@/shared/types';
-import type { AudioTrackConfig } from '@/types/media';
+import type { AudioTrackConfig } from '@/shared/types/audio';
+import type { ContentType } from '@/core/services/domain/collaboration-service';
 
 /** ProjectEditProvider 管理的页面级状态。 */
 export interface ProjectEditState {
@@ -43,6 +44,11 @@ export interface ProjectEditActions {
   setCommentDraft: (draft: string) => void;
   setVersionLabel: (label: string) => void;
   setFocusFrameId: (id: string | undefined) => void;
+  // 通用版本控制（支持脚本/角色/素材/分镜）
+  saveVersionByType: (contentType: ContentType, data: unknown, label?: string) => void;
+  listVersionsByType: (contentType: ContentType) => unknown[];
+  compareVersionsByType: (leftId: string, rightId: string) => unknown;
+  rollbackVersionByType: (contentType: ContentType, versionId: string) => unknown | null;
   // 渲染
   applyRenderedFrame: (frameId: string, imageUrl: string) => void;
   // 音频

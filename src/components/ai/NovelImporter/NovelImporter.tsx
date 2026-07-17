@@ -1,6 +1,6 @@
 import { Upload, FileText, Trash2 } from 'lucide-react';
 import { useState } from 'react';
-import { toast } from 'sonner';
+import { toast } from '@/shared/components/ui/toast';
 
 import { scriptImportService, tauriService } from '@/core/services';
 import { Loading } from '@/shared/components/ui';

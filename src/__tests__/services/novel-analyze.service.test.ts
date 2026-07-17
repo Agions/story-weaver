@@ -2,12 +2,12 @@
  * 小说分析服务测试
  */
 
-import { aiService } from '@/core/services/ai/text/ai.service';
-import { novelAnalyzer } from '@/core/services/ai/text/novel-analyze.service';
+import { aiService } from '@/core/services/ai/text/ai-service';
+import { novelAnalyzer } from '@/core/services/ai/text/novel-analyze-service';
 import { EmotionType } from '@/shared/types';
 
 // Mock AI 服务
-jest.mock('@/core/services/ai/text/ai.service', () => ({
+jest.mock('@/core/services/ai/text/ai-service', () => ({
   aiService: {
     generate: jest.fn(),
     setMockMode: jest.fn(),

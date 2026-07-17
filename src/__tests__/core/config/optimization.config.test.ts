@@ -8,7 +8,7 @@ import {
   PERFORMANCE_OPTIMIZATION,
   VIDEO_OPTIMIZATION,
   OPTIMIZATION_CONFIG
-} from '@/core/config/optimization.config';
+} from '@/core/config/optimization-config';
 
 describe('COST_OPTIMIZATION', () => {
   describe('llm', () => {

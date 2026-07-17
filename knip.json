@@ -1,0 +1,26 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "ignore": [
+    "src/**/__tests__/**/*"
+  ],
+  "ignoreDependencies": [
+    "pnpm",
+    "@commitlint/config-conventional",
+    "dependency-cruiser"
+  ],
+  "entry": [
+    "src/**/*.{ts,tsx}"
+  ],
+  "project": [
+    "src/**/*.{ts,tsx}"
+  ],
+  "include": [
+    "dependencies",
+    "exports",
+    "files",
+    "cycles"
+  ],
+  "exclude": [
+    "duplicates"
+  ]
+}

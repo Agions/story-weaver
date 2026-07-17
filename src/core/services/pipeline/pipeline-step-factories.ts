@@ -1,7 +1,7 @@
 /**
  * Pipeline 步骤工厂（消除 7 段重复代码）
  *
- * 原 pipeline.service.ts 中 createImportStep / createAnalysisStep /
+ * 原 pipeline-service.ts 中 createImportStep / createAnalysisStep /
  * createScriptStep / createStoryboardStep / createCharacterStep /
  * createRenderStep / createExportStep 七个工厂方法体 100% 相同，
  * 唯一的差别是 name 和 stepId 字段——典型可消除重复。
@@ -11,17 +11,18 @@
  *
  * 注意：
  *   - 每个 step.execute() 都是"日志+原样返回 input"——这是占位实现，
- *     实际业务由对应服务（scriptImportService / novel-analyze.service
- *     / ai.service / storyboard.service / character.service /
- *     render-queue.service / review-export.service）注入。
+ *     实际业务由对应服务（scriptImportService / novel-analyze-service
+ *     / ai-service / storyboard-service / character-service /
+ *     render-queue-service / review-export-service）注入。
  *   - 保留 7 个具名导出 + 原签名，避免破坏测试与调用方。
  */
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { PipelineStepId } from '@/core/pipeline/pipeline.types';
+import { PipelineStepId } from '@/core/pipeline/pipeline-types';
+import { createExportStep as createCoreExportStep } from '@/core/pipeline/step-export';
 
-import type { PipelineContext, PipelineStep } from './pipeline.types';
+import type { PipelineContext, PipelineStep } from './pipeline-types';
 
 /**
  * 通用步骤工厂
@@ -91,12 +92,30 @@ export function createRenderStep(config?: {
   return createGenericStep(PipelineStepId.RENDER, '渲染', config?.onProgress);
 }
 
-/** 创建导出步骤 */
-export function createExportStep(config?: {
+/**
+ * 创建导出步骤（简化占位实现）
+ *
+ * 注意：底层 ExportStep 的 onProgress 签名是 (event: StepProgressEvent) => void，
+ * 此处做兼容转换，保持原有 (progress, message) => void 签名不变。
+ *
+ * @deprecated 核心版本请使用 `createExportStep` from '@/core/pipeline/step-export'
+ */
+export function createSimpleExportStep(config?: {
   onProgress?: (progress: number, message?: string) => void;
 }): PipelineStep {
-  return createGenericStep(PipelineStepId.EXPORT, '导出', config?.onProgress);
+  const step = createCoreExportStep({
+    onProgress: config?.onProgress
+      ? (event) => config.onProgress?.(event.progress, event.message)
+      : undefined,
+  });
+  return step as PipelineStep;
 }
+
+/**
+ * @deprecated Use createSimpleExportStep instead.
+ * Core version: createExportStep from '@/core/pipeline/step-export'
+ */
+export const createExportStep = createSimpleExportStep;
 
 /** 步骤 ID 列表（按业务顺序：导入→分析→脚本→分镜→角色→渲染→导出） */
 export const PIPELINE_STEP_IDS = [

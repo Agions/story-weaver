@@ -7,7 +7,7 @@
 
 import { requestCache } from '@/shared/utils/request';
 
-import type { AIResponse } from './ai.service.types';
+import type { AIResponse } from './ai-service-types';
 
 /** 缓存 TTL（毫秒），与原实现一致 */
 const AI_CACHE_TTL_MS = 10 * 60 * 1000;

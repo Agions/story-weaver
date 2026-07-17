@@ -11,8 +11,8 @@ import type {
   RetryPolicy,
   StepInput,
   StepOutput,
-} from './pipeline.types';
-import { CONTEXT_KEY, QualityGateDecision, StepStatus } from './pipeline.types';
+} from './pipeline-types';
+import { CONTEXT_KEY, QualityGateDecision, StepStatus } from './pipeline-types';
 
 /**
  * 从 StepInput 提取 PipelineContext。

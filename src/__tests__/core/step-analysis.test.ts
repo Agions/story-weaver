@@ -4,7 +4,7 @@ import {
   PipelineStepId,
   StepStatus,
   QualityGateDecision,
-} from '../../core/pipeline/pipeline.types';
+} from '../../core/pipeline/pipeline-types';
 import {
   AnalysisStep,
   createAnalysisStep,

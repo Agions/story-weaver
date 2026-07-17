@@ -1,8 +1,8 @@
-import { getCharacterService } from '@/core/services/domain/character.service';
+import { getCharacterService } from '@/core/services/domain/character-service';
 import { logger } from '@/core/utils/logger';
 
 import { BasePipelineStep } from './base-pipeline-step';
-import { PipelineStepId, PipelineStep, StepInput } from './pipeline.types';
+import { PipelineStepId, PipelineStep, StepInput } from './pipeline-types';
 import { getContext } from './step-helpers';
 
 export interface CharacterOutput {
@@ -23,8 +23,6 @@ export interface CharacterOutput {
   }>;
   totalCount: number;
 }
-
-// ========== CharacterStep 实现 ==========
 
 export class CharacterStep extends BasePipelineStep {
   constructor(config?: Partial<PipelineStep>) {

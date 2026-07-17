@@ -9,5 +9,5 @@
 export { useVideo } from '@/core/hooks/useVideo';
 export type { UseVideoReturn } from '@/core/hooks/useVideo';
 
-export { videoReducer, initialVideoState, createVideoSetters } from '@/core/hooks/useVideo.reducer';
-export type { VideoState, VideoAction, VideoSetter } from '@/core/hooks/useVideo.reducer';
+export { videoReducer, initialVideoState, createVideoSetters } from '@/core/hooks/useVideo-reducer';
+export type { VideoState, VideoAction, VideoSetter } from '@/core/hooks/useVideo-reducer';

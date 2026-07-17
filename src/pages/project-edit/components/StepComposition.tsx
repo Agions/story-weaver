@@ -14,11 +14,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui
 import { useStepCompositionContext } from '../context/selectors';
 import styles from '../ProjectEdit.module.less';
 
-import { StepActions } from './StepActions';
+import { StepActions } from '@/components/pipeline/StepActions';
 
 const CompositionStudio = lazy(() => import('@/shared/components/business/CompositionStudio'));
 
-/** @deprecated 内部改用 Context selector，保留类型以兼容旧引用。 */
 export interface StepCompositionProps {
   storyboardFrames?: import('@/shared/types/storyboard').StoryboardFrame[];
   projectId?: string;

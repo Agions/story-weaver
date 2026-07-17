@@ -1,7 +1,7 @@
 /**
  * 图片导出（ZIP 压缩包）
  *
- * 从 export.service.ts 抽离 exportAsZip。
+ * 从 export-service.ts 抽离 exportAsZip。
  * - 图片质量缩放（quality < 1.0 时通过 canvas 重采样）
  * - 把字幕 + 元数据一起打包
  */

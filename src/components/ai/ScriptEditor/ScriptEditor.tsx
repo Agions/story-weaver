@@ -28,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/components/ui/select';
-import { toast } from '@/shared/components/ui/sonner';
+import { toast } from '@/shared/components/ui/toast';
 import type { VideoSegment } from '@/shared/types/script';
 import { formatDurationShort } from '@/shared/utils';
 import { theme } from '@/styles/theme';

@@ -1,5 +1,5 @@
 /**
- * useProject.reducer 单元测试
+ * useProject-reducer 单元测试
  *
  * 覆盖 projectReducer + createProjectSetters 的状态转换契约。
  */
@@ -8,8 +8,8 @@ import {
   projectReducer,
   initialProjectState,
   createProjectSetters,
-} from '@/core/hooks/useProject.reducer';
-import type { ProjectAction } from '@/core/hooks/useProject.reducer';
+} from '@/core/hooks/useProject-reducer';
+import type { ProjectAction } from '@/core/hooks/useProject-reducer';
 
 describe('projectReducer', () => {
   it('应返回初始状态的深拷贝引用', () => {

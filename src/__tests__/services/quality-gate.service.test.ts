@@ -1,4 +1,4 @@
-import { qualityGateService } from '@/core/services/pipeline/quality-gate.service';
+import { qualityGateService } from '@/core/services/pipeline/quality-gate-service';
 
 describe('qualityGateService', () => {
   it('should fail when frame count is too low', () => {

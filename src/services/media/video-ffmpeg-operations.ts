@@ -13,7 +13,7 @@
 import { FFmpegCommandBuilder } from '@/core/utils/ffmpeg-command-builder';
 import { logger } from '@/core/utils/logger';
 import { delay, PROCESSING_DELAY_MS } from '@/shared/utils';
-import type { SubtitleRenderStyle } from '@/types/media';
+import type { SubtitleRenderStyle } from '@/shared/types/video-composition-types';
 
 import {
   CLIP_CODEC_FLAGS,

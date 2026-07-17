@@ -1,6 +1,6 @@
 import { createContext, useContext, ReactNode } from 'react';
 
-import { useSettingsStore } from '@/shared/stores/settings.store';
+import { useSettingsStore } from '@/shared/stores/settings-store';
 import type { AppSettings } from '@/shared/types';
 
 interface SettingsContextType {

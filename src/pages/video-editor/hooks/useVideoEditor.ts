@@ -8,7 +8,7 @@
  */
 import { open } from '@tauri-apps/plugin-dialog';
 import { useReducer, useCallback, useEffect, useRef } from 'react';
-import { toast } from 'sonner';
+import { toast } from '@/shared/components/ui/toast';
 
 import { tauriService } from '@/core/services';
 import { logger } from '@/core/utils/logger';
@@ -19,7 +19,7 @@ import {
   videoEditorReducer,
   initialVideoEditorState,
   createVideoEditorSetters,
-} from './useVideoEditor.reducer';
+} from './useVideoEditor-reducer';
 import { useVideoExport } from './video-editor-export';
 import type { VideoSegment } from './video-editor-types';
 

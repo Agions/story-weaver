@@ -11,8 +11,8 @@ import {
   getModelById,
   getModelsByProvider,
   getRecommendedModels,
-} from '@/core/config/models.config';
-import { secureStorage } from '@/core/services/project/secure-storage.service';
+} from '@/core/config/models-config';
+import { secureStorage } from '@/core/services/project/secure-storage-service';
 import type { AIModel, ModelProvider, ModelCategory, AIModelSettings } from '@/shared/types';
 import { delay } from '@/shared/utils/timing';
 

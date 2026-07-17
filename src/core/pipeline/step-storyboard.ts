@@ -1,7 +1,7 @@
 import { logger } from '@/core/utils/logger';
 
 import { BasePipelineStep } from './base-pipeline-step';
-import { PipelineStepId, PipelineStep, StepInput } from './pipeline.types';
+import { PipelineStepId, PipelineStep, StepInput } from './pipeline-types';
 import { getContext } from './step-helpers';
 
 export interface StoryboardOutput {
@@ -22,8 +22,6 @@ export interface StoryboardOutput {
 const SHOT_TYPES = ['ECU', 'CU', 'MCU', 'MS', 'WS', 'EWS'] as const;
 const CAMERA_ANGLES = ['仰拍', '俯拍', '平拍', '侧拍'] as const;
 const LIGHTING_TYPES = ['顺光', '侧光', '逆光', '顶光'] as const;
-
-// ========== StoryboardStep 实现 ==========
 
 export class StoryboardStep extends BasePipelineStep {
   constructor(config?: Partial<PipelineStep>) {
@@ -105,8 +103,6 @@ export class StoryboardStep extends BasePipelineStep {
     return `${mainCharacter}, ${shotType} shot, ${cameraAngle}, ${lighting}, ${scene.description || scene.title}, high detail, 8k`;
   }
 }
-
-// ========== 工厂函数 ==========
 
 export function createStoryboardStep(config?: Partial<PipelineStep>): StoryboardStep {
   return new StoryboardStep(config);

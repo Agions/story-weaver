@@ -1,28 +1,24 @@
 /**
- * 流水线编排
- * @module core/services/domain/manga-pipeline-orchestrator
+ * 漫画流水线编排
  *
- * 提取自原 MangaPipelineService.generateFromNovel 主流程 + cancelled / failed 包装。
- * 4 阶段串行：images → audio → lipsync → compose
+ * 基于 PipelineEngine 实现，使用单个 PipelineStep 执行 4 阶段串行任务：
+ *   images → audio → lipsync → compose
+ *
+ * @module core/services/domain/manga-pipeline-orchestrator
  */
 
-import { applyLipSync } from './manga-pipeline-stage-lipsync';
-import { composePipelineVideo } from './manga-pipeline-stage-compose';
-import { generateSceneAudio } from './manga-pipeline-stage-audio';
-import { generateSceneImages } from './manga-pipeline-stage-images';
-import { ProgressEmitter } from './manga-pipeline-progress';
 import {
-  ABORT_ERROR_NAME,
-  PIPELINE_CANCELLED_MESSAGE,
+  createMangaPipelineEngine,
+  createMangaPipelineStep,
+} from './manga-pipeline-steps';
+import {
   type PipelineConfig,
+  type PipelineScene,
   type PipelineProgress,
   type PipelineResult,
-  type PipelineScene,
 } from './manga-pipeline-types';
 
-export type ProgressListener = (progress: PipelineProgress) => void;
-
-/** 构造失败的 PipelineResult（status='failed'） */
+/** 构造失败的 PipelineResult */
 export function buildFailedResult(
   scenes: PipelineScene[],
   startTime: number,
@@ -36,7 +32,7 @@ export function buildFailedResult(
   };
 }
 
-/** 构造成功的 PipelineResult（status='completed'） */
+/** 构造成功的 PipelineResult */
 export function buildCompletedResult(
   scenes: PipelineScene[],
   startTime: number
@@ -49,56 +45,67 @@ export function buildCompletedResult(
   };
 }
 
-/** 判断一个错误是否为"取消" */
+/**
+ * 判断一个错误是否为"取消"
+ */
 export function isPipelineCancelled(error: unknown): boolean {
   if (!error || typeof error !== 'object') return false;
   const e = error as Error;
-  return e.name === ABORT_ERROR_NAME || e.message === PIPELINE_CANCELLED_MESSAGE;
+  return (
+    e.name === 'AbortError' ||
+    e.message.includes('已被取消') ||
+    e.message.includes('cancelled')
+  );
 }
 
 /**
- * 流水线主流程编排
+ * 漫画流水线主流程编排
  *
- * 行为与原 `MangaPipelineService.generateFromNovel` 字节级一致：
- *   1. 准备 AbortController（外部传 signal 优先）
- *   2. 阶段 1 图像 → 阶段 2 音频 → 阶段 3 唇同步 → 阶段 4 合成
- *   3. catch 中：cancelled → failed("流水线已被取消")；其余 → failed(error.message)
- *   4. 任意失败前 emit('failed', 100, 100, 0, 0, message)
+ * 通过 PipelineEngine 执行单个漫画流水线步骤，
+ * 统一管理取消信号、进度推送、异常包装。
  */
 export async function runPipeline(
   novelContent: string,
   scenes: Omit<PipelineScene, 'imageUrl' | 'videoUrl' | 'audioUrl' | 'finalVideoUrl'>[],
   config: PipelineConfig,
   options: { signal?: AbortSignal } = {},
-  emit: ProgressEmitter
+  onProgress?: (progress: PipelineProgress) => void
 ): Promise<PipelineResult> {
   const startTime = Date.now();
   const totalScenes = scenes.length;
-  // 优先使用外部 signal，否则由调用方负责 abortController
-  const signal = options.signal ?? new AbortController().signal;
-  let pipelineScenes: PipelineScene[] = [];
+  const workflowId = `manga-${Date.now()}`;
+
+  // 构建引擎
+  const engine = createMangaPipelineEngine({
+    workflowId,
+    enableCheckpoint: false,
+    onProgress,
+  });
+
+  // 添加漫画流水线步骤
+  engine.addStep(createMangaPipelineStep(onProgress));
+
+  // 构造步骤输入
+  const input = {
+    scenes: scenes as PipelineScene[],
+    config,
+    signal: options.signal ?? new AbortController().signal,
+    totalScenes,
+    progressCallback: onProgress,
+  };
 
   try {
-    // 阶段 1：图像
-    pipelineScenes = await generateSceneImages(scenes, config, signal, emit, totalScenes);
-    // 阶段 2：语音
-    await generateSceneAudio(pipelineScenes, config, signal, emit, totalScenes);
-    // 阶段 3：唇同步
-    await applyLipSync(pipelineScenes, config, signal, emit, totalScenes);
-    // 阶段 4：合成
-    await composePipelineVideo(pipelineScenes, config, emit, totalScenes);
-
-    emit.emit('completed', 100, 100, totalScenes, totalScenes, '生成完成');
-    return buildCompletedResult(pipelineScenes, startTime);
+    const output = (await engine.run(input)) as unknown as { scenes: PipelineScene[]; durationMs: number };
+    return buildCompletedResult(output.scenes, startTime);
   } catch (error) {
     const errorMessage = isPipelineCancelled(error)
-      ? PIPELINE_CANCELLED_MESSAGE
+      ? '流水线已被取消'
       : error instanceof Error
         ? error.message
         : '未知错误';
-    emit.emit('failed', 100, 100, 0, 0, errorMessage);
-    return buildFailedResult(pipelineScenes, startTime, errorMessage);
+    return buildFailedResult(input.scenes, startTime, errorMessage);
   }
-  // 静默吞掉未使用变量警告（novelContent 暂未使用，保留参数兼容性）
+
+  // 静默吞掉未使用变量警告
   void novelContent;
 }

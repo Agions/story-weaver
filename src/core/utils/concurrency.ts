@@ -1,7 +1,7 @@
 /**
  * 并发控制工具
  *
- * 之前 novel.service / novel-analyze.service / scene-analyzer.service
+ * 之前 novel-service / novel-analyze-service / scene-analyzer-service
  * 各自内嵌了一份相同的 `concurrentLimit` 实现（3 处复制粘贴）。
  * 提取为统一工具，业务行为不变。
  */

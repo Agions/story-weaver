@@ -1,50 +1,21 @@
 /**
- * 视频摘要生成
- * @module core/services/video/video-analysis-summary
+ * Video analysis summary generation — extracted from video-analysis-service.ts
  *
- * 提取自原 `VideoAnalysisService.generateSummary` + 私有 `generateDefaultSummary` +
- * 私有 `groupByCategory`。
- * 行为字节级一致：AI 失败时回退到基于视频信息 + 场景数 + 物体类别的默认摘要。
+ * AI-powered summary with fallback to default summary on failure.
  */
 
-import { aiService } from '@/core/services/ai/text/ai.service';
+import { aiService } from '@/core/services/ai/text/ai-service';
 import { logger } from '@/core/utils/logger';
 import { formatTime } from '@/shared/utils';
-import type {
-  ObjectDetection,
-  VideoAnalysis,
-  VideoInfo,
-} from '@/shared/types';
+import type { VideoAnalysis, VideoInfo } from '@/shared/types';
+
+import { groupObjectsByCategory } from './video-analysis-utils';
 
 /**
- * 按 category 分组物体（与原 groupByCategory 字节级一致）
- *
- * @returns [category, ObjectDetection[]] 数组（Map.entries() 顺序）
+ * 构造 AI 摘要 prompt
  */
-export function groupObjectsByCategory(
-  objects: ObjectDetection[]
-): [string, ObjectDetection[]][] {
-  const groups = new Map<string, ObjectDetection[]>();
-
-  objects.forEach((obj) => {
-    const list = groups.get(obj.category) ?? [];
-    list.push(obj);
-    groups.set(obj.category, list);
-  });
-
-  return Array.from(groups.entries());
-}
-
-/**
- * 构造 AI 摘要 prompt（与原 generateSummary 内联字符串字面量字节级一致）
- */
-export function buildSummaryPrompt(
-  videoInfo: VideoInfo,
-  analysis: Partial<VideoAnalysis>
-): string {
-  const sceneLines =
-    analysis.scenes?.map((s) => `- ${s.type}: ${s.description}`).join('\n') || '无';
-
+function buildSummaryPrompt(videoInfo: VideoInfo, analysis: Partial<VideoAnalysis>): string {
+  const sceneLines = analysis.scenes?.map((s) => `- ${s.type}: ${s.description}`).join('\n') || '无';
   const objectLines =
     groupObjectsByCategory(analysis.objects ?? [])
       .map(([cat, objs]) => `- ${cat}: ${objs.length}个`)
@@ -54,7 +25,7 @@ export function buildSummaryPrompt(
 
 视频信息：
 - 时长：${formatTime(videoInfo.duration!)}
-- 分辨率：${videoInfo!.width}x${videoInfo!.height}
+- 分辨率：${videoInfo.width}x${videoInfo.height}
 - 格式：${videoInfo.format}
 
 场景分析：
@@ -68,16 +39,8 @@ ${objectLines}
 
 /**
  * 生成默认摘要（当 AI 失败时回退）
- *
- * 行为与原 generateDefaultSummary 字节级一致：
- *   - 包含时长 / 分辨率
- *   - 包含场景数
- *   - 若 objectCategories 有内容则追加"主要元素包括 X、Y、Z"
  */
-export function generateDefaultSummary(
-  videoInfo: VideoInfo,
-  analysis: Partial<VideoAnalysis>
-): string {
+function generateDefaultSummary(videoInfo: VideoInfo, analysis: Partial<VideoAnalysis>): string {
   const sceneCount = analysis.scenes?.length ?? 0;
   const objectTypes = Object.keys(analysis.stats?.objectCategories ?? {});
 
@@ -89,10 +52,6 @@ export function generateDefaultSummary(
 
 /**
  * AI 生成视频内容摘要（失败时回退到默认摘要）
- *
- * @param videoInfo 视频元信息
- * @param analysis 当前分析结果
- * @param ai AiServiceLike（默认走全局 aiService；测试可注入 mock）
  */
 export async function generateSummary(
   videoInfo: VideoInfo,

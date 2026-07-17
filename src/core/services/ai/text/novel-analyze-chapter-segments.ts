@@ -1,7 +1,7 @@
 /**
  * 章节分割
  *
- * 从 novel-analyze.service.ts 提取的 segmentChapters 私有方法。
+ * 从 novel-analyze-service.ts 提取的 segmentChapters 私有方法。
  *
  * 流程：
  *   1. 用 CHAPTER_PATTERNS 正则匹配章节标题

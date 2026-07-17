@@ -1,7 +1,7 @@
 /**
  * Pipeline Engine 类型定义
  */
-import type { PipelineOptions, StepInput, StepOutput } from './step.interface';
+import type { PipelineOptions, StepInput, StepOutput } from './step-interface';
 
 export interface PipelineEngineEventHandler {
   onStepProgress?: (stepId: string, progress: number, message?: string) => void;

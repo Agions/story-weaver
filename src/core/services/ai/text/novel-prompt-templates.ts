@@ -1,7 +1,7 @@
 /**
  * Novel Service Prompt 模板集合
  *
- * 把原 novel.service.ts 中 3 个巨型 prompt 模板（parseNovel /
+ * 把原 novel-service.ts 中 3 个巨型 prompt 模板（parseNovel /
  * convertToScenes / generateStoryboard）集中到这个模块。
  *
  * 拆分理由：

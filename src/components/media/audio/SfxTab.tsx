@@ -12,7 +12,7 @@ import { Space } from '@/shared/components/ui/space';
 import { Tag } from '@/shared/components/ui/tag';
 import { PRESET_SFX_LIST } from '@/shared/constants/media-presets';
 
-import type { SoundEffect } from './types/audio.entities';
+import type { SoundEffect } from './types/audio-entities';
 
 interface SfxTabProps {
   soundEffects: SoundEffect[];

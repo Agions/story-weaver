@@ -28,7 +28,6 @@
 import { logger } from '@/core/utils/logger';
 import { getErrorMessage, retryRequest } from '@/shared/utils';
 
-// ========== Error Types ==========
 
 export class ServiceError extends Error {
   constructor(
@@ -65,7 +64,6 @@ export type ErrorCode =
   | 'CONTENT_FILTERED'
   | 'UNKNOWN';
 
-// ========== Request/Response Contracts ==========
 
 export interface RequestOptions {
   signal?: AbortSignal;
@@ -84,7 +82,6 @@ export interface StreamChunk {
   };
 }
 
-// ========== BaseAIService ==========
 
 export abstract class BaseAIService<TParams, TResult> {
   /**
@@ -291,6 +288,5 @@ export abstract class BaseAIService<TParams, TResult> {
   }
 }
 
-// ========== Exports ==========
 
 export type { RetryOptions } from '@/shared/utils';

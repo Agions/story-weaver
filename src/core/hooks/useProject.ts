@@ -2,26 +2,25 @@
  * 项目管理 Hook（reducer 实现）
  *
  * 内部用 useReducer + localStorage 完成项目 CRUD。
- * 状态机定义在 useProject.reducer.ts。
+ * 状态机定义在 useProject-reducer.ts。
  */
 
 import { useReducer, useCallback, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import type { ProjectData, VideoInfo, Script, ProjectSettings, TaskStatus } from '@/shared/types';
+import { STORAGE_KEYS } from '@/core/constants/app-config';
 
 import {
   projectReducer,
   initialProjectState,
   createProjectSetters,
   type ProjectState,
-} from './useProject.reducer';
-
-const PROJECTS_STORAGE_KEY = 'storyweaver_projects';
+} from './useProject-reducer';
 
 function loadProjects(): ProjectData[] {
   try {
-    const raw = localStorage.getItem(PROJECTS_STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEYS.PROJECTS);
     return raw ? (JSON.parse(raw) as ProjectData[]) : [];
   } catch {
     return [];
@@ -30,7 +29,7 @@ function loadProjects(): ProjectData[] {
 
 function persistProjects(projects: ProjectData[]): void {
   try {
-    localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(projects));
+    localStorage.setItem(STORAGE_KEYS.PROJECTS, JSON.stringify(projects));
   } catch {
     // ignore quota errors
   }

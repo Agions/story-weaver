@@ -11,7 +11,7 @@ import { providerRegistry } from '@/core/ai/providers';
 import { logger } from '@/core/utils/logger';
 
 import { dispatchAIRequest, buildRequestConfig } from './ai-call-dispatcher';
-import type { AIModel, AIModelSettings } from './ai.service.types';
+import type { AIModel, AIModelSettings } from './ai-service-types';
 
 /** 不支持流式时分块返回的字符数 */
 const STREAM_CHUNK_SIZE = 10;

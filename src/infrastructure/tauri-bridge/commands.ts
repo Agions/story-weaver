@@ -2,7 +2,7 @@
  * Tauri 桥接层 - 命令服务
  * 类型安全的 Tauri invoke 封装
  *
- * 类型定义在 commands.types.ts
+ * 类型定义在 commands-types.ts
  */
 
 import { invoke } from '@tauri-apps/api/core';
@@ -28,7 +28,7 @@ import type {
   ExportProgress,
   ExportProgressCallback,
   DirInfo,
-} from './commands.types';
+} from './commands-types';
 
 // Re-export types 保持向后兼容
 export type {
@@ -40,7 +40,7 @@ export type {
   ExportProgress,
   ExportProgressCallback,
   DirInfo,
-} from './commands.types';
+} from './commands-types';
 
 // ========== 服务类 ==========
 

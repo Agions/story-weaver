@@ -1,7 +1,7 @@
 /**
  * TTS 类型定义与默认配置
  *
- * 从 tts.service.ts 提取：
+ * 从 tts-service.ts 提取：
  *   - 默认 TTSConfig 工厂常量
  *   - 类型别名重新导出（保持外部导入路径稳定）
  */

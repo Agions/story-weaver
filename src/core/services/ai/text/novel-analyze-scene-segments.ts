@@ -1,7 +1,7 @@
 /**
  * 场景分割
  *
- * 从 novel-analyze.service.ts 提取的 segmentScenes 异步方法 +
+ * 从 novel-analyze-service.ts 提取的 segmentScenes 异步方法 +
  * 其内部 processChapter 闭包 + 类私有 ruleBasedSegmentation 私有方法。
  *
  * 关键修复（重复消除）：
@@ -18,7 +18,7 @@
  * 单一职责：把 Chapter[] 并发切为 NovelScene[]（AI 优先 + 规则兜底）。
  */
 
-import { aiService } from '@/core/services/ai/text/ai.service';
+import { aiService } from '@/core/services/ai/text/ai-service';
 import { ruleBasedSegmentation } from '@/core/services/ai/text/novel-helpers';
 import { concurrentLimit } from '@/core/utils/concurrency';
 import { logger } from '@/core/utils/logger';

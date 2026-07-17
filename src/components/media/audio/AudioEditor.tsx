@@ -22,7 +22,7 @@ import { useAudioEditor } from './hooks/useAudioEditor';
 import MixPanel from './MixPanel';
 import MusicTab from './MusicTab';
 import SfxTab from './SfxTab';
-import type { AudioTrackConfig } from './types/audio.entities';
+import type { AudioTrackConfig } from './types/audio-entities';
 import VoiceTab from './VoiceTab';
 
 // ========== Re-export types for backward compatibility ==========
@@ -31,7 +31,7 @@ export type {
   BackgroundMusic,
   SoundEffect,
   AudioTrackConfig,
-} from './types/audio.entities';
+} from './types/audio-entities';
 
 // ========== Props ==========
 

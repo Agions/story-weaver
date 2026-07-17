@@ -25,7 +25,7 @@ export function mapCharacterReferences(
  * 获取 API Key
  */
 export async function getAPIKey(service: string): Promise<string> {
-  const { secureStorage } = await import('../../../project/secure-storage.service');
+  const { secureStorage } = await import('../../../project/secure-storage-service');
   const value = await secureStorage.getSecureConfig(`api_key_${service}`);
 
   if (typeof value === 'string' && value) {

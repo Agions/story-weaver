@@ -1,7 +1,7 @@
 /**
  * FrameAnimation 默认值工厂
  *
- * 原 composition.service.ts 中 3 处重复出现的
+ * 原 composition-service.ts 中 3 处重复出现的
  *   { cameraMotion: null, zoom: 1, pan: {x:0,y:0}, rotation:0,
  *     opacity:1, filters: {blur:0,brightness:100,contrast:100,saturation:100},
  *     keyframes: [] }

@@ -4,13 +4,13 @@
  */
 
 import type { AIProviderStrategy } from './base';
-import { openAIStrategy } from './openai.strategy';
-import { anthropicStrategy } from './anthropic.strategy';
-import { googleStrategy } from './google.strategy';
-import { baiduStrategy } from './baidu.strategy';
-import { alibabaStrategy } from './alibaba.strategy';
-import { zhipuStrategy } from './zhipu.strategy';
-import { mockStrategy } from './mock.strategy';
+import { openAIStrategy } from './openai-strategy';
+import { anthropicStrategy } from './anthropic-strategy';
+import { googleStrategy } from './google-strategy';
+import { baiduStrategy } from './baidu-strategy';
+import { alibabaStrategy } from './alibaba-strategy';
+import { zhipuStrategy } from './zhipu-strategy';
+import { mockStrategy } from './mock-strategy';
 
 /**
  * Provider Registry

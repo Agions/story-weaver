@@ -5,4 +5,4 @@
 export { default } from './AIAssistant/AIAssistant';
 
 // Re-export types for backward compatibility
-export type { ChatMessage } from './AIAssistant/types/ai-assistant.entities';
+export type { ChatMessage } from './AIAssistant/types/ai-assistant-entities';

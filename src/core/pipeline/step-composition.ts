@@ -4,11 +4,11 @@
  * 视频合成、字幕添加、音频混音
  */
 
-import { videoCompositorService } from '@/core/services/video/video-compositor.service';
+import { videoCompositorService } from '@/core/services/video/video-compositor-service';
 
 import { BasePipelineStep } from './base-pipeline-step';
-import type { StepInput } from './pipeline.types';
-import { PipelineStepId } from './pipeline.types';
+import type { StepInput } from './pipeline-types';
+import { PipelineStepId } from './pipeline-types';
 import { getContext } from './step-helpers';
 
 export interface CompositionOutput {

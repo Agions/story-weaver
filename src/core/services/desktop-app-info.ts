@@ -1,7 +1,7 @@
 /**
  * 桌面应用元信息
  *
- * 从 desktop-app.service.ts 提取的纯查询函数。
+ * 从 desktop-app-service.ts 提取的纯查询函数。
  * 不持有状态、不依赖 Tauri 运行时（除 navigator.userAgent）。
  *
  * 重复模式识别：

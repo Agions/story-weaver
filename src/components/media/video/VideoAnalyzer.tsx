@@ -8,7 +8,7 @@ import { Alert } from '@/shared/components/ui/alert';
 import { Button } from '@/shared/components/ui/button';
 import { Card } from '@/shared/components/ui/card';
 import { Progress } from '@/shared/components/ui/progress';
-import { toast } from '@/shared/components/ui/sonner';
+import { toast } from '@/shared/components/ui/toast';
 import type { VideoAnalysis, KeyMoment, EmotionAnalysis, VideoMetadata } from '@/shared/types';
 
 import styles from './VideoAnalyzer.module.less';

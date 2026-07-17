@@ -7,7 +7,7 @@ import React, { Suspense } from 'react';
 
 import { tauriService } from '@/core/services';
 import { logger } from '@/core/utils/logger';
-import { toast } from '@/shared/components/ui/sonner';
+import { toast } from '@/shared/components/ui/toast';
 import { Spin } from '@/shared/components/ui/spin';
 import type { ProjectData } from '@/shared/types';
 

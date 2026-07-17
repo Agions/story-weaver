@@ -6,7 +6,7 @@
  * 行为字节级一致：单帧 prompt 拼接 + VLM 调用 + 整数解析 + 失败兜底。
  */
 
-import type { AIProvider, ChatMessage } from '@/core/ai/providers/ai-provider.interface';
+import type { AIProvider, ChatMessage } from '@/core/ai/providers/ai-provider-interface';
 import type { CharacterVideoRef } from '@/core/services/ai/image/image-generation/types';
 
 import { evaluateByPromptMatch } from './visual-consistency-heuristic';

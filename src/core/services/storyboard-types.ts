@@ -2,7 +2,7 @@
  * 分镜服务共享类型与常量
  * @module core/services/storyboard-types
  *
- * 提取自原 storyboard.service.ts 中散落的 interface / const。
+ * 提取自原 storyboard-service.ts 中散落的 interface / const。
  * 其它子模块（frame-factory / prompt-builder / persistence / scene-splitter / subscriber）
  * 共用这套类型，保持领域模型一致。
  */
@@ -46,8 +46,10 @@ export const STORYBOARD_FRAME_DEFAULTS = {
   duration: 5,
 } as const;
 
+import { STORAGE_KEYS } from '@/core/constants/app-config';
+
 /** localStorage 存储键前缀 */
-export const STORYBOARD_STORAGE_KEY = 'storyweaver-storyboards';
+export const STORYBOARD_STORAGE_KEY = STORAGE_KEYS.STORYBOARDS;
 
 /** 项目级 key 构造（与原 StoryboardService.loadFromStorage / saveToStorage 逻辑一致） */
 export function buildStoryboardStorageKey(projectId?: string): string {

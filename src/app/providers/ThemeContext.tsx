@@ -6,7 +6,7 @@
  */
 import { createContext, useContext, useEffect, ReactNode, useSyncExternalStore } from 'react';
 
-import { useSettingsStore } from '@/shared/stores/settings.store';
+import { useSettingsStore } from '@/shared/stores/settings-store';
 
 type Theme = 'light' | 'dark' | 'system';
 

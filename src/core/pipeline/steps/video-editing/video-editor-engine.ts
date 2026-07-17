@@ -14,7 +14,7 @@ import type {
   SubtitleBlock,
   AudioTrack,
   VideoEditingConfig,
-} from './video-editing.types';
+} from './video-editing-types';
 
 // ========== 辅助函数 ==========
 

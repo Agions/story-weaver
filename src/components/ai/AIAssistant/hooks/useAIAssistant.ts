@@ -10,13 +10,13 @@
 
 import { useReducer, useCallback } from 'react';
 
-import type { ChatMessage, UseAIAssistantReturn } from '../types/ai-assistant.entities';
+import type { ChatMessage, UseAIAssistantReturn } from '../types/ai-assistant-entities';
 
 import {
   aiAssistantReducer,
   initialAIAssistantState,
   createAIAssistantSetters,
-} from './useAIAssistant.reducer';
+} from './useAIAssistant-reducer';
 
 export function useAIAssistant(): UseAIAssistantReturn {
   // ── 18 个 useState 已迁移到 useReducer 状态机 (2026-06-11) ──

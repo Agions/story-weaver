@@ -24,6 +24,11 @@ export class ProgressEmitter {
     return this.callback !== undefined;
   }
 
+  /** 获取当前回调（供外部传递为函数引用） */
+  getCallback(): ProgressCallback | undefined {
+    return this.callback;
+  }
+
   /**
    * 推一次进度事件
    *

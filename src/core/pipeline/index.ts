@@ -20,12 +20,12 @@
  * } from '@/core/pipeline';
  *
  * // ❌ 旧方式（已弃用）
- * import { PipelineStep } from '@/core/services/pipeline/pipeline.types';
+ * import { PipelineStep } from '@/core/services/pipeline/pipeline-types';
  * ```
  *
  * @module
  * - pipeline-engine.ts    — PipelineEngine 类 + createPipelineEngine 工厂
- * - pipeline.types.ts     — 所有核心类型定义（StepInput/StepOutput/PipelineContext 等）
+ * - pipeline-types.ts     — 所有核心类型定义（StepInput/StepOutput/PipelineContext 等）
  * - pipeline-engine-types.ts — 引擎事件/中间件类型
  * - step-helpers.ts       — 步骤辅助函数（getContext / createFailedStepResult 等）
  * - step-*.ts (×7)        — 各业务步骤实现
@@ -44,7 +44,7 @@ export {
   QualityGateDecision,
   // Symbol key
   CONTEXT_KEY,
-} from './pipeline.types';
+} from './pipeline-types';
 
 // ========== 核心 type-only 导出 ==========
 export type {
@@ -68,7 +68,7 @@ export type {
   // 结果
   PipelineResult,
   PipelineStepResult,
-} from './pipeline.types';
+} from './pipeline-types';
 
 // ========== 引擎事件/中间件类型 ==========
 export type {
@@ -76,6 +76,11 @@ export type {
   PipelineMiddleware,
   PipelineEngineOptions,
 } from './pipeline-engine-types';
+
+// ========== 步骤实现 ==========
+export { VideoEditingStep, createVideoEditingStep } from './step-video-editing';
+export { ExportStep, createExportStep } from './step-export';
+export type { ExportOutput } from './step-export';
 
 // ========== 步骤辅助函数 ==========
 export {

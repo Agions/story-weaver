@@ -8,7 +8,7 @@
 import { providerRegistry, mockStrategy } from '@/core/ai/providers';
 import { logger } from '@/core/utils/logger';
 
-import type { AIResponse, AIModel, AIModelSettings, AIRequestConfig } from './ai.service.types';
+import type { AIResponse, AIModel, AIModelSettings, AIRequestConfig } from './ai-service-types';
 
 /** 默认 system prompt（与原实现逐字一致） */
 const DEFAULT_SYSTEM_PROMPT = '你是一个专业的视频内容创作助手，擅长生成高质量的解说脚本。';

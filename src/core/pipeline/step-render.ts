@@ -1,9 +1,12 @@
-import { imageGenerationService } from '@/core/services/ai/image/image-generation.service';
+import { imageGenerationService } from '@/core/services/ai/image/image-generation-service';
 import { logger } from '@/core/utils/logger';
+import { assetLibraryService } from '@/features/asset-library';
+import { checkBatchConsistency, type ConsistencyCheckInput } from '@/features/character-consistency';
 
 import { BasePipelineStep } from './base-pipeline-step';
-import { PipelineStepId, PipelineStep, StepInput, QualityGateDecision } from './pipeline.types';
+import { PipelineStepId, PipelineStep, StepInput, QualityGateDecision } from './pipeline-types';
 import { getContext } from './step-helpers';
+import type { CharacterOutput } from './step-character';
 import type { StoryboardOutput } from './step-storyboard';
 
 export interface RenderOutput {
@@ -12,13 +15,12 @@ export interface RenderOutput {
     imageUrl: string;
     thumbnailUrl?: string;
     qualityScore?: number;
+    renderTime?: number;
   }>;
   failedFrames: string[];
   totalFrames: number;
   successRate: number;
 }
-
-// ========== RenderStep 实现 ==========
 
 export class RenderStep extends BasePipelineStep {
   readonly dependencies = [PipelineStepId.STORYBOARD];
@@ -140,6 +142,32 @@ export class RenderStep extends BasePipelineStep {
 
     this.reportProgress(95, '渲染完成');
 
+    // 将渲染结果注册到资产库（用于复用率追踪）
+    try {
+      for (const frame of renderedFrames) {
+        assetLibraryService.registerAsset({
+          type: 'image',
+          name: `frame_${frame.frameId}`,
+          url: frame.imageUrl,
+          thumbnailUrl: frame.thumbnailUrl,
+          sceneId: frame.frameId,
+          tags: ['rendered', `quality_${(frame.qualityScore ?? 0).toFixed(2)}`],
+          metadata: {
+            qualityScore: frame.qualityScore,
+            renderTime: frame.renderTime,
+          },
+        });
+      }
+      logger.info(`[RenderStep] Registered ${renderedFrames.length} assets to asset library`);
+    } catch (err) {
+      logger.warn(`[RenderStep] Failed to register assets: ${err}`);
+      // 非阻塞：渲染结果仍可继续
+    }
+
+    // 对有参考图的角色进行一致性评分（生成门禁）
+    const characters = context.getVariable<CharacterOutput['characters']>('characters');
+    const consistencyResults = await this.checkConsistency(characters, renderedFrames);
+
     const totalFrames = frames.length;
     const successRate = (totalFrames - failedFrames.length) / totalFrames;
 
@@ -156,7 +184,67 @@ export class RenderStep extends BasePipelineStep {
       failedFrames,
       totalFrames,
       successRate,
+      consistencyResults, // 一致性评分结果（可选）
     };
+  }
+
+  /**
+   * 对有参考图的角色进行一致性评分
+   * 仅检查每个角色的第一帧（采样），避免 VLM 调用过多
+   */
+  private async checkConsistency(
+    characters: CharacterOutput['characters'] | undefined,
+    renderedFrames: RenderOutput['renderedFrames']
+  ): Promise<Array<{ characterId: string; score: number; passed: boolean }>> {
+    if (!characters || characters.length === 0 || renderedFrames.length === 0) {
+      return [];
+    }
+
+    // 只对有参考图的角色进行一致性检查
+    const charactersWithRefs = characters.filter(
+      (c) => c.consistency.referenceImages && c.consistency.referenceImages.length > 0
+    );
+
+    if (charactersWithRefs.length === 0) {
+      return [];
+    }
+
+    // 采样检查：每个角色只检查前 3 帧
+    const sampleFrames = renderedFrames.slice(0, 3);
+    const checks: ConsistencyCheckInput[] = [];
+
+    for (const char of charactersWithRefs) {
+      for (const frame of sampleFrames) {
+        checks.push({
+          characterId: char.id,
+          frameImageUrl: frame.imageUrl,
+          prompt: `Consistency check for character ${char.name}`,
+        });
+      }
+    }
+
+    try {
+      const results = await checkBatchConsistency(checks);
+      const output: Array<{ characterId: string; score: number; passed: boolean }> = [];
+
+      for (const char of charactersWithRefs) {
+        const charResults = Array.from(results.values()).filter((r) => r.characterId === char.id);
+        if (charResults.length > 0) {
+          const avgScore = charResults.reduce((sum, r) => sum + r.score, 0) / charResults.length;
+          output.push({
+            characterId: char.id,
+            score: avgScore,
+            passed: avgScore >= 70,
+          });
+        }
+      }
+
+      logger.info(`[RenderStep] Consistency check completed for ${output.length} characters`);
+      return output;
+    } catch (err) {
+      logger.warn(`[RenderStep] Consistency check failed: ${err}`);
+      return [];
+    }
   }
 }
 

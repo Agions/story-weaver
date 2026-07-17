@@ -1,43 +1,31 @@
 /**
- * 项目数据验证
- * @module core/services/project/project-import-export-validator
- *
- * 提取自原 `ProjectImportExportService.validateProjectData` + 私有 `validateVersion`。
+ * Project import/export validation & utilities — extracted
  */
 
-import {
-  ARRAY_PROJECT_FIELDS,
-  MIN_SUPPORTED_VERSION,
-  parseVersion,
-} from './project-import-export-types';
+import type { ProjectData } from '@/shared/types';
 
-/** 验证结果 */
-export interface ValidationResult {
-  valid: boolean;
-  errors: string[];
+import { ARRAY_PROJECT_FIELDS, MIN_SUPPORTED_VERSION } from './project-import-export-constants';
+import { parseVersion, nowIso } from './project-import-export-utils';
+import type { ValidationResult } from './project-import-export-types';
+
+const FILENAME_SAFE_CHAR_REGEX = /[^a-zA-Z0-9一-龥]/g;
+
+/** 把项目名规整为文件名安全字符串 */
+export function sanitizeProjectName(name: string): string {
+  return name.replace(FILENAME_SAFE_CHAR_REGEX, '_');
 }
 
-/**
- * 验证项目数据合法性
- *
- * 行为与原 `validateProjectData` 字节级一致：
- *   - 必需字段（id / name / status）必须存在且为字符串
- *   - 数组字段（videos / scripts）必须是数组
- *
- * @param project 待验证数据
- */
+/** 验证项目数据合法性 */
 export function validateProjectData(project: unknown): ValidationResult {
   const errors: string[] = [];
   const p = project as Record<string, unknown>;
 
-  // 必填字符串字段
   if (!p.id || typeof p.id !== 'string') {
     errors.push('缺少项目 ID');
   }
   if (!p.name || typeof p.name !== 'string') {
     errors.push('缺少项目名称');
   }
-  // status 字段：仅要求存在
   if (!p.status) {
     errors.push('缺少项目状态');
   }
@@ -48,21 +36,10 @@ export function validateProjectData(project: unknown): ValidationResult {
     }
   }
 
-  return {
-    valid: errors.length === 0,
-    errors,
-  };
+  return { valid: errors.length === 0, errors };
 }
 
-/**
- * 验证版本兼容性
- *
- * 行为与原 `validateVersion` 字节级一致：
- *   - 仅比较 major + minor，patch 差异不影响兼容性
- *   - version < MIN_SUPPORTED_VERSION 抛错
- *
- * @throws 不支持时抛 Error
- */
+/** 验证版本兼容性 */
 export function validateVersion(version: string): void {
   const { major, minor } = parseVersion(version);
   const { major: minMajor, minor: minMinor } = parseVersion(MIN_SUPPORTED_VERSION);
@@ -71,3 +48,12 @@ export function validateVersion(version: string): void {
     throw new Error(`项目文件版本 ${version} 不被支持。最低支持版本为 ${MIN_SUPPORTED_VERSION}`);
   }
 }
+
+/** 解析导入选项默认值 */
+export function resolveImportOptions(options: ImportOptions = {}): ImportOptions {
+  return { merge: false, overwrite: false, validate: true, ...options };
+}
+
+import type { ImportOptions } from './project-import-export-types';
+
+export { sanitizeProjectName as _sanitizeForTests };

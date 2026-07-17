@@ -4,7 +4,7 @@ import {
   PipelineStepId,
   StepStatus,
   QualityGateDecision,
-} from '../../core/pipeline/pipeline.types';
+} from '../../core/pipeline/pipeline-types';
 import {
   CharacterStep,
   createCharacterStep,
@@ -13,7 +13,7 @@ import {
 
 // Mock character service
 const mockCreate = jest.fn();
-jest.mock('@/core/services/domain/character.service', () => ({
+jest.mock('@/core/services/domain/character-service', () => ({
   getCharacterService: () => ({
     create: mockCreate,
   }),

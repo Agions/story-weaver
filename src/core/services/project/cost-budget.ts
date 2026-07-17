@@ -8,7 +8,7 @@
 import { logger } from '@/core/utils/logger';
 
 import { calculateCostStats } from './cost-stats';
-import type { BudgetStatus, CostAlert, CostBudget, CostRecord, CostStats } from './cost.types';
+import type { BudgetStatus, CostAlert, CostBudget, CostRecord, CostStats } from './cost-types';
 
 /** 预算告警冷却时间（毫秒），与原实现一致 */
 export const BUDGET_ALERT_COOLDOWN_MS = 10 * 60 * 1000;

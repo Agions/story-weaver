@@ -11,7 +11,7 @@ import { Space } from '@/shared/components/ui/space';
 import { Tag } from '@/shared/components/ui/tag';
 import { formatTime } from '@/shared/utils';
 
-import type { VoiceTrack } from './types/audio.entities';
+import type { VoiceTrack } from './types/audio-entities';
 
 interface VoiceTabProps {
   voiceTracks: VoiceTrack[];

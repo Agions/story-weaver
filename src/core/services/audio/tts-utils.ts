@@ -7,7 +7,7 @@
  *   - splitText()            流式场景下文本分块
  *   - saveAudio()            浏览器端 ArrayBuffer → 下载文件
  *
- * 提取动机：原 tts.service.ts 中 5 个 stub provider + 1 个真实 provider
+ * 提取动机：原 tts-service.ts 中 5 个 stub provider + 1 个真实 provider
  * 都要"先 split 再 escape 再 estimate"，把它们集中后新增 provider
  * 不需要复制粘贴 4 段几乎一样的代码。
  */
