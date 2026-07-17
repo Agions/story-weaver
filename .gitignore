@@ -84,3 +84,10 @@ demo/
 docs/dev/
 docs/refactor-plan.md
 docs/baseline.md
+
+# Session-local artifacts (IDE/agent temp files)
+.zcode/plans/
+.workbuddy/memory/
+
+# Generated code quality reports
+reports/jscpd/
