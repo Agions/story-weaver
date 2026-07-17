@@ -2,11 +2,9 @@
  * Project import/export validation & utilities — extracted
  */
 
-import type { ProjectData } from '@/shared/types';
-
 import { ARRAY_PROJECT_FIELDS, MIN_SUPPORTED_VERSION } from './project-import-export-constants';
-import { parseVersion, nowIso } from './project-import-export-utils';
-import type { ValidationResult } from './project-import-export-types';
+import { parseVersion } from './project-import-export-utils';
+import type { ImportOptions, ValidationResult } from './project-import-export-types';
 
 const FILENAME_SAFE_CHAR_REGEX = /[^a-zA-Z0-9一-龥]/g;
 
@@ -53,7 +51,5 @@ export function validateVersion(version: string): void {
 export function resolveImportOptions(options: ImportOptions = {}): ImportOptions {
   return { merge: false, overwrite: false, validate: true, ...options };
 }
-
-import type { ImportOptions } from './project-import-export-types';
 
 export { sanitizeProjectName as _sanitizeForTests };

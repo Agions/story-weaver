@@ -20,7 +20,7 @@ import {
 } from '@/core/services';
 import { logger } from '@/core/utils/logger';
 import { toast } from '@/shared/components/ui/toast';
-import { useStoryboard } from '@/shared/stores/storyboard-store';
+import { type StoryboardState } from '@/shared/stores/storyboard-store';
 import type { Character, CompositionProject, StoryAnalysis } from '@/shared/types';
 import type { StoryboardFrame } from '@/shared/types/storyboard';
 import type { QualityGateIssue } from '@/core/services';
@@ -50,9 +50,12 @@ export interface UseProjectEditActionsParams {
   setSaving: (v: boolean) => void;
   updateProject: (updates: Record<string, unknown>) => void;
   setCurrentStep: (step: number) => void;
-  storyboard: ReturnType<typeof useStoryboard>;
+  storyboard: StoryboardState;
   novelMetadata: ScriptImportMetadata | null;
   storyAnalysis: StoryAnalysis | null;
+  analysisDraft: string;
+  commentDraft: string;
+  versionLabel: string;
   audioConfig: AudioTrackConfig;
   characters: Character[];
   composition: CompositionProject | null;

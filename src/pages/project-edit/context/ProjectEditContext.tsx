@@ -16,7 +16,6 @@ import {
 
 import type { ScriptImportMetadata } from '@/components/ai';
 import { useProject } from '@/core/hooks/useProject';
-import { toast } from '@/shared/components/ui/toast';
 import { useStoryboard } from '@/shared/stores/storyboard-store';
 import type { Character, CompositionProject, StoryAnalysis } from '@/shared/types';
 import type { AudioTrackConfig } from '@/shared/types/audio';
@@ -125,6 +124,9 @@ export function ProjectEditProvider({
     storyboard,
     novelMetadata,
     storyAnalysis,
+    analysisDraft,
+    commentDraft,
+    versionLabel,
     audioConfig,
     characters,
     composition,

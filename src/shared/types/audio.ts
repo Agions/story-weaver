@@ -1,8 +1,56 @@
 /**
  * 音频领域类型
  *
- * 已从 @/types/media 统一迁移。本文件保留为兼容性 re-export shim，
- * 请勿在此新增类型 — 请改到 @/types/media。
+ * Canonical definitions — migrated from deleted @/types/media.
  */
 
-export type { VoiceTrack, BackgroundMusic, SoundEffect, AudioTrackConfig } from '@/shared/types/audio';
+/** 配音轨道 */
+export interface VoiceTrack {
+  id: string;
+  name: string;
+  filePath: string;
+  fileUrl?: string;
+  duration: number;
+  startTime: number;
+  volume: number;
+  fadeIn: number;
+  fadeOut: number;
+  type: 'dubbing' | 'voiceover';
+}
+
+/** 背景音乐 */
+export interface BackgroundMusic {
+  id: string;
+  name: string;
+  filePath: string;
+  fileUrl?: string;
+  duration: number;
+  volume: number;
+  fadeIn: number;
+  fadeOut: number;
+  loop: boolean;
+  startTime: number;
+}
+
+/** 音效 */
+export interface SoundEffect {
+  id: string;
+  name: string;
+  filePath: string;
+  fileUrl?: string;
+  duration: number;
+  volume: number;
+  startTime: number;
+  category: string;
+}
+
+/** 完整音频轨道配置 */
+export interface AudioTrackConfig {
+  voiceTracks: VoiceTrack[];
+  backgroundMusic: BackgroundMusic | null;
+  soundEffects: SoundEffect[];
+  masterVolume: number;
+  voiceVolume: number;
+  musicVolume: number;
+  effectVolume: number;
+}

@@ -137,3 +137,8 @@ export interface MockConfig {
   shouldFail?: boolean;
   errorMessage?: string;
 }
+
+// ========== Re-exports for AI consumers (migrated from @/types/ai) ==========
+
+export type { VideoAnalysis, VideoScene, Keyframe } from './video';
+export type { ScriptSegment } from './script';

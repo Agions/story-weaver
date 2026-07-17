@@ -7,7 +7,7 @@ import type {
 } from '@/core/services/domain/collaboration-service';
 import type { StoryboardFrame } from '@/shared/types';
 
-interface StoryboardState {
+export interface StoryboardState {
   frames: StoryboardFrame[];
   selectedFrame: StoryboardFrame | null;
   comments: FrameComment[];

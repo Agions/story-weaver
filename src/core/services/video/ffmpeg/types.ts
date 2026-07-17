@@ -31,5 +31,5 @@ export type { SubtitleRenderStyle as SubtitleStyle } from '@/shared/types/video-
  */
 export interface SubtitleTrack {
   id: string;
-  subtitles: import('@/types/media').Subtitle[];
+  subtitles: import('@/shared/types/video-composition-types').Subtitle[];
 }

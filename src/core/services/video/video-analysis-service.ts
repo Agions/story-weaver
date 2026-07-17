@@ -10,7 +10,6 @@
  */
 
 import { aiService } from '@/core/services/ai/text/ai-service';
-import { logger } from '@/core/utils/logger';
 import type { VideoAnalysis, VideoInfo } from '@/shared/types';
 
 import {

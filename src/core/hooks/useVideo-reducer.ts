@@ -15,7 +15,7 @@
  */
 
 import type { VideoInfo, VideoAnalysis, TaskStatus } from '@/shared/types';
-import { createFieldUpdater, type FieldUpdater as Updater } from '@/shared/utils/reducer-helpers';
+import { createFieldUpdater, type FieldUpdater } from '@/shared/utils/reducer-helpers';
 
 export interface VideoState {
   video: VideoInfo | null;

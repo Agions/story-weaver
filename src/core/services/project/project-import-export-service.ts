@@ -43,7 +43,6 @@ export type {
   ValidationResult,
 } from './project-import-export-types';
 import type {
-  ExportFormat,
   ExportOptions,
   ImportOptions,
   ProjectExportData,
