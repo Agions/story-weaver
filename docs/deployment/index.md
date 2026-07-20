@@ -30,4 +30,4 @@ ZHIPU_API_KEY=...
 docker compose up -d
 ```
 
-[完整部署详情 →](build)
+[完整部署详情 →](https://v2.tauri.app/start/)"

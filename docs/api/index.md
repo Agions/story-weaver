@@ -39,6 +39,6 @@ for await (const chunk of aiService.stream({...})) {
 
 ## 更多详见
 
-- [Pipeline Service](pipeline-service)
-- [AI Service](ai-service)
-- [Subtitle Service](subtitle-service)
+- Pipeline Service → `@/core/pipeline/pipeline-engine.ts`
+- AI Service → `@/core/services/ai/text/ai-service.ts`
+- Subtitle Service → `@/core/services/video/subtitle-service.ts`
