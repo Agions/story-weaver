@@ -90,16 +90,21 @@ export abstract class OpenAICompatibleStrategy extends BaseAIProviderStrategy { 
 
 7 Provider 共享同一接口，OpenAI 兼容协议封装为抽象基类消除重复。
 
-## 已废弃的路径（渐进清理中）
+## 已废弃的路径（清理完成）
 
-以下路径保留导出以保证向后兼容，但新代码应使用推荐路径：
+以下路径已完全删除，旧导入将无法解析：
+
+| 已删除路径 | 迁移到 | 说明 |
+|----------|--------|------|
+| `@/services/` | `@/core/services/` | 服务层 facade 已删除，改用核心路径 |
+| `@/types/` | `@/shared/types/` | 旧类型目录已完全删除，21 个导入方已迁移 |
+| `@/shared/utils/general.ts` | `@/shared/utils/` | 已删除，barrel 直接导出子模块 |
+
+以下路径保留导出且标记 `@deprecated`，新代码请使用推荐路径：
 
 | 废弃路径 | 推荐路径 | 说明 |
 |----------|----------|------|
-| `@/services/` | `@/core/services/` | 服务层 facade 已删除，纯 re-export |
-| `@/types/` | `@/shared/types/` | 旧类型目录，已标记 @deprecated |
 | `@/core/services/pipeline/pipeline-types.ts` | `@/core/pipeline/pipeline-types.ts` | 服务层类型 shim，不兼容核心版本 |
-| `@/shared/utils/general.ts` | `@/shared/utils/` | 已删除，barrel 直接导出 |
 
 ## 重构进度
 
@@ -118,9 +123,12 @@ export abstract class OpenAICompatibleStrategy extends BaseAIProviderStrategy { 
 - 统一所有 toast 导入路径到 `@/shared/components/ui/toast`
 - 提取 reducer 公共模式（useProject + useVideo 改用 `createFieldUpdater`）
 
-### Phase 3: 架构升级（进行中）
+### Phase 3: 架构升级（已完成）
 - 删除纯 re-export facade（PipelineFacade, AIProviderRegistry, FFmpegService）
-- 标记 `src/types/` 旧类型目录为 `@deprecated`
-- 大文件拆分评估中
+- 删除 `src/types/` 旧类型目录，21 个导入方迁移到 `@/shared/types/`
+- 大文件拆分：ProjectEditContext（554→180）、video-analysis-service（574→134）、project-import-export-service（535→170）
+- CI 修复：TS 构建错误、Vite build 缺失模块文件、E2E 测试
+- 清理 stale dev artifacts（docs/superpowers、.superpowers/sdd、.zcode/plans、.workbuddy/memory）
+- 统一 `package.json` 脚本使用 `pnpm` 而非 `npm`
 
 [下一步：模块系统 →](/developer-guide/module-system)
